@@ -894,6 +894,7 @@ static INT_PTR CALLBACK ConsoleDlgProc(HWND hwndDlg, UINT message, WPARAM wParam
 
 void __cdecl ConsoleThread(void*)
 {
+	MThreadHandle threadLock(g_plugin.hConsoleThread);
 	CoInitialize(nullptr);
 
 	HWND hwnd = CreateDialog(g_plugin.getInst(), MAKEINTRESOURCE(IDD_CONSOLE), nullptr, ConsoleDlgProc);
@@ -1179,8 +1180,6 @@ static int stringCompare(LOGWIN *lw1, LOGWIN *lw2)
 
 static UINT logicons[] = { IDI_EMPTY, IDI_ARROW, IDI_IN, IDI_OUT, IDI_INFO };
 
-static HANDLE hConsoleThread = nullptr;
-
 void InitConsole()
 {
 	int i;
@@ -1211,7 +1210,7 @@ void InitConsole()
 
 	LoadSettings();
 
-	hConsoleThread = mir_forkthread(ConsoleThread);
+	mir_forkthread(ConsoleThread);
 
 	HookEvent(ME_SYSTEM_PRESHUTDOWN, PreshutdownConsole);
 	HookEvent(ME_SYSTEM_MODULESLOADED, OnSystemModulesLoaded);
@@ -1221,19 +1220,17 @@ void InitConsole()
 
 void ShutdownConsole(void)
 {
-	int i;
-
 	List_Destroy(&lModules);
 
-	if (gImg) ImageList_Destroy(gImg);
+	if (gImg)
+		ImageList_Destroy(gImg);
 
-	for (i = 0; i < _countof(hIcons); i++) {
-		if (hIcons[i]) DestroyIcon(hIcons[i]);
-	}
+	for (int i = 0; i < _countof(hIcons); i++)
+		if (hIcons[i])
+			DestroyIcon(hIcons[i]);
 
 	if (hwndConsole)
 		EndDialog(hwndConsole, TRUE);
-	WaitForSingleObject(hConsoleThread, INFINITE);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -949,6 +949,12 @@ public:
 	bool OnApply() override;
 	void OnReset() override;
 
+	// returns item data associated with the selected item or -1
+	LPARAM   GetCurData() const;
+
+	// selects line with userdata passed. returns index of this line or -1
+	int      SelectData(LPARAM data); 
+
 	// Control interface
 	int      AddString(const wchar_t *text, LPARAM data = 0);
 	int      AddStringA(const char *text, LPARAM data = 0);
@@ -984,6 +990,11 @@ class MIR_CORE_EXPORT CCtrlListView : public CCtrlBase
 
 public:
 	CCtrlListView(CDlgBase *dlg, int ctrlId);
+
+	// direction = -1 or 1. returns new item index
+	int MoveItem(int idx, int direction);
+
+	void SetCurSel(int idx);
 
 	// Classic LV interface
 	DWORD      ApproximateViewRect(int cx, int cy, int iCount);
@@ -1129,6 +1140,7 @@ public:
 			NMLVFINDITEM   *nmlvfi;
 			NMITEMACTIVATE *nmlvia;
 			NMLVKEYDOWN    *nmlvkey;
+			NMLVCUSTOMDRAW *nmcd;
 		};
 	};
 
@@ -1137,6 +1149,7 @@ public:
 	CCallback<TEventInfo> OnBeginRDrag;
 	CCallback<TEventInfo> OnBeginScroll;
 	CCallback<TEventInfo> OnColumnClick;
+	CCallback<TEventInfo> OnCustomDraw;
 	CCallback<TEventInfo> OnDeleteAllItems;
 	CCallback<TEventInfo> OnDeleteItem;
 	CCallback<TEventInfo> OnClick;
@@ -1273,6 +1286,7 @@ public:
 			NMTVKEYDOWN *nmtvkey;
 			NMTVDISPINFO *nmtvdi;
 			NMTVGETINFOTIP *nmtvit;
+			NMTVCUSTOMDRAW *nmcd;
 			HTREEITEM hItem; // for OnItemChanged
 		};
 	};
@@ -1280,6 +1294,7 @@ public:
 	CCallback<TEventInfo> OnBeginDrag;
 	CCallback<TEventInfo> OnBeginLabelEdit;
 	CCallback<TEventInfo> OnBeginRDrag;
+	CCallback<TEventInfo> OnCustomDraw;
 	CCallback<TEventInfo> OnDeleteItem;
 	CCallback<TEventInfo> OnEndLabelEdit;
 	CCallback<TEventInfo> OnGetDispInfo;

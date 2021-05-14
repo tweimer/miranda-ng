@@ -134,7 +134,7 @@ MIR_APP_DLL(INT_PTR) Proto_ChainRecv(int iOrder, CCSDATA *ccs)
 	return ret;
 }
 
-PROTOACCOUNT* __fastcall Proto_GetAccount(MCONTACT hContact)
+MIR_APP_DLL(PROTOACCOUNT*) Proto_GetContactAccount(MCONTACT hContact)
 {
 	if (hContact == 0)
 		return nullptr;
@@ -148,7 +148,7 @@ PROTOACCOUNT* __fastcall Proto_GetAccount(MCONTACT hContact)
 
 MIR_APP_DLL(char*) Proto_GetBaseAccountName(MCONTACT hContact)
 {
-	PROTOACCOUNT *pa = Proto_GetAccount(hContact);
+	PROTOACCOUNT *pa = Proto_GetContactAccount(hContact);
 	return pa->IsEnabled() ? pa->szModuleName : nullptr;
 }
 
@@ -171,23 +171,22 @@ MIR_APP_DLL(int) Proto_IsProtoOnContact(MCONTACT hContact, const char *szProto)
 
 MIR_APP_DLL(int) Proto_AddToContact(MCONTACT hContact, const char *szProto)
 {
-	PROTOCOLDESCRIPTOR *pd = Proto_IsProtocolLoaded(szProto);
-	if (pd == nullptr) {
-		PROTOACCOUNT *pa = Proto_GetAccount(szProto);
-		if (pa) {
-			db_set_s(hContact, "Protocol", "p", szProto);
-
-			if (pa->ppro)
-				pa->ppro->OnContactAdded(hContact);
-			return 0;
-		}
-		return 1;
-	}
-
-	if (pd->type == PROTOTYPE_PROTOCOL || pd->type == PROTOTYPE_VIRTUAL || pd->type == PROTOTYPE_PROTOWITHACCS)
+	if (auto *pa = Proto_GetAccount(szProto)) {
 		db_set_s(hContact, "Protocol", "p", szProto);
 
-	return 0;
+		if (pa->ppro)
+			pa->ppro->OnContactAdded(hContact);
+		return 0;
+	}
+
+	if (auto *pd = Proto_IsProtocolLoaded(szProto)) {
+		if (pd->type == PROTOTYPE_PROTOCOL || pd->type == PROTOTYPE_VIRTUAL || pd->type == PROTOTYPE_PROTOWITHACCS)
+			db_set_s(hContact, "Protocol", "p", szProto);
+
+		return 0;
+	}
+	
+	return 1;
 }
 
 MIR_APP_DLL(int) Proto_RemoveFromContact(MCONTACT hContact, const char *szProto)

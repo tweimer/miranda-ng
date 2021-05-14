@@ -170,6 +170,9 @@ void CDiscordProto::ProcessGuild(const JSONNode &pRoot)
 		pGuild->groupId = Clist_GroupCreate(Clist_GroupExists(m_wszDefaultGroup), pGuild->wszName);
 
 	SESSION_INFO *si = Chat_NewSession(GCW_SERVER, m_szModuleName, pGuild->wszName, pGuild->wszName, pGuild);
+	if (si == nullptr)
+		return;
+
 	pGuild->pParentSi = (SESSION_INFO*)si;
 	pGuild->hContact = si->hContact;
 	setId(pGuild->hContact, DB_KEY_CHANNELID, guildId);
@@ -209,8 +212,7 @@ void CDiscordProto::ProcessGuild(const JSONNode &pRoot)
 	for (auto &it : pGuild->arChatUsers)
 		AddGuildUser(pGuild, *it);
 
-	if (m_bUseGroupchats)
-		ForkThread(&CDiscordProto::BatchChatCreate, pGuild);
+	ForkThread(&CDiscordProto::BatchChatCreate, pGuild);
 
 	pGuild->bSynced = true;
 }

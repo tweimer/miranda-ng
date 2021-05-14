@@ -16,6 +16,11 @@ function GetContactStatus(hContact:TMCONTACT):integer;
 function IsChat(hContact:TMCONTACT):bool;
 function IsMirandaUser(hContact:TMCONTACT):integer; // >0=Miranda; 0=Not miranda; -1=unknown
 
+// -2 - deleted account, -1 - disabled account, 0 - hidden
+// 1 - metacontact, 2 - submetacontact, positive - active
+// proto - ASSIGNED buffer
+function IsContactActive(hContact:TMCONTACT;Proto:PAnsiChar=nil):integer;
+
 //----- Save / Load contact -----
 
 function LoadContact(group,setting:PAnsiChar):TMCONTACT;

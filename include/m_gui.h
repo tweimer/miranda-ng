@@ -339,6 +339,7 @@ public:
 	CCtrlBase* FindControl(HWND hwnd);
 
 	void SetCaption(const wchar_t *ptszCaption);
+	void SetDraw(bool bEnable);
 	void NotifyChange(void); // sends a notification to a parent window
 
 	__forceinline HINSTANCE GetInst() const { return m_pPlugin.getInst(); }
@@ -491,12 +492,13 @@ public:
 	bool Enabled(void) const;
 
 	void NotifyChange();
+	void SetDraw(bool bEnable);
 
-	LRESULT SendMsg(UINT Msg, WPARAM wParam, LPARAM lParam) const;
+	LRESULT  SendMsg(UINT Msg, WPARAM wParam, LPARAM lParam) const;
 
-	void SetText(const wchar_t *text);
-	void SetTextA(const char *text);
-	void SetInt(int value);
+	void     SetText(const wchar_t *text);
+	void     SetTextA(const char *text);
+	void     SetInt(int value);
 
 	wchar_t* GetText() const;
 	char*    GetTextA() const;
@@ -508,18 +510,18 @@ public:
 
 	int      GetInt() const;
 
-	virtual BOOL OnCommand(HWND /*hwndCtrl*/, WORD /*idCtrl*/, WORD /*idCode*/) { return FALSE; }
-	virtual BOOL OnNotify(int /*idCtrl*/, NMHDR* /*pnmh*/) { return FALSE; }
-
-	virtual BOOL OnMeasureItem(MEASUREITEMSTRUCT*) { return FALSE; }
-	virtual BOOL OnDrawItem(DRAWITEMSTRUCT*) { return FALSE; }
-	virtual BOOL OnDeleteItem(DELETEITEMSTRUCT*) { return FALSE; }
-
-	virtual void OnInit();
-	virtual void OnDestroy();
-
-	virtual bool OnApply();
-	virtual void OnReset();
+	virtual  BOOL OnCommand(HWND /*hwndCtrl*/, WORD /*idCtrl*/, WORD /*idCode*/) { return FALSE; }
+	virtual  BOOL OnNotify(int /*idCtrl*/, NMHDR* /*pnmh*/) { return FALSE; }
+			   
+	virtual  BOOL OnMeasureItem(MEASUREITEMSTRUCT*) { return FALSE; }
+	virtual  BOOL OnDrawItem(DRAWITEMSTRUCT*) { return FALSE; }
+	virtual  BOOL OnDeleteItem(DELETEITEMSTRUCT*) { return FALSE; }
+			   
+	virtual  void OnInit();
+	virtual  void OnDestroy();
+			   
+	virtual  bool OnApply();
+	virtual  void OnReset();
 
 protected:
 	HWND m_hwnd = nullptr;  // must be the first data item
@@ -1421,87 +1423,6 @@ protected:
 	void OnReset() override;
 
 	LRESULT CustomWndProc(UINT msg, WPARAM wParam, LPARAM lParam) override;
-};
-
-/////////////////////////////////////////////////////////////////////////////////////////
-// CCtrlCustom
-
-template<typename TDlg>
-class MIR_CORE_EXPORT CCtrlCustom : public CCtrlBase
-{
-	typedef CCtrlBase CSuper;
-
-private:
-	void (TDlg::*m_pfnOnCommand)(HWND hwndCtrl, WORD idCtrl, WORD idCode);
-	void (TDlg::*m_pfnOnNotify)(int idCtrl, NMHDR *pnmh);
-	void (TDlg::*m_pfnOnMeasureItem)(MEASUREITEMSTRUCT *param);
-	void (TDlg::*m_pfnOnDrawItem)(DRAWITEMSTRUCT *param);
-	void (TDlg::*m_pfnOnDeleteItem)(DELETEITEMSTRUCT *param);
-
-public:
-	CCtrlCustom(TDlg *wnd, int idCtrl,
-		void (TDlg::*pfnOnCommand)(HWND hwndCtrl, WORD idCtrl, WORD idCode),
-		void (TDlg::*pfnOnNotify)(int idCtrl, NMHDR *pnmh),
-		void (TDlg::*pfnOnMeasureItem)(MEASUREITEMSTRUCT *param) = NULL,
-		void (TDlg::*pfnOnDrawItem)(DRAWITEMSTRUCT *param) = NULL,
-		void (TDlg::*pfnOnDeleteItem)(DELETEITEMSTRUCT *param) = NULL): CCtrlBase(wnd, idCtrl)
-	{
-		m_pfnOnCommand		= pfnOnCommand;
-		m_pfnOnNotify		= pfnOnNotify;
-		m_pfnOnMeasureItem	= pfnOnMeasureItem;
-		m_pfnOnDrawItem		= pfnOnDrawItem;
-		m_pfnOnDeleteItem	= pfnOnDeleteItem;
-	}
-
-	BOOL OnCommand(HWND hwndCtrl, WORD idCtrl, WORD idCode) override
-	{
-		if (m_parentWnd && m_pfnOnCommand) {
-			m_parentWnd->m_lresult = 0;
-			(((TDlg *)m_parentWnd)->*m_pfnOnCommand)(hwndCtrl, idCtrl, idCode);
-			return m_parentWnd->m_lresult;
-		}
-		return FALSE;
-	}
-
-	BOOL OnNotify(int idCtrl, NMHDR *pnmh) override
-	{
-		if (m_parentWnd && m_pfnOnNotify) {
-			m_parentWnd->m_lresult = 0;
-			(((TDlg *)m_parentWnd)->*m_pfnOnNotify)(idCtrl, pnmh);
-			return m_parentWnd->m_lresult;
-		}
-		return FALSE;
-	}
-
-	BOOL OnMeasureItem(MEASUREITEMSTRUCT *param) override
-	{
-		if (m_parentWnd && m_pfnOnMeasureItem) {
-			m_parentWnd->m_lresult = 0;
-			(((TDlg *)m_parentWnd)->*m_pfnOnMeasureItem)(param);
-			return m_parentWnd->m_lresult;
-		}
-		return FALSE;
-	}
-	
-	BOOL OnDrawItem(DRAWITEMSTRUCT *param) override
-	{
-		if (m_parentWnd && m_pfnOnDrawItem) {
-			m_parentWnd->m_lresult = 0;
-			(((TDlg *)m_parentWnd)->*m_pfnOnDrawItem)(param);
-			return m_parentWnd->m_lresult;
-		}
-		return FALSE;
-	}
-	
-	BOOL OnDeleteItem(DELETEITEMSTRUCT *param) override
-	{
-		if (m_parentWnd && m_pfnOnDeleteItem) {
-			m_parentWnd->m_lresult = 0;
-			(((TDlg *)m_parentWnd)->*m_pfnOnDeleteItem)(param);
-			return m_parentWnd->m_lresult;
-		}
-		return FALSE;
-	}
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////

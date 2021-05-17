@@ -321,7 +321,7 @@ typedef struct {
 	WIDATAITEMLIST *UpdateDataTail;
 	WIIDSEARCH IDSearch;
 	WINAMESEARCH NameSearch;
-	WICONDLIST CondList[10];
+	WICONDLIST CondList[8];
 } WIDATA;
 
 //============  DATA LIST (LINKED LIST)  ============
@@ -498,8 +498,6 @@ INT_PTR CALLBACK DlgProcINIPage(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lP
 
 int BriefInfo(WPARAM wParam, LPARAM lParam);
 INT_PTR BriefInfoSvc(WPARAM wParam, LPARAM lParam);
-
-void InitIcons(void);
 
 //============  Plugin Class ============
 

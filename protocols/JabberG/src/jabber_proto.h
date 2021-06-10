@@ -81,7 +81,7 @@ struct CJabberProto : public PROTO<CJabberProto>, public IJabberInterface
 		friend struct CJabberProto;
 		CJabberProto &m_proto;
 
-		CTimer m_heartBeat;
+		CTimer m_heartBeat, m_keepAlive;
 		void OnHeartBeat(CTimer *pTimer)
 		{
 			m_proto.SendGetVcard(0);
@@ -90,11 +90,18 @@ struct CJabberProto : public PROTO<CJabberProto>, public IJabberInterface
 			pTimer->Start(86400 * 1000);
 		}
 
+		void OnKeepAlive(CTimer*)
+		{
+			m_proto.CheckKeepAlive();
+		}
+
 		CJabberProtoImpl(CJabberProto &pro) :
 			m_proto(pro),
-			m_heartBeat(Miranda_GetSystemWindow(), UINT_PTR(this))
+			m_heartBeat(Miranda_GetSystemWindow(), UINT_PTR(this)),
+			m_keepAlive(Miranda_GetSystemWindow(), UINT_PTR(this)+1)
 		{
 			m_heartBeat.OnEvent = Callback(this, &CJabberProtoImpl::OnHeartBeat);
+			m_keepAlive.OnEvent = Callback(this, &CJabberProtoImpl::OnKeepAlive);
 		}
 	} m_impl;
 
@@ -523,7 +530,8 @@ struct CJabberProto : public PROTO<CJabberProto>, public IJabberInterface
 	int        GetTransportStatusIconIndex(int iID, int Status);
 	bool       DBCheckIsTransportedContact(const char *jid, MCONTACT hContact);
 	void       CheckAllContactsAreTransported(void);
-	INT_PTR    __cdecl JGetAdvancedStatusIcon(WPARAM wParam, LPARAM lParam);
+	
+	INT_PTR    __cdecl OnGetAdvancedStatusIcon(WPARAM wParam, LPARAM lParam);
 
 	//---- jabber_iq.c -------------------------------------------------------------------
 
@@ -827,7 +835,9 @@ struct CJabberProto : public PROTO<CJabberProto>, public IJabberInterface
 		        
 	void       xmlStreamInitialize(char *which);
 	void       xmlStreamInitializeNow(ThreadData *info);
-		        
+
+	void       CheckKeepAlive(void);
+
 	bool       OnProcessJingle(const TiXmlElement *node);
 	void       OnProcessIq(const TiXmlElement *node);
 	void       SetRegConfig(CJabberFormDlg *pDlg, void *from);

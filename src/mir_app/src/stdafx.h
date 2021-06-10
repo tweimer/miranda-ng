@@ -29,6 +29,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #define INCL_WINSOCK_API_TYPEDEFS 1
 
+#define HSSL_DEFINED 1
+typedef struct SslHandle *HSSL;
+
 #include <winsock2.h>
 #include <ws2tcpip.h>
 #include <windows.h>
@@ -72,6 +75,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include <m_file.h>
 #include <m_findadd.h>
 #include <m_gui.h>
+#include <m_history.h>
 #include <m_hpp.h>
 #include <m_icolib.h>
 #include <m_idle.h>
@@ -92,7 +96,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include <m_skin.h>
 #include <m_skin_eng.h>
 #include <m_srmm_int.h>
-#include <m_ssl.h>
 #include <m_timezones.h>
 #include <m_tipper.h>
 #include <m_toptoolbar.h>

@@ -135,7 +135,7 @@ static BOOL dialogListPlugins(WIN32_FIND_DATA *fd, wchar_t *path, WPARAM, LPARAM
 
 	CCtrlListView *pCtrl = (CCtrlListView*)lParam;
 	bool bNoCheckbox = (dat->flags & STATIC_PLUGIN) != 0;
-	if (bNoCheckbox || hasMuuid(pIds, MIID_CLIST) || hasMuuid(pIds, MIID_SSL))
+	if (bNoCheckbox || hasMuuid(pIds, MIID_CLIST))
 		dat->bRequiresRestart = true;
 
 	LVITEM it = { 0 };
@@ -227,13 +227,18 @@ static bool LoadPluginDynamically(PluginListItemData *dat)
 			continue;
 
 		for (auto &pa : g_arAccounts) {
-			if (pa->ppro == nullptr && !mir_strcmp(pa->szProtoName, pd->szName)) {
+			if (mir_strcmp(pa->szProtoName, pd->szName))
+				continue;
+
+			if (pa->ppro == nullptr) {
 				if (pa->bIsEnabled) {
 					if (ActivateAccount(pa, true))
 						NotifyEventHooks(hAccListChanged, PRAC_ADDED, (LPARAM)pa);
 				}
 				else pa->bDynDisabled = false;
 			}
+			else if (pa->bOldProto)
+				NotifyEventHooks(hAccListChanged, PRAC_ADDED, (LPARAM)pa);
 		}
 	}
 

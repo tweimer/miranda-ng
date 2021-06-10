@@ -29,10 +29,40 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #define DM_FINDNEXT  (WM_USER+10)
 #define DM_HREBUILD  (WM_USER+11)
 
-static INT_PTR CALLBACK DlgProcHistory(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam);
-static INT_PTR CALLBACK DlgProcHistoryFind(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam);
 static MWindowList hWindowList = nullptr;
 static HGENMENU hContactMenu = nullptr;
+
+/////////////////////////////////////////////////////////////////////////////////////////
+// Find dialog window procedure
+
+static CMStringW g_savedSearch;
+
+class CHistoryFindDlg : public CDlgBase
+{
+public:
+	CHistoryFindDlg(HWND hwndParent) :
+		CDlgBase(g_plugin, IDD_HISTORY_FIND)
+	{
+		SetParent(hwndParent);
+	}
+
+	bool OnInitDialog() override
+	{
+		SetDlgItemText(m_hwnd, IDC_FINDWHAT, g_savedSearch);
+		return true;
+	}
+
+	bool OnApply() override
+	{
+		wchar_t str[128];
+		GetDlgItemText(m_hwnd, IDC_FINDWHAT, str, _countof(str));
+		g_savedSearch = str;
+
+		CharUpperW(str);
+		SendMessage(m_hwndParent, DM_FINDNEXT, 0, (LPARAM)str);
+		return true;
+	}
+};
 
 /////////////////////////////////////////////////////////////////////////////////////////
 // Fills the events list
@@ -92,19 +122,12 @@ static void FillHistoryThread(THistoryThread *hInfo)
 	int i = db_event_count(hInfo->hContact);
 	SendDlgItemMessage(hInfo->hwnd, IDC_LIST, LB_INITSTORAGE, i, i * 40);
 
-	DBEVENTINFO dbei = {};
-	int oldBlobSize = 0;
-	MEVENT hDbEvent = db_event_last(hInfo->hContact);
-
-	while (hDbEvent != NULL) {
+	DB::ECPTR pCursor(DB::EventsRev(hInfo->hContact));
+	while (MEVENT hDbEvent = pCursor.FetchNext()) {
 		if (!IsWindow(hInfo->hwnd))
 			break;
-		int newBlobSize = db_event_getBlobSize(hDbEvent);
-		if (newBlobSize > oldBlobSize) {
-			dbei.pBlob = (PBYTE)mir_realloc(dbei.pBlob, newBlobSize);
-			oldBlobSize = newBlobSize;
-		}
-		dbei.cbBlob = oldBlobSize;
+
+		DBEVENTINFO dbei = {};
 		db_event_get(hDbEvent, &dbei);
 
 		wchar_t str[200], eventText[256], strdatetime[64];
@@ -115,9 +138,7 @@ static void FillHistoryThread(THistoryThread *hInfo)
 			i = SendMessage(hwndList, LB_ADDSTRING, 0, (LPARAM)eventText);
 			SendMessage(hwndList, LB_SETITEMDATA, i, (LPARAM)hDbEvent);
 		}
-		hDbEvent = db_event_prev(hInfo->hContact, hDbEvent);
 	}
-	mir_free(dbei.pBlob);
 
 	SendDlgItemMessage(hInfo->hwnd, IDC_LIST, LB_SETCURSEL, 0, 0);
 	SendMessage(hInfo->hwnd, WM_COMMAND, MAKEWPARAM(IDC_LIST, LBN_SELCHANGE), 0);
@@ -141,6 +162,30 @@ static int HistoryDlgResizer(HWND, LPARAM, UTILRESIZECONTROL *urc)
 	return RD_ANCHORX_LEFT | RD_ANCHORY_TOP;
 }
 
+static LRESULT CALLBACK HotkeyProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam)
+{
+	switch (msg) {
+	case WM_CHAR:
+		if (wParam == 0x06) // Ctrl+F
+			PostMessage(GetParent(hwndDlg), WM_COMMAND, IDC_FIND, 0);
+		break;
+
+	case WM_KEYDOWN:
+		if (wParam == VK_F3) {
+			wchar_t buf[200];
+			wcsncpy_s(buf, g_savedSearch, _countof(buf)-1);
+			CharUpperW(buf);
+			SendMessage(GetParent(hwndDlg), DM_FINDNEXT, 0, LPARAM(buf));
+		}
+		else if (wParam == VK_DELETE) {
+			PostMessage(GetParent(hwndDlg), WM_COMMAND, IDC_DELETEHISTORY, 0);
+		}
+		break;
+	}
+
+	return mir_callNextSubclass(hwndDlg, HotkeyProc, msg, wParam, lParam);
+}
+
 static INT_PTR CALLBACK DlgProcHistory(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam)
 {
 	MCONTACT hContact = (MCONTACT)GetWindowLongPtr(hwndDlg, GWLP_USERDATA);
@@ -159,6 +204,9 @@ static INT_PTR CALLBACK DlgProcHistory(HWND hwndDlg, UINT msg, WPARAM wParam, LP
 		}
 		else SetWindowText(hwndDlg, TranslateT("System history"));
 
+		mir_subclassWindow(GetDlgItem(hwndDlg, IDC_LIST), HotkeyProc);
+		mir_subclassWindow(GetDlgItem(hwndDlg, IDC_EDIT), HotkeyProc);
+	
 		Window_SetSkinIcon_IcoLib(hwndDlg, SKINICON_OTHER_HISTORY);
 		SendMessage(hwndDlg, DM_HREBUILD, 0, 0);
 		return TRUE;
@@ -196,7 +244,7 @@ static INT_PTR CALLBACK DlgProcHistory(HWND hwndDlg, UINT msg, WPARAM wParam, LP
 			return TRUE;
 
 		case IDC_FIND:
-			ShowWindow(CreateDialogParam(g_plugin.getInst(), MAKEINTRESOURCE(IDD_HISTORY_FIND), hwndDlg, DlgProcHistoryFind, (LPARAM)hwndDlg), SW_SHOW);
+			CHistoryFindDlg(hwndDlg).DoModal();
 			return TRUE;
 
 		case IDC_DELETEHISTORY:
@@ -216,20 +264,20 @@ static INT_PTR CALLBACK DlgProcHistory(HWND hwndDlg, UINT msg, WPARAM wParam, LP
 		case IDC_LIST:
 			if (HIWORD(wParam) == LBN_SELCHANGE) {
 				int sel = SendDlgItemMessage(hwndDlg, IDC_LIST, LB_GETCURSEL, 0, 0);
-				if (sel == LB_ERR) { EnableWindow(GetDlgItem(hwndDlg, IDC_DELETEHISTORY), FALSE); break; }
+				if (sel == LB_ERR) {
+					EnableWindow(GetDlgItem(hwndDlg, IDC_DELETEHISTORY), FALSE);
+					break;
+				}
+				
 				EnableWindow(GetDlgItem(hwndDlg, IDC_DELETEHISTORY), TRUE);
 				MEVENT hDbEvent = SendDlgItemMessage(hwndDlg, IDC_LIST, LB_GETITEMDATA, sel, 0);
 
-				DBEVENTINFO dbei = {};
-				dbei.cbBlob = db_event_getBlobSize(hDbEvent);
-				if ((int)dbei.cbBlob != -1) {
-					dbei.pBlob = (PBYTE)mir_alloc(dbei.cbBlob);
-					if (db_event_get(hDbEvent, &dbei) == 0) {
-						ptrW wszDescr(DbEvent_GetTextW(&dbei, CP_ACP));
-						if (wszDescr)
-							SetDlgItemText(hwndDlg, IDC_EDIT, wszDescr);
-					}
-					mir_free(dbei.pBlob);
+				DB::EventInfo dbei;
+				dbei.cbBlob = -1;
+				if (!db_event_get(hDbEvent, &dbei)) {
+					ptrW wszDescr(DbEvent_GetTextW(&dbei, CP_ACP));
+					if (wszDescr)
+						SetDlgItemText(hwndDlg, IDC_EDIT, wszDescr);
 				}
 			}
 			return TRUE;
@@ -264,7 +312,7 @@ static INT_PTR CALLBACK DlgProcHistory(HWND hwndDlg, UINT msg, WPARAM wParam, LP
 
 			ptrW wszDescr(DbEvent_GetTextW(&dbei, CP_ACP));
 			if (wszDescr) {
-				CharUpperBuff(wszDescr, (int)mir_wstrlen(wszDescr));
+				CharUpperW(wszDescr);
 				if (wcsstr(wszDescr, (const wchar_t *)lParam) != nullptr) {
 					SendDlgItemMessage(hwndDlg, IDC_LIST, LB_SETCURSEL, index, 0);
 					SendMessage(hwndDlg, WM_COMMAND, MAKEWPARAM(IDC_LIST, LBN_SELCHANGE), 0);
@@ -274,33 +322,6 @@ static INT_PTR CALLBACK DlgProcHistory(HWND hwndDlg, UINT msg, WPARAM wParam, LP
 		}
 
 		mir_free(dbei.pBlob);
-		break;
-	}
-	return FALSE;
-}
-
-static INT_PTR CALLBACK DlgProcHistoryFind(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam)
-{
-	switch (msg) {
-	case WM_INITDIALOG:
-		TranslateDialogDefault(hwndDlg);
-		SetWindowLongPtr(hwndDlg, GWLP_USERDATA, (LONG_PTR)lParam);
-		return TRUE;
-
-	case WM_COMMAND:
-		switch (LOWORD(wParam)) {
-		case IDCANCEL:
-			DestroyWindow(hwndDlg);
-			return TRUE;
-
-		case IDOK://find Next
-			wchar_t str[128];
-			HWND hwndParent = (HWND)GetWindowLongPtr(hwndDlg, GWLP_USERDATA);
-			GetDlgItemText(hwndDlg, IDC_FINDWHAT, str, _countof(str));
-			CharUpperBuff(str, (int)mir_wstrlen(str));
-			SendMessage(hwndParent, DM_FINDNEXT, 0, (LPARAM)str);
-			return TRUE;
-		}
 		break;
 	}
 	return FALSE;

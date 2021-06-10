@@ -189,10 +189,10 @@ void CIcqProto::ConnectionFailed(int iReason, int iErrorCode)
 		wcscpy_s(Popup.lpwzContactName, m_tszUserName);
 		switch (iReason) {
 		case LOGINERR_BADUSERID:
-			mir_snwprintf(Popup.lpwzText, TranslateT("You have not entered an ICQ number or password.\nConfigure this in Options -> Network -> ICQ and try again."));
+			mir_snwprintf(Popup.lpwzText, TranslateT("You have not entered a login or password.\nConfigure this in Options -> Network -> ICQ and try again."));
 			break;
 		case LOGINERR_WRONGPASSWORD:
-			mir_snwprintf(Popup.lpwzText, TranslateT("Connection failed.\nYour ICQ number or password was rejected (%d)."), iErrorCode);
+			mir_snwprintf(Popup.lpwzText, TranslateT("Connection failed.\nYour login or password was rejected (%d)."), iErrorCode);
 			break;
 		case LOGINERR_NONETWORK:
 		case LOGINERR_NOSERVER:
@@ -282,7 +282,11 @@ MCONTACT CIcqProto::ParseBuddyInfo(const JSONNode &buddy, MCONTACT hContact)
 		CMStringW wszChatId(buddy["aimId"].as_mstring());
 		CMStringW wszChatName(buddy["friendly"].as_mstring());
 
-		SESSION_INFO *si = Chat_NewSession(GCW_CHATROOM, m_szModuleName, wszChatId, wszChatName);
+		auto *pContact = FindContactByUIN(wszId);
+		if (pContact && pContact->m_iApparentMode == ID_STATUS_OFFLINE)
+			return INVALID_CONTACT_ID;
+
+		auto *si = Chat_NewSession(GCW_CHATROOM, m_szModuleName, wszChatId, wszChatName);
 		if (si == nullptr)
 			return INVALID_CONTACT_ID;
 

@@ -139,6 +139,26 @@ void CJabberProto::JLoginFailed(int errorCode)
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
+void CJabberProto::CheckKeepAlive()
+{
+	if (GetTickCount() - m_lastTicks < m_iConnectionKeepAliveInterval)
+		return;
+
+	if (m_bKeepAlive && m_ThreadInfo) {
+		if (m_ThreadInfo->jabberServerCaps & JABBER_CAPS_PING) {
+			CJabberIqInfo *pInfo = AddIQ(&CJabberProto::OnPingReply, JABBER_IQ_TYPE_GET, nullptr, this);
+			pInfo->SetTimeout(m_iConnectionKeepAliveTimeout);
+			m_ThreadInfo->send(XmlNodeIq(pInfo) << XATTR("from", m_ThreadInfo->fullJID) << XCHILDNS("ping", JABBER_FEAT_PING));
+		}
+		else m_ThreadInfo->send(" \t ");
+	}
+
+	if (m_bEnableStreamMgmt)
+		m_StrmMgmt.RequestAck();
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
 static int CompareDNS(const DNS_SRV_DATAA* dns1, const DNS_SRV_DATAA* dns2)
 {
 	return (int)dns1->wPriority - (int)dns2->wPriority;
@@ -385,14 +405,12 @@ LBL_FatalError:
 
 	// User may change status to OFFLINE while we are connecting above
 	if (m_iDesiredStatus != ID_STATUS_OFFLINE || info.bIsReg) {
-		bool bSendKeepAlive = false;
-
 		if (!info.bIsReg) {
 			m_szJabberJID = CMStringA(FORMAT, "%s@%s", info.conn.username, info.conn.server).Detach();
-			bSendKeepAlive = m_bKeepAlive;
 			setUString("jid", m_szJabberJID); // store jid in database
 
 			ListInit();
+			m_impl.m_keepAlive.Start(1000);
 		}
 
 		xmlStreamInitializeNow(&info);
@@ -401,34 +419,7 @@ LBL_FatalError:
 		int datalen = 0;
 
 		// cache values
-		DWORD dwConnectionKeepAliveInterval = m_iConnectionKeepAliveInterval;
 		for (;;) {
-			if (!info.useZlib || info.zRecvReady) {
-				DWORD dwIdle = GetTickCount() - m_lastTicks;
-				if (dwIdle >= dwConnectionKeepAliveInterval)
-					dwIdle = dwConnectionKeepAliveInterval - 10; // now!
-
-				NETLIBSELECT nls = {};
-				nls.dwTimeout = dwConnectionKeepAliveInterval - dwIdle;
-				nls.hReadConns[0] = info.s;
-				int nSelRes = Netlib_Select(&nls);
-				if (nSelRes == -1) // error
-					break;
-				else if (nSelRes == 0) {
-					if (bSendKeepAlive) {
-						if (info.jabberServerCaps & JABBER_CAPS_PING) {
-							CJabberIqInfo *pInfo = AddIQ(&CJabberProto::OnPingReply, JABBER_IQ_TYPE_GET, nullptr, this);
-							pInfo->SetTimeout(m_iConnectionKeepAliveTimeout);
-							info.send(XmlNodeIq(pInfo) << XATTR("from", info.fullJID) << XCHILDNS("ping", JABBER_FEAT_PING));
-						}
-						else info.send(" \t ");
-					}
-					
-					if (m_bEnableStreamMgmt)
-						m_StrmMgmt.RequestAck();
-				}
-			}
-
 			int recvResult = info.recv(info.buffer + datalen, jabberNetworkBufferSize - datalen);
 			debugLogA("recvResult = %d", recvResult);
 			if (recvResult <= 0)
@@ -493,6 +484,7 @@ recvRest:
 		}
 
 		if (!info.bIsReg) {
+			m_impl.m_keepAlive.Stop();
 			m_iqManager.ExpireAll();
 			m_bJabberOnline = false;
 			info.zlibUninit();
@@ -980,18 +972,11 @@ DWORD JabberGetLastContactMessageTime(MCONTACT hContact)
 	if (!hDbEvent)
 		return 0;
 
-	DWORD dwTime = 0;
+	DB::EventInfo dbei;
+	if (!db_event_get(hDbEvent, &dbei))
+		return dbei.timestamp;
 
-	DBEVENTINFO dbei = {};
-	dbei.cbBlob = db_event_getBlobSize(hDbEvent);
-	if (dbei.cbBlob != -1) {
-		dbei.pBlob = (PBYTE)mir_alloc(dbei.cbBlob + 1);
-		int nGetTextResult = db_event_get(hDbEvent, &dbei);
-		if (!nGetTextResult)
-			dwTime = dbei.timestamp;
-		mir_free(dbei.pBlob);
-	}
-	return dwTime;
+	return 0;
 }
 
 MCONTACT CJabberProto::CreateTemporaryContact(const char *szJid, JABBER_LIST_ITEM* chatItem)

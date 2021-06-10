@@ -130,8 +130,11 @@ static INT_PTR CALLBACK DlgProcMoreData(HWND hwndDlg, UINT msg, WPARAM wParam, L
 		DBDataManage(hContact, WDBM_DETAILDISPLAY, (WPARAM)hwndDlg, 0);
 
 		// set icons
-		Window_FreeIcon_IcoLib(hwndDlg);
-		Window_SetProtoIcon_IcoLib(hwndDlg, MODULENAME, g_plugin.getWord(hContact, "StatusIcon", 0));
+		{
+			HICON hIcon = GetStatusIconBig(hContact);
+			DestroyIcon((HICON)SendMessage(hwndDlg, WM_SETICON, ICON_BIG, LPARAM(hIcon)));
+			DestroyIcon((HICON)SendMessage(hwndDlg, WM_SETICON, ICON_SMALL, LPARAM(hIcon)));
+		}
 
 		RedrawWindow(GetDlgItem(hwndDlg, IDC_HEADERBAR), nullptr, nullptr, RDW_INVALIDATE | RDW_UPDATENOW);
 		break;
@@ -225,7 +228,9 @@ static INT_PTR CALLBACK DlgProcMoreData(HWND hwndDlg, UINT msg, WPARAM wParam, L
 		break;
 
 	case WM_DESTROY:
-		Window_FreeIcon_IcoLib(hwndDlg);
+		DestroyIcon((HICON)SendMessage(hwndDlg, WM_SETICON, ICON_BIG, 0));
+		DestroyIcon((HICON)SendMessage(hwndDlg, WM_SETICON, ICON_SMALL, 0));
+
 		Utils_SaveWindowPosition(hwndDlg, NULL, MODULENAME, "BriefInfo_");
 		WindowList_Remove(hDataWindowList, hwndDlg);
 		break;
@@ -253,7 +258,7 @@ static INT_PTR CALLBACK DlgProcUIPage(HWND hwndDlg, UINT msg, WPARAM wParam, LPA
 		w = LoadWeatherInfo(lParam);
 		SetDlgItemText(hwndDlg, IDC_INFO1, GetDisplay(&w, TranslateT("Current condition for %n"), str));
 
-		SendDlgItemMessage(hwndDlg, IDC_INFOICON, STM_SETICON, (WPARAM)Skin_LoadProtoIcon(MODULENAME, g_plugin.getWord(hContact, "StatusIcon")), 0);
+		SendDlgItemMessage(hwndDlg, IDC_INFOICON, STM_SETICON, (WPARAM)GetStatusIconBig(hContact), 0);
 		{
 			// bold and enlarge the current condition
 			LOGFONT lf;
@@ -283,7 +288,7 @@ static INT_PTR CALLBACK DlgProcUIPage(HWND hwndDlg, UINT msg, WPARAM wParam, LPA
 		break;
 
 	case WM_DESTROY:
-		IcoLib_ReleaseIcon((HICON)SendDlgItemMessage(hwndDlg, IDC_INFOICON, STM_SETICON, 0, 0));
+		DestroyIcon((HICON)SendDlgItemMessage(hwndDlg, IDC_INFOICON, STM_SETICON, 0, 0));
 		DeleteObject((HFONT)SendDlgItemMessage(hwndDlg, IDC_INFO2, WM_GETFONT, 0, 0));
 		break;
 
@@ -330,26 +335,25 @@ int UserInfoInit(WPARAM wParam, LPARAM hContact)
 	return 0;
 }
 
-
 // show brief information dialog
 // wParam = current contact
 int BriefInfo(WPARAM wParam, LPARAM)
 {
 	// make sure that the contact is actually a weather one
-	if (IsMyContact(wParam)) {
-		HWND hMoreDataDlg = WindowList_Find(hDataWindowList, wParam);
-		if (hMoreDataDlg != nullptr) {
-			SetForegroundWindow(hMoreDataDlg);
-			SetFocus(hMoreDataDlg);
-		}
-		else hMoreDataDlg = CreateDialogParam(g_plugin.getInst(), MAKEINTRESOURCE(IDD_BRIEF), nullptr, DlgProcMoreData, (LPARAM)wParam);
+	if (!IsMyContact(wParam))
+		return 0;
 
-		ShowWindow(GetDlgItem(hMoreDataDlg, IDC_DATALIST), 0);
-		ShowWindow(GetDlgItem(hMoreDataDlg, IDC_MTEXT), 1);
-		SetDlgItemText(hMoreDataDlg, IDC_MTOGGLE, TranslateT("More Info"));
-		return 1;
+	HWND hMoreDataDlg = WindowList_Find(hDataWindowList, wParam);
+	if (hMoreDataDlg != nullptr) {
+		SetForegroundWindow(hMoreDataDlg);
+		SetFocus(hMoreDataDlg);
 	}
-	return 0;
+	else hMoreDataDlg = CreateDialogParam(g_plugin.getInst(), MAKEINTRESOURCE(IDD_BRIEF), nullptr, DlgProcMoreData, (LPARAM)wParam);
+
+	ShowWindow(GetDlgItem(hMoreDataDlg, IDC_DATALIST), 0);
+	ShowWindow(GetDlgItem(hMoreDataDlg, IDC_MTEXT), 1);
+	SetDlgItemText(hMoreDataDlg, IDC_MTOGGLE, TranslateT("More Info"));
+	return 1;
 }
 
 INT_PTR BriefInfoSvc(WPARAM wParam, LPARAM lParam)

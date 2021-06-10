@@ -1,6 +1,6 @@
 #include "StdAfx.h"
 
-tstring CreateFilePath(const tstring &rsName)
+CMStringW CreateFilePath(const CMStringW &rsName)
 {
 	wchar_t szPath[_MAX_PATH];
 	::GetModuleFileName(g_plugin.getInst(), szPath, _MAX_PATH);
@@ -9,9 +9,7 @@ tstring CreateFilePath(const tstring &rsName)
 	if (p)
 		*p = 0;
 
-	tstring s(rsName);
+	CMStringW s(rsName);
 	FixInvalidChars(s);
-	tostringstream o;
-	o << szPath << L"\\CurrencyRates\\" << s;
-	return o.str();
+	return CMStringW(szPath) + L"\\CurrencyRates\\" + s;
 }

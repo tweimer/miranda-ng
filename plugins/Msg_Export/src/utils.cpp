@@ -446,69 +446,48 @@ void ReplaceAllNoColon(wstring &sSrc, const wchar_t *pszReplace, wstring &sNew)
 //                   sTarget  - String with either %user% or %UIN%, to replace in
 // Returns         : void
 
-void ReplaceDefines(MCONTACT hContact, wstring & sTarget)
+static wstring GetUniqueId(MCONTACT hContact, const char *szProto)
 {
+	ptrW uniqueId(Contact_GetInfo(CNF_UNIQUEID, hContact, szProto));
+	return (uniqueId == nullptr) ? L"(null)" : uniqueId;
+}
+
+void ReplaceDefines(MCONTACT hContact, wstring &sTarget)
+{
+	const char *szProto = Proto_GetBaseAccountName(hContact);
+
 	if (sTarget.find(L"%nick%") != string::npos)
 		ReplaceAll(sTarget, L"%nick%", FileNickFromHandle(hContact));
 
-	bool bUINUsed = sTarget.find(L"%UIN%") != string::npos;
-	bool bEMailUsed = sTarget.find(L"%e-mail%") != string::npos;
-	bool bProtoUsed = sTarget.find(L"%protocol%") != string::npos;
-	bool bIdentifierUsed = sTarget.find(L"%identifier%") != string::npos;
-
-	if (bUINUsed || bEMailUsed || bProtoUsed || bIdentifierUsed) {
-		const char *szProto = Proto_GetBaseAccountName(hContact);
-		if (bUINUsed || (bIdentifierUsed && !mir_strcmp(szProto, "ICQ"))) {
-			DWORD dwUIN = db_get_dw(hContact, szProto, "UIN", 0);
-			wstring sReplaceUin;
-			if (dwUIN) {
-				wchar_t sTmp[20];
-				mir_snwprintf(sTmp, L"%d", dwUIN);
-				sReplaceUin = sTmp;
-			}
-			else sReplaceUin = FileNickFromHandle(hContact);
-
-			if (bUINUsed)
-				ReplaceAll(sTarget, L"%UIN%", sReplaceUin);
-			if (bIdentifierUsed && !mir_strcmp(szProto, "ICQ")) {
-				bIdentifierUsed = false;
-				ReplaceAll(sTarget, L"%identifier%", sReplaceUin);
-			}
+	if (sTarget.find(L"%UIN%") != string::npos) {
+		DWORD dwUIN = db_get_dw(hContact, szProto, "UIN", 0);
+		wstring sReplaceUin;
+		if (dwUIN) {
+			wchar_t sTmp[20];
+			mir_snwprintf(sTmp, L"%d", dwUIN);
+			sReplaceUin = sTmp;
 		}
+		else sReplaceUin = GetUniqueId(hContact, szProto);
 
-		if (bEMailUsed || (bIdentifierUsed && !mir_strcmp(szProto, "MSN"))) {
-			wstring sEMail = _DBGetStringW(hContact, szProto, "e-mail", L"");
-			if (sEMail.empty()) {
-				sEMail = _DBGetStringW(hContact, "MSN", "e-mail", L"");
-				if (sEMail.empty()) {
-					// We can't find the E-mail address we will use the the nick
-					sEMail = FileNickFromHandle(hContact);
-				}
-			}
-			if (bEMailUsed)
-				ReplaceAllNoColon(sTarget, L"%e-mail%", sEMail);
-			if (bIdentifierUsed && !mir_strcmp(szProto, "MSN")) {
-				bIdentifierUsed = false;
-				ReplaceAllNoColon(sTarget, L"%identifier%", sEMail);
-			}
-		}
+		ReplaceAll(sTarget, L"%UIN%", sReplaceUin);
+	}
 
-		if (bIdentifierUsed && !mir_strcmp(szProto, "Jabber")) {
-			wstring sReplace = _DBGetStringW(hContact, "Jabber", "jid", L"");
-			if (sReplace.empty()) {
-				sReplace = FileNickFromHandle(hContact);
-			}
-			bIdentifierUsed = false;
-			ReplaceAll(sTarget, L"%identifier%", sReplace);
-		}
+	if (sTarget.find(L"%e-mail%") != string::npos) {
+		wstring sEMail = _DBGetStringW(hContact, szProto, "e-mail", L"");
+		if (sEMail.empty())
+			sEMail = FileNickFromHandle(hContact);
+		ReplaceAllNoColon(sTarget, L"%e-mail%", sEMail);
+	}
 
-		if (bProtoUsed) {
-			wstring tmp = _DBGetStringW(hContact, "Protocol", "p", L"");
-			ReplaceAllNoColon(sTarget, L"%protocol%", tmp);
-		}
+	if (sTarget.find(L"%identifier%") != string::npos)
+		ReplaceAll(sTarget, L"%identifier%", GetUniqueId(hContact, szProto));
 
-		if (bIdentifierUsed) // It has still not been replaced we will just use nick
-			ReplaceAll(sTarget, L"%nick%", FileNickFromHandle(hContact));
+	if (sTarget.find(L"%id%") != string::npos)
+		ReplaceAll(sTarget, L"%id%", GetUniqueId(hContact, szProto));
+
+	if (sTarget.find(L"%protocol%") != string::npos) {
+		wstring tmp = _DBGetStringW(hContact, "Protocol", "p", L"");
+		ReplaceAllNoColon(sTarget, L"%protocol%", tmp);
 	}
 
 	if (sTarget.find(L"%group%") != string::npos) {
@@ -642,6 +621,13 @@ const char *pSettings[] =
 	LPGEN("Homepage"),
 	LPGEN("About")
 };
+
+static wchar_t* getEventString(DBEVENTINFO &dbei, char *&buf)
+{
+	char *in = buf;
+	buf += mir_strlen(buf) + 1;
+	return (dbei.flags & DBEF_UTF) ? mir_utf8decodeW(in) : mir_a2u(in);
+}
 
 static bool ExportDBEventInfo(MCONTACT hContact, HANDLE hFile, const wstring &sFilePath, DBEVENTINFO &dbei, bool bAppendOnly)
 {
@@ -792,9 +778,20 @@ static bool ExportDBEventInfo(MCONTACT hContact, HANDLE hFile, const wstring &sF
 			flags += "r";
 		pRoot.push_back(JSONNode("flags", flags));
 
-		ptrW msg(DbEvent_GetTextW(&dbei, CP_ACP));
-		if (msg)
-			pRoot.push_back(JSONNode("body", T2Utf(msg).get()));
+		if (dbei.eventType == EVENTTYPE_FILE) {
+			char *p = (char*)dbei.pBlob + sizeof(DWORD);
+			ptrW wszFileName(getEventString(dbei, p));
+			ptrW wszDescr(getEventString(dbei, p));
+
+			pRoot << WCHAR_PARAM("file", wszFileName);
+			if (mir_wstrlen(wszDescr))
+				pRoot << WCHAR_PARAM("descr", wszDescr);
+		}
+		else {
+			ptrW msg(DbEvent_GetTextW(&dbei, CP_ACP));
+			if (msg)
+				pRoot.push_back(JSONNode("body", T2Utf(msg).get()));
+		}
 
 		std::string output = pRoot.write_formatted();
 		output += "\n]}";
@@ -827,24 +824,18 @@ static bool ExportDBEventInfo(MCONTACT hContact, HANDLE hFile, const wstring &sF
 
 		case EVENTTYPE_FILE:
 			{
-				const wchar_t *pszType = LPGENW("File: ");
-				const char *pszData = (char *)(dbei.pBlob + sizeof(DWORD));
+				char *p = (char*)dbei.pBlob + sizeof(DWORD);
+				ptrW wszFileName(getEventString(dbei, p));
+				ptrW wszDescr(getEventString(dbei, p));
 
-				int nLen = (int)mir_strlen(pszData);
-				if ((pszData - (char *)dbei.pBlob) + nLen < (int)dbei.cbBlob) {
-					if (bWriteTextToFile(hFile, pszType, bWriteUTF8Format) &&
-						bWriteIndentedToFile(hFile, nIndent, _A2T(pszData), bWriteUTF8Format)) {
-						pszData += nLen + 1;
-						if ((pszData - (char *)dbei.pBlob) < (int)dbei.cbBlob) {
-							nLen = (int)mir_strlen(pszData);
-							if ((pszData - (char *)dbei.pBlob) + nLen < (int)dbei.cbBlob) {
-								if (bWriteNewLine(hFile, nIndent) &&
-									bWriteTextToFile(hFile, LPGENW("Description: "), bWriteUTF8Format) &&
-									bWriteIndentedToFile(hFile, nIndent, _A2T(pszData), bWriteUTF8Format)) {
-								}
-							}
-						}
-					}
+				const wchar_t *pszType = LPGENW("File: ");
+				bWriteTextToFile(hFile, pszType, bWriteUTF8Format);
+				bWriteIndentedToFile(hFile, nIndent, wszFileName, bWriteUTF8Format);
+
+				if (mir_wstrlen(wszDescr)) {
+					bWriteNewLine(hFile, nIndent);
+					bWriteTextToFile(hFile, LPGENW("Description: "), bWriteUTF8Format);
+					bWriteIndentedToFile(hFile, nIndent, wszDescr, bWriteUTF8Format);
 				}
 			}
 			break;
@@ -982,18 +973,10 @@ int nExportEvent(WPARAM hContact, LPARAM hDbEvent)
 
 bool bExportEvent(MCONTACT hContact, MEVENT hDbEvent, HANDLE hFile, const wstring &sFilePath, bool bAppendOnly)
 {
-	DBEVENTINFO dbei = {};
-	int nSize = db_event_getBlobSize(hDbEvent);
-	if (nSize > 0) {
-		dbei.cbBlob = nSize;
-		dbei.pBlob = (PBYTE)malloc(dbei.cbBlob + 2);
-		dbei.pBlob[dbei.cbBlob] = 0;
-		dbei.pBlob[dbei.cbBlob + 1] = 0;
-		// Double null terminate, this should prevent most errors 
-		// where the blob received has an invalid format
-	}
-
 	bool result = true;
+
+	DB::EventInfo dbei;
+	dbei.cbBlob = -1;
 	if (!db_event_get(hDbEvent, &dbei)) {
 		if (db_mc_isMeta(hContact))
 			hContact = db_event_getContact(hDbEvent);
@@ -1001,8 +984,7 @@ bool bExportEvent(MCONTACT hContact, MEVENT hDbEvent, HANDLE hFile, const wstrin
 		// Write the event
 		result = ExportDBEventInfo(hContact, hFile, sFilePath, dbei, bAppendOnly);
 	}
-	if (dbei.pBlob)
-		free(dbei.pBlob);
+
 	return result;
 }
 

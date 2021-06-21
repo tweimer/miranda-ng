@@ -44,41 +44,15 @@ struct SslHandle : public MZeroedObject
 	{
 		if (session)
 			SSL_free(session);
-		if (ctx)
-			SSL_CTX_free(ctx);
 	}
 
 	SOCKET s;
-	SSL_CTX *ctx;
 	SSL *session;
 	SocketState state;
 };
 
-static void SSL_library_unload(void)
-{
-	/* Load Library Pointers */
-	if (!bSslInitDone)
-		return;
-
-	bSslInitDone = false;
-}
-
-static bool SSL_library_load(void)
-{
-	/* Load Library Pointers */
-	if (bSslInitDone)
-		return true;
-
-	if (!bSslInitDone) { // init OpenSSL
-		SSL_library_init();
-		SSL_load_error_strings();
-		// FIXME check errors
-
-		bSslInitDone = true;
-	}
-
-	return bSslInitDone;
-}
+static SSL_CTX *g_ctx;
+static mir_cs csSsl;
 
 static void dump_error(SSL *session, int err)
 {
@@ -125,42 +99,6 @@ static void ReportSslError(SECURITY_STATUS scRet, int line, bool = false)
 
 	SetLastError(scRet);
 	PUShowMessageW(tszMsg.GetBuffer(), SM_WARNING);
-}
-
-static bool ClientConnect(SslHandle *ssl, const char*)
-{
-	SSL_METHOD *meth = (SSL_METHOD*)SSLv23_client_method();
-
-	// contrary to what it's named, SSLv23 announces all supported ciphers/versions,
-	// generally TLS1.2 in a TLS1.0 Client Hello
-	if (!meth) {
-		Netlib_Logf(nullptr, "SSL setup failure: client method");
-		return false;
-	}
-	ssl->ctx = SSL_CTX_new(meth);
-	if (!ssl->ctx) {
-		Netlib_Logf(nullptr, "SSL setup failure: context");
-		return false;
-	}
-
-	// SSL_read/write should transparently handle renegotiations
-	SSL_CTX_ctrl(ssl->ctx, SSL_CTRL_MODE, SSL_MODE_AUTO_RETRY, nullptr);
-
-	RAND_screen();
-	ssl->session = SSL_new(ssl->ctx);
-	if (!ssl->session) {
-		Netlib_Logf(nullptr, "SSL setup failure: session");
-		return false;
-	}
-	SSL_set_fd(ssl->session, ssl->s);
-
-	int err = SSL_connect(ssl->session);
-	if (err != 1) {
-		dump_error(ssl->session, err);
-		return false;
-	}
-
-	return true;
 }
 
 static PCCERT_CONTEXT SSL_X509ToCryptCert(X509 * x509)
@@ -291,22 +229,36 @@ cleanup:
 
 MIR_APP_DLL(HSSL) Netlib_SslConnect(SOCKET s, const char* host, int verify)
 {
-	SslHandle *ssl = new SslHandle();
+	std::unique_ptr<SslHandle> ssl(new SslHandle());
 	ssl->s = s;
-	bool res = ClientConnect(ssl, host);
+	{
+		mir_cslock lck(csSsl);
+		ssl->session = SSL_new(g_ctx);
+	}
 
-	if (res && verify) {
+	if (!ssl->session) {
+		Netlib_Logf(nullptr, "SSL setup failure: session");
+		return false;
+	}
+	SSL_set_fd(ssl->session, ssl->s);
+
+	SSL_set_tlsext_host_name(ssl->session, host);
+
+	int err = SSL_connect(ssl->session);
+	if (err != 1) {
+		dump_error(ssl->session, err);
+		return nullptr;
+	}
+
+	if (verify) {
 		DWORD dwFlags = 0;
 		if (!host || inet_addr(host) != INADDR_NONE)
 			dwFlags |= 0x00001000;
-		res = VerifyCertificate(ssl, host, dwFlags);
+		if (!VerifyCertificate(ssl.get(), host, dwFlags))
+			return nullptr;
 	}
 
-	if (res)
-		return ssl;
-
-	delete ssl;
-	return nullptr;
+	return ssl.release();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -436,4 +388,56 @@ MIR_APP_DLL(void*) Netlib_GetTlsUnique(HNETLIBCONN nlc, int &cbLen)
 	void *pBuf = mir_alloc(len);
 	memcpy(pBuf, buf, len);
 	return pBuf;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+// module entry point
+
+bool OpenSsl_Init(void)
+{
+	/* Load Library Pointers */
+	if (bSslInitDone)
+		return true;
+
+	if (!bSslInitDone) { // init OpenSSL
+		SSL_library_init();
+		SSL_load_error_strings();
+		// FIXME check errors
+
+		const SSL_METHOD *meth = TLS_client_method();
+		if (!meth) {
+			Netlib_Logf(nullptr, "SSL setup failure: client method");
+			return false;
+		}
+
+		g_ctx = SSL_CTX_new(meth);
+		if (!g_ctx) {
+			Netlib_Logf(nullptr, "SSL setup failure: context");
+			return false;
+		}
+
+		VARSW wszPemFile(L"%miranda_path%\\libs\\microsoft.pem");
+		SSL_CTX_load_verify_locations(g_ctx, _T2A(wszPemFile), NULL);
+
+		// SSL_read/write should transparently handle renegotiations
+		SSL_CTX_ctrl(g_ctx, SSL_CTRL_MODE, SSL_MODE_AUTO_RETRY, nullptr);
+
+		RAND_screen();
+
+		bSslInitDone = true;
+	}
+
+	return bSslInitDone;
+}
+
+void OpenSsl_Unload(void)
+{
+	/* Load Library Pointers */
+	if (!bSslInitDone)
+		return;
+
+	if (g_ctx)
+		SSL_CTX_free(g_ctx);
+
+	bSslInitDone = false;
 }

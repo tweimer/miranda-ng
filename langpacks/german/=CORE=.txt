@@ -2802,7 +2802,7 @@ Alle abwählen
 [Nickname]
 Nickname
 [Unique ID]
-Unique ID
+Eindeutige ID
 ;file \src\mir_app\src\srmm_log.cpp
 [Log viewer]
 Verlaufsbetrachter

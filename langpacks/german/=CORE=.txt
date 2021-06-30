@@ -943,7 +943,7 @@ Autor(en):
 [Homepage:]
 Homepage:
 [Unique ID:]
-Unique ID:
+Eindeutige ID:
 [Copyright:]
 Copyright:
 [Please restart Miranda NG for your changes to take effect.]

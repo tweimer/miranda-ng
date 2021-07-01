@@ -1698,7 +1698,7 @@ Schriftart
 [Font color]
 Schriftfarbe
 [Format strike-through]
-Durchgestrichen
+Durchgestrichen formatieren
 [Background color]
 Hintergrundfarbe
 [Room settings]

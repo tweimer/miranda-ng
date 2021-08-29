@@ -53,7 +53,9 @@ struct OAuthRequest : public AsyncHttpRequest
 		this << CHAR_PARAM("wa", "wsignin1.0") << CHAR_PARAM("wp", "MBI_SSL")
 			<< CHAR_PARAM("wreply", "https://lw.skype.com/login/oauth/proxy?site_name=lw.skype.com")
 			<< CHAR_PARAM("cobrandid", "90010")
+			<< CHAR_PARAM("id", "293290")
 			<< CHAR_PARAM("opid", opid);
+
 		m_szUrl.AppendFormat("?%s", m_szParam.c_str());
 		m_szParam.Empty();
 

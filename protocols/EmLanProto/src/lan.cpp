@@ -80,8 +80,8 @@ void CLan::StopListen()
 
 	if (m_hListenThread) {
 		shutdown(m_income, SD_BOTH);
-		WaitForSingleObject(m_hListenThread, INFINITE);
-		m_hListenThread = nullptr;
+		while (m_hListenThread)
+			SleepEx(100, TRUE);
 	}
 	if (m_hAcceptTCPThread) {
 		TerminateThread(m_hAcceptTCPThread, 0);
@@ -146,7 +146,7 @@ void CLan::StartListen()
 			return;
 		}
 
-		mir_forkthread(ListenProc, this);
+		m_hListenThread = mir_forkthread(ListenProc, this);
 		m_hAcceptTCPThread = mir_forkthread(AcceptTCPProc, this);
 		if (m_hListenThread == nullptr || m_hAcceptTCPThread == nullptr) {
 			m_mode = LM_ON;
@@ -176,22 +176,23 @@ void __cdecl CLan::ListenProc(void *lpParameter)
 
 void CLan::Listen()
 {
-	MThreadHandle threadLock(m_hListenThread);
+	if (m_mode != LM_LISTEN)
+		return;
 
-	if (m_mode == LM_LISTEN) {
-		char buf[65536];
-		while (true) {
-			sockaddr_in addr;
-			int addrLen = sizeof(addr);
-			Sleep(20);
-			int recLen = recvfrom(m_income, buf, 65536, 0, (sockaddr*)&addr, &addrLen);
-			if (recLen == SOCKET_ERROR)
-				break;
+	MThreadLock threadLock(m_hListenThread);
+	mir_ptr<char> buf((char*)mir_alloc(65536));
 
-			OnRecvPacket((u_char*)buf, recLen, addr.sin_addr);
-		}
+	while (true) {
+		Sleep(20);
+
+		sockaddr_in addr;
+		int addrLen = sizeof(addr);
+		int recLen = recvfrom(m_income, buf, 65536, 0, (sockaddr*)&addr, &addrLen);
+		if (recLen == SOCKET_ERROR)
+			break;
+
+		OnRecvPacket((u_char*)buf.get(), recLen, addr.sin_addr);
 	}
-	m_hListenThread = nullptr;
 }
 
 void CLan::SendPacketBroadcast(const u_char* mes, int len)

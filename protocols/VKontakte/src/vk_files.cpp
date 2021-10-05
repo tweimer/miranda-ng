@@ -288,7 +288,11 @@ void CVkProto::OnReciveUpload(NETLIBHTTPREQUEST *reply, AsyncHttpRequest *pReq)
 			return;
 		}
 		pUploadReq = new AsyncHttpRequest(this, REQUEST_GET, "/method/docs.save.json", true, &CVkProto::OnReciveUploadFile);
-		pUploadReq << CHAR_PARAM("title", fup->fileName()) << WCHAR_PARAM("file", upload);
+		pUploadReq
+			<< CHAR_PARAM("title", fup->fileName())
+			<< WCHAR_PARAM("file", upload)
+			<< CHAR_PARAM("tags", fup->fileName())
+			<< INT_PARAM("return_tags", 0);
 		break;
 	default:
 		SendFileFiled(fup, VKERR_FTYPE_NOT_SUPPORTED);
@@ -322,7 +326,7 @@ void CVkProto::OnReciveUploadFile(NETLIBHTTPREQUEST *reply, AsyncHttpRequest *pR
 	}
 
 	int id, owner_id;
-	if (fup->GetType() == CVkFileUploadParam::typeDoc) {
+	if ((fup->GetType() == CVkFileUploadParam::typeDoc) || (fup->GetType() == CVkFileUploadParam::typeAudioMsg)) {
 		CMStringA wszType(jnResponse["type"].as_mstring());
 		const JSONNode& jnDoc = jnResponse[wszType];
 		id = jnDoc["id"].as_int();

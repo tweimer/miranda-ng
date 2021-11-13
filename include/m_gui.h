@@ -29,7 +29,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #ifndef __M_GUI_H
 #define __M_GUI_H
 
+#ifdef _MSC_VER
 #include <CommCtrl.h>
+#endif // _WINDOWS
 
 #include <m_system.h>
 #include <m_protoint.h>
@@ -147,10 +149,14 @@ public:
 	{
 		return (Type)CMDBTraits<sizeof(Type)>::Get(m_szModuleName, m_szSetting, m_default);
 	}
-	
+
 	__forceinline Type operator= (Type value)
 	{
+      #ifdef _MSC_VER
 		CMDBTraits<sizeof(Type)>::Set(m_szModuleName, m_szSetting, (CMDBTraits<sizeof(Type)>::DBType)value);
+		#else
+		CMDBTraits<sizeof(Type)>::Set(m_szModuleName, m_szSetting, value);
+		#endif
 		return value;
 	}
 
@@ -162,7 +168,7 @@ template<>
 class CMOption<char*> : public CMOptionBase
 {
 public:
-	
+
 	typedef char Type;
 
 	__forceinline CMOption(PROTO_INTERFACE *proto, const char *szSetting, const Type *defValue = nullptr) :
@@ -335,8 +341,8 @@ public:
 	int  DoModal();
 	void EndModal(INT_PTR nResult);
 
-	CCtrlBase* FindControl(int idCtrl);
-	CCtrlBase* FindControl(HWND hwnd);
+	class CCtrlBase* FindControl(int idCtrl);
+	class CCtrlBase* FindControl(HWND hwnd);
 
 	void SetCaption(const wchar_t *ptszCaption);
 	void SetDraw(bool bEnable);
@@ -376,7 +382,7 @@ protected:
 	virtual bool OnClose();
 	virtual void OnDestroy();
 
-	virtual void OnTimer(CTimer*);
+	virtual void OnTimer(class CTimer*);
 
 	// miranda-related stuff
 	virtual int Resizer(UTILRESIZECONTROL *urc);
@@ -397,8 +403,8 @@ protected:
 	void RemoveTimer(UINT_PTR idEvent);
 
 	// options support
-	void CreateLink(CCtrlData& ctrl, const char *szSetting, BYTE type, DWORD iValue);
-	void CreateLink(CCtrlData& ctrl, const char *szSetting, wchar_t *szValue);
+	void CreateLink(class CCtrlData& ctrl, const char *szSetting, BYTE type, DWORD iValue);
+	void CreateLink(class CCtrlData& ctrl, const char *szSetting, wchar_t *szValue);
 
 	template<class T>
 	__inline void CreateLink(CCtrlData& ctrl, CMOption<T> &option)
@@ -512,14 +518,14 @@ public:
 
 	virtual  BOOL OnCommand(HWND /*hwndCtrl*/, WORD /*idCtrl*/, WORD /*idCode*/) { return FALSE; }
 	virtual  BOOL OnNotify(int /*idCtrl*/, NMHDR* /*pnmh*/) { return FALSE; }
-			   
+
 	virtual  BOOL OnMeasureItem(MEASUREITEMSTRUCT*) { return FALSE; }
 	virtual  BOOL OnDrawItem(DRAWITEMSTRUCT*) { return FALSE; }
 	virtual  BOOL OnDeleteItem(DELETEITEMSTRUCT*) { return FALSE; }
-			   
+
 	virtual  void OnInit();
 	virtual  void OnDestroy();
-			   
+
 	virtual  bool OnApply();
 	virtual  void OnReset();
 
@@ -705,7 +711,7 @@ public:
 	void       SetHideOfflineRoot(bool state);
 	void       SetOfflineModes(DWORD modes);
 	void       SetUseGroups(bool state);
-	
+
 	struct TEventInfo
 	{
 		CCtrlClc *ctrl;
@@ -955,7 +961,7 @@ public:
 	LPARAM   GetCurData() const;
 
 	// selects line with userdata passed. returns index of this line or -1
-	int      SelectData(LPARAM data); 
+	int      SelectData(LPARAM data);
 
 	// Control interface
 	int      AddString(const wchar_t *text, LPARAM data = 0);
@@ -1002,7 +1008,7 @@ public:
 	DWORD      ApproximateViewRect(int cx, int cy, int iCount);
 	void       Arrange(UINT code);
 	void       CancelEditLabel();
-	HIMAGELIST CreateDragImage(int iItem, LPPOINT lpptUpLeft);
+	HIMAGELIST CreateDragImage(int iItem, POINT *lpptUpLeft);
 	void       DeleteAllItems();
 	void       DeleteColumn(int iCol);
 	void       DeleteItem(int iItem);
@@ -1011,31 +1017,31 @@ public:
 	BOOL       EnsureVisible(int i, BOOL fPartialOK);
 	int        FindItem(int iStart, const LVFINDINFO *plvfi);
 	COLORREF   GetBkColor() const;
-	void       GetBkImage(LPLVBKIMAGE plvbki) const;
+	void       GetBkImage(LVBKIMAGE *plvbki) const;
 	UINT       GetCallbackMask() const;
 	BOOL       GetCheckState(UINT iIndex) const;
-	void       GetColumn(int iCol, LPLVCOLUMN pcol) const;
+	void       GetColumn(int iCol, LVCOLUMN *pcol) const;
 	void       GetColumnOrderArray(int iCount, int *lpiArray) const;
 	int        GetColumnWidth(int iCol) const;
 	int        GetCountPerPage() const;
 	HWND       GetEditControl() const;
 	DWORD      GetExtendedListViewStyle() const;
-	INT        GetFocusedGroup() const;
+	int        GetFocusedGroup() const;
 	int        GetGroupCount() const;
-	void       GetGroupInfo(int iGroupId, PLVGROUP pgrp) const;
-	void       GetGroupInfoByIndex(int iIndex, PLVGROUP pgrp) const;
+	void       GetGroupInfo(int iGroupId, LVGROUP *pgrp) const;
+	void       GetGroupInfoByIndex(int iIndex, LVGROUP *pgrp) const;
 	void       GetGroupMetrics(LVGROUPMETRICS *pGroupMetrics) const;
 	UINT       GetGroupState(UINT dwGroupId, UINT dwMask) const;
 	HWND       GetHeader() const;
 	HCURSOR    GetHotCursor() const;
-	INT        GetHotItem() const;
+	int        GetHotItem() const;
 	DWORD      GetHoverTime() const;
 	HIMAGELIST GetImageList(int iImageList) const;
 	BOOL       GetInsertMark(LVINSERTMARK *plvim) const;
 	COLORREF   GetInsertMarkColor() const;
-	int        GetInsertMarkRect(LPRECT prc) const;
+	int        GetInsertMarkRect(RECT *prc) const;
 	BOOL       GetISearchString(LPSTR lpsz) const;
-	bool       GetItem(LPLVITEM pitem) const;
+	bool       GetItem(LVITEM *pitem) const;
 	int        GetItemCount() const;
 	void       GetItemPosition(int i, POINT *ppt) const;
 	void       GetItemRect(int i, RECT *prc, int code) const;
@@ -1043,32 +1049,32 @@ public:
 	UINT       GetItemState(int i, UINT mask) const;
 	void       GetItemText(int iItem, int iSubItem, LPTSTR pszText, int cchTextMax) const;
 	int        GetNextItem(int iStart, UINT flags) const;
-	BOOL       GetNumberOfWorkAreas(LPUINT lpuWorkAreas) const;
-	BOOL       GetOrigin(LPPOINT lpptOrg) const;
+	BOOL       GetNumberOfWorkAreas(UINT *lpuWorkAreas) const;
+	BOOL       GetOrigin(POINT *lpptOrg) const;
 	COLORREF   GetOutlineColor() const;
 	UINT       GetSelectedColumn() const;
 	UINT       GetSelectedCount() const;
-	INT        GetSelectionMark() const;
+	int        GetSelectionMark() const;
 	int        GetStringWidth(LPCSTR psz) const;
-	BOOL       GetSubItemRect(int iItem, int iSubItem, int code, LPRECT lpRect) const;
+	BOOL       GetSubItemRect(int iItem, int iSubItem, int code, RECT *lpRect) const;
 	COLORREF   GetTextBkColor() const;
 	COLORREF   GetTextColor() const;
-	void       GetTileInfo(PLVTILEINFO plvtinfo) const;
-	void       GetTileViewInfo(PLVTILEVIEWINFO plvtvinfo) const;
+	void       GetTileInfo(LVTILEINFO *plvtinfo) const;
+	void       GetTileViewInfo(LVTILEVIEWINFO *plvtvinfo) const;
 	HWND       GetToolTips() const;
 	int        GetTopIndex() const;
 	BOOL       GetUnicodeFormat() const;
 	DWORD      GetView() const;
 	BOOL       GetViewRect(RECT *prc) const;
-	void       GetWorkAreas(INT nWorkAreas, LPRECT lprc) const;
+	void       GetWorkAreas(int nWorkAreas, RECT *lprc) const;
 	BOOL       HasGroup(int dwGroupId);
-	int        HitTest(LPLVHITTESTINFO pinfo) const;
-	int        HitTestEx(LPLVHITTESTINFO pinfo);
-	int        InsertColumn(int iCol, const LPLVCOLUMN pcol);
-	int        InsertGroup(int index, PLVGROUP pgrp);
-	void       InsertGroupSorted(PLVINSERTGROUPSORTED structInsert);
-	int        InsertItem(const LPLVITEM pitem);
-	BOOL       InsertMarkHitTest(LPPOINT point, LVINSERTMARK *plvim);
+	int        HitTest(LVHITTESTINFO *pinfo) const;
+	int        HitTestEx(LVHITTESTINFO *pinfo);
+	int        InsertColumn(int iCol, const LVCOLUMN *pcol);
+	int        InsertGroup(int index, LVGROUP *pgrp);
+	void       InsertGroupSorted(LVINSERTGROUPSORTED *structInsert);
+	int        InsertItem(const LVITEM *pitem);
+	BOOL       InsertMarkHitTest(POINT *point, LVINSERTMARK *plvim);
 	BOOL       IsGroupViewEnabled();
 	UINT       IsItemVisible(UINT index);
 	UINT       MapIDToIndex(UINT id);
@@ -1078,26 +1084,26 @@ public:
 	int        RemoveGroup(int iGroupId);
 	BOOL       Scroll(int dx, int dy);
 	BOOL       SetBkColor(COLORREF clrBk);
-	BOOL       SetBkImage(LPLVBKIMAGE plvbki);
+	BOOL       SetBkImage(LVBKIMAGE *plvbki);
 	BOOL       SetCallbackMask(UINT mask);
 	void       SetCheckState(UINT iIndex, BOOL fCheck);
-	BOOL       SetColumn(int iCol, LPLVCOLUMN pcol);
+	BOOL       SetColumn(int iCol, LVCOLUMN *pcol);
 	BOOL       SetColumnOrderArray(int iCount, int *lpiArray);
 	BOOL       SetColumnWidth(int iCol, int cx);
 	void       SetExtendedListViewStyle(DWORD dwExStyle);
 	void       SetExtendedListViewStyleEx(DWORD dwExMask, DWORD dwExStyle);
-	int        SetGroupInfo(int iGroupId, PLVGROUP pgrp);
-	void       SetGroupMetrics(PLVGROUPMETRICS pGroupMetrics);
+	int        SetGroupInfo(int iGroupId, LVGROUP *pgrp);
+	void       SetGroupMetrics(LVGROUPMETRICS *pGroupMetrics);
 	void       SetGroupState(UINT dwGroupId, UINT dwMask, UINT dwState);
 	HCURSOR    SetHotCursor(HCURSOR hCursor);
-	INT        SetHotItem(INT iIndex);
+	int        SetHotItem(int iIndex);
 	void       SetHoverTime(DWORD dwHoverTime);
 	DWORD      SetIconSpacing(int cx, int cy);
 	HIMAGELIST SetImageList(HIMAGELIST himl, int iImageList);
-	BOOL       SetInfoTip(PLVSETINFOTIP plvSetInfoTip);
+	BOOL       SetInfoTip(LVSETINFOTIP *plvSetInfoTip);
 	BOOL       SetInsertMark(LVINSERTMARK *plvim);
 	COLORREF   SetInsertMarkColor(COLORREF color);
-	BOOL       SetItem(const LPLVITEM pitem);
+	BOOL       SetItem(const LVITEM *pitem);
 	void       SetItemCount(int cItems);
 	void       SetItemCountEx(int cItems, DWORD dwFlags);
 	BOOL       SetItemPosition(int i, int x, int y);
@@ -1106,21 +1112,24 @@ public:
 	void       SetItemText(int i, int iSubItem, const wchar_t *pszText);
 	COLORREF   SetOutlineColor(COLORREF color);
 	void       SetSelectedColumn(int iCol);
-	INT        SetSelectionMark(INT iIndex);
+	int        SetSelectionMark(int iIndex);
 	BOOL       SetTextBkColor(COLORREF clrText);
 	BOOL       SetTextColor(COLORREF clrText);
-	BOOL       SetTileInfo(PLVTILEINFO plvtinfo);
-	BOOL       SetTileViewInfo(PLVTILEVIEWINFO plvtvinfo);
+	BOOL       SetTileInfo(LVTILEINFO *plvtinfo);
+	BOOL       SetTileViewInfo(LVTILEVIEWINFO *plvtvinfo);
 	HWND       SetToolTips(HWND ToolTip);
 	BOOL       SetUnicodeFormat(BOOL fUnicode);
 	int        SetView(DWORD iView);
-	void       SetWorkAreas(INT nWorkAreas, LPRECT lprc);
+	void       SetWorkAreas(int nWorkAreas, RECT *lprc);
+	int        SubItemHitTest(LVHITTESTINFO *pInfo) const;
+	int        SubItemHitTestEx(LVHITTESTINFO *plvhti);
+	BOOL       Update(int iItem);
+
+	#ifdef _MSC_VER
 	int        SortGroups(PFNLVGROUPCOMPARE pfnGroupCompare, LPVOID plv);
 	BOOL       SortItems(PFNLVCOMPARE pfnCompare, LPARAM lParamSort);
 	BOOL       SortItemsEx(PFNLVCOMPARE pfnCompare, LPARAM lParamSort);
-	INT        SubItemHitTest(LPLVHITTESTINFO pInfo) const;
-	INT        SubItemHitTestEx(LPLVHITTESTINFO plvhti);
-	BOOL       Update(int iItem);
+	#endif // _MSC_VER
 
 	// Additional APIs
 	HIMAGELIST CreateImageList(int iImageList);
@@ -1315,7 +1324,7 @@ protected:
 	void OnInit() override;
 	void OnDestroy() override;
 	BOOL OnNotify(int idCtrl, NMHDR *pnmh) override;
-	
+
 	void GetCaretPos(CContextMenuPos&) const override;
 	LRESULT CustomWndProc(UINT msg, WPARAM wParam, LPARAM lParam) override;
 
@@ -1415,7 +1424,7 @@ public:
 
 protected:
 	BOOL OnNotify(int idCtrl, NMHDR *pnmh) override;
-	
+
 	void OnInit() override;
 	void OnDestroy() override;
 

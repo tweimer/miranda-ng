@@ -88,12 +88,15 @@ bool save_url(HNETLIBUSER hNetlib, const CMStringA &url, const CMStringW &filena
 		return false;
 	
 	// Create folder if necessary
-	CreatePathToFileW(filename);
+	if (CreatePathToFileW(filename) != ERROR_SUCCESS)
+		return false;
 
 	// Write to file
-	FILE *f = _wfopen(filename, L"wb");
-	fwrite(resp->pData, 1, resp->dataLength, f);
-	fclose(f);
+	if (FILE *f = _wfopen(filename, L"wb")) {
+		fwrite(resp->pData, 1, resp->dataLength, f);
+		fclose(f);
+	}
+	else return false;
 	
 	return true;
 }

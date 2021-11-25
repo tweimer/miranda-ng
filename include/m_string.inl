@@ -25,6 +25,11 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #ifndef M_STRING_INL__
 
+#ifndef _MSC_VER
+	#include <algorithm>
+	#define __max std::max
+#endif
+
 template<typename BaseType>
 CMSimpleStringT<BaseType>::CMSimpleStringT()
 {
@@ -1341,7 +1346,7 @@ typename CMStringT<BaseType, StringTraits>::PCXSTR CMStringT<BaseType, StringTra
 	va_start(argList, pszFormat);
 	FormatV(pszFormat, argList);
 	va_end(argList);
-	return GetString();
+	return this->GetString();
 }
 
 // Append formatted data using format string 'pszFormat'
@@ -1352,7 +1357,7 @@ typename CMStringT<BaseType, StringTraits>::PCXSTR CMStringT<BaseType, StringTra
 	va_start(argList, pszFormat);
 	AppendFormatV(pszFormat, argList);
 	va_end(argList);
-	return GetString();
+	return this->GetString();
 }
 
 template< typename BaseType, class StringTraits >
@@ -1372,7 +1377,7 @@ typename CMStringT<BaseType, StringTraits>::PCXSTR CMStringT<BaseType, StringTra
 	PXSTR pszBuffer = this->GetBuffer(nLength);
 	StringTraits::Format(pszBuffer, nLength + 1, pszFormat, args);
 	this->ReleaseBufferSetLength(nLength);
-	return GetString();
+	return this->GetString();
 }
 
 // Set the string to the value of environment variable 'pszVar'
@@ -1398,7 +1403,7 @@ BOOL CMStringT<BaseType, StringTraits>::GetEnvironmentVariable(PCXSTR pszVar)
 template< typename BaseType, class StringTraits >
 typename CMStringT<BaseType, StringTraits>::PXSTR CMStringT<BaseType, StringTraits>::Detach() const
 {
-	return StringTraits::MirCopy(CMStringT<BaseType, StringTraits>::GetString(), GetLength());
+	return StringTraits::MirCopy(CMStringT<BaseType, StringTraits>::GetString(), this->GetLength());
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

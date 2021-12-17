@@ -108,7 +108,7 @@ void CIcqProto::ProcessDiff(const JSONNode &ev)
 				if (bDeleted)
 					continue;
 
-				MCONTACT hContact = ParseBuddyInfo(buddy);
+				MCONTACT hContact = ParseBuddyInfo(buddy, true);
 				if (hContact == INVALID_CONTACT_ID)
 					continue;
 
@@ -325,6 +325,8 @@ void CIcqProto::ProcessPresence(const JSONNode &ev)
 		return;
 
 	int iNewStatus = StatusFromPresence(ev, pCache->m_hContact);
+	if (iNewStatus == -1)
+		iNewStatus = ID_STATUS_OFFLINE;
 
 	// major crutch dedicated to the official client behaviour to go offline
 	// when its window gets closed. we change the status of a contact to the
@@ -340,7 +342,7 @@ void CIcqProto::ProcessPresence(const JSONNode &ev)
 
 	setWord(pCache->m_hContact, "Status", iNewStatus);
 
-	Json2string(pCache->m_hContact, ev, "friendly", "Nick");
+	Json2string(pCache->m_hContact, ev, "friendly", "Nick", true);
 	CheckAvatarChange(pCache->m_hContact, ev);
 }
 

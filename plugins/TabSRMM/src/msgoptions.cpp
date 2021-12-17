@@ -486,7 +486,6 @@ static TOptionListItem lvItemsMsg[] =
 	{ 0, LPGENW("Enable \"Paste and send\" feature"), 0, LOI_TYPE_SETTING, (UINT_PTR)"pasteandsend", 1 },
 	{ 0, LPGENW("Allow BBCode formatting in outgoing messages"), 0, LOI_TYPE_SETTING, (UINT_PTR)"sendformat", 1 },
 	{ 0, LPGENW("Automatically split long messages (experimental, use with care)"), 0, LOI_TYPE_SETTING, (UINT_PTR)"autosplit", 2 },
-	{ 0, LPGENW("Log status changes"), 0, LOI_TYPE_SETTING, (UINT_PTR)"logstatuschanges", 2 },
 	{ 0, LPGENW("Use the same splitter height for all sessions"), 1, LOI_TYPE_SETTING, (UINT_PTR)"usesamesplitsize", 2 },
 	{ 0, LPGENW("Automatically copy selected text"), 1, LOI_TYPE_SETTING, (UINT_PTR)"autocopy", 2 },
 	{ 0, nullptr, 0, 0, 0, 0 }
@@ -847,6 +846,7 @@ static TOptionListItem lvItemsLog[] =
 	{ 0, LPGENW("Show seconds in timestamps"), 1, LOI_TYPE_FLAG, (UINT_PTR)MWF_LOG_SHOWSECONDS, 2 },
 	{ 0, LPGENW("Use contacts local time (if timezone info available)"), 0, LOI_TYPE_FLAG, (UINT_PTR)MWF_LOG_LOCALTIME, 2 },
 	{ 0, LPGENW("Draw grid lines"), 1, LOI_TYPE_FLAG, MWF_LOG_GRID, 0 },
+	{ 0, LPGENW("Log status changes"), 0, LOI_TYPE_SETTING, (UINT_PTR)"logstatuschanges", 0 },
 	{ 0, LPGENW("Event type icons in the message log"), 1, LOI_TYPE_FLAG, MWF_LOG_SHOWICONS, 3 },
 	{ 0, LPGENW("Text symbols as event markers"), 0, LOI_TYPE_FLAG, MWF_LOG_SYMBOLS, 3 },
 	{ 0, LPGENW("Use incoming/outgoing icons"), 1, LOI_TYPE_FLAG, MWF_LOG_INOUTICONS, 3 },
@@ -1004,57 +1004,58 @@ class COptTypingDlg : public CDlgBase
 {
 	HANDLE hItemNew, hItemUnknown;
 
+	CCtrlClc m_clist;
 	CCtrlCheck chkWin, chkNoWin;
 	CCtrlCheck chkNotifyPopup, chkNotifyTray, chkShowNotify;
 	CCtrlHyperlink urlHelp;
 
-	void ResetCList()
+	void ResetCList(CCtrlClc* = nullptr)
 	{
-		SendDlgItemMessage(m_hwnd, IDC_CLIST, CLM_SETUSEGROUPS, Clist::UseGroups, 0);
-		SendDlgItemMessage(m_hwnd, IDC_CLIST, CLM_SETHIDEEMPTYGROUPS, 1, 0);
+		m_clist.SetUseGroups(Clist::UseGroups);
+		m_clist.SetHideEmptyGroups(true);
 	}
 
-	void RebuildList()
+	void RebuildList(CCtrlClc* = nullptr)
 	{
 		BYTE defType = g_plugin.getByte(SRMSGSET_TYPINGNEW, SRMSGDEFSET_TYPINGNEW);
 		if (hItemNew && defType)
-			SendDlgItemMessage(m_hwnd, IDC_CLIST, CLM_SETCHECKMARK, (WPARAM)hItemNew, 1);
+			m_clist.SetCheck(hItemNew, true);
 
 		if (hItemUnknown && g_plugin.getByte(SRMSGSET_TYPINGUNKNOWN, SRMSGDEFSET_TYPINGUNKNOWN))
-			SendDlgItemMessage(m_hwnd, IDC_CLIST, CLM_SETCHECKMARK, (WPARAM)hItemUnknown, 1);
+			m_clist.SetCheck(hItemUnknown, true);
 
-		for (auto &hContact : Contacts()) {
-			HANDLE hItem = (HANDLE)SendDlgItemMessage(m_hwnd, IDC_CLIST, CLM_FINDCONTACT, hContact, 0);
-			if (hItem && g_plugin.getByte(hContact, SRMSGSET_TYPING, defType))
-				SendDlgItemMessage(m_hwnd, IDC_CLIST, CLM_SETCHECKMARK, (WPARAM)hItem, 1);
-		}
+		for (auto &hContact : Contacts())
+			if (HANDLE hItem = m_clist.FindContact(hContact))
+				m_clist.SetCheck(hItem, g_plugin.getByte(hContact, SRMSGSET_TYPING, defType));
 	}
 
 	void SaveList()
 	{
 		if (hItemNew)
-			g_plugin.setByte(SRMSGSET_TYPINGNEW, (BYTE)(SendDlgItemMessage(m_hwnd, IDC_CLIST, CLM_GETCHECKMARK, (WPARAM)hItemNew, 0) ? 1 : 0));
+			g_plugin.setByte(SRMSGSET_TYPINGNEW, m_clist.GetCheck(hItemNew));
 
 		if (hItemUnknown)
-			g_plugin.setByte(SRMSGSET_TYPINGUNKNOWN, (BYTE)(SendDlgItemMessage(m_hwnd, IDC_CLIST, CLM_GETCHECKMARK, (WPARAM)hItemUnknown, 0) ? 1 : 0));
+			g_plugin.setByte(SRMSGSET_TYPINGUNKNOWN, m_clist.GetCheck(hItemUnknown));
 
-		for (auto &hContact : Contacts()) {
-			HANDLE hItem = (HANDLE)SendDlgItemMessage(m_hwnd, IDC_CLIST, CLM_FINDCONTACT, hContact, 0);
-			if (hItem)
-				g_plugin.setByte(hContact, SRMSGSET_TYPING, (BYTE)(SendDlgItemMessage(m_hwnd, IDC_CLIST, CLM_GETCHECKMARK, (WPARAM)hItem, 0) ? 1 : 0));
-		}
+		for (auto &hContact : Contacts())
+			if (HANDLE hItem = m_clist.FindContact(hContact))
+				g_plugin.setByte(hContact, SRMSGSET_TYPING, m_clist.GetCheck(hItem));
 	}
 
 public:
-	COptTypingDlg()
-		: CDlgBase(g_plugin, IDD_OPT_MSGTYPE),
+	COptTypingDlg() :
+		CDlgBase(g_plugin, IDD_OPT_MSGTYPE),
 		urlHelp(this, IDC_MTN_HELP, "https://wiki.miranda-ng.org/index.php?title=Plugin:TabSRMM/en/Advanced_tweaks"),
+		m_clist(this, IDC_CLIST),
 		chkWin(this, IDC_TYPEWIN),
 		chkNoWin(this, IDC_TYPENOWIN),
 		chkNotifyTray(this, IDC_NOTIFYTRAY),
 		chkShowNotify(this, IDC_SHOWNOTIFY),
 		chkNotifyPopup(this, IDC_NOTIFYPOPUP)
 	{
+		m_clist.OnListRebuilt = Callback(this, &COptTypingDlg::RebuildList);
+		m_clist.OnOptionsChanged = Callback(this, &COptTypingDlg::ResetCList);
+
 		chkWin.OnChange = chkNoWin.OnChange = Callback(this, &COptTypingDlg::onCheck_Win);
 
 		chkNotifyTray.OnChange = Callback(this, &COptTypingDlg::onCheck_NotifyTray);
@@ -1067,11 +1068,11 @@ public:
 		CLCINFOITEM cii = { sizeof(cii) };
 		cii.flags = CLCIIF_GROUPFONT | CLCIIF_CHECKBOX;
 		cii.pszText = TranslateT("** New contacts **");
-		hItemNew = (HANDLE)SendDlgItemMessage(m_hwnd, IDC_CLIST, CLM_ADDINFOITEM, 0, (LPARAM)&cii);
+		hItemNew = m_clist.AddInfoItem(&cii);
 		cii.pszText = TranslateT("** Unknown contacts **");
-		hItemUnknown = (HANDLE)SendDlgItemMessage(m_hwnd, IDC_CLIST, CLM_ADDINFOITEM, 0, (LPARAM)&cii);
+		hItemUnknown = m_clist.AddInfoItem(&cii);
 
-		SetWindowLongPtr(GetDlgItem(m_hwnd, IDC_CLIST), GWL_STYLE, GetWindowLongPtr(GetDlgItem(m_hwnd, IDC_CLIST), GWL_STYLE) | (CLS_SHOWHIDDEN));
+		SetWindowLongPtr(m_clist.GetHwnd(), GWL_STYLE, GetWindowLongPtr(m_clist.GetHwnd(), GWL_STYLE) | (CLS_SHOWHIDDEN));
 		ResetCList();
 
 		CheckDlgButton(m_hwnd, IDC_SHOWNOTIFY, g_plugin.getByte(SRMSGSET_SHOWTYPING, SRMSGDEFSET_SHOWTYPING) ? BST_CHECKED : BST_UNCHECKED);
@@ -1113,25 +1114,6 @@ public:
 		db_set_b(0, SRMSGMOD_T, "MTN_PopupMode", (BYTE)SendDlgItemMessage(m_hwnd, IDC_MTN_POPUPMODE, CB_GETCURSEL, 0, 0));
 		PluginConfig.reloadSettings();
 		return true;
-	}
-
-	INT_PTR DlgProc(UINT msg, WPARAM wParam, LPARAM lParam) override
-	{
-		if (msg == WM_NOTIFY && ((NMHDR*)lParam)->idFrom == IDC_CLIST) {
-			switch (((NMHDR*)lParam)->code) {
-			case CLN_OPTIONSCHANGED:
-				ResetCList();
-				break;
-			case CLN_CHECKCHANGED:
-				SendMessage(m_hwndParent, PSM_CHANGED, 0, 0);
-				break;
-			case CLN_LISTREBUILT:
-				RebuildList();
-				break;
-			}
-		}
-
-		return CDlgBase::DlgProc(msg, wParam, lParam);
 	}
 
 	void onCheck_NotifyPopup(CCtrlCheck*)

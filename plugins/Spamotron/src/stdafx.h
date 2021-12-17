@@ -17,10 +17,8 @@
 #include <m_popup.h>
 #include <m_langpack.h>
 #include <m_protosvc.h>
-
-#include "m_folders.h"
-
-#include "../../libs/pcre16/src/pcre.h"
+#include <m_folders.h>
+#include <pcre.h>
 
 #include "resource.h"
 #include "version.h"
@@ -107,7 +105,7 @@ int LogToSystemHistory(char *message, char *origmessage);
 
 /* bayes.c */
 
-#include "../../Libs/sqlite3/src/sqlite3.h"
+#include <sqlite3.h>
 
 extern sqlite3 *bayesdb;
 #define BAYESDB_PATH "spamotron"

@@ -819,9 +819,13 @@ static char* Template_CreateRTFFromDbEvent(CMsgDialog *dat, MCONTACT hContact, M
 				AppendUnicodeToBuffer(str, LPCTSTR(dbei.szModule), MAKELONG(isSent, dat->m_bIsHistory));
 				break;
 			case 'M': // message
+				if (bIsStatusChangeEvent)
+					dbei.eventType = EVENTTYPE_STATUSCHANGE;
+
 				switch (dbei.eventType) {
 				case EVENTTYPE_MESSAGE:
 				case EVENTTYPE_ERRMSG:
+				case EVENTTYPE_STATUSCHANGE:
 					if (bIsStatusChangeEvent || dbei.eventType == EVENTTYPE_ERRMSG) {
 						if (dbei.eventType == EVENTTYPE_ERRMSG && dbei.cbBlob == 0)
 							break;
@@ -1322,7 +1326,7 @@ void CLogWindow::LogEvents(LOGINFO *lin, bool bRedraw)
 	if (m_rtf.GetHwnd() == nullptr || lin == nullptr || si == nullptr)
 		return;
 
-	if (!bRedraw && (si->iType == GCW_CHATROOM || si->iType == GCW_PRIVMESS) && m_pDlg.m_bFilterEnabled && (m_pDlg.m_iLogFilterFlags & lin->iType) == 0)
+	if (!bRedraw && m_pDlg.AllowTyping() && m_pDlg.m_bFilterEnabled && (m_pDlg.m_iLogFilterFlags & lin->iType) == 0)
 		return;
 
 	bool bFlag = false, bDoReplace, bAtBottom = AtBottom();

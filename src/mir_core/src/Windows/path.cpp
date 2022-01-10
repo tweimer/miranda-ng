@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org),
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org),
 Copyright (c) 2000-12 Miranda IM project,
 all portions of this codebase are copyrighted to the people
 listed in contributors.txt.
@@ -102,7 +102,7 @@ MIR_CORE_DLL(int) CreateDirectoryTree(const char *szDir)
 	if (szDir == nullptr)
 		return 1;
 
-	DWORD dwAttributes = GetFileAttributesA(szDir);
+	uint32_t dwAttributes = GetFileAttributesA(szDir);
 	if (dwAttributes != INVALID_FILE_ATTRIBUTES && (dwAttributes & FILE_ATTRIBUTE_DIRECTORY))
 		return 0;
 
@@ -191,7 +191,7 @@ MIR_CORE_DLL(int) CreateDirectoryTreeW(const wchar_t *szDir)
 	if (szDir == nullptr)
 		return 1;
 
-	DWORD dwAttributes = GetFileAttributesW(szDir);
+	uint32_t dwAttributes = GetFileAttributesW(szDir);
 	if (dwAttributes != INVALID_FILE_ATTRIBUTES && (dwAttributes & FILE_ATTRIBUTE_DIRECTORY))
 		return 0;
 

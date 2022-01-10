@@ -5,7 +5,7 @@ Jabber Protocol Plugin for Miranda NG
 Copyright (c) 2002-04  Santithorn Bunchua
 Copyright (c) 2005-12  George Hazan
 Copyright (c) 2007     Maxim Mluhov
-Copyright (C) 2012-21 Miranda NG team
+Copyright (C) 2012-22 Miranda NG team
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -52,12 +52,12 @@ bool XmlNodeHash::VisitEnter(const TiXmlElement &pNode, const tinyxml2::XMLAttri
 void XmlNodeHash::add(const char *str)
 {
 	if (str)
-		mir_md5_append(&state, (const BYTE *)str, strlen(str));
+		mir_md5_append(&state, (const uint8_t *)str, strlen(str));
 }
 
 CMStringA XmlNodeHash::getResult()
 {
-	BYTE digest[16];
+	uint8_t digest[16];
 	mir_md5_finish(&state, digest);
 
 	CMStringA res;

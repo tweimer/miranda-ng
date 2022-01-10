@@ -39,7 +39,7 @@ const int nProtoColWitdh = 100; // width in pixels of the UIN column in the List
 
 class CLDBEvent
 {
-	DWORD time;
+	uint32_t time;
 public:
 	MCONTACT hUser;
 	MEVENT   hDbEvent;
@@ -82,8 +82,8 @@ int CALLBACK CompareFunc(LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort)
 		return mir_strcmp(Proto_GetBaseAccountName((MCONTACT)lParam1), Proto_GetBaseAccountName((MCONTACT)lParam2));
 
 	if (lParamSort == 3) {
-		DWORD dwUin1 = db_get_dw((MCONTACT)lParam1, Proto_GetBaseAccountName((MCONTACT)lParam1), "UIN", 0);
-		DWORD dwUin2 = db_get_dw((MCONTACT)lParam2, Proto_GetBaseAccountName((MCONTACT)lParam2), "UIN", 0);
+		uint32_t dwUin1 = db_get_dw((MCONTACT)lParam1, Proto_GetBaseAccountName((MCONTACT)lParam1), "UIN", 0);
+		uint32_t dwUin2 = db_get_dw((MCONTACT)lParam2, Proto_GetBaseAccountName((MCONTACT)lParam2), "UIN", 0);
 		if (dwUin1 == dwUin2)
 			return 0;
 		return (dwUin1 > dwUin2) ? -1 : 1;
@@ -285,7 +285,7 @@ public:
 			return false;
 		}
 		else nMaxLineWidth = nTmp;
-		g_plugin.setWord("MaxLineWidth", (WORD)nMaxLineWidth);
+		g_plugin.setWord("MaxLineWidth", (uint16_t)nMaxLineWidth);
 
 		cmbTimeFormat.GetText(szTemp, _countof(szTemp));
 		g_sTimeFormat = szTemp;
@@ -417,7 +417,7 @@ public:
 
 	bool OnInitDialog() override
 	{
-		DWORD dw = listUsers.GetExtendedListViewStyle();
+		uint32_t dw = listUsers.GetExtendedListViewStyle();
 		dw |= LVS_EX_HEADERDRAGDROP | LVS_EX_FULLROWSELECT | LVS_EX_CHECKBOXES;
 		listUsers.SetExtendedListViewStyle(dw);
 
@@ -876,7 +876,7 @@ public:
 			g_enRenameAction = eDAAutomatic;
 		else if (chkFcNothing.GetState() == BST_CHECKED)
 			g_enRenameAction = eDANothing;
-		g_plugin.setByte("RenameAction", (BYTE)g_enRenameAction);
+		g_plugin.setByte("RenameAction", (uint8_t)g_enRenameAction);
 
 		if (chkFdPrompt.GetState() == BST_CHECKED)
 			g_enDeleteAction = eDAPromptUser;
@@ -884,7 +884,7 @@ public:
 			g_enDeleteAction = eDAAutomatic;
 		else if (chkFdNothing.GetState() == BST_CHECKED)
 			g_enDeleteAction = eDANothing;
-		g_plugin.setByte("DeleteAction", (BYTE)g_enDeleteAction);
+		g_plugin.setByte("DeleteAction", (uint8_t)g_enDeleteAction);
 
 		int nCount = listProtos.GetItemCount();
 		for (int nCur = 0; nCur < nCount; nCur++) {

@@ -179,7 +179,7 @@ void CIrcProto::SendIrcMessage(const wchar_t* msg, bool bNotify, int cp)
 		int cbLen = (int)mir_strlen(str);
 		str = (char*)mir_realloc(str, cbLen + 3);
 		mir_strcat(str, "\r\n");
-		NLSend((const BYTE*)str, cbLen + 2);
+		NLSend((const uint8_t*)str, cbLen + 2);
 		mir_free(str);
 
 		if (bNotify) {
@@ -251,7 +251,7 @@ bool CIrcProto::Connect(const CIrcSessionInfo& info)
 
 void CIrcProto::Disconnect(void)
 {
-	static const DWORD dwServerTimeout = 5 * 1000;
+	static const uint32_t dwServerTimeout = 5 * 1000;
 
 	if (con == nullptr)
 		return;
@@ -805,7 +805,7 @@ void __cdecl CDccSession::ConnectProc(void *pparam)
 }
 
 // small function to setup the address and port of the remote computer fror passive filetransfers
-void CDccSession::SetupPassive(DWORD adress, DWORD port)
+void CDccSession::SetupPassive(uint32_t adress, uint32_t port)
 {
 	di->dwAdr = adress;
 	di->iPort = (int)port;
@@ -859,7 +859,7 @@ int CDccSession::SetupConnection()
 	if (di->iType == DCC_CHAT && !di->bSender || di->iType == DCC_SEND && di->bSender && di->bReverse) {
 		NETLIBOPENCONNECTION ncon = {};
 		ncon.szHost = ConvertIntegerToIP(di->dwAdr);
-		ncon.wPort = (WORD)di->iPort;
+		ncon.wPort = (uint16_t)di->iPort;
 		con = Netlib_OpenConnection(m_proto->hNetlibDCC, &ncon);
 	}
 
@@ -953,7 +953,7 @@ int CDccSession::SetupConnection()
 		// connect to the remote computer from which you are receiving the file (now all actions to take (resume/overwrite etc) have been decided
 		NETLIBOPENCONNECTION ncon = {};
 		ncon.szHost = ConvertIntegerToIP(di->dwAdr);
-		ncon.wPort = (WORD)di->iPort;
+		ncon.wPort = (uint16_t)di->iPort;
 
 		con = Netlib_OpenConnection(m_proto->hNetlibDCC, &ncon);
 	}
@@ -975,7 +975,7 @@ int CDccSession::SetupConnection()
 }
 
 // called by netlib for incoming connections on a listening socket (chat/filetransfer)
-int CDccSession::IncomingConnection(HNETLIBCONN hConnection, DWORD dwIP)
+int CDccSession::IncomingConnection(HNETLIBCONN hConnection, uint32_t dwIP)
 {
 	con = hConnection;
 	if (con == nullptr) {
@@ -1024,7 +1024,7 @@ void CDccSession::DoSendFile()
 	ProtoBroadcastAck(m_proto->m_szModuleName, di->hContact, ACKTYPE_FILE, ACKRESULT_INITIALISING, (void *)di, 0);
 	ProtoBroadcastAck(m_proto->m_szModuleName, di->hContact, ACKTYPE_FILE, ACKRESULT_NEXTFILE, (void *)di, 0);
 
-	WORD wPacketSize = m_proto->getWord("DCCPacketSize", 1024 * 4);
+	uint16_t wPacketSize = m_proto->getWord("DCCPacketSize", 1024 * 4);
 
 	if (wPacketSize < 256)
 		wPacketSize = 256;
@@ -1032,7 +1032,7 @@ void CDccSession::DoSendFile()
 	if (wPacketSize > 32 * 1024)
 		wPacketSize = 32 * 1024;
 
-	BYTE* chBuf = new BYTE[wPacketSize + 1];
+	uint8_t* chBuf = new uint8_t[wPacketSize + 1];
 
 	// is there a connection?
 	if (con) {
@@ -1057,11 +1057,11 @@ void CDccSession::DoSendFile()
 			tLastActivity = time(0);
 
 			// create a packet receiver to handle receiving ack's from the remote computer.
-			HANDLE hPackrcver = Netlib_CreatePacketReceiver(con, sizeof(DWORD));
+			HANDLE hPackrcver = Netlib_CreatePacketReceiver(con, sizeof(uint32_t));
 
 			NETLIBPACKETRECVER npr = {};
 			npr.dwTimeout = 60 * 1000;
-			npr.bufferSize = sizeof(DWORD);
+			npr.bufferSize = sizeof(uint32_t);
 
 			// until the connection is dropped it will spin around in this while() loop
 			while (con) {
@@ -1082,17 +1082,17 @@ void CDccSession::DoSendFile()
 
 				// block connection and receive ack's from remote computer (if applicable)
 				if (m_proto->m_DCCMode == 0) {
-					DWORD dwRead = 0;
-					DWORD dwPacket = NULL;
+					uint32_t dwRead = 0;
+					uint32_t dwPacket = NULL;
 
 					do {
 						dwRead = Netlib_GetMorePackets(hPackrcver, &npr);
-						npr.bytesUsed = sizeof(DWORD);
+						npr.bytesUsed = sizeof(uint32_t);
 
 						if (dwRead <= 0)
 							break; // connection closed, or a timeout occurred.
 
-						dwPacket = *(DWORD*)npr.buffer;
+						dwPacket = *(uint32_t*)npr.buffer;
 						dwLastAck = ntohl(dwPacket);
 
 					}
@@ -1103,16 +1103,16 @@ void CDccSession::DoSendFile()
 				}
 
 				if (m_proto->m_DCCMode == 1) {
-					DWORD dwRead = 0;
-					DWORD dwPacket = 0;
+					uint32_t dwRead = 0;
+					uint32_t dwPacket = 0;
 
 					do {
 						dwRead = Netlib_GetMorePackets(hPackrcver, &npr);
-						npr.bytesUsed = sizeof(DWORD);
+						npr.bytesUsed = sizeof(uint32_t);
 						if (dwRead <= 0)
 							break; // connection closed, or a timeout occurred.
 
-						dwPacket = *(DWORD*)npr.buffer;
+						dwPacket = *(uint32_t*)npr.buffer;
 						dwLastAck = ntohl(dwPacket);
 					}
 					while (con && (di->dwSize != dwTotal
@@ -1173,7 +1173,7 @@ void CDccSession::DoReceiveFile()
 	// initialize the filetransfer dialog
 	ProtoBroadcastAck(m_proto->m_szModuleName, di->hContact, ACKTYPE_FILE, ACKRESULT_INITIALISING, (void *)di, 0);
 
-	BYTE chBuf[1024 * 32 + 1];
+	uint8_t chBuf[1024 * 32 + 1];
 
 	// do some stupid thing so  the filetransfer dialog shows the right thing
 	ProtoBroadcastAck(m_proto->m_szModuleName, di->hContact, ACKTYPE_FILE, ACKRESULT_NEXTFILE, (void *)di, 0);
@@ -1213,9 +1213,9 @@ void CDccSession::DoReceiveFile()
 			// this snippet sends out an ack for every 4 kb received in send ahead
 			// or every packet for normal mode
 			if (!di->bTurbo) {
-				DWORD no = dwTotal;
+				uint32_t no = dwTotal;
 				no = htonl(no);
-				NLSend((unsigned char *)&no, sizeof(DWORD));
+				NLSend((unsigned char *)&no, sizeof(uint32_t));
 				dwLastAck = dwTotal;
 			}
 			else dwLastAck = dwTotal;
@@ -1293,7 +1293,7 @@ void CDccSession::DoChatReceive()
 			if (*pStart) {
 				// send it off to some messaging module
 				PROTORECVEVENT pre = { 0 };
-				pre.timestamp = (DWORD)time(0);
+				pre.timestamp = (uint32_t)time(0);
 				pre.szMessage = pStart;
 				ProtoChainRecvMsg(di->hContact, &pre);
 			}
@@ -1340,7 +1340,7 @@ VOID CALLBACK DCCTimerProc(HWND, UINT, UINT_PTR idEvent, DWORD)
 }
 
 // helper function for incoming dcc connections.
-void DoIncomingDcc(HNETLIBCONN hConnection, DWORD dwRemoteIP, void * p1)
+void DoIncomingDcc(HNETLIBCONN hConnection, uint32_t dwRemoteIP, void * p1)
 {
 	CDccSession *dcc = (CDccSession*)p1;
 	dcc->IncomingConnection(hConnection, dwRemoteIP);
@@ -1348,7 +1348,7 @@ void DoIncomingDcc(HNETLIBCONN hConnection, DWORD dwRemoteIP, void * p1)
 
 // ident server
 
-void DoIdent(HNETLIBCONN hConnection, DWORD, void* extra)
+void DoIdent(HNETLIBCONN hConnection, uint32_t, void* extra)
 {
 	CIrcProto *ppro = (CIrcProto*)extra;
 

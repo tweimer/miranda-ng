@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////////////////
 // Miranda NG: the free IM client for Microsoft* Windows*
 //
-// Copyright (C) 2012-21 Miranda NG team,
+// Copyright (C) 2012-22 Miranda NG team,
 // Copyright (c) 2000-09 Miranda ICQ/IM project,
 // all portions of this codebase are copyrighted to the people
 // listed in contributors.txt.
@@ -131,7 +131,7 @@ static INT_PTR HotkeyProcessor(WPARAM, LPARAM lParam)
 	return 0;
 }
 
-void TSAPI DrawMenuItem(DRAWITEMSTRUCT *dis, HICON hIcon, DWORD dwIdle)
+void TSAPI DrawMenuItem(DRAWITEMSTRUCT *dis, HICON hIcon, uint32_t dwIdle)
 {
 	FillRect(dis->hDC, &dis->rcItem, GetSysColorBrush(COLOR_MENU));
 	if (dwIdle)
@@ -183,7 +183,7 @@ LONG_PTR CALLBACK HotkeyHandlerDlgProc(HWND hwndDlg, UINT msg, WPARAM wParam, LP
 			LPDRAWITEMSTRUCT dis = (LPDRAWITEMSTRUCT)lParam;
 			if (dis->CtlType == ODT_MENU) {
 				HWND hWnd = Srmm_FindWindow((MCONTACT)dis->itemID);
-				DWORD idle = 0;
+				uint32_t idle = 0;
 
 				if (hWnd == nullptr) {
 					SESSION_INFO *si = SM_FindSessionByHCONTACT((MCONTACT)dis->itemID);

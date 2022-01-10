@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2015-21 Miranda NG team (https://miranda-ng.org)
+Copyright (c) 2015-22 Miranda NG team (https://miranda-ng.org)
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -21,7 +21,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 struct SendMessageParam
 {
 	MCONTACT hContact;
-	DWORD hMessage;
+	uint32_t hMessage;
 };
 
 struct SendMessageRequest : public AsyncHttpRequest

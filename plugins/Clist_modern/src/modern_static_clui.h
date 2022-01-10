@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org),
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org),
 Copyright (c) 2000-08 Miranda ICQ/IM project,
 all portions of this codebase are copyrighted to the people
 listed in contributors.txt.
@@ -69,7 +69,7 @@ int EventArea_Create(HWND hCluiWnd);
 int ExtraImage_ExtraIDToColumnNum(int extra);
 
 int ModernSkinButtonLoadModule();
-int ModernSkinButton_ReposButtons(HWND parent, BYTE draw, RECT *r);
+int ModernSkinButton_ReposButtons(HWND parent, uint8_t draw, RECT *r);
 
 void ske_ApplyTranslucency();
 HBITMAP ske_CreateDIB32(int cx, int cy);
@@ -88,7 +88,7 @@ int UnhookAll();
 
 int CLUI_IsInMainWindow(HWND hwnd);
 int CLUI_SizingOnBorder(POINT pt, int size);
-int CLUI_SmoothAlphaTransition(HWND hwnd, BYTE GoalAlpha, BOOL wParam);
+int CLUI_SmoothAlphaTransition(HWND hwnd, uint8_t GoalAlpha, BOOL wParam);
 int CLUI_TestCursorOnBorders();
 
 static int CLUI_SmoothAlphaThreadTransition();

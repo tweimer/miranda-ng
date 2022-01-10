@@ -35,7 +35,7 @@ struct ProtoItemData : public MZeroedObject
 	int    fullWidth;
 	RECT   protoRect;
 
-	BYTE   xStatusMode;     // 0-only main, 1-xStatus, 2-main as overlay
+	uint8_t   xStatusMode;     // 0-only main, 1-xStatus, 2-main as overlay
 	bool   bDoubleIcons;
 	bool   bShowProtoIcon;
 	bool   bShowProtoName;
@@ -72,7 +72,7 @@ int LoadStatusBarData()
 	g_StatusBarData.rectBorders.right = db_get_dw(0, "CLUI", "RightOffset", SETTING_RIGHTOFFSET_DEFAULT);
 	g_StatusBarData.rectBorders.top = db_get_dw(0, "CLUI", "TopOffset", SETTING_TOPOFFSET_DEFAULT);
 	g_StatusBarData.rectBorders.bottom = db_get_dw(0, "CLUI", "BottomOffset", SETTING_BOTTOMOFFSET_DEFAULT);
-	g_StatusBarData.extraspace = (BYTE)db_get_dw(0, "CLUI", "SpaceBetween", SETTING_SPACEBETWEEN_DEFAULT);
+	g_StatusBarData.extraspace = (uint8_t)db_get_dw(0, "CLUI", "SpaceBetween", SETTING_SPACEBETWEEN_DEFAULT);
 
 	if (g_StatusBarData.BarFont) {
 		DeleteObject(g_StatusBarData.BarFont);
@@ -120,7 +120,7 @@ int BgStatusBarChange(WPARAM, LPARAM)
 }
 
 // ProtocolData;
-int NewStatusPaintCallbackProc(HWND hWnd, HDC hDC, RECT *, HRGN, DWORD, void *)
+int NewStatusPaintCallbackProc(HWND hWnd, HDC hDC, RECT *, HRGN, uint32_t, void *)
 {
 	return ModernDrawStatusBar(hWnd, hDC);
 }
@@ -188,7 +188,7 @@ int ModernDrawStatusBarWorker(HWND hWnd, HDC hDC)
 
 			mir_snprintf(buf, "SBarShow_%s", szProto);
 
-			BYTE showOps = db_get_b(0, "CLUI", buf, SETTING_SBARSHOW_DEFAULT);
+			uint8_t showOps = db_get_b(0, "CLUI", buf, SETTING_SBARSHOW_DEFAULT);
 			p = new ProtoItemData;
 			p->bShowProtoIcon = (showOps & 1) != 0;
 			p->bShowProtoName = (showOps & 2) != 0;
@@ -313,7 +313,7 @@ int ModernDrawStatusBarWorker(HWND hWnd, HDC hDC)
 		int iconY = rc.top + (((rc.bottom - rc.top) - iconHeight) / 2);
 
 		// Code for each line
-		DWORD sw;
+		uint32_t sw;
 		int rectwidth = rc.right - rc.left - g_StatusBarData.rectBorders.left - g_StatusBarData.rectBorders.right;
 		if (visProtoCount > 1)
 			sw = (rectwidth - (g_StatusBarData.extraspace*(visProtoCount - 1))) / visProtoCount;
@@ -324,7 +324,7 @@ int ModernDrawStatusBarWorker(HWND hWnd, HDC hDC)
 		for (int i = 0; i < visProtoCount; i++) {
 			ProtoItemData &p = ProtosData[line*protosperline + i];
 
-			DWORD w = p.PaddingLeft;
+			uint32_t w = p.PaddingLeft;
 			w += p.PaddingRight;
 
 			if (p.bShowProtoIcon) {
@@ -469,7 +469,7 @@ int ModernDrawStatusBarWorker(HWND hWnd, HDC hDC)
 				SelectClipRgn(hDC, rgn);
 				p.bDoubleIcons = false;
 
-				DWORD dim = p.bIsDimmed ? ((64 << 24) | 0x80) : 0;
+				uint32_t dim = p.bIsDimmed ? ((64 << 24) | 0x80) : 0;
 
 				if ((p.xStatusMode & 3) == 3) {
 					if (hIcon)
@@ -653,7 +653,7 @@ LRESULT CALLBACK ModernStatusProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPa
 			if (ID) {
 				int res = CallService(MS_CLIST_FRAMES_GETFRAMEOPTIONS, MAKEWPARAM(FO_FLAGS, ID), 0);
 				if (res >= 0)
-					db_set_b(0, "CLUI", "ShowSBar", (BYTE)(wParam/*(res&F_VISIBLE)*/ ? 1 : 0));
+					db_set_b(0, "CLUI", "ShowSBar", (uint8_t)(wParam/*(res&F_VISIBLE)*/ ? 1 : 0));
 			}
 		}
 		break;

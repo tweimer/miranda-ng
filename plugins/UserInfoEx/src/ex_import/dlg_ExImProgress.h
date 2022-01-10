@@ -27,9 +27,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 class CProgress
 {
 	HWND	_hDlg;
-	DWORD	_dwStartTime;
+	uint32_t	_dwStartTime;
 
-	BYTE	Update();
+	uint8_t	Update();
 
 public:
 	CProgress();
@@ -37,11 +37,11 @@ public:
 
 	void Hide();
 
-	void SetContactCount(DWORD numContacts);
-	void SetSettingsCount(DWORD numSettings);
+	void SetContactCount(uint32_t numContacts);
+	void SetSettingsCount(uint32_t numSettings);
 
-	BYTE UpdateContact(LPCTSTR pszFormat, ...);
-	BYTE UpdateSetting(LPCTSTR pszFormat, ...);
+	uint8_t UpdateContact(LPCTSTR pszFormat, ...);
+	uint8_t UpdateSetting(LPCTSTR pszFormat, ...);
 };
 
 #endif /* _DLG_EXIMPROGRESS_H_ */

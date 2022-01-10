@@ -27,15 +27,15 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 typedef struct tagPOPUPOPTIONS {
 	//==Page General====
 	//Timeout
-	BYTE InfiniteDelay;
+	uint8_t InfiniteDelay;
 	int Seconds;
-	BYTE LeaveHovered;
+	uint8_t LeaveHovered;
 	//Size&Position
-	BYTE DynamicResize;
-	BYTE UseMinimumWidth;
-	WORD MinimumWidth;
-	BYTE UseMaximumWidth;
-	WORD MaximumWidth;
+	uint8_t DynamicResize;
+	uint8_t UseMinimumWidth;
+	uint16_t MinimumWidth;
+	uint8_t UseMaximumWidth;
+	uint16_t MaximumWidth;
 	int Position;
 	int Spreading;
 	//position Popup
@@ -45,51 +45,51 @@ typedef struct tagPOPUPOPTIONS {
 	int gapRight;
 	int spacing;
 	//Miscellaneous
-	BYTE ReorderPopups;
-	BYTE ReorderPopupsWarning;
+	uint8_t ReorderPopups;
+	uint8_t ReorderPopupsWarning;
 	//Disable when
-	BYTE DisableWhenFullscreen;
+	uint8_t DisableWhenFullscreen;
 	//others
-	BYTE debug;
+	uint8_t debug;
 	//==Page Skins====
 	LPTSTR SkinPack;
-	BYTE DisplayTime;
-	BYTE DropShadow;
-	BYTE EnableFreeformShadows;
-	BYTE EnableAeroGlass;
-	BYTE UseWinColors;
-	BYTE UseMText;
+	uint8_t DisplayTime;
+	uint8_t DropShadow;
+	uint8_t EnableFreeformShadows;
+	uint8_t EnableAeroGlass;
+	uint8_t UseWinColors;
+	uint8_t UseMText;
 	//==Page Actions====
-	DWORD actions;
+	uint32_t actions;
 	//Mouse Override
 	int overrideLeft;
 	int overrideRight;
 	int overrideMiddle;
 	//==Page Advanced====
 	//History
-	BYTE EnableHistory;
-	WORD HistorySize;
-	BYTE UseHppHistoryLog;
+	uint8_t EnableHistory;
+	uint16_t HistorySize;
+	uint8_t UseHppHistoryLog;
 	//Avatars
-	BYTE avatarBorders;
-	BYTE avatarPNGBorders;
-	BYTE avatarRadius;
-	WORD avatarSize;
-	BYTE EnableAvatarUpdates;
+	uint8_t avatarBorders;
+	uint8_t avatarPNGBorders;
+	uint8_t avatarRadius;
+	uint16_t avatarSize;
+	uint8_t EnableAvatarUpdates;
 	//Monitor
-	BYTE Monitor;
+	uint8_t Monitor;
 	//Transparency
-	BYTE UseTransparency;
-	BYTE Alpha;
-	BYTE OpaqueOnHover;
+	uint8_t UseTransparency;
+	uint8_t Alpha;
+	uint8_t OpaqueOnHover;
 	//Effect
-	BYTE UseAnimations;
-	BYTE UseEffect;
+	uint8_t UseAnimations;
+	uint8_t UseEffect;
 	LPTSTR Effect;
-	DWORD FadeIn;
-	DWORD FadeOut;
+	uint32_t FadeIn;
+	uint32_t FadeOut;
 	//Others
-	WORD MaxPopups;
+	uint16_t MaxPopups;
 } POPUPOPTIONS;
 
 //===== User wnd class =====
@@ -162,7 +162,7 @@ extern bool OptionLoaded;
 #define AC_SRC_ALPHA 0x01
 #endif
 #ifndef INVALID_FILE_ATTRIBUTES
-#define INVALID_FILE_ATTRIBUTES (DWORD (-1))
+#define INVALID_FILE_ATTRIBUTES (uint32_t (-1))
 #endif
 
 #define DWM_BB_ENABLE					0x00000001
@@ -170,7 +170,7 @@ extern bool OptionLoaded;
 #define DWM_BB_TRANSITIONONMAXIMIZED	0x00000004
 struct DWM_BLURBEHIND
 {
-	DWORD dwFlags;
+	uint32_t dwFlags;
 	BOOL fEnable;
 	HRGN hRgnBlur;
 	BOOL fTransitionOnMaximized;

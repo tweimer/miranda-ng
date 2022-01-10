@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org),
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org),
 Copyright (c) 2000-12 Miranda IM project,
 all portions of this codebase are copyrighted to the people
 listed in contributors.txt.
@@ -24,24 +24,24 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #pragma once
 
-#define _ALPHA_BASE_ 1	// defined for CVS builds
-#define _ALPHA_FUSE_ 1	// defined for fuse powered core
-
-#define INCL_WINSOCK_API_TYPEDEFS 1
-
 #define HSSL_DEFINED 1
 typedef struct SslHandle *HSSL;
 
-#include <winsock2.h>
-#include <ws2tcpip.h>
-#include <windows.h>
-#include <windowsx.h>
-#include <shlobj.h>
-#include <uxtheme.h>
-#include <commctrl.h>
-#include <vssym32.h>
-#include <Shlwapi.h>
-#include <Richedit.h>
+#ifdef _WINDOWS
+	#include <winsock2.h>
+	#include <ws2tcpip.h>
+	#include <windows.h>
+	#include <windowsx.h>
+	#include <ShlObj.h>
+	#include <uxtheme.h>
+	#include <vssym32.h>
+	#include <Shlwapi.h>
+	#include <Richedit.h>
+	
+	#include <io.h>
+	#include <direct.h>
+	#include <process.h>
+#endif
 
 #ifdef _DEBUG
 #include <crtdbg.h>
@@ -53,12 +53,9 @@ typedef struct SslHandle *HSSL;
 #include <math.h>
 #include <time.h>
 #include <stddef.h>
-#include <process.h>
-#include <io.h>
 #include <limits.h>
 #include <string.h>
 #include <locale.h>
-#include <direct.h>
 
 #include <memory>
 
@@ -96,7 +93,6 @@ typedef struct SslHandle *HSSL;
 #include <m_protocols.h>
 #include <m_protoint.h>
 #include <m_skin.h>
-#include <m_skin_eng.h>
 #include <m_srmm_int.h>
 #include <m_timezones.h>
 #include <m_tipper.h>

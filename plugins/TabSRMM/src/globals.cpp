@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////////////////
 // Miranda NG: the free IM client for Microsoft* Windows*
 //
-// Copyright (C) 2012-21 Miranda NG team,
+// Copyright (C) 2012-22 Miranda NG team,
 // Copyright (c) 2000-09 Miranda ICQ/IM project,
 // all portions of this codebase are copyrighted to the people
 // listed in contributors.txt.
@@ -145,7 +145,7 @@ void CGlobals::reloadSettings(bool fReloadSkins)
 	m_bAlwaysFullToolbarWidth = M.GetBool("alwaysfulltoolbar", true);
 	m_LimitStaticAvatarHeight = M.GetDword("avatarheight", 96);
 	m_SendFormat = M.GetByte("sendformat", 0);
-	m_panelHeight = (DWORD)M.GetDword("panelheight", CInfoPanel::DEGRADE_THRESHOLD);
+	m_panelHeight = (uint32_t)M.GetDword("panelheight", CInfoPanel::DEGRADE_THRESHOLD);
 	m_MUCpanelHeight = db_get_dw(0, CHAT_MODULE, "panelheight", CInfoPanel::DEGRADE_THRESHOLD);
 	m_bIdleDetect = M.GetBool("dimIconsForIdleContacts", true);
 	m_smcxicon = m_smcyicon = 16;
@@ -509,8 +509,8 @@ void CGlobals::logStatusChange(WPARAM wParam, const CContactCache *c)
 	if (Proto_GetStatus(c->getProto()) == ID_STATUS_OFFLINE || db_get_b(hContact, c->getProto(), "ChatRoom", 0))
 		return;
 
-	WORD wStatus = LOWORD(wParam);
-	WORD wOldStatus = HIWORD(wParam);
+	uint16_t wStatus = LOWORD(wParam);
+	uint16_t wOldStatus = HIWORD(wParam);
 	if (wStatus == wOldStatus)
 		return;
 
@@ -529,7 +529,7 @@ void CGlobals::logStatusChange(WPARAM wParam, const CContactCache *c)
 
 	T2Utf szMsg(text);
 	DBEVENTINFO dbei = {};
-	dbei.pBlob = (PBYTE)(char*)szMsg;
+	dbei.pBlob = (uint8_t*)(char*)szMsg;
 	dbei.cbBlob = (int)mir_strlen(szMsg) + 1;
 	dbei.flags = DBEF_UTF | DBEF_READ;
 	dbei.eventType = EVENTTYPE_STATUSCHANGE;

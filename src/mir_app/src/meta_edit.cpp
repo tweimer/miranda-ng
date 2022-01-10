@@ -1,7 +1,7 @@
 /*
 former MetaContacts Plugin for Miranda IM.
 
-Copyright © 2014-21  Miranda NG team
+Copyright © 2014-22 Miranda NG team
 Copyright © 2004-07 Scott Ellis
 Copyright © 2004 Universite Louis PASTEUR, STRASBOURG.
 
@@ -31,8 +31,8 @@ struct
 	DBCachedContact *cc;
 	MCONTACT hDefaultContact;                // HANDLE of the new default contact
 	MCONTACT hOfflineContact;
-	int num_deleted,                         // DWORD number of deleted contacts
-		num_contacts;                        // DWORD number of contacts
+	int num_deleted,                         // uint32_t number of deleted contacts
+		num_contacts;                        // uint32_t number of contacts
 	MCONTACT hDeletedContacts[MAX_CONTACTS]; // HANDLEs of the subcontacts to be removed from this metacontact
 	MCONTACT hContact[MAX_CONTACTS];         // HANDLEs of the subcontacts, in the order they should be in
 }

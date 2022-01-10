@@ -91,12 +91,12 @@ BOOL _isregex(wchar_t* strSearch);
 BOOL _isvalidregex(wchar_t* strSearch);
 BOOL _regmatch(wchar_t* str, wchar_t* strSearch);
 BOOL Contains(wchar_t* dst, wchar_t* src);
-BOOL isOneDay(DWORD timestamp1, DWORD timestamp2);
+BOOL isOneDay(uint32_t timestamp1, uint32_t timestamp2);
 void MarkUnread(MCONTACT hContact);
 
-int ShowPopup(MCONTACT hContact, BYTE popupType, wchar_t *line1, wchar_t *line2);
-int ShowPopupPreview(HWND optDlg, BYTE popupType, wchar_t *line1, wchar_t *line2);
-int _notify(MCONTACT hContact, BYTE type, wchar_t *message, wchar_t *origmessage);
+int ShowPopup(MCONTACT hContact, uint8_t popupType, wchar_t *line1, wchar_t *line2);
+int ShowPopupPreview(HWND optDlg, uint8_t popupType, wchar_t *line1, wchar_t *line2);
+int _notify(MCONTACT hContact, uint8_t type, wchar_t *message, wchar_t *origmessage);
 int LogToSystemHistory(char *message, char *origmessage);
 #define POPUP_DEFAULT 0
 #define POPUP_BLOCKED 1
@@ -132,7 +132,7 @@ void learn_spam(wchar_t *msg);
 int get_token_count(int type);
 int get_msg_count(int type);
 double get_msg_score(wchar_t *msg);
-void queue_message(MCONTACT hContact, DWORD msgtime, wchar_t *message);
+void queue_message(MCONTACT hContact, uint32_t msgtime, wchar_t *message);
 void bayes_approve_contact(MCONTACT hContact);
 void dequeue_messages();
 

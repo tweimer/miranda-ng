@@ -133,7 +133,7 @@ LRESULT CALLBACK CCList::ParentSubclassProc(HWND hWnd, UINT Msg, WPARAM wParam, 
 						RECT rc;
 						if (TreeView_GetItemRect(dat->hTreeView, (HTREEITEM)lpNMCD->nmcd.dwItemSpec, &rc, false)) {
 							for (int i = 0; i < MAXEXTRAICONS; i++) {
-								BYTE nIndex = dat->Items[lpNMCD->nmcd.lItemlParam].ExtraIcons[i];
+								uint8_t nIndex = dat->Items[lpNMCD->nmcd.lItemlParam].ExtraIcons[i];
 								if (nIndex != CLC_EXTRAICON_EMPTY) {
 									ImageList_DrawEx(dat->ExtraImageList, nIndex, lpNMCD->nmcd.hdc, rc.right - EXTRAICON_XSTEP * (i + 1), rc.top, 0, 0, /*GetSysColor(COLOR_WINDOW)*/CLR_NONE, CLR_NONE, ILD_NORMAL);
 								}
@@ -499,13 +499,13 @@ int CCList::GetItemType(HTREEITEM hItem) // returns a MCLCIT_ (see below)
 	return (IsHContactInfo(hContact)) ? MCLCIT_INFO : ((IsHContactGroup(hContact)) ? MCLCIT_GROUP : MCLCIT_CONTACT);
 }
 
-DWORD CCList::GetItemTypeAsCLGNFlag(HTREEITEM hItem)
+uint32_t CCList::GetItemTypeAsCLGNFlag(HTREEITEM hItem)
 {
 	MCONTACT hContact = GetItemData(hItem).hContact;
 	return (IsHContactInfo(hContact)) ? MCLGN_INFO : ((IsHContactGroup(hContact)) ? MCLGN_GROUP : MCLGN_CONTACT);
 }
 
-HTREEITEM CCList::GetNextItem(DWORD Flags, HTREEITEM hItem)
+HTREEITEM CCList::GetNextItem(uint32_t Flags, HTREEITEM hItem)
 {
 	switch (Flags & ~(MCLGN_MULTILEVEL | MCLGN_NOTCHILD | MCLGN_ANY)) {
 	case MCLGN_ROOT:

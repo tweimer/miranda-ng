@@ -1,7 +1,7 @@
 /*
 Chat module plugin for Miranda IM
 
-Copyright 2000-12 Miranda IM, 2012-21 Miranda NG team,
+Copyright 2000-12 Miranda IM, 2012-22 Miranda NG team,
 all portions of this codebase are copyrighted to the people
 listed in contributors.txt.
 
@@ -236,8 +236,8 @@ void Load_ChatModule()
 
 void Unload_ChatModule()
 {
-	db_set_w(0, CHAT_MODULE, "SplitterX", (WORD)g_Settings.iSplitterX);
-	db_set_w(0, CHAT_MODULE, "SplitterY", (WORD)g_Settings.iSplitterY);
+	db_set_w(0, CHAT_MODULE, "SplitterX", (uint16_t)g_Settings.iSplitterX);
+	db_set_w(0, CHAT_MODULE, "SplitterY", (uint16_t)g_Settings.iSplitterY);
 	db_set_dw(0, CHAT_MODULE, "roomx", g_Settings.iX);
 	db_set_dw(0, CHAT_MODULE, "roomy", g_Settings.iY);
 	db_set_dw(0, CHAT_MODULE, "roomwidth", g_Settings.iWidth);

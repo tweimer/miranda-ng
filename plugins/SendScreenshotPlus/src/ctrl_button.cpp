@@ -36,8 +36,8 @@ typedef struct TMBCtrl
 	HBITMAP		hBitmap;
 	HFONT		hFont;			// font
 
-	DWORD		dwStyle;
-	BYTE		bFocus;
+	uint32_t		dwStyle;
+	uint8_t		bFocus;
 
 	int			stateId;		// button state
 	int			defbutton;	// default button
@@ -159,8 +159,8 @@ static void __fastcall PaintIcon(BTNCTRL *ctl, HDC hdcMem, LPWORD ccText, LPRECT
 static void __fastcall PaintThemeButton(BTNCTRL *ctl, HDC hdcMem, LPRECT rcClient)
 {
 	RECT rcText = { 0, 0, 0, 0 };
-	WCHAR wszText[MAX_PATH] = { 0 };
-	WORD ccText;
+	wchar_t wszText[MAX_PATH] = { 0 };
+	uint16_t ccText;
 
 	// Draw the flat button
 	if ((ctl->dwStyle & MBS_FLAT) && ctl->hThemeToolbar) {
@@ -259,7 +259,7 @@ static void __fastcall PaintButton(BTNCTRL *ctl, HDC hdcMem, LPRECT rcClient)
 {
 	RECT rcText = { 0, 0, 0, 0 };
 	wchar_t szText[MAX_PATH] = { 0 };
-	WORD ccText;
+	uint16_t ccText;
 
 	// Draw the flat button
 	if (ctl->dwStyle & MBS_FLAT) {
@@ -604,7 +604,7 @@ static LRESULT CALLBACK Button_WndProc(HWND hwndBtn, UINT uMsg, WPARAM wParam, L
 	
 	case WM_LBUTTONUP:
 		if (bct->stateId != PBS_DISABLED) { // don't change states if disabled
-			BYTE bPressed = bct->stateId == PBS_PRESSED;
+			uint8_t bPressed = bct->stateId == PBS_PRESSED;
 
 			if (bct->dwStyle & MBS_PUSHBUTTON) {
 				if (bct->pbState) bct->pbState = 0;

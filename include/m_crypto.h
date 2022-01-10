@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org)
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org)
 all portions of this codebase are copyrighted to the people
 listed in contributors.txt.
 
@@ -30,14 +30,14 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 struct MICryptoEngine
 {
-	DWORD	dwVersion;
+	uint32_t	dwVersion;
 
 	STDMETHOD_(void, destroy)(void) PURE;
 
 	// get/set the instance key
 	STDMETHOD_(size_t, getKeyLength)(void) PURE;
-	STDMETHOD_(bool, getKey)(BYTE *pKey, size_t cbKeyLen) PURE;
-	STDMETHOD_(bool, setKey)(const char *pszPassword, const BYTE *pKey, size_t cbKeyLen) PURE;
+	STDMETHOD_(bool, getKey)(uint8_t *pKey, size_t cbKeyLen) PURE;
+	STDMETHOD_(bool, setKey)(const char *pszPassword, const uint8_t *pKey, size_t cbKeyLen) PURE;
 
 	STDMETHOD_(bool, generateKey)(void)PURE; // creates a new key inside
 	STDMETHOD_(void, purgeKey)(void)PURE;    // purges a key from memory
@@ -46,13 +46,13 @@ struct MICryptoEngine
 	STDMETHOD_(bool, checkPassword)(const char *pszPassword) PURE;
 	STDMETHOD_(void, setPassword)(const char *pszPassword) PURE;
 
-	// result must be freed using mir_free or assigned to mir_ptr<BYTE>
-	STDMETHOD_(BYTE*, encodeString)(const char *src, size_t *cbResultLen) PURE;
-	STDMETHOD_(BYTE*, encodeBuffer)(const void *src, size_t cbLen, size_t *cbResultLen) PURE;
+	// result must be freed using mir_free or assigned to mir_ptr<uint8_t>
+	STDMETHOD_(uint8_t*, encodeString)(const char *src, size_t *cbResultLen) PURE;
+	STDMETHOD_(uint8_t*, encodeBuffer)(const void *src, size_t cbLen, size_t *cbResultLen) PURE;
 
 	// result must be freed using mir_free or assigned to ptrA/ptrT
-	STDMETHOD_(char*, decodeString)(const BYTE *pBuf, size_t bufLen, size_t *cbResultLen) PURE;
-	STDMETHOD_(void*, decodeBuffer)(const BYTE *pBuf, size_t bufLen, size_t *cbResultLen) PURE;
+	STDMETHOD_(char*, decodeString)(const uint8_t *pBuf, size_t bufLen, size_t *cbResultLen) PURE;
+	STDMETHOD_(void*, decodeBuffer)(const uint8_t *pBuf, size_t bufLen, size_t *cbResultLen) PURE;
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -61,14 +61,14 @@ struct MICryptoEngine
 // lParam = (CRYPTO_PROVIDER*)
 // returns HANDLE on success or NULL on failure
 
-typedef MICryptoEngine* (__cdecl *pfnCryptoProviderFactory)(void);
+typedef MICryptoEngine* (MIR_CDECL *pfnCryptoProviderFactory)(void);
 
 #define CPF_UNICODE 1
 
 struct CRYPTO_PROVIDER
 {
-	DWORD	dwSize;
-	DWORD	dwFlags; // one of CPF_* constants
+	uint32_t	dwSize;
+	uint32_t	dwFlags; // one of CPF_* constants
 	HPLUGIN pPlugin;
 
 	char *pszName; // unique id

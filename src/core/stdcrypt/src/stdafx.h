@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org),
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org),
 Copyright (c) 2000-12 Miranda IM project,
 all portions of this codebase are copyrighted to the people
 listed in contributors.txt.
@@ -72,5 +72,5 @@ struct CMPlugin : public PLUGIN<CMPlugin>
 	int Load() override;
 };
 
-bool getRandomBytes(BYTE *buf, size_t bufLen);
-void slow_hash(const void *buf, size_t bufLen, BYTE *tmpHash);
+bool getRandomBytes(uint8_t *buf, size_t bufLen);
+void slow_hash(const void *buf, size_t bufLen, uint8_t *tmpHash);

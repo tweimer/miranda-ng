@@ -5,7 +5,7 @@ Jabber Protocol Plugin for Miranda NG
 Copyright (c) 2002-04  Santithorn Bunchua
 Copyright (c) 2005-12  George Hazan
 Copyright (c) 2007     Maxim Mluhov
-Copyright (C) 2012-21 Miranda NG team
+Copyright (C) 2012-22 Miranda NG team
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -456,8 +456,8 @@ void CJabberProto::UpdateFeatHash()
 		feat_buf.Append(os); feat_buf.AppendChar('<');
 	}
 
-	BYTE hash[MIR_SHA1_HASH_SIZE];
-	mir_sha1_hash((BYTE *)feat_buf.c_str(), feat_buf.GetLength(), hash);
+	uint8_t hash[MIR_SHA1_HASH_SIZE];
+	mir_sha1_hash((uint8_t *)feat_buf.c_str(), feat_buf.GetLength(), hash);
 	ptrA szHash(mir_base64_encode(&hash, sizeof(hash)));
 	m_szFeaturesCrc = szHash;
 }

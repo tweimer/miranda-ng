@@ -5,7 +5,7 @@ Jabber Protocol Plugin for Miranda NG
 Copyright (c) 2002-04  Santithorn Bunchua
 Copyright (c) 2005-12  George Hazan
 Copyright (c) 2007     Maxim Mluhov
-Copyright (C) 2012-21 Miranda NG team
+Copyright (C) 2012-22 Miranda NG team
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -171,7 +171,7 @@ bool CJabberProto::OnIbbRecvdData(const char *data, const char *sid, const char 
 	if (item == nullptr)
 		return false;
 
-	WORD wSeq = (WORD)atoi(seq);
+	uint16_t wSeq = (uint16_t)atoi(seq);
 	if (wSeq != item->jibb->wPacketId) {
 		if (item->jibb->hEvent)
 			SetEvent(item->jibb->hEvent);
@@ -186,6 +186,6 @@ bool CJabberProto::OnIbbRecvdData(const char *data, const char *sid, const char 
 		return false;
 
 	(this->*item->jibb->pfnRecv)(nullptr, item->ft, decodedData, (int)length);
-	item->jibb->dwTransferredSize += (DWORD)length;
+	item->jibb->dwTransferredSize += (uint32_t)length;
 	return true;
 }

@@ -3,7 +3,7 @@
 Omegle plugin for Miranda Instant Messenger
 _____________________________________________
 
-Copyright © 2011-17 Robert Pösel, 2017-21 Miranda NG team
+Copyright © 2011-17 Robert Pösel, 2017-22 Miranda NG team
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -73,7 +73,7 @@ class OmegleProto;
 #include "theme.h"
 #include "resource.h"
 
-extern DWORD g_mirandaVersion;
+extern uint32_t g_mirandaVersion;
 
 class ScopedLock
 {

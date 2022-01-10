@@ -5,7 +5,7 @@ Jabber Protocol Plugin for Miranda NG
 Copyright (c) 2002-04  Santithorn Bunchua
 Copyright (c) 2005-12  George Hazan
 Copyright (c) 2007     Maxim Mluhov
-Copyright (C) 2012-21 Miranda NG team
+Copyright (C) 2012-22 Miranda NG team
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -104,7 +104,7 @@ public:
 	// XEP-0115 support
 	CJabberClientPartialCaps *m_pCaps;
 	ptrA  m_tszCapsExt;
-	DWORD m_dwDiscoInfoRequestTime;
+	uint32_t m_dwDiscoInfoRequestTime;
 
 	JabberCapsBits m_jcbCachedCaps;
 	JabberCapsBits m_jcbManualDiscoveredCaps;
@@ -185,12 +185,12 @@ struct JABBER_LIST_ITEM : public MZeroedObject
 	HWND  hwndGcListAdmin;
 	HWND  hwndGcListOwner;
 	int   iChatState;
-	DWORD dwChatInitTime;
+	uint32_t dwChatInitTime;
 
 	// LIST_FILE
 	// jid = string representation of port number
 	filetransfer *ft;
-	WORD port;
+	uint16_t port;
 
 	// LIST_BYTE
 	// jid = string representation of port number

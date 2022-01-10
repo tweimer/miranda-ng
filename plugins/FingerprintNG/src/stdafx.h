@@ -1,7 +1,7 @@
 /*
 Fingerprint NG (client version) icons module for Miranda NG
 
-Copyright © 2006-21 ghazan, mataes, HierOS, FYR, Bio, nullbie, faith_healer and all respective contributors.
+Copyright © 2006-22 ghazan, mataes, HierOS, FYR, Bio, nullbie, faith_healer and all respective contributors.
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -47,10 +47,10 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 struct RGBA
 {
-	BYTE	b;
-	BYTE	g;
-	BYTE	r;
-	BYTE	a;
+	uint8_t	b;
+	uint8_t	g;
+	uint8_t	r;
+	uint8_t	a;
 };
 
 struct KN_FP_MASK

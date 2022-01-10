@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org),
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org),
 Copyright (c) 2000-12 Miranda IM project,
 all portions of this codebase are copyrighted to the people
 listed in contributors.txt.
@@ -109,8 +109,8 @@ MIR_CORE_DLL(int) db_get_b(MCONTACT hContact, const char *szModule, const char *
 		{
 			switch(dbv.type) {
 				case DBVT_BYTE:	return dbv.bVal;
-				case DBVT_WORD:   return BYTE(dbv.wVal);
-				case DBVT_DWORD:	return BYTE(dbv.dVal);
+				case DBVT_WORD:   return uint8_t(dbv.wVal);
+				case DBVT_DWORD:	return uint8_t(dbv.dVal);
 			}
 			g_pCurrDb->FreeVariant(&dbv);
 		}
@@ -126,7 +126,7 @@ MIR_CORE_DLL(int) db_get_w(MCONTACT hContact, const char *szModule, const char *
 			switch(dbv.type) {
 				case DBVT_BYTE:	return dbv.bVal;
 				case DBVT_WORD:   return dbv.wVal;
-				case DBVT_DWORD:	return WORD(dbv.dVal);
+				case DBVT_DWORD:	return uint16_t(dbv.dVal);
 			}
 			g_pCurrDb->FreeVariant(&dbv);
 		}
@@ -134,7 +134,7 @@ MIR_CORE_DLL(int) db_get_w(MCONTACT hContact, const char *szModule, const char *
 	return errorValue;
 }
 
-MIR_CORE_DLL(DWORD) db_get_dw(MCONTACT hContact, const char *szModule, const char *szSetting, DWORD errorValue)
+MIR_CORE_DLL(uint32_t) db_get_dw(MCONTACT hContact, const char *szModule, const char *szSetting, uint32_t errorValue)
 {
 	if (g_pCurrDb != nullptr) {
 		DBVARIANT dbv;
@@ -164,7 +164,7 @@ MIR_CORE_DLL(INT_PTR) db_get_s(MCONTACT hContact, const char *szModule, const ch
 	if (g_pCurrDb == nullptr)
 		return 1;
 
-	dbv->type = (BYTE)nType;
+	dbv->type = (uint8_t)nType;
 	return g_pCurrDb->GetContactSettingStr(hContact, szModule, szSetting, dbv);
 }
 
@@ -278,7 +278,7 @@ MIR_CORE_DLL(INT_PTR) db_set(MCONTACT hContact, const char *szModule, const char
 	return g_pCurrDb->WriteContactSetting(hContact, &cws);
 }
 
-MIR_CORE_DLL(INT_PTR) db_set_b(MCONTACT hContact, const char *szModule, const char *szSetting, BYTE val)
+MIR_CORE_DLL(INT_PTR) db_set_b(MCONTACT hContact, const char *szModule, const char *szSetting, uint8_t val)
 {
 	if (g_pCurrDb == nullptr) return 1;
 
@@ -290,7 +290,7 @@ MIR_CORE_DLL(INT_PTR) db_set_b(MCONTACT hContact, const char *szModule, const ch
 	return g_pCurrDb->WriteContactSetting(hContact, &cws);
 }
 
-MIR_CORE_DLL(INT_PTR) db_set_w(MCONTACT hContact, const char *szModule, const char *szSetting, WORD val)
+MIR_CORE_DLL(INT_PTR) db_set_w(MCONTACT hContact, const char *szModule, const char *szSetting, uint16_t val)
 {
 	if (g_pCurrDb == nullptr) return 1;
 
@@ -302,7 +302,7 @@ MIR_CORE_DLL(INT_PTR) db_set_w(MCONTACT hContact, const char *szModule, const ch
 	return g_pCurrDb->WriteContactSetting(hContact, &cws);
 }
 
-MIR_CORE_DLL(INT_PTR) db_set_dw(MCONTACT hContact, const char *szModule, const char *szSetting, DWORD val)
+MIR_CORE_DLL(INT_PTR) db_set_dw(MCONTACT hContact, const char *szModule, const char *szSetting, uint32_t val)
 {
 	if (g_pCurrDb == nullptr) return 1;
 
@@ -358,7 +358,7 @@ MIR_CORE_DLL(INT_PTR) db_set_blob(MCONTACT hContact, const char *szModule, const
 	cws.szModule = szModule;
 	cws.szSetting = szSetting;
 	cws.value.type = DBVT_BLOB;
-	cws.value.cpbVal = (WORD)len;
+	cws.value.cpbVal = (uint16_t)len;
 	cws.value.pbVal = (unsigned char*)val;
 	return g_pCurrDb->WriteContactSetting(hContact, &cws);
 }

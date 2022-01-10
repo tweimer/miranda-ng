@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org),
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org),
 Copyright (c) 2000-03 Miranda ICQ/IM project,
 all portions of this codebase are copyrighted to the people
 listed in contributors.txt.
@@ -62,10 +62,10 @@ int __forceinline GetStatusModeOrdering(int statusMode)
 int mf_updatethread_running = TRUE;
 HANDLE hThreadMFUpdate = nullptr;
 
-static void MF_CalcFrequency(MCONTACT hContact, DWORD dwCutoffDays, int doSleep)
+static void MF_CalcFrequency(MCONTACT hContact, uint32_t dwCutoffDays, int doSleep)
 {
-	DWORD  curTime = time(0);
-	DWORD  frequency, eventCount = 0;
+	uint32_t  curTime = time(0);
+	uint32_t  frequency, eventCount = 0;
 
 	DBEVENTINFO dbei = {};
 	DB::ECPTR cursor(DB::EventsRev(hContact));
@@ -125,7 +125,7 @@ void MF_UpdateThread(LPVOID)
 
 void MF_InitCheck(void)
 {
-	BYTE bMsgFrequency = g_plugin.getByte("fhistdata", 0);
+	uint8_t bMsgFrequency = g_plugin.getByte("fhistdata", 0);
 	if (!bMsgFrequency) {
 		for (auto &hContact : Contacts())
 			MF_CalcFrequency(hContact, 100, 0);
@@ -133,7 +133,7 @@ void MF_InitCheck(void)
 	}
 }
 
-DWORD INTSORT_GetLastMsgTime(MCONTACT hContact)
+uint32_t INTSORT_GetLastMsgTime(MCONTACT hContact)
 {
 	DB::ECPTR cursor(DB::EventsRev(hContact));
 	while (MEVENT hDbEvent = cursor.FetchNext()) {
@@ -206,8 +206,8 @@ int __forceinline INTSORT_CompareContacts(const ClcContact* c1, const ClcContact
 		if (c1->pExtra && c2->pExtra)
 			return c2->pExtra->dwLastMsgTime - c1->pExtra->dwLastMsgTime;
 		else {
-			DWORD timestamp1 = INTSORT_GetLastMsgTime(c1->hContact);
-			DWORD timestamp2 = INTSORT_GetLastMsgTime(c2->hContact);
+			uint32_t timestamp1 = INTSORT_GetLastMsgTime(c1->hContact);
+			uint32_t timestamp2 = INTSORT_GetLastMsgTime(c2->hContact);
 			return timestamp2 - timestamp1;
 		}
 

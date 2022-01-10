@@ -44,7 +44,7 @@ int OnDbEventAdded(WPARAM hContact, LPARAM hDbEvent)
 					Contact_Hide(hcntct);
 				if (gbSpecialGroup)
 					Clist_SetGroup(hcntct, gbSpammersGroup.c_str());
-				BYTE msg = 1;
+				uint8_t msg = 1;
 				if (gbIgnoreURL) {
 					wchar_t* EventText = ReqGetText(&dbei); //else return NULL
 					msg = !IsUrlContains(EventText);
@@ -258,7 +258,7 @@ int OnDbEventFilterAdd(WPARAM hContact, LPARAM l)
 			ProtoChainSend(hContact, PSS_MESSAGE, 0, ptrA(mir_utf8encodeW(q.c_str())));
 
 			// increment question count
-			DWORD questCount = g_plugin.getDword(hContact, "QuestionCount");
+			uint32_t questCount = g_plugin.getDword(hContact, "QuestionCount");
 			g_plugin.setDword(hContact, "QuestionCount", questCount + 1);
 		}
 		else {

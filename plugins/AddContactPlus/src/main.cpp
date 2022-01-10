@@ -2,7 +2,7 @@
 AddContact+ plugin for Miranda NG
 
 Copyright (C) 2007-11 Bartosz 'Dezeath' Białek
-Copyright (C) 2012-21 Miranda NG team
+Copyright (C) 2012-22 Miranda NG team
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -71,7 +71,7 @@ static int OnAccListChanged(WPARAM, LPARAM)
 		if (!pa->IsEnabled())
 			continue;
 
-		DWORD dwCaps = (DWORD)CallProtoService(pa->szModuleName, PS_GETCAPS, PFLAGNUM_1, 0);
+		uint32_t dwCaps = (uint32_t)CallProtoService(pa->szModuleName, PS_GETCAPS, PFLAGNUM_1, 0);
 		if (dwCaps & PF1_BASICSEARCH || dwCaps & PF1_EXTSEARCH || dwCaps & PF1_SEARCHBYEMAIL || dwCaps & PF1_SEARCHBYNAME)
 			iAccCount++;
 	}

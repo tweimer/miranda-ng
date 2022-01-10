@@ -1,5 +1,5 @@
 /*
-Copyright © 2016-21 Miranda NG team
+Copyright © 2016-22 Miranda NG team
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -41,8 +41,8 @@ void CDiscordProto::OnCommandCallCreated(const JSONNode &pRoot)
 		dbei.szModule = m_szModuleName;
 		dbei.timestamp = pCall->startTime;
 		dbei.eventType = EVENT_INCOMING_CALL;
-		dbei.cbBlob = DWORD(mir_strlen(szMessage) + 1);
-		dbei.pBlob = (BYTE *)szMessage;
+		dbei.cbBlob = uint32_t(mir_strlen(szMessage) + 1);
+		dbei.pBlob = (uint8_t *)szMessage;
 		dbei.flags = DBEF_UTF;
 		db_event_add(pUser->hContact, &dbei);
 	}
@@ -75,8 +75,8 @@ void CDiscordProto::OnCommandCallDeleted(const JSONNode &pRoot)
 	dbei.szModule = m_szModuleName;
 	dbei.timestamp = currTime;
 	dbei.eventType = EVENT_CALL_FINISHED;
-	dbei.cbBlob = DWORD(szMessage.GetLength() + 1);
-	dbei.pBlob = (BYTE *)szMessage.c_str();
+	dbei.cbBlob = uint32_t(szMessage.GetLength() + 1);
+	dbei.pBlob = (uint8_t *)szMessage.c_str();
 	dbei.flags = DBEF_UTF;
 	db_event_add(pUser->hContact, &dbei);
 }

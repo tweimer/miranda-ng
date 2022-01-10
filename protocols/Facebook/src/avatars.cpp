@@ -1,7 +1,7 @@
 /*
 
 Facebook plugin for Miranda NG
-Copyright © 2019-21 Miranda NG team
+Copyright © 2019-22 Miranda NG team
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 void FacebookProto::GetAvatarFilename(MCONTACT hContact, wchar_t *pwszFileName)
 {
-	WCHAR wszPath[MAX_PATH];
+	wchar_t wszPath[MAX_PATH];
 	mir_snwprintf(wszPath, MAX_PATH, L"%s\\%S", VARSW(L"%miranda_avatarcache%"), m_szModuleName);
 	CreateDirectoryTreeW(wszPath);
 

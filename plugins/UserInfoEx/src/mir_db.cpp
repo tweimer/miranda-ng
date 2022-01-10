@@ -31,7 +31,7 @@ namespace Contact {
 /**
  * This function trys to guess, when an ICQ contact was added to database.
  **/
-DWORD	WhenAdded(DWORD dwUIN, LPCSTR)
+uint32_t	WhenAdded(uint32_t dwUIN, LPCSTR)
 {
 	DBEVENTINFO	dbei = {};
 	DB::ECPTR pCursor(DB::Events(0));
@@ -40,8 +40,8 @@ DWORD	WhenAdded(DWORD dwUIN, LPCSTR)
 		if (!DB::Event::GetInfo(edbe, &dbei) && dbei.eventType == EVENTTYPE_ADDED) {
 			if (!DB::Event::GetInfoWithData(edbe, &dbei)) {
 				// extract UIN and compare with given one
-				DWORD dwEvtUIN;
-				memcpy(&dwEvtUIN, dbei.pBlob, sizeof(DWORD));
+				uint32_t dwEvtUIN;
+				memcpy(&dwEvtUIN, dbei.pBlob, sizeof(uint32_t));
 				MIR_FREE(dbei.pBlob);
 				if (dwEvtUIN == dwUIN)
 					return dbei.timestamp;
@@ -134,10 +134,10 @@ namespace Setting {
 * @retval	1 - error
 **/
 
-BYTE Get(MCONTACT hContact, LPCSTR pszModule, LPCSTR pszSetting, DBVARIANT *dbv, const BYTE destType)
+uint8_t Get(MCONTACT hContact, LPCSTR pszModule, LPCSTR pszSetting, DBVARIANT *dbv, const uint8_t destType)
 {
 	// read value without translation to specific type
-	BYTE result = db_get_s(hContact, pszModule, pszSetting, dbv, 0) != 0;
+	uint8_t result = db_get_s(hContact, pszModule, pszSetting, dbv, 0) != 0;
 
 	// Is value read successfully and destination type set?
 	if (!result && destType)
@@ -200,9 +200,9 @@ LPWSTR GetWString(MCONTACT hContact, LPCSTR pszModule, LPCSTR pszSetting)
 * @retval	1 - error
 **/
 
-BYTE GetEx(MCONTACT hContact, LPCSTR pszModule, LPCSTR pszProto, LPCSTR pszSetting, DBVARIANT *dbv, const BYTE destType)
+uint8_t GetEx(MCONTACT hContact, LPCSTR pszModule, LPCSTR pszProto, LPCSTR pszSetting, DBVARIANT *dbv, const uint8_t destType)
 {
-	BYTE result = !pszModule || Get(hContact, pszModule, pszSetting, dbv, destType);
+	uint8_t result = !pszModule || Get(hContact, pszModule, pszSetting, dbv, destType);
 	// try to read setting from the contact's protocol module 
 	if (result && pszProto) {
 		result = Get(hContact, pszProto, pszSetting, dbv, destType) != 0;
@@ -242,12 +242,12 @@ BYTE GetEx(MCONTACT hContact, LPCSTR pszModule, LPCSTR pszProto, LPCSTR pszSetti
 * @param	pszSetting		- the setting to read
 * @param	destType		- desired string type (DBVT_ASCIIZ, DBVT_WCHAR, DBVT_UTF8)
 *
-* @return	This function returns the WORD which contains the source of information.
+* @return	This function returns the uint16_t which contains the source of information.
 **/
 
-WORD GetCtrl(MCONTACT hContact, LPCSTR pszModule, LPCSTR pszSubModule, LPCSTR pszProto, LPCSTR pszSetting, DBVARIANT *dbv, const BYTE destType)
+uint16_t GetCtrl(MCONTACT hContact, LPCSTR pszModule, LPCSTR pszSubModule, LPCSTR pszProto, LPCSTR pszSetting, DBVARIANT *dbv, const uint8_t destType)
 {
-	WORD wFlags = 0;
+	uint16_t wFlags = 0;
 
 	// read setting from given module
 	if (hContact && pszModule && *pszModule && !Get(hContact, pszModule, pszSetting, dbv, destType)) {
@@ -307,7 +307,7 @@ WORD GetCtrl(MCONTACT hContact, LPCSTR pszModule, LPCSTR pszSubModule, LPCSTR ps
 * @retval	FALSE			- setting does not exist
 **/
 
-BYTE Exists(MCONTACT hContact, LPCSTR pszModule, LPCSTR pszSetting)
+uint8_t Exists(MCONTACT hContact, LPCSTR pszModule, LPCSTR pszSetting)
 {
 	if (pszModule && pszSetting) {
 		CHAR szDummy[1];
@@ -349,7 +349,7 @@ namespace Variant {
 * @retval		1			- error
 **/
 
-BYTE ConvertString(DBVARIANT* dbv, const BYTE destType)
+uint8_t ConvertString(DBVARIANT* dbv, const uint8_t destType)
 {
 	if (dbv == nullptr)
 		return 1;
@@ -421,7 +421,7 @@ BYTE ConvertString(DBVARIANT* dbv, const BYTE destType)
 
 /**
 * This function completely converts a DBVARIANT to the destination string type.
-* It includes BYTE, WORD, DWORD and all string types
+* It includes uint8_t, uint16_t, uint32_t and all string types
 * @param		dbv			- pointer to DBVARIANT structure which is to manipulate
 * @param		destType	- one of (DBVT_ASCIIZ, DBVT_UTF8 or DBVT_WCHAR)
 *
@@ -429,12 +429,12 @@ BYTE ConvertString(DBVARIANT* dbv, const BYTE destType)
 * @retval	1 - error
 **/
 
-BYTE	dbv2String(DBVARIANT* dbv, const BYTE destType)
+uint8_t	dbv2String(DBVARIANT* dbv, const uint8_t destType)
 {
 	if (dbv == nullptr)
 		return 1;
 
-	WCHAR wbuf[32];
+	wchar_t wbuf[32];
 	CHAR buf[32];
 	switch (destType) {
 	// destination type is "utf8" or "ascii"
@@ -533,10 +533,10 @@ bool GetInfoWithData(MEVENT hEvent, DBEVENTINFO *dbei)
 {
 	if (!dbei->cbBlob) {
 		INT_PTR size = db_event_getBlobSize(hEvent);
-		dbei->cbBlob = (size != -1) ? (DWORD)size : 0;
+		dbei->cbBlob = (size != -1) ? (uint32_t)size : 0;
 	}
 	if (dbei->cbBlob) {
-		dbei->pBlob = (PBYTE) mir_alloc(dbei->cbBlob);
+		dbei->pBlob = (uint8_t*) mir_alloc(dbei->cbBlob);
 		if (dbei->pBlob == nullptr)
 			dbei->cbBlob = 0;
 	}
@@ -558,7 +558,7 @@ bool GetInfoWithData(MEVENT hEvent, DBEVENTINFO *dbei)
 * @retval	timestamp
 **/
 
-DWORD	TimeOf(MEVENT hEvent)
+uint32_t	TimeOf(MEVENT hEvent)
 {
 	DBEVENTINFO dbei;
 	if (!GetInfo(hEvent, &dbei))

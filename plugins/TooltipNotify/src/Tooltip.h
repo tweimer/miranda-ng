@@ -20,11 +20,11 @@ public:
 	void set_Position(INT x, INT y);
 	void get_Rect(RECT *Rect) const;
 	void set_TransparentInput(BOOL bOnOff);
-	void set_Translucency(BYTE bAlpha);
+	void set_Translucency(uint8_t bAlpha);
 	void set_Text(const wchar_t* szText);
 	void set_Font(const LOGFONT& Font) { m_lfFont = Font; }
-	void set_TextColor(DWORD TextColor) { m_dwTextColor = TextColor; }
-	void set_BgColor(DWORD BgColor) { m_dwBgColor = BgColor; }
+	void set_TextColor(uint32_t TextColor) { m_dwTextColor = TextColor; }
+	void set_BgColor(uint32_t BgColor) { m_dwBgColor = BgColor; }
 
 	static void Initialize();
 	static void Deinitialize();
@@ -42,13 +42,13 @@ private:
 	HFONT m_hFont;
 
 	// tooltip parameters
-	DWORD m_dwTextColor;
-	DWORD m_dwBgColor;
+	uint32_t m_dwTextColor;
+	uint32_t m_dwBgColor;
 	LOGFONT m_lfFont;
 	wchar_t *m_szText;
-	BYTE m_bAlpha;
+	uint8_t m_bAlpha;
 	BOOL m_bTranspInput;
-	BYTE m_bLDblClick;
+	uint8_t m_bLDblClick;
 	
 	CTooltipNotify *m_pTooltipNotify;	
 	static const wchar_t *s_szTooltipClass;

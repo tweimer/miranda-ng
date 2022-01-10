@@ -1,4 +1,4 @@
-// Copyright © 2010-21 sss
+// Copyright © 2010-22 sss
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -39,7 +39,7 @@ struct gpg_execution_params
 
 	std::vector<std::wstring> aargv;
 	CMStringA out;
-	DWORD code = 0;
+	uint32_t code = 0;
 	int bNoOutput = false;
 	pxResult result = pxSuccess;
 	boost::process::child *child = nullptr;

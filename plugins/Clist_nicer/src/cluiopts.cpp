@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org),
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org),
 Copyright (c) 2000-03 Miranda ICQ/IM project,
 all portions of this codebase are copyrighted to the people
 listed in contributors.txt.
@@ -24,9 +24,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "stdafx.h"
 
-DWORD GetCLUIWindowStyle(BYTE style)
+uint32_t GetCLUIWindowStyle(uint8_t style)
 {
-	DWORD dwBasic = WS_CLIPCHILDREN;
+	uint32_t dwBasic = WS_CLIPCHILDREN;
 
 	if (style == SETTING_WINDOWSTYLE_THINBORDER)
 		return dwBasic | WS_BORDER;
@@ -40,7 +40,7 @@ DWORD GetCLUIWindowStyle(BYTE style)
 
 void ApplyCLUIBorderStyle()
 {
-	BYTE windowStyle = db_get_b(0, "CLUI", "WindowStyle", SETTING_WINDOWSTYLE_TOOLWINDOW);
+	uint8_t windowStyle = db_get_b(0, "CLUI", "WindowStyle", SETTING_WINDOWSTYLE_TOOLWINDOW);
 	WINDOWPLACEMENT p;
 	bool minToTray = TRUE;
 

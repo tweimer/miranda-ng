@@ -317,9 +317,9 @@ void GetElev(wchar_t *tempchar, wchar_t *unit, wchar_t *str)
 // return value = status for the icon (ONLINE, OFFLINE, etc)
 
 static const wchar_t *statusStr[MAX_COND] = { L"Lightning", L"Fog", L"Snow", L"Rain", L"Partly Cloudy", L"Cloudy", L"Sunny", L"N/A", L"Rain Shower", L"Snow Shower"};
-static const WORD statusValue[MAX_COND] = { LIGHT, FOG, SNOW, RAIN, PCLOUDY, CLOUDY, SUNNY, NA, RSHOWER, SSHOWER };
+static const uint16_t statusValue[MAX_COND] = { LIGHT, FOG, SNOW, RAIN, PCLOUDY, CLOUDY, SUNNY, NA, RSHOWER, SSHOWER };
 
-WORD GetIcon(const wchar_t *cond, WIDATA *Data)
+uint16_t GetIcon(const wchar_t *cond, WIDATA *Data)
 {
 	// set the icon using ini
 	for (int i = 0; i < _countof(statusValue); i++)
@@ -363,7 +363,7 @@ WORD GetIcon(const wchar_t *cond, WIDATA *Data)
 			// using the format _T("# Weather <condition name> <counter> #"
 			mir_snwprintf(LangPackStr, L"# Weather %s %i #", statusStr[i], j);
 			wcsncpy_s(LangPackStr1, TranslateW(LangPackStr), _TRUNCATE);
-			CharLowerBuff(LangPackStr1, (DWORD)mir_wstrlen(LangPackStr1));
+			CharLowerBuff(LangPackStr1, (uint32_t)mir_wstrlen(LangPackStr1));
 			if (wcsstr(cond, LangPackStr1) != nullptr)
 				return statusValue[i];
 			// loop until the translation string exists (ie, the translated string is differ from original)
@@ -380,7 +380,7 @@ void CaseConv(wchar_t *str)
 {
 	bool nextUp = true;
 
-	CharLowerBuffW(str, (DWORD)mir_wstrlen(str));
+	CharLowerBuffW(str, (uint32_t)mir_wstrlen(str));
 	for (wchar_t *pstr = str; *pstr; pstr++) {
 		if (*pstr == ' ' || *pstr == '-')
 			nextUp = true;
@@ -404,14 +404,14 @@ void TrimString(char *str)
 	memmove(str, str + start, len - start + 1);
 }
 
-void TrimString(WCHAR *str)
+void TrimString(wchar_t *str)
 {
 	size_t len, start;
 
 	len = mir_wstrlen(str);
 	while (len && (unsigned char)str[len - 1] <= ' ') str[--len] = 0;
 	for (start = 0; (unsigned char)str[start] <= ' ' && str[start]; start++);
-	memmove(str, str + start, (len - start + 1) * sizeof(WCHAR));
+	memmove(str, str + start, (len - start + 1) * sizeof(wchar_t));
 }
 
 // convert \t to tab and \n to linefeed

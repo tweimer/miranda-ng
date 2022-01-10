@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org),
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org),
 Copyright (c) 2000-08 Miranda ICQ/IM project,
 all portions of this codebase are copyrighted to the people
 listed in contributors.txt.
@@ -106,7 +106,7 @@ INT_PTR FreeOwnerDataGroupMenu(WPARAM, LPARAM lParam)
 static INT_PTR HideGroupsHelper(WPARAM, LPARAM)
 {
 	int newVal = !(GetWindowLongPtr(g_clistApi.hwndContactTree, GWL_STYLE) & CLS_HIDEEMPTYGROUPS);
-	db_set_b(0, "CList", "HideEmptyGroups", (BYTE)newVal);
+	db_set_b(0, "CList", "HideEmptyGroups", (uint8_t)newVal);
 	SendMessage(g_clistApi.hwndContactTree, CLM_SETHIDEEMPTYGROUPS, newVal, 0);
 	return newVal;
 }
@@ -147,7 +147,7 @@ static int OnBuildGroupMenu(WPARAM, LPARAM)
 	bChecked = SendMessage(g_clistApi.hwndContactTree, CLM_GETHIDEOFFLINEROOT, 0, 0) != 0;
 	Menu_SetChecked(hHideOfflineUsersOutHereMenuItem, bChecked);
 
-	DWORD dwStyle = GetWindowLongPtr(g_clistApi.hwndContactTree, GWL_STYLE);
+	uint32_t dwStyle = GetWindowLongPtr(g_clistApi.hwndContactTree, GWL_STYLE);
 	Menu_SetChecked(hHideEmptyGroupsMenuItem, (dwStyle & CLS_HIDEEMPTYGROUPS) != 0);
 	Menu_SetChecked(hDisableGroupsMenuItem, (dwStyle & CLS_USEGROUPS) == 0);
 	return 0;

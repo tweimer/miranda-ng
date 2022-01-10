@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org),
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org),
 Copyright (c) 2000-12 Miranda IM project,
 all portions of this codebase are copyrighted to the people
 listed in contributors.txt.
@@ -24,6 +24,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "stdafx.h"
 #include "FontService.h"
+#include <m_skin_eng.h>
 
 // *_w2 is working copy of list
 // *_w3 is stores initial configuration
@@ -205,7 +206,7 @@ static BOOL ExportSettings(HWND hwndDlg, const wchar_t *filename, OBJLIST<FontIn
 			}
 			else if (F->flags & FIDF_SAVEPOINTSIZE) {
 				HDC hdc = GetDC(hwndDlg);
-				iFontSize = (BYTE)-MulDiv(F->value.size, 72, GetDeviceCaps(hdc, LOGPIXELSY));
+				iFontSize = (uint8_t)-MulDiv(F->value.size, 72, GetDeviceCaps(hdc, LOGPIXELSY));
 				ReleaseDC(hwndDlg, hdc);
 			}
 			else iFontSize = F->value.size;
@@ -224,7 +225,7 @@ static BOOL ExportSettings(HWND hwndDlg, const wchar_t *filename, OBJLIST<FontIn
 
 		ColourInternal *C = (ColourInternal*)it;
 		if (clist.indexOf(C) != -1) {
-			fprintf(out, "%s=d%d\n", C->setting, (DWORD)C->value);
+			fprintf(out, "%s=d%d\n", C->setting, (uint32_t)C->value);
 			continue;
 		}
 
@@ -408,7 +409,7 @@ static void sttSaveCollapseState(HWND hwndTree)
 
 		tvi.mask = TVIF_STATE | TVIF_HANDLE | TVIF_CHILDREN | TVIF_PARAM;
 		tvi.hItem = hti;
-		tvi.stateMask = (DWORD)-1;
+		tvi.stateMask = (uint32_t)-1;
 		TreeView_GetItem(hwndTree, &tvi);
 
 		if (tvi.cChildren > 0) {
@@ -486,8 +487,8 @@ static INT_PTR CALLBACK ChooseEffectDlgProc(HWND hwndDlg, UINT uMsg, WPARAM wPar
 
 		SendDlgItemMessage(hwndDlg, IDC_EFFECT_COLOUR_SPIN1, UDM_SETRANGE, 0, MAKELONG(255, 0));
 		SendDlgItemMessage(hwndDlg, IDC_EFFECT_COLOUR_SPIN2, UDM_SETRANGE, 0, MAKELONG(255, 0));
-		SendDlgItemMessage(hwndDlg, IDC_EFFECT_COLOUR_SPIN1, UDM_SETPOS, 0, MAKELONG((BYTE)~((BYTE)((pEffect->baseColour & 0xFF000000) >> 24)), 0));
-		SendDlgItemMessage(hwndDlg, IDC_EFFECT_COLOUR_SPIN2, UDM_SETPOS, 0, MAKELONG((BYTE)~((BYTE)((pEffect->secondaryColour & 0xFF000000) >> 24)), 0));
+		SendDlgItemMessage(hwndDlg, IDC_EFFECT_COLOUR_SPIN1, UDM_SETPOS, 0, MAKELONG((uint8_t)~((uint8_t)((pEffect->baseColour & 0xFF000000) >> 24)), 0));
+		SendDlgItemMessage(hwndDlg, IDC_EFFECT_COLOUR_SPIN2, UDM_SETPOS, 0, MAKELONG((uint8_t)~((uint8_t)((pEffect->secondaryColour & 0xFF000000) >> 24)), 0));
 		return TRUE;
 
 	case WM_COMMAND:
@@ -495,9 +496,9 @@ static INT_PTR CALLBACK ChooseEffectDlgProc(HWND hwndDlg, UINT uMsg, WPARAM wPar
 		case IDOK:
 			{
 				int i = SendDlgItemMessage(hwndDlg, IDC_EFFECT_COMBO, CB_GETCURSEL, 0, 0);
-				pEffect->effectIndex = (BYTE)SendDlgItemMessage(hwndDlg, IDC_EFFECT_COMBO, CB_GETITEMDATA, i, 0);
-				pEffect->baseColour = SendDlgItemMessage(hwndDlg, IDC_EFFECT_COLOUR1, CPM_GETCOLOUR, 0, 0) | ((~(BYTE)SendDlgItemMessage(hwndDlg, IDC_EFFECT_COLOUR_SPIN1, UDM_GETPOS, 0, 0)) << 24);
-				pEffect->secondaryColour = SendDlgItemMessage(hwndDlg, IDC_EFFECT_COLOUR2, CPM_GETCOLOUR, 0, 0) | ((~(BYTE)SendDlgItemMessage(hwndDlg, IDC_EFFECT_COLOUR_SPIN2, UDM_GETPOS, 0, 0)) << 24);
+				pEffect->effectIndex = (uint8_t)SendDlgItemMessage(hwndDlg, IDC_EFFECT_COMBO, CB_GETITEMDATA, i, 0);
+				pEffect->baseColour = SendDlgItemMessage(hwndDlg, IDC_EFFECT_COLOUR1, CPM_GETCOLOUR, 0, 0) | ((~(uint8_t)SendDlgItemMessage(hwndDlg, IDC_EFFECT_COLOUR_SPIN1, UDM_GETPOS, 0, 0)) << 24);
+				pEffect->secondaryColour = SendDlgItemMessage(hwndDlg, IDC_EFFECT_COLOUR2, CPM_GETCOLOUR, 0, 0) | ((~(uint8_t)SendDlgItemMessage(hwndDlg, IDC_EFFECT_COLOUR_SPIN2, UDM_GETPOS, 0, 0)) << 24);
 			}
 			EndDialog(hwndDlg, IDOK);
 			return TRUE;
@@ -546,7 +547,7 @@ static void sttSaveFontData(HWND hwndDlg, FontInternal &F)
 	}
 	else if (F.flags & FIDF_SAVEPOINTSIZE) {
 		HDC hdc = GetDC(hwndDlg);
-		db_set_b(0, F.dbSettingsGroup, str, (BYTE)-MulDiv(F.value.size, 72, GetDeviceCaps(hdc, LOGPIXELSY)));
+		db_set_b(0, F.dbSettingsGroup, str, (uint8_t)-MulDiv(F.value.size, 72, GetDeviceCaps(hdc, LOGPIXELSY)));
 		ReleaseDC(hwndDlg, hdc);
 	}
 	else db_set_b(0, F.dbSettingsGroup, str, F.value.size);
@@ -559,10 +560,10 @@ static void sttSaveFontData(HWND hwndDlg, FontInternal &F)
 	db_set_dw(0, F.dbSettingsGroup, str, F.value.colour);
 	if (F.flags & FIDF_NOAS) {
 		mir_snprintf(str, "%sAs", F.setting);
-		db_set_w(0, F.dbSettingsGroup, str, (WORD)0x00FF);
+		db_set_w(0, F.dbSettingsGroup, str, (uint16_t)0x00FF);
 	}
 	mir_snprintf(str, "%sFlags", F.setting);
-	db_set_w(0, F.dbSettingsGroup, str, (WORD)F.flags);
+	db_set_w(0, F.dbSettingsGroup, str, (uint16_t)F.flags);
 }
 
 static void RebuildTree(HWND hwndDlg)

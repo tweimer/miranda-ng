@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org),
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org),
 Copyright (c) 2000-12 Miranda IM project,
 all portions of this codebase are copyrighted to the people
 listed in contributors.txt.
@@ -139,9 +139,9 @@ int fnDocking_ProcessWindowMessage(WPARAM wParam, LPARAM lParam)
 
 	if (msg->message == WM_DESTROY) {
 		if (docked) {
-			db_set_b(0, "CList", "Docked", (BYTE)docked);
-			db_set_dw(0, "CList", "DockX", (DWORD)dockPos.x);
-			db_set_dw(0, "CList", "DockY", (DWORD)dockPos.y);
+			db_set_b(0, "CList", "Docked", (uint8_t)docked);
+			db_set_dw(0, "CList", "DockX", (uint32_t)dockPos.x);
+			db_set_dw(0, "CList", "DockY", (uint32_t)dockPos.y);
 		}
 		else {
 			db_unset(0, "CList", "Docked");
@@ -258,7 +258,7 @@ int fnDocking_ProcessWindowMessage(WPARAM wParam, LPARAM lParam)
 
 			// GetMessagePos() is no good, position is always unsigned
 			//			GetCursorPos(&ptCursor);
-			DWORD pos = GetMessagePos();
+			uint32_t pos = GetMessagePos();
 			ptCursor.x = GET_X_LPARAM(pos);
 			ptCursor.y = GET_Y_LPARAM(pos);
 			Docking_GetMonitorRectFromPoint(&ptCursor, &rcMonitor);

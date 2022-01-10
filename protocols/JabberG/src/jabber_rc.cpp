@@ -5,7 +5,7 @@ Jabber Protocol Plugin for Miranda NG
 Copyright (c) 2002-04  Santithorn Bunchua
 Copyright (c) 2005-12  George Hazan
 Copyright (c) 2007     Maxim Mluhov
-Copyright (C) 2012-21 Miranda NG team
+Copyright (C) 2012-22 Miranda NG team
 
 XEP-0146 support for Miranda IM
 
@@ -373,7 +373,7 @@ int CJabberProto::AdhocSetStatusHandler(const TiXmlElement*, CJabberIqInfo *pInf
 		SetAwayMsg(status, Utf2T(szStatusMessage));
 
 		// return NoDlg setting
-		db_set_b(0, "SRAway", StatusModeToDbSetting(status, "NoDlg"), (BYTE)nNoDlg);
+		db_set_b(0, "SRAway", StatusModeToDbSetting(status, "NoDlg"), (uint8_t)nNoDlg);
 
 		return JABBER_ADHOC_HANDLER_STATUS_COMPLETED;
 	}

@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2015-21 Miranda NG team (https://miranda-ng.org)
+Copyright (c) 2015-22 Miranda NG team (https://miranda-ng.org)
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -17,7 +17,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include "stdafx.h"
 
-struct { int type; char *name; DWORD flags; } g_SkypeDBTypes[] =
+struct { int type; char *name; uint32_t flags; } g_SkypeDBTypes[] =
 {
 	{ SKYPE_DB_EVENT_TYPE_INCOMING_CALL, LPGEN("Incoming call"), DETF_NONOTIFY },
 	{ SKYPE_DB_EVENT_TYPE_EDITED_MESSAGE, LPGEN("Edited message"), 0 },
@@ -38,7 +38,7 @@ MEVENT CSkypeProto::GetMessageFromDb(const char *messageId)
 	return db_event_getById(m_szModuleName, messageId);
 }
 
-MEVENT CSkypeProto::AddDbEvent(WORD type, MCONTACT hContact, DWORD timestamp, DWORD flags, const CMStringW &content, const CMStringA &msgId)
+MEVENT CSkypeProto::AddDbEvent(uint16_t type, MCONTACT hContact, uint32_t timestamp, uint32_t flags, const CMStringW &content, const CMStringA &msgId)
 {
 	if (MEVENT hDbEvent = GetMessageFromDb(msgId))
 		return hDbEvent;
@@ -48,8 +48,8 @@ MEVENT CSkypeProto::AddDbEvent(WORD type, MCONTACT hContact, DWORD timestamp, DW
 	dbei.szModule = m_szModuleName;
 	dbei.timestamp = timestamp;
 	dbei.eventType = type;
-	dbei.cbBlob = (DWORD)mir_strlen(szMsg) + 1;
-	dbei.pBlob = (BYTE *)szMsg;
+	dbei.cbBlob = (uint32_t)mir_strlen(szMsg) + 1;
+	dbei.pBlob = (uint8_t *)szMsg;
 	dbei.flags = flags;
 	dbei.szId = msgId;
 	return db_event_add(hContact, &dbei);
@@ -94,7 +94,7 @@ void CSkypeProto::EditEvent(MCONTACT hContact, MEVENT hEvent, const CMStringW &s
 	
 	std::string newMsg = jMsg.write().c_str();
 	dbei.cbBlob = int(newMsg.size() + 1);
-	dbei.pBlob = (PBYTE)newMsg.c_str();
+	dbei.pBlob = (uint8_t*)newMsg.c_str();
 	db_event_edit(hContact, hEvent, &dbei);
 }
 

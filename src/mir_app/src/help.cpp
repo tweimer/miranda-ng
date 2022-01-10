@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org),
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org),
 Copyright (c) 2000-12 Miranda IM project,
 all portions of this codebase are copyrighted to the people
 listed in contributors.txt.
@@ -62,7 +62,7 @@ public:
 		ctrlHeaderBar.SetText(CMStringW(FORMAT, L"Miranda NG\nv%S", productVersion));
 
 		HRSRC hResInfo = FindResource(g_plugin.getInst(), MAKEINTRESOURCE(IDR_CREDITS), L"TEXT");
-		DWORD ResSize = SizeofResource(g_plugin.getInst(), hResInfo);
+		uint32_t ResSize = SizeofResource(g_plugin.getInst(), hResInfo);
 		HGLOBAL hRes = LoadResource(g_plugin.getInst(), hResInfo);
 		char *pszMsg = (char*)LockResource(hRes);
 		if (pszMsg) {

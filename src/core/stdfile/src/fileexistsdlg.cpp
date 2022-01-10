@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org),
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org),
 Copyright (c) 2000-12 Miranda IM project,
 all portions of this codebase are copyrighted to the people
 listed in contributors.txt.
@@ -52,7 +52,7 @@ static void DoAnnoyingShellCommand(HWND hwnd, const wchar_t *szFilename, int cmd
 	IShellFolder *pDesktopFolder;
 	if (SHGetDesktopFolder(&pDesktopFolder) == NOERROR) {
 		ITEMIDLIST *pCurrentIdl;
-		WCHAR *wszFilename = (LPWSTR)szFilename;
+		wchar_t *wszFilename = (LPWSTR)szFilename;
 
 		if (pDesktopFolder->ParseDisplayName(nullptr, nullptr, wszFilename, nullptr, &pCurrentIdl, nullptr) == NOERROR) {
 			if (pCurrentIdl->mkid.cb) {
@@ -60,7 +60,7 @@ static void DoAnnoyingShellCommand(HWND hwnd, const wchar_t *szFilename, int cmd
 				IShellFolder *pFileFolder;
 
 				for (pidl = pCurrentIdl;;) {
-					pidlNext = (ITEMIDLIST *)((PBYTE)pidl + pidl->mkid.cb);
+					pidlNext = (ITEMIDLIST *)((uint8_t*)pidl + pidl->mkid.cb);
 					if (pidlNext->mkid.cb == 0) {
 						pidlFilename = (ITEMIDLIST *)CoTaskMemAlloc(pidl->mkid.cb + sizeof(pidl->mkid.cb));
 						memcpy(pidlFilename, pidl, pidl->mkid.cb + sizeof(pidl->mkid.cb));

@@ -179,7 +179,7 @@ void PopupWnd2::create()
 	update();
 }
 
-void PopupWnd2::updateLayered(BYTE opacity)
+void PopupWnd2::updateLayered(uint8_t opacity)
 {
 	if (!m_hwnd) return;
 
@@ -306,8 +306,8 @@ void PopupWnd2::show()
 	if ((m_options->UseEffect || (m_options->UseAnimations && !m_customPopup)) && m_options->FadeIn) {
 		IPopupPlusEffect *effect = nullptr;
 		m_bSlide = m_bFade = false;
-		DWORD dwTime, dwTime0 = GetTickCount();
-		DWORD dwTime1 = dwTime0 + m_options->FadeIn;
+		uint32_t dwTime, dwTime0 = GetTickCount();
+		uint32_t dwTime1 = dwTime0 + m_options->FadeIn;
 		if (m_options->UseEffect) {
 			m_bFade = true;
 			m_btAlpha0 = 0;
@@ -348,7 +348,7 @@ void PopupWnd2::show()
 					for (int row = 0; row < m_bmpAnimate->getHeight(); ++row) {
 						unsigned char *pixel = (unsigned char *)m_bmpAnimate->getRow(row);
 						for (int col = 0; col < m_bmpAnimate->getWidth(); ++col) {
-							WORD alphaLevel = effect->getPixelAlpha(col, row);
+							uint16_t alphaLevel = effect->getPixelAlpha(col, row);
 							pixel[0] = (pixel[0] * alphaLevel) >> 8;
 							pixel[1] = (pixel[1] * alphaLevel) >> 8;
 							pixel[2] = (pixel[2] * alphaLevel) >> 8;
@@ -393,8 +393,8 @@ void PopupWnd2::hide()
 		m_bDestroy = true;
 		IPopupPlusEffect *effect = nullptr;
 		m_bFade = m_bSlide = false;
-		DWORD dwTime, dwTime0 = GetTickCount();
-		DWORD dwTime1 = dwTime0 + m_options->FadeOut;
+		uint32_t dwTime, dwTime0 = GetTickCount();
+		uint32_t dwTime1 = dwTime0 + m_options->FadeOut;
 		if (m_options->UseEffect) {
 			m_bFade = true;
 			m_btAlpha0 = m_options->UseTransparency ? m_options->Alpha : 255;
@@ -429,7 +429,7 @@ void PopupWnd2::hide()
 					for (int row = 0; row < m_bmpAnimate->getHeight(); ++row) {
 						unsigned char *pixel = (unsigned char *)m_bmpAnimate->getRow(row);
 						for (int col = 0; col < m_bmpAnimate->getWidth(); ++col) {
-							WORD alphaLevel = effect->getPixelAlpha(col, row);
+							uint16_t alphaLevel = effect->getPixelAlpha(col, row);
 							pixel[0] = (pixel[0] * alphaLevel) >> 8;
 							pixel[1] = (pixel[1] * alphaLevel) >> 8;
 							pixel[2] = (pixel[2] * alphaLevel) >> 8;
@@ -799,7 +799,7 @@ void AddMessageToDB(MCONTACT hContact, char *msg)
 	dbei.szModule = Proto_GetBaseAccountName(hContact);
 	dbei.timestamp = time(0);
 	dbei.cbBlob = (int)mir_strlen(msg) + 1;
-	dbei.pBlob = (PBYTE)msg;
+	dbei.pBlob = (uint8_t*)msg;
 	db_event_add(hContact, &dbei);
 }
 

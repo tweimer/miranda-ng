@@ -85,8 +85,8 @@ static void ExportModule(MCONTACT hContact, LPCSTR pszModule, FILE *file)
 
 				case DBVT_BLOB:
 					fprintf(file, "%s=n", it);
-					for (WORD j = 0; j < dbv.cpbVal; j++)
-						fprintf(file, "%02X ", (BYTE)dbv.pbVal[j]);
+					for (uint16_t j = 0; j < dbv.cpbVal; j++)
+						fprintf(file, "%02X ", (uint8_t)dbv.pbVal[j]);
 					fputc('\n', file);
 					break;
 				}
@@ -104,7 +104,7 @@ static void ExportModule(MCONTACT hContact, LPCSTR pszModule, FILE *file)
  *			file		- ini file to write the contact to
  **/
 
-static BYTE ExportContact(MCONTACT hContact, DB::CEnumList *pModules, FILE *file)
+static uint8_t ExportContact(MCONTACT hContact, DB::CEnumList *pModules, FILE *file)
 {
 	CExImContactBase vcc;
 
@@ -175,7 +175,7 @@ int SvcExImINI_Export(lpExImParam ExImContact, const wchar_t *pszFileName)
  * importing stuff
  ***********************************************************************************************************/
 
-LPSTR strnrchr(LPSTR string, int ch, DWORD len)
+LPSTR strnrchr(LPSTR string, int ch, uint32_t len)
 {
 	LPSTR start = (LPSTR)string;
 	string += len; /* find end of string */
@@ -195,9 +195,9 @@ LPSTR strnrchr(LPSTR string, int ch, DWORD len)
  * return:	pointer to the buffer on success or NULL on error
  **/
 
-static DWORD ImportreadLine(FILE *file, LPSTR &str)
+static uint32_t ImportreadLine(FILE *file, LPSTR &str)
 {
-	DWORD l = 0;
+	uint32_t l = 0;
 	bool bComment = false;
 
 	str[0] = 0;
@@ -255,7 +255,7 @@ static DWORD ImportreadLine(FILE *file, LPSTR &str)
  * return:	handle to the contact that matches the information or NULL if no match
  **/
 
-static MCONTACT ImportFindContact(MCONTACT, LPSTR &strBuf, BYTE bCanCreate)
+static MCONTACT ImportFindContact(MCONTACT, LPSTR &strBuf, uint8_t bCanCreate)
 {
 	CExImContactBase vcc;
 
@@ -313,7 +313,7 @@ int ImportSetting(MCONTACT hContact, LPCSTR pszModule, LPSTR &strLine)
 		if (size_t brk = strspn(value, "0123456789-"))
 			*(value + brk) = 0;
 		dbv.type = DBVT_BYTE;
-		dbv.bVal = (BYTE)atoi(value);
+		dbv.bVal = (uint8_t)atoi(value);
 		break;
 
 	case 'w':
@@ -321,7 +321,7 @@ int ImportSetting(MCONTACT hContact, LPCSTR pszModule, LPSTR &strLine)
 		if (size_t brk = strspn(value, "0123456789-"))
 			*(value + brk) = 0;
 		dbv.type = DBVT_WORD;
-		dbv.wVal = (WORD)atoi(value);
+		dbv.wVal = (uint16_t)atoi(value);
 		break;
 
 	case 'd':
@@ -329,7 +329,7 @@ int ImportSetting(MCONTACT hContact, LPCSTR pszModule, LPSTR &strLine)
 		if (size_t brk = strspn(value, "0123456789-"))
 			*(value + brk) = 0;
 		dbv.type = DBVT_DWORD;
-		dbv.dVal = (DWORD)_atoi64(value);
+		dbv.dVal = (uint32_t)_atoi64(value);
 		break;
 
 	case 's':
@@ -365,14 +365,14 @@ int ImportSetting(MCONTACT hContact, LPCSTR pszModule, LPSTR &strLine)
 
 	case 'n':
 	case 'N':
-		PBYTE dest;
+		uint8_t *dest;
 		dbv.type = DBVT_BLOB;
-		dbv.cpbVal = (WORD)mir_strlen(value) / 3;
-		dbv.pbVal = (PBYTE)value;
+		dbv.cpbVal = (uint16_t)mir_strlen(value) / 3;
+		dbv.pbVal = (uint8_t*)value;
 		for (dest = dbv.pbVal, value = strtok(value, " ");
 			value && *value;
 			value = strtok(nullptr, " "))
-			*(dest++) = (BYTE)strtol(value, nullptr, 16);
+			*(dest++) = (uint8_t)strtol(value, nullptr, 16);
 		*dest = 0;
 		break;
 
@@ -403,7 +403,7 @@ int SvcExImINI_Import(MCONTACT hContact, const wchar_t *pszFileName)
 	}
 
 	MCONTACT hNewContact = INVALID_CONTACT_ID;
-	DWORD	end, numLines = 0;
+	uint32_t	end, numLines = 0;
 	CHAR szModule[MAXSETTING] = { 0 };
 	int numContactsInFile = 0; // number of contacts in the inifile
 	int numContactsAdded = 0;  // number of contacts, that were added to the database

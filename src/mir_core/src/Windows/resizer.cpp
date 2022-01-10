@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org),
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org),
 Copyright (c) 2000-12 Miranda IM project,
 all portions of this codebase are copyrighted to the people
 listed in contributors.txt.
@@ -28,21 +28,21 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 struct START_OF_DLGITEMTEMPLATEEX
 {
-	DWORD  helpID;
-	DWORD  exStyle;
-	DWORD  style;
+	uint32_t  helpID;
+	uint32_t  exStyle;
+	uint32_t  style;
 	short  x, y, cx, cy;
-	DWORD  id;
+	uint32_t  id;
 };
 
 struct START_OF_DLGTEMPLATEEX
 {
-	WORD   dlgVer;
-	WORD   signature;
-	DWORD  helpID;
-	DWORD  exStyle;
-	DWORD  style;
-	WORD   cDlgItems;
+	uint16_t   dlgVer;
+	uint16_t   signature;
+	uint32_t  helpID;
+	uint32_t  exStyle;
+	uint32_t  style;
+	uint16_t   cDlgItems;
 	short  x, y, cx, cy;
 };
 

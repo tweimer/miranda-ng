@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org)
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org)
 all portions of this codebase are copyrighted to the people
 listed in contributors.txt.
 
@@ -41,7 +41,7 @@ struct DATABASELINK;
 
 struct DBCHeckCallback
 {
-	DWORD  spaceProcessed, spaceUsed;
+	uint32_t spaceProcessed, spaceUsed;
 
 	void (*pfnAddLogMessage)(int type, const wchar_t *ptszFormat, ...);
 };

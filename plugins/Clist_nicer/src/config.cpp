@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org),
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org),
 Copyright (c) 2000-03 Miranda ICQ/IM project,
 all portions of this codebase are copyrighted to the people
 listed in contributors.txt.
@@ -143,7 +143,7 @@ void API::Ex_CopyEditToClipboard(HWND hWnd)
 
 INT_PTR CALLBACK API::Ex_DlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM)
 {
-	WORD wNotifyCode, wID;
+	uint16_t wNotifyCode, wID;
 
 	switch (uMsg) {
 	case WM_INITDIALOG: {

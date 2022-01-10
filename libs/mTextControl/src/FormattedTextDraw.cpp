@@ -31,19 +31,19 @@ const IID IID_ITextDocument = {
 /////////////////////////////////////////////////////////////////////////////
 // CallBack functions
 
-DWORD CALLBACK EditStreamInCallback(DWORD_PTR dwCookie, LPBYTE pbBuff, LONG cb, LONG *pcb)
+uint32_t CALLBACK EditStreamInCallback(DWORD_PTR dwCookie, LPBYTE pbBuff, LONG cb, LONG *pcb)
 {
 	COOKIE *pCookie = (COOKIE*)dwCookie;
 	if (pCookie->isUnicode) {
-		if ((pCookie->cbSize - pCookie->cbCount)*sizeof(WCHAR) < (size_t)cb)
-			*pcb = LONG(pCookie->cbSize - pCookie->cbCount)*sizeof(WCHAR);
+		if ((pCookie->cbSize - pCookie->cbCount)*sizeof(wchar_t) < (size_t)cb)
+			*pcb = LONG(pCookie->cbSize - pCookie->cbCount)*sizeof(wchar_t);
 		else
 			*pcb = cb & ~1UL;
 		memcpy(pbBuff, pCookie->unicode + pCookie->cbCount, *pcb);
-		pCookie->cbCount += *pcb / sizeof(WCHAR);
+		pCookie->cbCount += *pcb / sizeof(wchar_t);
 	}
 	else {
-		if (pCookie->cbSize - pCookie->cbCount < (DWORD)cb)
+		if (pCookie->cbSize - pCookie->cbCount < (uint32_t)cb)
 			*pcb = LONG(pCookie->cbSize - pCookie->cbCount);
 		else
 			*pcb = cb;
@@ -77,7 +77,7 @@ HRESULT CFormattedTextDraw::putRTFTextA(char *newVal)
 	return S_OK;
 }
 
-HRESULT CFormattedTextDraw::putRTFTextW(WCHAR *newVal)
+HRESULT CFormattedTextDraw::putRTFTextW(wchar_t *newVal)
 {
 	if (!m_spTextServices)
 		return S_FALSE;
@@ -126,7 +126,7 @@ HRESULT CFormattedTextDraw::putTextA(char *newVal)
 	return S_OK;
 }
 
-HRESULT CFormattedTextDraw::putTextW(WCHAR *newVal)
+HRESULT CFormattedTextDraw::putTextW(wchar_t *newVal)
 {
 	if (!m_spTextServices)
 		return S_FALSE;

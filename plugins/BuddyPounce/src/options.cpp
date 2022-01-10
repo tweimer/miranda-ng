@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org)
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org)
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -104,7 +104,7 @@ void COptionsDlg::onSelChange_Settings(CCtrlListBox*)
 		edtNumber.SetInt(g_plugin.getWord(hContact, "ConfirmTimeout"));
 		break;
 	}
-	g_plugin.setByte(hContact, "LastSetting", (BYTE)item);
+	g_plugin.setByte(hContact, "LastSetting", (uint8_t)item);
 	NotifyChange();
 }
 
@@ -112,14 +112,14 @@ void COptionsDlg::saveLastSetting()
 {
 	switch (g_plugin.getByte(hContact, "LastSetting", 2)) {
 	case 3: // Reuse Pounce
-		g_plugin.setByte(hContact, "Reuse", (BYTE)edtNumber.GetInt());
+		g_plugin.setByte(hContact, "Reuse", (uint8_t)edtNumber.GetInt());
 		break;
 	case 4: // Give Up delay
-		g_plugin.setByte(hContact, "GiveUpDays", (BYTE)edtNumber.GetInt());
-		g_plugin.setDword(hContact, "GiveUpDate", (DWORD)edtNumber.GetInt() * SECONDSINADAY);
+		g_plugin.setByte(hContact, "GiveUpDays", (uint8_t)edtNumber.GetInt());
+		g_plugin.setDword(hContact, "GiveUpDate", (uint32_t)edtNumber.GetInt() * SECONDSINADAY);
 		break;
 	case 5:	// confirm window
-		g_plugin.setWord(hContact, "ConfirmTimeout", (WORD)edtNumber.GetInt());
+		g_plugin.setWord(hContact, "ConfirmTimeout", (uint16_t)edtNumber.GetInt());
 		break;
 	}
 }

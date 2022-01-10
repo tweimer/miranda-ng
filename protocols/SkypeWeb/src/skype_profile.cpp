@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2015-21 Miranda NG team (https://miranda-ng.org)
+Copyright (c) 2015-22 Miranda NG team (https://miranda-ng.org)
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -253,7 +253,7 @@ void CSkypeProto::UpdateProfileGender(const JSONNode &root, MCONTACT hContact)
 {
 	CMStringW gender = root["gender"].as_mstring();
 	if (!gender.IsEmpty() && gender != "null")
-		setByte(hContact, "Gender", (BYTE)(_wtoi(gender) == 1 ? 'M' : 'F'));
+		setByte(hContact, "Gender", (uint8_t)(_wtoi(gender) == 1 ? 'M' : 'F'));
 	else
 		delSetting(hContact, "Gender");
 }

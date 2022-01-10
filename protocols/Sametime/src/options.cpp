@@ -100,14 +100,14 @@ static INT_PTR CALLBACK DlgProcOptNet(HWND hwndDlg, UINT msg, WPARAM wParam, LPA
 		SetWindowLongPtr(hwndDlg, GWLP_USERDATA, lParam);
 		proto = (CSametimeProto*)lParam;
 
-		WORD client_ver = proto->GetClientVersion();
+		uint16_t client_ver = proto->GetClientVersion();
 		if (client_ver) {
 			wchar_t verbuf[100];
 			mir_snwprintf(verbuf, TranslateT("Client protocol version: %03d.%03d"), (client_ver & 0xFF00) >> 8, client_ver & 0xFF);
 			SetDlgItemText(hwndDlg, IDC_ST_CLIENTVER, verbuf);
 		}
 
-		WORD server_ver = proto->GetServerVersion();
+		uint16_t server_ver = proto->GetServerVersion();
 		if (server_ver) {
 			wchar_t verbuf[100];
 			mir_snwprintf(verbuf, TranslateT("Server protocol version: %03d.%03d"), (server_ver & 0xFF00) >> 8, server_ver & 0xFF);
@@ -368,7 +368,7 @@ void CSametimeProto::LoadOptions()
 
 	options.client_id = db_get_dw(0, m_szModuleName, "ClientID", DEFAULT_ID);
 	options.client_versionMajor = db_get_dw(0, m_szModuleName, "ClientVersionMajor", DEFAULT_CV_MAJOR);
-	DWORD defaultCVMinor;
+	uint32_t defaultCVMinor;
 	if (db_get_b(0, m_szModuleName, "UseOldClientVer", 0) == 1){
 		// if sb have checked old deprecated option 'Use old client version' respect it
 		defaultCVMinor = 0x001d;

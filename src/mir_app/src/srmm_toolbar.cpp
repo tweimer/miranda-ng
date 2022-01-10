@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team,
+Copyright (C) 2012-22 Miranda NG team,
 all portions of this codebase are copyrighted to the people
 listed in contributors.txt.
 
@@ -130,7 +130,7 @@ MIR_APP_DLL(HANDLE) Srmm_AddButton(const BBButton *bbdi, HPLUGIN _hLang)
 	if (!db_get_s(0, BB_MODULE_NAME, SettingName, &dbv)) {
 		// modulename_buttonID, position_inIM_inCHAT_isLSide_isRSide_CanBeHidden
 		char *token = strtok(dbv.pszVal, "_");
-		cbd->m_dwPosition = (DWORD)atoi(token);
+		cbd->m_dwPosition = (uint32_t)atoi(token);
 		token = strtok(nullptr, "_");
 		cbd->m_bIMButton = atoi(token) != 0;
 		token = strtok(nullptr, "_");
@@ -160,7 +160,7 @@ MIR_APP_DLL(int) Srmm_GetButtonState(HWND hwndDlg, BBButton *bbdi)
 	if (hwndDlg == nullptr || bbdi == nullptr)
 		return 1;
 
-	DWORD tempCID = 0;
+	uint32_t tempCID = 0;
 	bbdi->bbbFlags = 0;
 	for (auto &cbd : arButtonsList)
 		if (!mir_strcmp(cbd->m_pszModuleName, bbdi->pszModuleName) && (cbd->m_dwButtonID == bbdi->dwButtonID)) {
@@ -181,7 +181,7 @@ MIR_APP_DLL(int) Srmm_SetButtonState(MCONTACT hContact, BBButton *bbdi)
 	if (hContact == 0 || bbdi == nullptr)
 		return 1;
 
-	DWORD tempCID = 0;
+	uint32_t tempCID = 0;
 	for (auto &cbd : arButtonsList)
 		if (!mir_strcmp(cbd->m_pszModuleName, bbdi->pszModuleName) && (cbd->m_dwButtonID == bbdi->dwButtonID)) {
 			tempCID = cbd->m_dwButtonCID;
@@ -467,7 +467,7 @@ class CSrmmToolbarOptions : public CDlgBase
 	{
 		bool RSide = false;
 		int count = 10;
-		DWORD loc_sepcout = 0;
+		uint32_t loc_sepcout = 0;
 		wchar_t strbuf[128];
 
 		TVITEMEX tvi;
@@ -521,7 +521,7 @@ class CSrmmToolbarOptions : public CDlgBase
 						}
 					}
 
-					cbd->m_dwPosition = (DWORD)count;
+					cbd->m_dwPosition = (uint32_t)count;
 					CB_WriteButtonSettings(0, cbd);
 
 					if (!(cbd->m_opFlags & BBSF_NTBDESTRUCT))
@@ -640,7 +640,7 @@ public:
 		SaveTree();               // save the whole tree then
 		CB_ReInitCustomButtons();
 
-		WORD newGap = m_gap.GetPosition();
+		uint16_t newGap = m_gap.GetPosition();
 		if (newGap != db_get_b(0, BB_MODULE_NAME, "ButtonsBarGap", 1)) {
 			WindowList_BroadcastAsync(g_hWindowList, WM_SIZE, 0, 0);
 			db_set_b(0, BB_MODULE_NAME, "ButtonsBarGap", newGap);

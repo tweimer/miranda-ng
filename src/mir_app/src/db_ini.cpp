@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org),
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org),
 Copyright (c) 2000-12 Miranda IM project,
 all portions of this codebase are copyrighted to the people
 listed in contributors.txt.
@@ -28,13 +28,25 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 static bool bModuleInitialized = false;
 static HANDLE hIniChangeNotification;
 
+static void MyMoveFile(const wchar_t *pwszFrom, const wchar_t *pwszTo)
+{
+	if (PU::PrepareEscalation())
+		PU::SafeMoveFile(pwszFrom, pwszTo);
+}
+
 static void MyDeleteFile(const wchar_t *pwszFileName)
 {
 	if (PU::PrepareEscalation())
 		PU::SafeDeleteFile(pwszFileName);
 }
 
-//////////////////////////////////////////////////////
+static void ToRecycleBin(const wchar_t *pwszFileName)
+{
+	if (PU::PrepareEscalation())
+		PU::SafeRecycleBin(pwszFileName);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
 
 class CInstallIniDlg : public CDlgBase
 {
@@ -56,16 +68,16 @@ protected:
 
 		const wchar_t *pszSecurityInfo;
 		if (!mir_wstrcmpi(szSecurity, L"all"))
-			pszSecurityInfo = LPGENW("Security systems to prevent malicious changes are in place and you will be warned before every change that is made.");
+			pszSecurityInfo = TranslateT("Security systems to prevent malicious changes are in place and you will be warned before every change that is made.");
 		else if (!mir_wstrcmpi(szSecurity, L"onlyunsafe"))
-			pszSecurityInfo = LPGENW("Security systems to prevent malicious changes are in place and you will be warned before changes that are known to be unsafe.");
+			pszSecurityInfo = TranslateT("Security systems to prevent malicious changes are in place and you will be warned before changes that are known to be unsafe.");
 		else if (!mir_wstrcmpi(szSecurity, L"none"))
-			pszSecurityInfo = LPGENW("Security systems to prevent malicious changes have been disabled. You will receive no further warnings.");
+			pszSecurityInfo = TranslateT("Security systems to prevent malicious changes have been disabled. You will receive no further warnings.");
 		else
 			pszSecurityInfo = nullptr;
 
 		if (pszSecurityInfo)
-			m_securityInfo.SetText(TranslateW(pszSecurityInfo));
+			m_securityInfo.SetText(pszSecurityInfo);
 		return true;
 	}
 
@@ -93,7 +105,7 @@ public:
 	}
 };
 
-//////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////
 
 static bool IsInSpaceSeparatedList(const char *szWord, const char *szList)
 {
@@ -151,12 +163,12 @@ protected:
 
 		const wchar_t *pszSecurityInfo;
 		if (IsInSpaceSeparatedList(m_warnInfo->szSection, m_warnInfo->szSafeSections))
-			pszSecurityInfo = LPGENW("This change is known to be safe.");
+			pszSecurityInfo = TranslateT("This change is known to be safe.");
 		else if (IsInSpaceSeparatedList(m_warnInfo->szSection, m_warnInfo->szUnsafeSections))
-			pszSecurityInfo = LPGENW("This change is known to be potentially hazardous.");
+			pszSecurityInfo = TranslateT("This change is known to be potentially hazardous.");
 		else
-			pszSecurityInfo = LPGENW("This change is not known to be safe.");
-		m_securityInfo.SetText(TranslateW(pszSecurityInfo));
+			pszSecurityInfo = TranslateT("This change is not known to be safe.");
+		m_securityInfo.SetText(pszSecurityInfo);
 		return true;
 	}
 
@@ -192,15 +204,25 @@ class CIniImportDoneDlg : public CDlgBase
 {
 	wchar_t *m_path;
 
-	CCtrlButton m_delete;
-	CCtrlButton m_leave;
-	CCtrlButton m_recycle;
-	CCtrlButton m_move;
+	CCtrlEdit m_iniPath, m_newPath;
+	CCtrlButton btnMove, btnDelete, btnRecycle;
 
-	CCtrlBase m_iniPath;
-	CCtrlEdit m_newPath;
+public:
+	CIniImportDoneDlg(wchar_t *path) :
+		CDlgBase(g_plugin, IDD_INIIMPORTDONE),
+		m_iniPath(this, IDC_ININAME),
+		m_newPath(this, IDC_NEWNAME),
+		btnMove(this, IDC_MOVE),
+		btnDelete(this, IDC_DELETE), 
+		btnRecycle(this, IDC_RECYCLE)
+	{
+		m_path = path;
 
-protected:
+		btnMove.OnClick = Callback(this, &CIniImportDoneDlg::onClick_Move);
+		btnDelete.OnClick = Callback(this, &CIniImportDoneDlg::onClick_Delete);
+		btnRecycle.OnClick = Callback(this, &CIniImportDoneDlg::onClick_Recycle);
+	}
+
 	bool OnInitDialog() override
 	{
 		m_iniPath.SetText(m_path);
@@ -208,46 +230,34 @@ protected:
 		return true;
 	}
 
-	void Delete_OnClick(CCtrlBase*)
+	void onClick_Move(CCtrlBase *)
 	{
-		ptrW szIniPath(m_iniPath.GetText());
-		MyDeleteFile(szIniPath);
+		ptrW wszOldFile(m_iniPath.GetText()), wszNewFile(ptrW(m_newPath.GetText()));
+		if (!wcsicmp(wszOldFile, wszNewFile)) {
+			MessageBoxW(m_hwnd, TranslateT("File names must be different"), TranslateT("Error"), MB_ICONERROR | MB_OK);
+			return;
+		}
+
+		MyMoveFile(wszOldFile, wszNewFile);
 		Close();
 	}
 
-	void Leave_OnClick(CCtrlBase*)
+	void onClick_Delete(CCtrlBase *)
 	{
+		MyDeleteFile(ptrW(m_iniPath.GetText()));
 		Close();
 	}
 
-	void Recycle_OnClick(CCtrlBase*)
+	void onClick_Recycle(CCtrlBase *)
 	{
-		DeleteDirectoryTreeW(ptrW(m_iniPath.GetText()), true);
+		ToRecycleBin(ptrW(m_iniPath.GetText()));
 		Close();
-	}
-
-	void Move_OnClick(CCtrlBase*)
-	{
-		ptrW szIniPath(m_iniPath.GetText());
-		ptrW szNewPath(m_newPath.GetText());
-		MoveFile(szIniPath, szNewPath);
-		Close();
-	}
-
-public:
-	CIniImportDoneDlg(wchar_t *path) :
-		CDlgBase(g_plugin, IDD_INIIMPORTDONE),
-		m_delete(this, IDC_DELETE), m_leave(this, IDC_LEAVE),
-		m_recycle(this, IDC_RECYCLE), m_move(this, IDC_MOVE),
-		m_iniPath(this, IDC_ININAME), m_newPath(this, IDC_NEWNAME)
-	{
-		m_path = path;
 	}
 };
 
-//////////////////////////////////////////////////////
-
+/////////////////////////////////////////////////////////////////////////////////////////
 // settings:
+
 struct SettingsList
 {
 	char *name;
@@ -308,7 +318,7 @@ static void ProcessIniFile(wchar_t* szIniPath, char *szSafeSections, char *szUns
 			break;
 LBL_NewLine:
 		size_t lineLength = mir_strlen(szLine);
-		while (lineLength && (BYTE)(szLine[lineLength - 1]) <= ' ')
+		while (lineLength && (uint8_t)(szLine[lineLength - 1]) <= ' ')
 			szLine[--lineLength] = '\0';
 
 		if (szLine[0] == ';' || szLine[0] <= ' ')
@@ -322,7 +332,7 @@ LBL_NewLine:
 			if (szLine[1] == '!')
 				szSection[0] = '\0';
 			else {
-				mir_strncpy(szSection, szLine + 1, min(sizeof(szSection), (int)(szEnd - szLine)));
+				mir_strncpy(szSection, szLine + 1, min(sizeof(szSection), (size_t)(szEnd - szLine)));
 				switch (secur) {
 				case 0:
 					warnThisSection = false;
@@ -343,7 +353,7 @@ LBL_NewLine:
 				if (secFN) warnThisSection = 0;
 			}
 			if (szLine[1] == '?' || szLine[1] == '-') {
-				mir_strncpy(szSection, szLine + 2, min(sizeof(szSection), (int)(szEnd - szLine - 1)));
+				mir_strncpy(szSection, szLine + 2, min(sizeof(szSection), (size_t)(szEnd - szLine - 1)));
 				db_enum_settings(0, SettingsEnumProc, szSection);
 				while (setting_items) {
 					SettingsList *next = setting_items->next;
@@ -366,7 +376,7 @@ LBL_NewLine:
 			continue;
 
 		char szName[128];
-		mir_strncpy(szName, szLine, min(sizeof(szName), (int)(szValue - szLine + 1)));
+		mir_strncpy(szName, szLine, min(sizeof(szName), (size_t)(szValue - szLine + 1)));
 		szValue++;
 		{
 			warnSettingChangeInfo_t warnInfo;
@@ -390,15 +400,15 @@ LBL_NewLine:
 		switch (szValue[0]) {
 		case 'b':
 		case 'B':
-			db_set_b(0, szSection, szName, (BYTE)strtol(szValue + 1, nullptr, 0));
+			db_set_b(0, szSection, szName, (uint8_t)strtol(szValue + 1, nullptr, 0));
 			break;
 		case 'w':
 		case 'W':
-			db_set_w(0, szSection, szName, (WORD)strtol(szValue + 1, nullptr, 0));
+			db_set_w(0, szSection, szName, (uint16_t)strtol(szValue + 1, nullptr, 0));
 			break;
 		case 'd':
 		case 'D':
-			db_set_dw(0, szSection, szName, (DWORD)strtoul(szValue + 1, nullptr, 0));
+			db_set_dw(0, szSection, szName, (uint32_t)strtoul(szValue + 1, nullptr, 0));
 			break;
 		case 'l':
 		case 'L':
@@ -467,9 +477,9 @@ LBL_NewLine:
 				int len;
 				char *pszValue, *pszEnd;
 
-				PBYTE buf = (PBYTE)mir_alloc(mir_strlen(szValue + 1));
+				uint8_t *buf = (uint8_t*)mir_alloc(mir_strlen(szValue + 1));
 				for (len = 0, pszValue = szValue + 1;; len++) {
-					buf[len] = (BYTE)strtol(pszValue, &pszEnd, 0x10);
+					buf[len] = (uint8_t)strtol(pszValue, &pszEnd, 0x10);
 					if (pszValue == pszEnd)
 						break;
 					pszValue = pszEnd;
@@ -553,15 +563,13 @@ static void DoAutoExec(void)
 			if (!mir_wstrcmpi(szOnCompletion, L"delete"))
 				MyDeleteFile(szIniPath);
 			else if (!mir_wstrcmpi(szOnCompletion, L"recycle")) {
-				DeleteDirectoryTreeW(szIniPath, true);
+				ToRecycleBin(szIniPath);
 			}
 			else if (!mir_wstrcmpi(szOnCompletion, L"rename")) {
-				wchar_t szRenamePrefix[MAX_PATH], szNewPath[MAX_PATH];
-				Profile_GetSetting(L"AutoExec/RenamePrefix", szRenamePrefix, L"done_");
-				mir_wstrcpy(szNewPath, szFindPath);
-				mir_wstrcat(szNewPath, szRenamePrefix);
-				mir_wstrcat(szNewPath, fd.cFileName);
-				MoveFile(szIniPath, szNewPath);
+				wchar_t wszRenamePrefix[MAX_PATH], wszNewPath[MAX_PATH];
+				Profile_GetSetting(L"AutoExec/RenamePrefix", wszRenamePrefix, L"done_");
+				mir_snwprintf(wszNewPath, L"%s%s%s", szFindPath, wszRenamePrefix, fd.cFileName);
+				MyMoveFile(szIniPath, wszNewPath);
 			}
 			else if (!mir_wstrcmpi(szOnCompletion, L"ask")) {
 				CIniImportDoneDlg dlg(szIniPath);

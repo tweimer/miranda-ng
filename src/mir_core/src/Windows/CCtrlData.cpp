@@ -2,7 +2,7 @@
 
 Object UI extensions
 Copyright (c) 2008  Victor Pavlychko, George Hazan
-Copyright (C) 2012-21 Miranda NG team
+Copyright (C) 2012-22 Miranda NG team
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -41,7 +41,7 @@ void CCtrlData::OnInit()
 	OnReset();
 }
 
-void CCtrlData::CreateDbLink(const char* szModuleName, const char* szSetting, BYTE type, DWORD iValue)
+void CCtrlData::CreateDbLink(const char* szModuleName, const char* szSetting, uint8_t type, uint32_t iValue)
 {
 	m_dbLink = new CDbLink(szModuleName, szSetting, type, iValue);
 }

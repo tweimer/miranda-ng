@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org)
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org)
 Copyright (c) 2000-04 Miranda ICQ/IM project,
 all portions of this codebase are copyrighted to the people
 listed in contributors.txt.
@@ -85,11 +85,11 @@ BOOL AnimatedGifGetData(ACCData *data)
 	FITAG *tag = nullptr;
 	if (!FreeImage_GetMetadata(FIMD_ANIMATION, page, "LogicalWidth", &tag))
 		goto ERR;
-	data->ag.logicalWidth = *(WORD *)FreeImage_GetTagValue(tag);
+	data->ag.logicalWidth = *(uint16_t *)FreeImage_GetTagValue(tag);
 
 	if (!FreeImage_GetMetadata(FIMD_ANIMATION, page, "LogicalHeight", &tag))
 		goto ERR;
-	data->ag.logicalHeight = *(WORD *)FreeImage_GetTagValue(tag);
+	data->ag.logicalHeight = *(uint16_t *)FreeImage_GetTagValue(tag);
 
 	if (!FreeImage_GetMetadata(FIMD_ANIMATION, page, "Loop", &tag))
 		goto ERR;
@@ -135,12 +135,12 @@ void AnimatedGifMountFrame(ACCData* data, int page)
 
 	FITAG *tag = nullptr;
 	if (FreeImage_GetMetadata(FIMD_ANIMATION, dib, "FrameLeft", &tag))
-		data->ag.frame.left = *(WORD *)FreeImage_GetTagValue(tag);
+		data->ag.frame.left = *(uint16_t *)FreeImage_GetTagValue(tag);
 	else
 		data->ag.frame.left = 0;
 
 	if (FreeImage_GetMetadata(FIMD_ANIMATION, dib, "FrameTop", &tag))
-		data->ag.frame.top = *(WORD *)FreeImage_GetTagValue(tag);
+		data->ag.frame.top = *(uint16_t *)FreeImage_GetTagValue(tag);
 	else
 		data->ag.frame.top = 0;
 
@@ -150,7 +150,7 @@ void AnimatedGifMountFrame(ACCData* data, int page)
 		data->ag.times[page] = 0;
 
 	if (FreeImage_GetMetadata(FIMD_ANIMATION, dib, "DisposalMethod", &tag))
-		data->ag.frame.disposal_method = *(BYTE *)FreeImage_GetTagValue(tag);
+		data->ag.frame.disposal_method = *(uint8_t *)FreeImage_GetTagValue(tag);
 	else
 		data->ag.frame.disposal_method = 0;
 
@@ -163,7 +163,7 @@ void AnimatedGifMountFrame(ACCData* data, int page)
 	int transparent_color = -1;
 	if (FreeImage_IsTransparent(dib)) {
 		int count = FreeImage_GetTransparencyCount(dib);
-		BYTE *table = FreeImage_GetTransparencyTable(dib);
+		uint8_t *table = FreeImage_GetTransparencyTable(dib);
 		for (int i = 0; i < count; i++) {
 			if (table[i] == 0) {
 				have_transparent = true;
@@ -176,7 +176,7 @@ void AnimatedGifMountFrame(ACCData* data, int page)
 	//copy page data into logical buffer, with full alpha opaqueness
 	for (int y = 0; y < data->ag.frame.height; y++) {
 		RGBQUAD *scanline = (RGBQUAD*)FreeImage_GetScanLine(data->ag.dib, data->ag.logicalHeight - (y + data->ag.frame.top) - 1) + data->ag.frame.left;
-		BYTE *pageline = FreeImage_GetScanLine(dib, data->ag.frame.height - y - 1);
+		uint8_t *pageline = FreeImage_GetScanLine(dib, data->ag.frame.height - y - 1);
 		for (int x = 0; x < data->ag.frame.width; x++) {
 			if (!have_transparent || *pageline != transparent_color) {
 				*scanline = pal[*pageline];

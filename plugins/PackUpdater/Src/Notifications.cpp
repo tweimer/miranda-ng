@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2011-21 Mataes
+Copyright (C) 2011-22 Mataes
 
 This is free software; you can redistribute it and/or
 modify it under the terms of the GNU Library General Public
@@ -22,7 +22,7 @@ Boston, MA 02111-1307, USA.
 HWND hDlgDld = nullptr;
 INT UpdatesCount = 0;
 
-void PopupAction(HWND hWnd, BYTE action)
+void PopupAction(HWND hWnd, uint8_t action)
 {
 	switch (action) {
 	case PCA_CLOSEPOPUP:

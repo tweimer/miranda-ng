@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org),
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org),
 Copyright (c) 2000-08 Miranda ICQ/IM project,
 all portions of this codebase are copyrighted to the people
 listed in contributors.txt.
@@ -27,7 +27,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 CLCPaint g_clcPainter;
 
-DWORD CLCPaint::HASH[hi_LastItem] = { 0 };
+uint32_t CLCPaint::HASH[hi_LastItem] = { 0 };
 const char* CLCPaint::HASHTEXT[hi_LastItem] = {
 	"Module",
 	"ID",
@@ -88,13 +88,13 @@ const int CLCPaint::SELECTION_BORDER = 6;
 const int CLCPaint::MIN_TEXT_WIDTH = 20;
 const int CLCPaint::BUF2SIZE = 7;
 
-const BYTE CLCPaint::GIM_SELECTED_AFFECT = 1;
-const BYTE CLCPaint::GIM_HOT_AFFECT = 2;
-const BYTE CLCPaint::GIM_TEMP_AFFECT = 4;
-const BYTE CLCPaint::GIM_IDLE_AFFECT = 8;
-const BYTE CLCPaint::GIM_EXTRAICON_AFFECT = CLCPaint::GIM_SELECTED_AFFECT | CLCPaint::GIM_HOT_AFFECT | CLCPaint::GIM_IDLE_AFFECT | CLCPaint::GIM_TEMP_AFFECT;
-const BYTE CLCPaint::GIM_STATUSICON_AFFECT = CLCPaint::GIM_IDLE_AFFECT | CLCPaint::GIM_TEMP_AFFECT;
-const BYTE CLCPaint::GIM_AVATAR_AFFECT = CLCPaint::GIM_IDLE_AFFECT | CLCPaint::GIM_TEMP_AFFECT;
+const uint8_t CLCPaint::GIM_SELECTED_AFFECT = 1;
+const uint8_t CLCPaint::GIM_HOT_AFFECT = 2;
+const uint8_t CLCPaint::GIM_TEMP_AFFECT = 4;
+const uint8_t CLCPaint::GIM_IDLE_AFFECT = 8;
+const uint8_t CLCPaint::GIM_EXTRAICON_AFFECT = CLCPaint::GIM_SELECTED_AFFECT | CLCPaint::GIM_HOT_AFFECT | CLCPaint::GIM_IDLE_AFFECT | CLCPaint::GIM_TEMP_AFFECT;
+const uint8_t CLCPaint::GIM_STATUSICON_AFFECT = CLCPaint::GIM_IDLE_AFFECT | CLCPaint::GIM_TEMP_AFFECT;
+const uint8_t CLCPaint::GIM_AVATAR_AFFECT = CLCPaint::GIM_IDLE_AFFECT | CLCPaint::GIM_TEMP_AFFECT;
 
 CLCPaint::CLCPaint()
 {
@@ -231,7 +231,7 @@ void CLCPaint::GetTextSize(SIZE *text_size, HDC hdcMem, RECT free_row_rc, wchar_
 	}
 }
 
-void CLCPaint::AddParam(MODERNMASK *mpModernMask, DWORD dwParamHash, const char *const szValue, DWORD dwValueHash)
+void CLCPaint::AddParam(MODERNMASK *mpModernMask, uint32_t dwParamHash, const char *const szValue, uint32_t dwValueHash)
 {
 	static MASKPARAM param = { 0 }; //AddParameter will clear it so it can be static to avoid initializations
 	_FillParam(&param, dwParamHash, szValue, dwValueHash);
@@ -245,7 +245,7 @@ BOOL  CLCPaint::CheckMiniMode(ClcData *dat, BOOL selected)
 	return TRUE;
 }
 
-tPaintCallbackProc CLCPaint::PaintCallbackProc(HWND hWnd, HDC hDC, RECT *rcPaint, HRGN, DWORD, void *)
+tPaintCallbackProc CLCPaint::PaintCallbackProc(HWND hWnd, HDC hDC, RECT *rcPaint, HRGN, uint32_t, void *)
 {
 	ClcData *dat = (ClcData*)GetWindowLongPtr(hWnd, 0);
 	if (dat)
@@ -454,7 +454,7 @@ void CLCPaint::_AddParameter(MODERNMASK *mpModernMask, MASKPARAM *lpParam)
 	memset(lpParam, 0, sizeof(MASKPARAM));
 }
 
-void CLCPaint::_FillParam(MASKPARAM *lpParam, DWORD dwParamHash, const char *const szValue, DWORD dwValueHash)
+void CLCPaint::_FillParam(MASKPARAM *lpParam, uint32_t dwParamHash, const char *const szValue, uint32_t dwValueHash)
 {
 	lpParam->bMaskParamFlag = MPF_EQUAL | MPF_HASHED;
 	lpParam->dwId = dwParamHash;
@@ -470,7 +470,7 @@ void CLCPaint::_FillParam(MASKPARAM *lpParam, DWORD dwParamHash, const char *con
 		lpParam->szValue = nullptr;
 }
 
-void CLCPaint::_AddParamShort(MODERNMASK *mpModernMask, DWORD dwParamIndex, DWORD dwValueIndex)
+void CLCPaint::_AddParamShort(MODERNMASK *mpModernMask, uint32_t dwParamIndex, uint32_t dwValueIndex)
 {
 	AddParam(mpModernMask, HASH[dwParamIndex], HASHTEXT[dwValueIndex], HASH[dwValueIndex]);
 }
@@ -891,7 +891,7 @@ void CLCPaint::_PaintRowItemsEx(HDC hdcMem, ClcData *dat, ClcContact *Drawing, R
 	dy += (minheight > height) ? ((minheight - height) >> 1) : 0;
 }
 
-void CLCPaint::_DrawStatusIcon(ClcContact *Drawing, ClcData *dat, int iImage, HDC hdcMem, int x, int y, int cx, int cy, DWORD colorbg, DWORD colorfg, int mode)
+void CLCPaint::_DrawStatusIcon(ClcContact *Drawing, ClcData *dat, int iImage, HDC hdcMem, int x, int y, int cx, int cy, uint32_t colorbg, uint32_t colorfg, int mode)
 {
 	if (Drawing->type != CLCIT_CONTACT)
 		ske_ImageList_DrawEx(g_himlCListClc, LOWORD(iImage), hdcMem, x, y, cx, cy, colorbg, colorfg, mode);
@@ -1050,9 +1050,9 @@ void CLCPaint::_PreparePaintContext(ClcData *dat, HDC hdc, int paintMode, RECT &
 		int gValue = GetRValue(pc.tmpbkcolour) + gDelta;
 		int bValue = GetRValue(pc.tmpbkcolour) + bDelta;
 
-		BYTE brValue = (rValue > 255) ? 255 : rValue < 0 ? 0 : (BYTE)rValue;
-		BYTE bgValue = (gValue > 255) ? 255 : gValue < 0 ? 0 : (BYTE)gValue;
-		BYTE bbValue = (bValue > 255) ? 255 : bValue < 0 ? 0 : (BYTE)bValue;
+		uint8_t brValue = (rValue > 255) ? 255 : rValue < 0 ? 0 : (uint8_t)rValue;
+		uint8_t bgValue = (gValue > 255) ? 255 : gValue < 0 ? 0 : (uint8_t)gValue;
+		uint8_t bbValue = (bValue > 255) ? 255 : bValue < 0 ? 0 : (uint8_t)bValue;
 
 		pc.hBrushAlternateGrey = CreateSolidBrush(GetNearestColor(pc.hdcMem, RGB(brValue, bgValue, bbValue)));
 	}
@@ -2169,7 +2169,7 @@ void CLCPaint::_DrawContactText(HDC hdcMem, ClcData *dat, ClcContact *Drawing, i
 	text_rc.left = min(text_rc.left, prcItem->left);
 }
 
-void CLCPaint::_DrawContactSubText(HDC hdcMem, ClcData *dat, ClcContact *Drawing, int &selected, int &hottrack, RECT &text_rc, RECT *prcItem, UINT uTextFormat, BYTE itemType)
+void CLCPaint::_DrawContactSubText(HDC hdcMem, ClcData *dat, ClcContact *Drawing, int &selected, int &hottrack, RECT &text_rc, RECT *prcItem, UINT uTextFormat, uint8_t itemType)
 {
 	if (Drawing->type == CLCIT_GROUP) {
 		wchar_t *szCounts = Clist_GetGroupCountsText(dat, Drawing);

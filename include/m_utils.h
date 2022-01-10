@@ -3,7 +3,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org)
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org)
 Copyright (c) 2000-12 Miranda ICQ/IM project,
 all portions of this codebase are copyrighted to the people
 listed in contributors.txt.
@@ -176,13 +176,13 @@ EXTERN_C MIR_CORE_DLL(int) WindowList_BroadcastAsync(MWindowList hList, UINT mes
 
 /////////////////////////////////////////////////////////////////////////////////////////
 // Use this in a SendMessage to set the color of the url when control is enabled
-// wParam = DWORD color
+// wParam = uint32_t color
 // lParam = not used
 #define HLK_SETENABLECOLOUR	 (WM_USER+101) // added in 0.3.1
 
 /////////////////////////////////////////////////////////////////////////////////////////
 // Use this in a SendMessage to set the color of the url when control is disabled
-// wParam = DWORD color
+// wParam = uint32_t color
 // lParam = not used
 #define HLK_SETDISABLECOLOUR (WM_USER+102) // added in 0.3.1
 
@@ -421,11 +421,10 @@ namespace PU
 	MIR_APP_DLL(int) SafeCopyFile(const wchar_t *pSrc, const wchar_t *pDst);
 	MIR_APP_DLL(int) SafeMoveFile(const wchar_t *pSrc, const wchar_t *pDst);
 	MIR_APP_DLL(int) SafeDeleteFile(const wchar_t *pwszFile);
+	MIR_APP_DLL(int) SafeRecycleBin(const wchar_t *pwszFile);
 	MIR_APP_DLL(int) SafeCreateDirectory(const wchar_t *pwszFolder);
 	MIR_APP_DLL(int) SafeDeleteDirectory(const wchar_t *pwszDirName);
 	MIR_APP_DLL(int) SafeCreateFilePath(const wchar_t *pwszFolder);
-
-
 };
 
 #endif // M_UTILS_H__

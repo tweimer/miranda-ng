@@ -140,7 +140,7 @@ STDMETHODIMP IEViewSink::GetTypeInfoCount(UINT *) { return E_NOTIMPL; }
 STDMETHODIMP IEViewSink::GetTypeInfo(UINT, LCID, LPTYPEINFO*) { return S_OK; }
 STDMETHODIMP IEViewSink::GetIDsOfNames(REFIID, LPOLESTR*, UINT, LCID, DISPID*) { return S_OK; }
 
-STDMETHODIMP IEViewSink::Invoke(DISPID dispIdMember, REFIID, LCID, WORD, DISPPARAMS* pDispParams, VARIANT*, EXCEPINFO*, UINT*)
+STDMETHODIMP IEViewSink::Invoke(DISPID dispIdMember, REFIID, LCID, uint16_t, DISPPARAMS* pDispParams, VARIANT*, EXCEPINFO*, UINT*)
 {
 	if (!pDispParams) return E_INVALIDARG;
 	switch (dispIdMember) {
@@ -432,7 +432,7 @@ STDMETHODIMP IEView::GetIDsOfNames(REFIID /*riid*/, LPOLESTR *rgszNames, UINT cN
 STDMETHODIMP IEView::Invoke(DISPID dispIdMember,
 	REFIID /*riid*/,
 	LCID /*lcid*/,
-	WORD /*wFlags*/,
+	uint16_t /*wFlags*/,
 	DISPPARAMS *pDispParams,
 	VARIANT *pVarResult,
 	EXCEPINFO * /*pExcepInfo*/,
@@ -670,14 +670,14 @@ STDMETHODIMP IEView::MapUrlToZone(LPCWSTR pwszUrl, DWORD *pdwZone, DWORD)
 	return INET_E_DEFAULT_ACTION;
 }
 
-STDMETHODIMP IEView::GetSecurityId(LPCWSTR, BYTE *, DWORD *, DWORD_PTR)
+STDMETHODIMP IEView::GetSecurityId(LPCWSTR, uint8_t *, DWORD *, DWORD_PTR)
 {
 	return INET_E_DEFAULT_ACTION;
 }
 
-STDMETHODIMP IEView::ProcessUrlAction(LPCWSTR pwszUrl, DWORD dwAction, BYTE *pPolicy, DWORD cbPolicy, BYTE *, DWORD, DWORD, DWORD)
+STDMETHODIMP IEView::ProcessUrlAction(LPCWSTR pwszUrl, DWORD dwAction, uint8_t *pPolicy, DWORD cbPolicy, uint8_t *, DWORD, DWORD, DWORD)
 {
-	DWORD dwPolicy = URLPOLICY_ALLOW;
+	uint32_t dwPolicy = URLPOLICY_ALLOW;
 	if (pwszUrl != nullptr && !mir_wstrcmp(pwszUrl, L"about:blank")) {
 		if (dwAction <= URLACTION_ACTIVEX_MAX && dwAction >= URLACTION_ACTIVEX_MIN) {
 			//dwPolicy = URLPOLICY_DISALLOW;
@@ -697,8 +697,8 @@ STDMETHODIMP IEView::ProcessUrlAction(LPCWSTR pwszUrl, DWORD dwAction, BYTE *pPo
 		}
 		else return INET_E_DEFAULT_ACTION;
 
-		if (cbPolicy >= sizeof(DWORD)) {
-			*(DWORD*)pPolicy = dwPolicy;
+		if (cbPolicy >= sizeof(uint32_t)) {
+			*(uint32_t*)pPolicy = dwPolicy;
 			return S_OK;
 		}
 
@@ -707,7 +707,7 @@ STDMETHODIMP IEView::ProcessUrlAction(LPCWSTR pwszUrl, DWORD dwAction, BYTE *pPo
 	return INET_E_DEFAULT_ACTION;
 }
 
-STDMETHODIMP IEView::QueryCustomPolicy(LPCWSTR, REFGUID, BYTE **, DWORD *, BYTE *, DWORD, DWORD)
+STDMETHODIMP IEView::QueryCustomPolicy(LPCWSTR, REFGUID, uint8_t **, DWORD *, uint8_t *, DWORD, DWORD)
 {
 	return INET_E_DEFAULT_ACTION;
 }
@@ -974,7 +974,7 @@ wchar_t* IEView::getSelection()
 /**
  * Returns the destination url (href) of the given anchor element (or parent anchor element)
  **/
-WCHAR* IEView::getHrefFromAnchor(CComPtr<IHTMLElement> element)
+wchar_t* IEView::getHrefFromAnchor(CComPtr<IHTMLElement> element)
 {
 	if (element == nullptr)
 		return nullptr;
@@ -982,7 +982,7 @@ WCHAR* IEView::getHrefFromAnchor(CComPtr<IHTMLElement> element)
 	CComPtr<IHTMLAnchorElement> pAnchor;
 	if (FAILED(element.QueryInterface(&pAnchor))) {
 		VARIANT variant;
-		WCHAR *url = nullptr;
+		wchar_t *url = nullptr;
 		if (SUCCEEDED(element->getAttribute(BSTR_PTR(L"href"), 2, &variant)) && variant.vt == VT_BSTR) {
 			url = mir_wstrdup(variant.bstrVal);
 			::SysFreeString(variant.bstrVal);

@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2011-21 Mataes
+Copyright (C) 2011-22 Mataes
 
 This is free software; you can redistribute it and/or
 modify it under the terms of the GNU Library General Public
@@ -142,7 +142,7 @@ INT_PTR CALLBACK UpdateNotifyOptsProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPA
 INT_PTR CALLBACK DlgPopupOpts(HWND hdlg, UINT msg, WPARAM wParam, LPARAM lParam)
 {
 	int i;
-	WORD idCtrl;
+	uint16_t idCtrl;
 	char str[20] = { 0 }, str2[20] = { 0 };
 
 	switch (msg) {
@@ -223,9 +223,9 @@ INT_PTR CALLBACK DlgPopupOpts(HWND hdlg, UINT msg, WPARAM wParam, LPARAM lParam)
 		}
 		if (HIWORD(wParam) == CBN_SELCHANGE) {
 			if (idCtrl == IDC_LC)
-				MyOptions.LeftClickAction = (BYTE)SendDlgItemMessage(hdlg, IDC_LC, CB_GETCURSEL, 0, 0);
+				MyOptions.LeftClickAction = (uint8_t)SendDlgItemMessage(hdlg, IDC_LC, CB_GETCURSEL, 0, 0);
 			else if (idCtrl == IDC_RC)
-				MyOptions.RightClickAction = (BYTE)SendDlgItemMessage(hdlg, IDC_RC, CB_GETCURSEL, 0, 0);
+				MyOptions.RightClickAction = (uint8_t)SendDlgItemMessage(hdlg, IDC_RC, CB_GETCURSEL, 0, 0);
 
 			SendMessage(GetParent(hdlg), PSM_CHANGED, 0, 0);
 			return TRUE;
@@ -329,7 +329,7 @@ INT_PTR CALLBACK DlgPopupOpts(HWND hdlg, UINT msg, WPARAM wParam, LPARAM lParam)
 		case PSN_APPLY:
 			//Text color
 			char szSetting[20] = { 0 };
-			DWORD ctlColor = 0;
+			uint32_t ctlColor = 0;
 			for (i = 0; i <= POPUPS - 1; i++) {
 				ctlColor = SendDlgItemMessage(hdlg, (i + 42071), CPM_GETCOLOUR, 0, 0);
 				PopupsList[i].colorBack = ctlColor;
@@ -352,9 +352,9 @@ INT_PTR CALLBACK DlgPopupOpts(HWND hdlg, UINT msg, WPARAM wParam, LPARAM lParam)
 			//Notified popups
 			for (i = 0; i < POPUPS; i++) {
 				mir_snprintf(str, "Popups%d", i);
-				g_plugin.setByte(str, (BYTE)(IsDlgButtonChecked(hdlg, (i + 40071))));
+				g_plugin.setByte(str, (uint8_t)(IsDlgButtonChecked(hdlg, (i + 40071))));
 				mir_snprintf(str2, "Popups%dM", i);
-				g_plugin.setByte(str2, (BYTE)(IsDlgButtonChecked(hdlg, (i + 1024))));
+				g_plugin.setByte(str2, (uint8_t)(IsDlgButtonChecked(hdlg, (i + 1024))));
 			}
 			return TRUE;
 		}

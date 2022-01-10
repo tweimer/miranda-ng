@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org),
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org),
 Copyright (c) 2000-09 Miranda ICQ/IM project,
 
 This file is part of Send Screenshot Plus, a Miranda IM plugin.
@@ -329,12 +329,12 @@ int CSend::OnSend(void *obj, WPARAM, LPARAM lParam)
 		case ACKTYPE_CHAT:
 			break;
 		case ACKTYPE_MESSAGE:
-			self->DB_EventAdd((WORD)EVENTTYPE_MESSAGE);
+			self->DB_EventAdd((uint16_t)EVENTTYPE_MESSAGE);
 			break;
 		case ACKTYPE_FILE:
 			self->m_szEventMsg.Insert(0, "aaaa");
-			self->m_cbEventMsg += sizeof(DWORD);
-			self->DB_EventAdd((WORD)EVENTTYPE_FILE);
+			self->m_cbEventMsg += sizeof(uint32_t);
+			self->DB_EventAdd((uint16_t)EVENTTYPE_FILE);
 			break;
 		}
 		self->Exit(ack->result);
@@ -343,7 +343,7 @@ int CSend::OnSend(void *obj, WPARAM, LPARAM lParam)
 	return 0;
 }
 
-void CSend::DB_EventAdd(WORD EventType)
+void CSend::DB_EventAdd(uint16_t EventType)
 {
 	DBEVENTINFO dbei = {};
 	dbei.szModule = m_pszProto;
@@ -352,7 +352,7 @@ void CSend::DB_EventAdd(WORD EventType)
 	dbei.timestamp = time(0);
 	dbei.flags |= DBEF_UTF;
 	dbei.cbBlob = m_cbEventMsg;
-	dbei.pBlob = (PBYTE)m_szEventMsg.GetString();
+	dbei.pBlob = (uint8_t*)m_szEventMsg.GetString();
 	db_event_add(m_hContact, &dbei);
 }
 
@@ -481,7 +481,7 @@ int CSend::HTTPFormCreate(NETLIBHTTPREQUEST* nlhr, int requestType, const char* 
 	{
 		union
 		{
-			DWORD num;
+			uint32_t num;
 			unsigned char cr[4];
 		}; num = GetTickCount() ^ 0x8000;
 		for (int i = 0; i < 4; ++i) {

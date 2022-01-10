@@ -1,6 +1,6 @@
 /*
 
-Copyright 2000-12 Miranda IM, 2012-21 Miranda NG team,
+Copyright 2000-12 Miranda IM, 2012-22 Miranda NG team,
 all portions of this codebase are copyrighted to the people
 listed in contributors.txt.
 
@@ -73,7 +73,7 @@ class CMsgDialog : public CSrmmBaseDialog
 	void OnType(CTimer *);
 
 	CTabbedWindow *m_pOwner;
-	DWORD m_nFlash = 0;
+	uint32_t m_nFlash = 0;
 	char *m_szProto = nullptr;
 
 	// splitters
@@ -95,10 +95,10 @@ class CMsgDialog : public CSrmmBaseDialog
 	HFONT m_hFont = nullptr;
 
 	int m_limitAvatarH = 0;
-	DWORD m_lastMessage = 0;
+	uint32_t m_lastMessage = 0;
 	HANDLE m_hTimeZone = 0;
-	WORD m_wStatus = ID_STATUS_OFFLINE, m_wOldStatus = ID_STATUS_OFFLINE;
-	WORD m_wMinute = 0;
+	uint16_t m_wStatus = ID_STATUS_OFFLINE, m_wOldStatus = ID_STATUS_OFFLINE;
+	uint16_t m_wMinute = 0;
 	bool m_bIsMeta = false, m_bWindowCascaded = false, m_bNoActivate = false;
 
 public:

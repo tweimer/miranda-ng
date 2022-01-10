@@ -55,7 +55,7 @@ struct EventData
 {
 	int cbSize;
 	int iType;
-	DWORD	dwFlags;
+	uint32_t	dwFlags;
 	const char *fontName;
 	int fontSize;
 	int fontStyle;
@@ -63,8 +63,8 @@ struct EventData
 	MAllStrings szNick;     // Nick, usage depends on type of event
 	MAllStrings szText;     // Text, usage depends on type of event
 	MAllStrings szText2;    // Text, usage depends on type of event
-	DWORD	time;
-	DWORD	eventType;
+	uint32_t	time;
+	uint32_t	eventType;
 	BOOL  custom;
 	EventData *next;
 };
@@ -114,8 +114,8 @@ class CMsgDialog : public CSrmmBaseDialog
 	MEVENT m_hDbEventFirst, m_hDbEventLast, m_hDbUnreadEventFirst;
 	int    m_minLogBoxHeight, m_minEditBoxHeight;
 	int    m_iShowUnread;
-	WORD   m_wStatus;
-	DWORD  m_lastMessage;
+	uint16_t   m_wStatus;
+	uint32_t  m_lastMessage;
 	int    m_iMessagesInProgress;
 	int    m_iSendAllConfirm;
 	HICON  m_hStatusIcon, m_hStatusIconBig, m_hStatusIconOverlay;

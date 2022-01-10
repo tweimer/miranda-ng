@@ -110,7 +110,7 @@ EventData* CMsgDialog::GetEventFromDB(MCONTACT hContact, MEVENT hDbEvent)
 		evt->szNick.w = mir_wstrdup(Clist_GetContactDisplayName(hContact));
 
 	if (evt->eventType == EVENTTYPE_FILE) {
-		char *filename = ((char*)dbei.pBlob) + sizeof(DWORD);
+		char *filename = ((char*)dbei.pBlob) + sizeof(uint32_t);
 		char *descr = filename + mir_strlen(filename) + 1;
 		evt->szText.w = DbEvent_GetString(&dbei, filename);
 		if (*descr != 0)
@@ -124,7 +124,7 @@ EventData* CMsgDialog::GetEventFromDB(MCONTACT hContact, MEVENT hDbEvent)
 	return evt;
 }
 
-static EventData* GetTestEvent(DWORD flags)
+static EventData* GetTestEvent(uint32_t flags)
 {
 	EventData *evt = (EventData *)mir_calloc(sizeof(EventData));
 	evt->eventType = EVENTTYPE_MESSAGE;
@@ -169,12 +169,12 @@ static void freeEvent(EventData *evt)
 	mir_free(evt);
 }
 
-static int AppendUnicodeOrAnsiiToBufferL(CMStringA &buf, const WCHAR *line, size_t maxLen, BOOL isAnsii)
+static int AppendUnicodeOrAnsiiToBufferL(CMStringA &buf, const wchar_t *line, size_t maxLen, BOOL isAnsii)
 {
 	if (maxLen == -1)
 		maxLen = mir_wstrlen(line);
 
-	const WCHAR *maxLine = line + maxLen;
+	const wchar_t *maxLine = line + maxLen;
 
 	if (isAnsii)
 		buf.Append("{");
@@ -223,7 +223,7 @@ static int AppendAnsiToBuffer(CMStringA &buf, const char *line)
 	return AppendUnicodeOrAnsiiToBufferL(buf, _A2T(line), -1, true);
 }
 
-static int AppendUnicodeToBuffer(CMStringA &buf, const WCHAR *line)
+static int AppendUnicodeToBuffer(CMStringA &buf, const wchar_t *line)
 {
 	return AppendUnicodeOrAnsiiToBufferL(buf, line, -1, false);
 }
@@ -348,7 +348,7 @@ static void AppendWithCustomLinks(EventData *evt, int style, CMStringA &buf)
 		return;
 
 	BOOL isAnsii = (evt->dwFlags & IEEDF_UNICODE_TEXT) == 0;
-	WCHAR *wText;
+	wchar_t *wText;
 	size_t len;
 	if (isAnsii) {
 		len = mir_strlen(evt->szText.a);
@@ -646,7 +646,7 @@ void LoadMsgLogIcons(void)
 	HDC hdc = GetDC(nullptr);
 	HBITMAP hBmp = CreateCompatibleBitmap(hdc, bih.biWidth, bih.biHeight);
 	HDC hdcMem = CreateCompatibleDC(hdc);
-	PBYTE pBmpBits = (PBYTE)mir_alloc(widthBytes * bih.biHeight);
+	uint8_t *pBmpBits = (uint8_t*)mir_alloc(widthBytes * bih.biHeight);
 	HBRUSH hBrush = hBkgBrush;
 	for (int i = 0; i < _countof(pLogIconBmpBits); i++) {
 		switch (i) {
@@ -706,7 +706,7 @@ void CLogWindow::Attach()
 {
 	CSuper::Attach();
 
-	DWORD dwExStyle = GetWindowLongPtr(m_rtf.GetHwnd(), GWL_EXSTYLE);
+	uint32_t dwExStyle = GetWindowLongPtr(m_rtf.GetHwnd(), GWL_EXSTYLE);
 	SetWindowLongPtr(m_rtf.GetHwnd(), GWL_EXSTYLE, (m_pDlg.m_bUseRtl) ? dwExStyle | WS_EX_LEFTSCROLLBAR : dwExStyle & ~WS_EX_LEFTSCROLLBAR);
 
 	// Workaround to make Richedit display RTL messages correctly

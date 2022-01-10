@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2011-21 Mataes
+Copyright (C) 2011-22 Mataes
 
 This is free software; you can redistribute it and/or
 modify it under the terms of the GNU Library General Public
@@ -59,9 +59,9 @@ MSGPOPUPDATA, *LPMSGPOPUPDATA;
 
 //===== Options flags
 typedef struct tagMYOPTIONS {
-	BYTE DefColors;
-	BYTE LeftClickAction;
-	BYTE RightClickAction;
+	uint8_t DefColors;
+	uint8_t LeftClickAction;
+	uint8_t RightClickAction;
 	int Timeout;
 } MYOPTIONS;
 

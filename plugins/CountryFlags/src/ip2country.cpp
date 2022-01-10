@@ -24,35 +24,35 @@ extern struct CountryListEntry *countries;
 
 /************************* Bin Records ****************************/
 
-#define DATARECORD_SIZE (sizeof(DWORD)+sizeof(DWORD)+sizeof(WORD))
+#define DATARECORD_SIZE (sizeof(uint32_t)+sizeof(uint32_t)+sizeof(uint16_t))
 
 // mir_free() the return value
-static BYTE* GetDataHeader(BYTE *data, DWORD cbDataSize, DWORD *pnDataRecordCount)
+static uint8_t* GetDataHeader(uint8_t *data, uint32_t cbDataSize, uint32_t *pnDataRecordCount)
 {
-	BYTE *recordData;
-	/* uncompressed size stored in first DWORD */
-	*pnDataRecordCount = (*(DWORD*)data) / DATARECORD_SIZE;
-	recordData = (BYTE*)mir_alloc(*(DWORD*)data);
+	uint8_t *recordData;
+	/* uncompressed size stored in first uint32_t */
+	*pnDataRecordCount = (*(uint32_t*)data) / DATARECORD_SIZE;
+	recordData = (uint8_t*)mir_alloc(*(uint32_t*)data);
 	if (recordData != nullptr)
-		Huffman_Uncompress(data + sizeof(DWORD), recordData, cbDataSize - sizeof(DWORD), *(DWORD*)data);
+		Huffman_Uncompress(data + sizeof(uint32_t), recordData, cbDataSize - sizeof(uint32_t), *(uint32_t*)data);
 	return recordData;
 }
 
-static int GetDataRecord(BYTE *data, DWORD index, DWORD *pdwFrom, DWORD *pdwTo)
+static int GetDataRecord(uint8_t *data, uint32_t index, uint32_t *pdwFrom, uint32_t *pdwTo)
 {
 	data += index * DATARECORD_SIZE;
-	*pdwFrom = *(DWORD*)data;
-	data += sizeof(DWORD);
-	if (pdwTo != nullptr) *pdwTo = *(DWORD*)data;
-	data += sizeof(DWORD);
-	return (int)*(WORD*)data;
+	*pdwFrom = *(uint32_t*)data;
+	data += sizeof(uint32_t);
+	if (pdwTo != nullptr) *pdwTo = *(uint32_t*)data;
+	data += sizeof(uint32_t);
+	return (int)*(uint16_t*)data;
 }
 
 /************************* Record Cache ***************************/
 
 static mir_cs csRecordCache;
-static DWORD nDataRecordsCount; /* protected by csRecordCache */
-static BYTE *dataRecords;       /* protected by csRecordCache */
+static uint32_t nDataRecordsCount; /* protected by csRecordCache */
+static uint8_t *dataRecords;       /* protected by csRecordCache */
 
 #define UNLOADDELAY  30*1000  /* time after which the data records are being unloaded */
 
@@ -64,17 +64,17 @@ static void CALLBACK UnloadRecordCache(LPARAM)
 }
 
 // function assumes it has got the csRecordCache mutex
-static BOOL EnsureRecordCacheLoaded(BYTE **pdata, DWORD *pcount)
+static BOOL EnsureRecordCacheLoaded(uint8_t **pdata, uint32_t *pcount)
 {
 	HRSRC hrsrc;
-	DWORD cb;
+	uint32_t cb;
 	mir_cslock lck(csRecordCache);
 	if (dataRecords == nullptr) {
 		/* load record data list from resources */
 		hrsrc = FindResource(g_plugin.getInst(), MAKEINTRESOURCE(IDR_IPTOCOUNTRY), L"BIN");
 		cb = SizeofResource(g_plugin.getInst(), hrsrc);
-		dataRecords = (BYTE*)LockResource(LoadResource(g_plugin.getInst(), hrsrc));
-		if (cb <= sizeof(DWORD) || dataRecords == nullptr)
+		dataRecords = (uint8_t*)LockResource(LoadResource(g_plugin.getInst(), hrsrc));
+		if (cb <= sizeof(uint32_t) || dataRecords == nullptr)
 			return FALSE;
 		/* uncompress record data */
 		dataRecords = GetDataHeader(dataRecords, cb, &nDataRecordsCount);
@@ -97,9 +97,9 @@ static void LeaveRecordCache(void)
 
 INT_PTR ServiceIpToCountry(WPARAM wParam, LPARAM)
 {
-	BYTE *data;
-	DWORD dwFrom, dwTo;
-	DWORD low = 0, i, high;
+	uint8_t *data;
+	uint32_t dwFrom, dwTo;
+	uint32_t low = 0, i, high;
 	int id;
 	if (EnsureRecordCacheLoaded(&data, &high)) {
 		/* binary search in record data */
@@ -162,14 +162,14 @@ struct {
 #define ALLOC_STEP (800*1024)  /* approx. size of data output */
 
 struct ResizableByteBuffer {
-	BYTE *buf;
-	DWORD cbLength, cbAlloced;
+	uint8_t *buf;
+	uint32_t cbLength, cbAlloced;
 };
 
-static void AppendToByteBuffer(struct ResizableByteBuffer *buffer, const void *append, DWORD cbAppendSize)
+static void AppendToByteBuffer(struct ResizableByteBuffer *buffer, const void *append, uint32_t cbAppendSize)
 {
 	if (buffer->cbAlloced <= buffer->cbLength + cbAppendSize) {
-		BYTE* buf = (BYTE*)mir_realloc(buffer->buf, buffer->cbAlloced + ALLOC_STEP + cbAppendSize);
+		uint8_t* buf = (uint8_t*)mir_realloc(buffer->buf, buffer->cbAlloced + ALLOC_STEP + cbAppendSize);
 		if (buf == NULL) return;
 		buffer->buf = buf;
 		buffer->cbAlloced += ALLOC_STEP + cbAppendSize;
@@ -184,8 +184,8 @@ static int EnumIpDataLines(const char *pszFileCSV, const char *pszFileOut)
 	FILE *fp;
 	char line[1024], out[512], *pszFrom, *pszTo, *pszTwo, *pszCountry, *buf;
 	int i, j;
-	DWORD dwOut;
-	WORD wOut;
+	uint32_t dwOut;
+	uint16_t wOut;
 	struct ResizableByteBuffer buffer;
 
 	memset(&buffer, 0, sizeof(buffer));
@@ -233,12 +233,12 @@ static int EnumIpDataLines(const char *pszFileCSV, const char *pszFileOut)
 					buf = (char*)countries[i].szName;
 				/* check country */
 				if (!mir_strcmpi(pszCountry, buf)) {
-					dwOut = (DWORD)atoi(pszFrom);
-					AppendToByteBuffer(&buffer, (void*)&dwOut, sizeof(DWORD));
-					dwOut = (DWORD)atoi(pszTo);
-					AppendToByteBuffer(&buffer, (void*)&dwOut, sizeof(DWORD));
-					wOut = (WORD)countries[i].id;
-					AppendToByteBuffer(&buffer, (void*)&wOut, sizeof(WORD));
+					dwOut = (uint32_t)atoi(pszFrom);
+					AppendToByteBuffer(&buffer, (void*)&dwOut, sizeof(uint32_t));
+					dwOut = (uint32_t)atoi(pszTo);
+					AppendToByteBuffer(&buffer, (void*)&dwOut, sizeof(uint32_t));
+					wOut = (uint16_t)countries[i].id;
+					AppendToByteBuffer(&buffer, (void*)&wOut, sizeof(uint16_t));
 					break;
 				}
 			}
@@ -252,12 +252,12 @@ static int EnumIpDataLines(const char *pszFileCSV, const char *pszFileOut)
 		OutputDebugStringA("Done!\n"); /* all ascii */
 		if (buffer.buf != NULL) {
 			HANDLE hFileOut;
-			DWORD cbWritten = 0;
-			BYTE *compressed;
-			DWORD cbCompressed;
+			uint32_t cbWritten = 0;
+			uint8_t *compressed;
+			uint32_t cbCompressed;
 			/* compress whole data */
 			OutputDebugStringA("Compressing...\n"); /* all ascii */
-			compressed = (BYTE*)mir_alloc(buffer.cbAlloced + 384);
+			compressed = (uint8_t*)mir_alloc(buffer.cbAlloced + 384);
 			if (compressed != NULL) {
 				cbCompressed = Huffman_Compress(buffer.buf, compressed, buffer.cbLength);
 				OutputDebugStringA("Done!\n"); /* all ascii */
@@ -266,7 +266,7 @@ static int EnumIpDataLines(const char *pszFileCSV, const char *pszFileOut)
 				if (hFileOut != INVALID_HANDLE_VALUE) {
 					/* store data length count at beginning */
 					dwOut = buffer.cbLength;
-					WriteFile(hFileOut, &dwOut, sizeof(DWORD), &cbWritten, NULL);
+					WriteFile(hFileOut, &dwOut, sizeof(uint32_t), &cbWritten, NULL);
 					/* store compressed data records */
 					WriteFile(hFileOut, compressed, cbCompressed, &cbWritten, NULL);
 					CloseHandle(hFileOut);

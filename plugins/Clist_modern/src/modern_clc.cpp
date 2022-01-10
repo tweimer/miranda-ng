@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org),
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org),
 Copyright (c) 2000-08 Miranda ICQ/IM project,
 all portions of this codebase are copyrighted to the people
 listed in contributors.txt.
@@ -35,7 +35,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 static HANDLE	hShowInfoTipEvent;
 static POINT	HitPoint;
 static BOOL		fMouseUpped;
-static BYTE		IsDragToScrollMode = 0;
+static uint8_t		IsDragToScrollMode = 0;
 static int		StartDragPos = 0;
 static int		StartScrollPos = 0;
 static BOOL		g_bSortTimerIsSet = FALSE;
@@ -715,7 +715,7 @@ static LRESULT clcOnLButtonDown(ClcData *dat, HWND hwnd, UINT, WPARAM, LPARAM lP
 
 	ClcContact *contact;
 	ClcGroup *group;
-	DWORD hitFlags;
+	uint32_t hitFlags;
 	int hit = cliHitTest(hwnd, dat, (short)LOWORD(lParam), (short)HIWORD(lParam), &contact, &group, &hitFlags);
 	if (GetFocus() != hwnd)
 		SetFocus(hwnd);
@@ -886,7 +886,7 @@ static LRESULT clcOnMouseMove(ClcData *dat, HWND hwnd, UINT, WPARAM wParam, LPAR
 	}
 
 	if (dat->iDragItem == -1) {
-		DWORD flag = 0;
+		uint32_t flag = 0;
 		int iOldHotTrack = dat->iHotTrack;
 
 		if (dat->hwndRenameEdit != nullptr || GetKeyState(VK_MENU) & 0x8000 || GetKeyState(VK_F10) & 0x8000)
@@ -952,11 +952,11 @@ static LRESULT clcOnMouseMove(ClcData *dat, HWND hwnd, UINT, WPARAM wParam, LPAR
 			dat->dragStage &= ~DRAGSTAGEF_OUTSIDE;
 		}
 
-		ClcContact *contSour, *contDest;
+		ClcContact *contSour = nullptr, *contDest = nullptr;
 		cliGetRowByIndex(dat, dat->selection, &contDest, nullptr);
 		cliGetRowByIndex(dat, dat->iDragItem, &contSour, nullptr);
 
-		if (contDest->type != CLCIT_INFO && contSour->type != CLCIT_INFO)
+		if (contDest->getType() != CLCIT_INFO && contSour->getType() != CLCIT_INFO)
 		switch (target) {
 		case DROPTARGET_ONSELF:
 			break;
@@ -1055,7 +1055,7 @@ static LRESULT clcOnLButtonUp(ClcData *dat, HWND hwnd, UINT msg, WPARAM wParam, 
 	fMouseUpped = TRUE;
 
 	if (hitcontact != nullptr && dat->bMetaExpanding) {
-		BYTE doubleClickExpand = db_get_b(0, "CLC", "MetaDoubleClick", SETTING_METAAVOIDDBLCLICK_DEFAULT);
+		uint8_t doubleClickExpand = db_get_b(0, "CLC", "MetaDoubleClick", SETTING_METAAVOIDDBLCLICK_DEFAULT);
 		CLUI_SafeSetTimer(hwnd, TIMERID_SUBEXPAND, GetDoubleClickTime()*doubleClickExpand, nullptr);
 	}
 	else if (dat->iHotTrack == -1 && dat->iDragItem == -1)
@@ -1066,7 +1066,7 @@ static LRESULT clcOnLButtonUp(ClcData *dat, HWND hwnd, UINT msg, WPARAM wParam, 
 
 	SetCursor((HCURSOR)GetClassLongPtr(hwnd, GCLP_HCURSOR));
 	if (dat->exStyle & CLS_EX_TRACKSELECT) {
-		DWORD flags;
+		uint32_t flags;
 		dat->iHotTrack = cliHitTest(hwnd, dat, (short)LOWORD(lParam), (short)HIWORD(lParam), nullptr, nullptr, &flags);
 		if (dat->iHotTrack == -1)
 			ReleaseCapture();
@@ -1078,16 +1078,14 @@ static LRESULT clcOnLButtonUp(ClcData *dat, HWND hwnd, UINT msg, WPARAM wParam, 
 	if (dat->dragStage == (DRAGSTAGE_NOTMOVED | DRAGSTAGEF_MAYBERENAME))
 		CLUI_SafeSetTimer(hwnd, TIMERID_RENAME, GetDoubleClickTime(), nullptr);
 	else if ((dat->dragStage & DRAGSTAGEM_STAGE) == DRAGSTAGE_ACTIVE) {
-		wchar_t Wording[500];
-
 		POINT pt = UNPACK_POINT(lParam);
 		int target = GetDropTargetInformation(hwnd, dat, pt);
 
-		ClcContact *contDest, *contSour;
+		ClcContact *contDest = nullptr, *contSour = nullptr;
 		cliGetRowByIndex(dat, dat->iDragItem, &contSour, nullptr);
 		cliGetRowByIndex(dat, dat->selection, &contDest, nullptr);
 
-		if (contDest->type != CLCIT_INFO && contSour->type != CLCIT_INFO)
+		if (contDest->getType() != CLCIT_INFO && contSour->getType() != CLCIT_INFO)
 		switch (target) {
 		case DROPTARGET_ONSELF:
 			break;
@@ -1099,6 +1097,7 @@ static LRESULT clcOnLButtonUp(ClcData *dat, HWND hwnd, UINT msg, WPARAM wParam, 
 			if (contSour->type == CLCIT_CONTACT) {
 				MCONTACT hcontact = contSour->hContact;
 				if (mir_strcmp(contSour->pce->szProto, META_PROTO)) {
+					wchar_t Wording[500];
 					if (!contSour->iSubNumber) {
 						MCONTACT hDest = contDest->hContact;
 						mir_snwprintf(Wording, TranslateT("Do you want contact '%s' to be converted to metacontact and '%s' be added to it?"), contDest->szText, contSour->szText);
@@ -1135,6 +1134,8 @@ static LRESULT clcOnLButtonUp(ClcData *dat, HWND hwnd, UINT msg, WPARAM wParam, 
 			if (contSour->type == CLCIT_CONTACT) {
 				if (!mir_strcmp(contSour->pce->szProto, META_PROTO))
 					break;
+
+				wchar_t Wording[500];
 				if (!contSour->iSubNumber) {
 					MCONTACT hcontact = contSour->hContact;
 					MCONTACT handle = contDest->hContact;
@@ -1175,6 +1176,8 @@ static LRESULT clcOnLButtonUp(ClcData *dat, HWND hwnd, UINT msg, WPARAM wParam, 
 			if (contSour->type == CLCIT_CONTACT) {
 				if (!mir_strcmp(contSour->pce->szProto, META_PROTO))
 					break;
+
+				wchar_t Wording[500];
 				if (!contSour->iSubNumber) {
 					MCONTACT hcontact = contSour->hContact;
 					MCONTACT handle = contDest->subcontacts->hContact;
@@ -1292,8 +1295,8 @@ static LRESULT clcOnDestroy(ClcData *dat, HWND hwnd, UINT msg, WPARAM wParam, LP
 
 static LRESULT clcOnIntmGroupChanged(ClcData *dat, HWND hwnd, UINT, WPARAM wParam, LPARAM)
 {
-	WORD iExtraImage[EXTRA_ICON_COUNT];
-	BYTE flags = 0;
+	uint16_t iExtraImage[EXTRA_ICON_COUNT];
+	uint8_t flags = 0;
 
 	ClcContact *contact;
 	if (!Clist_FindItem(hwnd, dat, wParam, &contact))
@@ -1334,12 +1337,12 @@ static LRESULT clcOnIntmIconChanged(ClcData *dat, HWND hwnd, UINT, WPARAM wParam
 	ClcContact *selcontact = nullptr;
 
 	char *szProto = Proto_GetBaseAccountName(wParam);
-	WORD status = (szProto == nullptr) ? ID_STATUS_OFFLINE : GetContactCachedStatus(wParam);
+	uint16_t status = (szProto == nullptr) ? ID_STATUS_OFFLINE : GetContactCachedStatus(wParam);
 	bool bImageIsSpecial = (LOWORD(contacticon) != (LOWORD(lParam))); //check only base icons
 
 	int nHiddenStatus = CLVM_GetContactHiddenStatus(wParam, szProto, dat);
 
-	DWORD style = GetWindowLongPtr(hwnd, GWL_STYLE);
+	uint32_t style = GetWindowLongPtr(hwnd, GWL_STYLE);
 	bool isVisiblebyFilter = (((style & CLS_SHOWHIDDEN) && nHiddenStatus != -1) || !nHiddenStatus);
 	bool ifVisibleByClui = !Clist_IsHiddenMode(dat, status);
 	bool isVisible = (g_CluiData.bFilterEffective & CLVM_FILTER_STATUS) ? true : ifVisibleByClui;
@@ -1640,9 +1643,9 @@ HRESULT ClcLoadModule()
 
 int ClcUnloadModule()
 {
-	if (g_CluiData.bOldUseGroups != (BYTE)-1)
+	if (g_CluiData.bOldUseGroups != (uint8_t)-1)
 		Clist::UseGroups = g_CluiData.bOldUseGroups;
-	if (g_CluiData.boldHideOffline != (BYTE)-1)
+	if (g_CluiData.boldHideOffline != (uint8_t)-1)
 		Clist::HideOffline = g_CluiData.boldHideOffline;
 
 	return 0;

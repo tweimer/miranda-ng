@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org),
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org),
 Copyright (c) 2000-12 Miranda IM project,
 all portions of this codebase are copyrighted to the people
 listed in contributors.txt.
@@ -67,12 +67,12 @@ MIR_APP_DLL(wchar_t*) Clist_GetGroupCountsText(ClcData *dat, ClcContact *contact
 	return szName;
 }
 
-int fnHitTest(HWND hwnd, ClcData *dat, int testx, int testy, ClcContact **contact, ClcGroup **group, DWORD * flags)
+int fnHitTest(HWND hwnd, ClcData *dat, int testx, int testy, ClcContact **contact, ClcGroup **group, uint32_t * flags)
 {
 	ClcContact *hitcontact = nullptr;
 	ClcGroup *hitgroup = nullptr;
 	int indent, i;
-	DWORD style = GetWindowLongPtr(hwnd, GWL_STYLE);
+	uint32_t style = GetWindowLongPtr(hwnd, GWL_STYLE);
 
 	if (flags)
 		*flags = 0;
@@ -199,9 +199,9 @@ void fnScrollTo(HWND hwnd, ClcData *dat, int desty, int noSmooth)
 	
 	int previousy = dat->yScroll;
 	if (!noSmooth) {
-		DWORD startTick = GetTickCount();
+		uint32_t startTick = GetTickCount();
 		for (;;) {
-			DWORD nowTick = GetTickCount();
+			uint32_t nowTick = GetTickCount();
 			if (nowTick >= startTick + dat->scrollTime)
 				break;
 			
@@ -527,7 +527,7 @@ int GetDropTargetInformation(HWND hwnd, ClcData *dat, POINT pt)
 
 	ClcContact *contact, *movecontact;
 	ClcGroup *group, *movegroup;
-	DWORD hitFlags;
+	uint32_t hitFlags;
 	int hit = g_clistApi.pfnHitTest(hwnd, dat, pt.x, pt.y, &contact, &group, &hitFlags);
 	g_clistApi.pfnGetRowByIndex(dat, dat->iDragItem, &movecontact, &movegroup);
 	if (hit == dat->iDragItem)
@@ -642,10 +642,10 @@ MIR_APP_DLL(void) Clist_NotifyNewContact(HWND hwnd, MCONTACT hContact)
 	SendMessage(GetParent(hwnd), WM_NOTIFY, 0, (LPARAM)&nm);
 }
 
-MIR_APP_DLL(DWORD) Clist_GetDefaultExStyle(void)
+MIR_APP_DLL(uint32_t) Clist_GetDefaultExStyle(void)
 {
 	BOOL param;
-	DWORD ret = CLCDEFAULT_EXSTYLE;
+	uint32_t ret = CLCDEFAULT_EXSTYLE;
 	if (SystemParametersInfo(SPI_GETLISTBOXSMOOTHSCROLLING, 0, &param, FALSE) && !param)
 		ret |= CLS_EX_NOSMOOTHSCROLLING;
 	if (SystemParametersInfo(SPI_GETHOTTRACKING, 0, &param, FALSE) && !param)
@@ -698,7 +698,7 @@ MIR_APP_DLL(void) Clist_GetFontSetting(int i, LOGFONT *lf, COLORREF *colour)
 	lf->lfHeight = (char)db_get_b(0, "CLC", idstr, lf->lfHeight);
 
 	mir_snprintf(idstr, "Font%dSty", i);
-	BYTE style = (BYTE)db_get_b(0, "CLC", idstr, (lf->lfWeight == FW_NORMAL ? 0 : DBFONTF_BOLD) | (lf->lfItalic ? DBFONTF_ITALIC : 0) | (lf->lfUnderline ? DBFONTF_UNDERLINE : 0));
+	uint8_t style = (uint8_t)db_get_b(0, "CLC", idstr, (lf->lfWeight == FW_NORMAL ? 0 : DBFONTF_BOLD) | (lf->lfItalic ? DBFONTF_ITALIC : 0) | (lf->lfUnderline ? DBFONTF_UNDERLINE : 0));
 	lf->lfWidth = lf->lfEscapement = lf->lfOrientation = 0;
 	lf->lfWeight = style & DBFONTF_BOLD ? FW_BOLD : FW_NORMAL;
 	lf->lfItalic = (style & DBFONTF_ITALIC) != 0;

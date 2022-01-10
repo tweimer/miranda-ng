@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org),
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org),
 Copyright (c) 2000-12 Miranda IM project,
 all portions of this codebase are copyrighted to the people
 listed in contributors.txt.
@@ -164,9 +164,9 @@ static LPSTR rgszUsages[] =
 	szOID_SGC_NETSCAPE
 };
 
-static bool VerifyCertificate(SslHandle *ssl, PCSTR pszServerName, DWORD dwCertFlags)
+static bool VerifyCertificate(SslHandle *ssl, PCSTR pszServerName, uint32_t dwCertFlags)
 {
-	DWORD scRet;
+	uint32_t scRet;
 
 	ptrW pwszServerName(mir_a2u(pszServerName));
 
@@ -251,7 +251,7 @@ MIR_APP_DLL(HSSL) Netlib_SslConnect(SOCKET s, const char* host, int verify)
 	}
 
 	if (verify) {
-		DWORD dwFlags = 0;
+		uint32_t dwFlags = 0;
 		if (!host || inet_addr(host) != INADDR_NONE)
 			dwFlags |= 0x00001000;
 		if (!VerifyCertificate(ssl.get(), host, dwFlags))

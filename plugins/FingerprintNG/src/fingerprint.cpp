@@ -1,6 +1,6 @@
 fv/*
 Fingerprint NG (client version) icons module for Miranda NG
-Copyright © 2006-21 ghazan, mataes, HierOS, FYR, Bio, nullbie, faith_healer and all respective contributors.
+Copyright © 2006-22 ghazan, mataes, HierOS, FYR, Bio, nullbie, faith_healer and all respective contributors.
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -209,7 +209,7 @@ BOOL __fastcall WildCompare(LPWSTR wszName, LPWSTR wszMask)
 		return wildcmpw(wszName, wszMask);
 
 	size_t s = 1, e = 1;
-	LPWSTR wszTemp = (LPWSTR)_alloca(mir_wstrlen(wszMask) * sizeof(WCHAR) + sizeof(WCHAR));
+	LPWSTR wszTemp = (LPWSTR)_alloca(mir_wstrlen(wszMask) * sizeof(wchar_t) + sizeof(wchar_t));
 	BOOL bExcept;
 
 	while (wszMask[e] != L'\0')
@@ -221,7 +221,7 @@ BOOL __fastcall WildCompare(LPWSTR wszName, LPWSTR wszMask)
 		bExcept = (*(wszMask + s) == L'^');
 		if (bExcept) s++;
 
-		memcpy(wszTemp, wszMask + s, (e - s) * sizeof(WCHAR));
+		memcpy(wszTemp, wszMask + s, (e - s) * sizeof(wchar_t));
 		wszTemp[e - s] = L'\0';
 
 		if (wildcmpw(wszName, wszTemp))
@@ -430,7 +430,7 @@ HBITMAP __fastcall CreateBitmap32Point(int cx, int cy, LPVOID* bits)
 }
 
 /*
-*	 checkHasAlfa - checks if image has at least one BYTE in alpha channel
+*	 checkHasAlfa - checks if image has at least one uint8_t in alpha channel
 *				 that is not a 0. (is image real 32 bit or just 24 bit)
 */
 BOOL __fastcall checkHasAlfa(LPBYTE from, int width, int height)
@@ -473,15 +473,15 @@ BOOL __inline GetMaskBit(LPBYTE line, int x)
 *	blend	- alpha blend ARGB values of 2 pixels. X1 - underlaying,
 *	 X2 - overlaying points.
 */
-DWORD __fastcall blend(DWORD X1, DWORD X2)
+uint32_t __fastcall blend(uint32_t X1, uint32_t X2)
 {
 	RGBA* q1 = (RGBA*)&X1;
 	RGBA* q2 = (RGBA*)&X2;
-	BYTE a_1 = ~q1->a;
-	BYTE a_2 = ~q2->a;
-	WORD am = q1->a * a_2;
+	uint8_t a_1 = ~q1->a;
+	uint8_t a_2 = ~q2->a;
+	uint16_t am = q1->a * a_2;
 
-	WORD ar = q1->a + ((a_1 * q2->a) / 255);
+	uint16_t ar = q1->a + ((a_1 * q2->a) / 255);
 	// if a2 more than 0 than result should be more
 	// or equal (if a1==0) to a2, else in combination
 	// with mask we can get here black points
@@ -491,10 +491,10 @@ DWORD __fastcall blend(DWORD X1, DWORD X2)
 	if (ar == 0) return 0;
 
 	{
-		WORD arm = ar * 255;
-		WORD rr = ((q1->r * am + q2->r * q2->a * 255)) / arm;
-		WORD gr = ((q1->g * am + q2->g * q2->a * 255)) / arm;
-		WORD br = ((q1->b * am + q2->b * q2->a * 255)) / arm;
+		uint16_t arm = ar * 255;
+		uint16_t rr = ((q1->r * am + q2->r * q2->a * 255)) / arm;
+		uint16_t gr = ((q1->g * am + q2->g * q2->a * 255)) / arm;
+		uint16_t br = ((q1->b * am + q2->b * q2->a * 255)) / arm;
 		return (ar << 24) | (rr << 16) | (gr << 8) | br;
 	}
 }
@@ -511,7 +511,7 @@ HICON __fastcall CreateJoinedIcon(HICON hBottom, HICON hTop)
 	HBITMAP nMask, hbm, obmp, obmp2;
 	LPBYTE ptPixels = nullptr;
 	ICONINFO iNew = { 0 };
-	BYTE p[32] = { 0 };
+	uint8_t p[32] = { 0 };
 
 	tempDC = CreateCompatibleDC(nullptr);
 	nImage = CreateBitmap32Point(16, 16, (LPVOID*)&ptPixels);
@@ -592,8 +592,8 @@ HICON __fastcall CreateJoinedIcon(HICON hBottom, HICON hTop)
 			{
 				for (x = 0; x < 16; x++)
 				{
-					DWORD bottom_d = ((LPDWORD)bb)[x];
-					DWORD top_d = ((LPDWORD)tb)[x];
+					uint32_t bottom_d = ((LPDWORD)bb)[x];
+					uint32_t top_d = ((LPDWORD)tb)[x];
 
 					if (topMaskUsed)
 					{

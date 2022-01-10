@@ -42,16 +42,16 @@ void DynamicLoadInit()
 /************************* String Conv ****************************/
 
 // mir_free() the return value
-wchar_t* s2t(const void *pszStr, DWORD fUnicode, BOOL fMirCp)
+wchar_t* s2t(const void *pszStr, uint32_t fUnicode, BOOL fMirCp)
 {
 	if (fUnicode)
-		return mir_wstrdup((WCHAR*)pszStr);
+		return mir_wstrdup((wchar_t*)pszStr);
 	return mir_a2u_cp((char*)pszStr, fMirCp);
 
 }
 
 // mir_free() the return value
-void* t2s(const wchar_t *pszStr, DWORD fUnicode, BOOL fMirCp)
+void* t2s(const wchar_t *pszStr, uint32_t fUnicode, BOOL fMirCp)
 {
 	if (!fUnicode)
 		return (void*)mir_u2a_cp(pszStr, fMirCp);
@@ -107,7 +107,7 @@ static void MessageBoxIndirectFree(MSGBOXPARAMSA *mbp)
 	mir_free(mbp);
 }
 
-void ShowInfoMessage(BYTE flags, const char *pszTitle, const char *pszTextFmt, ...)
+void ShowInfoMessage(uint8_t flags, const char *pszTitle, const char *pszTextFmt, ...)
 {
 	char szText[256]; /* max for systray */
 
@@ -137,10 +137,10 @@ void ShowInfoMessage(BYTE flags, const char *pszTitle, const char *pszTextFmt, .
 }
 
 // LocalFree() the return value
-char* GetWinErrorDescription(DWORD dwLastError)
+char* GetWinErrorDescription(uint32_t dwLastError)
 {
 	char *buf = nullptr;
-	DWORD flags = FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM;
+	uint32_t flags = FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM;
 	if (!FormatMessageA(flags, nullptr, dwLastError, LANGIDFROMLCID(Langpack_GetDefaultLocale()), (char*)&buf, 0, nullptr))
 		if (GetLastError() == ERROR_RESOURCE_LANG_NOT_FOUND)
 			FormatMessageA(flags, nullptr, dwLastError, 0, (char*)&buf, 0, nullptr);

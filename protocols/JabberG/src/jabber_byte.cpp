@@ -5,7 +5,7 @@ Jabber Protocol Plugin for Miranda NG
 Copyright (c) 2002-04  Santithorn Bunchua
 Copyright (c) 2005-12  George Hazan
 Copyright (c) 2007     Maxim Mluhov
-Copyright (C) 2012-21 Miranda NG team
+Copyright (C) 2012-22 Miranda NG team
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -82,7 +82,7 @@ void CJabberProto::IqResultProxyDiscovery(const TiXmlElement *iqNode, CJabberIqI
 		SetEvent(jbt->hProxyEvent);
 }
 
-void JabberByteSendConnection(HNETLIBCONN hConn, DWORD /*dwRemoteIP*/, void* extra)
+void JabberByteSendConnection(HNETLIBCONN hConn, uint32_t /*dwRemoteIP*/, void* extra)
 {
 	CJabberProto *ppro = (CJabberProto*)extra;
 	JABBER_BYTE_TRANSFER *jbt;
@@ -321,7 +321,7 @@ void CJabberProto::ByteInitiateResult(const TiXmlElement *iqNode, CJabberIqInfo 
 int CJabberProto::ByteSendParse(HNETLIBCONN hConn, JABBER_BYTE_TRANSFER *jbt, char* buffer, int datalen)
 {
 	int nMethods;
-	BYTE data[10];
+	uint8_t data[10];
 	int i;
 
 	switch (jbt->state) {
@@ -365,7 +365,7 @@ int CJabberProto::ByteSendParse(HNETLIBCONN hConn, JABBER_BYTE_TRANSFER *jbt, ch
 		// 03-03 address type (1=IPv4 address)
 		// 04-07 bnd.addr server bound address
 		// 08-09 bnd.port server bound port
-		if (datalen == 47 && *((DWORD*)buffer) == 0x03000105 && buffer[4] == 40 && *((WORD*)(buffer + 45)) == 0) {
+		if (datalen == 47 && *((uint32_t*)buffer) == 0x03000105 && buffer[4] == 40 && *((uint16_t*)(buffer + 45)) == 0) {
 			ptrA szInitiatorJid(JabberPrepareJid(jbt->srcJID));
 			ptrA szTargetJid(JabberPrepareJid(jbt->dstJID));
 			CMStringA szAuthString(FORMAT, "%s%s%s", jbt->sid, szInitiatorJid.get(), szTargetJid.get());
@@ -438,7 +438,7 @@ void CJabberProto::ByteSendViaProxy(JABBER_BYTE_TRANSFER *jbt)
 	char *szPort = jbt->szProxyPort;
 	char *szHost = jbt->szProxyHost;
 
-	WORD port = (WORD)atoi(szPort);
+	uint16_t port = (uint16_t)atoi(szPort);
 	replaceStr(jbt->streamhostJID, jbt->szProxyJid);
 
 	NETLIBOPENCONNECTION nloc = {};
@@ -497,9 +497,9 @@ int CJabberProto::ByteSendProxyParse(HNETLIBCONN hConn, JABBER_BYTE_TRANSFER *jb
 		// 04-44 dst.addr (41 bytes: 1-byte length, 40-byte SHA1 hash of [sid,srcJID,dstJID])
 		// 45-46 dst.port (0)
 		if (datalen == 2 && buffer[0] == 5 && buffer[1] == 0) {
-			BYTE data[47];
+			uint8_t data[47];
 			memset(data, 0, sizeof(data));
-			*((DWORD*)data) = 0x03000105;
+			*((uint32_t*)data) = 0x03000105;
 			data[4] = 40;
 
 			char szAuthString[256];
@@ -575,7 +575,7 @@ void __cdecl CJabberProto::ByteReceiveThread(JABBER_BYTE_TRANSFER *jbt)
 		return;
 
 	const TiXmlElement *iqNode, *queryNode = nullptr;
-	WORD port;
+	uint16_t port;
 	char data[3];
 	char* buffer;
 	int datalen, bytesParsed, recvResult;
@@ -606,7 +606,7 @@ void __cdecl CJabberProto::ByteReceiveThread(JABBER_BYTE_TRANSFER *jbt)
 				const char *szHost = XmlGetAttr(n, "host");
 				const char *szPort = XmlGetAttr(n, "port");
 				if (str != nullptr && szHost != nullptr && szPort != nullptr) {
-					port = (WORD)atoi(szPort);
+					port = (uint16_t)atoi(szPort);
 					replaceStr(jbt->streamhostJID, str);
 
 					debugLogA("bytestream_recv connecting to %s:%d", szHost, port);
@@ -684,9 +684,9 @@ int CJabberProto::ByteReceiveParse(HNETLIBCONN hConn, JABBER_BYTE_TRANSFER *jbt,
 		// 04-44 dst.addr (41 bytes: 1-byte length, 40-byte SHA1 hash of [sid,srcJID,dstJID])
 		// 45-46 dst.port (0)
 		if (datalen == 2 && buffer[0] == 5 && buffer[1] == 0) {
-			BYTE data[47];
+			uint8_t data[47];
 			memset(data, 0, sizeof(data));
-			*((DWORD*)data) = 0x03000105;
+			*((uint32_t*)data) = 0x03000105;
 			data[4] = 40;
 
 			CMStringA szAuthString(FORMAT, "%s%s%s", jbt->sid, ptrA(JabberPrepareJid(jbt->srcJID)).get(), ptrA(JabberPrepareJid(jbt->dstJID)).get());

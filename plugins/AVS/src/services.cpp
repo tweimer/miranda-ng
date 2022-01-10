@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org)
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org)
 Copyright (c) 2000-04 Miranda ICQ/IM project,
 all portions of this codebase are copyrighted to the people
 listed in contributors.txt.
@@ -44,9 +44,9 @@ INT_PTR GetAvatarBitmap(WPARAM hContact, LPARAM)
 
 INT_PTR ProtectAvatar(WPARAM hContact, LPARAM lParam)
 {
-	BYTE was_locked = db_get_b(hContact, "ContactPhoto", "Locked", 0);
+	uint8_t was_locked = db_get_b(hContact, "ContactPhoto", "Locked", 0);
 
-	if (was_locked == (BYTE)lParam)      // no need for redundant lockings...
+	if (was_locked == (uint8_t)lParam)      // no need for redundant lockings...
 		return 0;
 
 	if (hContact) {
@@ -68,8 +68,8 @@ INT_PTR ProtectAvatar(WPARAM hContact, LPARAM lParam)
 
 struct OpenFileSubclassData
 {
-	BYTE *locking_request;
-	BYTE setView;
+	uint8_t *locking_request;
+	uint8_t setView;
 };
 
 UINT_PTR CALLBACK OpenFileSubclass(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
@@ -84,7 +84,7 @@ UINT_PTR CALLBACK OpenFileSubclass(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lP
 
 			data = (OpenFileSubclassData *)malloc(sizeof(OpenFileSubclassData));
 			SetWindowLongPtr(hwnd, GWLP_USERDATA, (LONG_PTR)data);
-			data->locking_request = (BYTE *)ofn->lCustData;
+			data->locking_request = (uint8_t *)ofn->lCustData;
 			data->setView = TRUE;
 			CheckDlgButton(hwnd, IDC_PROTECTAVATAR, *(data->locking_request) ? BST_CHECKED : BST_UNCHECKED);
 		}
@@ -119,7 +119,7 @@ INT_PTR SetAvatar(WPARAM hContact, LPARAM lParam)
 {
 	wchar_t FileName[MAX_PATH];
 	wchar_t *szFinalName;
-	BYTE locking_request;
+	uint8_t locking_request;
 
 	if (hContact == NULL)
 		return 0;
@@ -319,7 +319,7 @@ static UINT_PTR CALLBACK SetMyAvatarHookProc(HWND hwnd, UINT msg, WPARAM, LPARAM
 
 struct SaveProtocolData
 {
-	DWORD max_size;
+	uint32_t max_size;
 	wchar_t image_file_name[MAX_PATH];
 	BOOL saved;
 	BOOL need_smaller_size;
@@ -380,7 +380,7 @@ static int SetProtoMyAvatar(char *protocol, HBITMAP hBmp, wchar_t *originalFilen
 	// Get protocol info
 	SaveProtocolData d = { 0 };
 
-	d.max_size = (DWORD)Proto_GetAvatarMaxFileSize(protocol);
+	d.max_size = (uint32_t)Proto_GetAvatarMaxFileSize(protocol);
 
 	Proto_GetAvatarMaxSize(protocol, &d.width, &d.height);
 	int orig_width = d.width;

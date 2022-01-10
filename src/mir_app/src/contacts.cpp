@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org),
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org),
 Copyright (c) 2000-12 Miranda IM project,
 all portions of this codebase are copyrighted to the people
 listed in contributors.txt.
@@ -38,7 +38,7 @@ static wchar_t* nameOrderDescr[ NAMEORDERCOUNT ] =
 	LPGENW("'(Unknown contact)' (not movable)")
 };
 
-BYTE nameOrder[NAMEORDERCOUNT];
+uint8_t nameOrder[NAMEORDERCOUNT];
 
 static wchar_t* ProcessDatabaseValueDefault(MCONTACT hContact, const char *szProto, const char *szSetting)
 {
@@ -66,7 +66,7 @@ static wchar_t* ProcessDatabaseValueDefault(MCONTACT hContact, const char *szPro
 	case DBVT_DWORD:
 		return mir_wstrdup(_itow(dbv.dVal, buf, 10));
 	case DBVT_BLOB:
-		return mir_wstrdup(bin2hexW(dbv.pbVal, min(dbv.cpbVal, 19), buf));
+		return mir_wstrdup(bin2hexW(dbv.pbVal, min(int(dbv.cpbVal), 19), buf));
 	}
 
 	db_free(&dbv);
@@ -147,7 +147,7 @@ MIR_APP_DLL(wchar_t*) Contact_GetInfo(int type, MCONTACT hContact, const char *s
 			DBVARIANT dbv2;
 			if (!db_get_ws(hContact, szProto, "LastName", &dbv2)) {
 				size_t len = mir_wstrlen(dbv.pwszVal) + mir_wstrlen(dbv2.pwszVal) + 2;
-				WCHAR* buf = (WCHAR*)mir_alloc(sizeof(WCHAR)*len);
+				wchar_t *buf = (wchar_t*)mir_alloc(sizeof(wchar_t)*len);
 				if (buf != nullptr)
 					mir_wstrcat(mir_wstrcat(mir_wstrcpy(buf, dbv.pwszVal), L" "), dbv2.pwszVal);
 				db_free(&dbv);
@@ -215,7 +215,7 @@ MIR_APP_DLL(wchar_t*) Contact_GetInfo(int type, MCONTACT hContact, const char *s
 					if (!db_get_ws(hContact, szProto, uid, &dbv)) {
 						if (dbv.type == DBVT_BYTE || dbv.type == DBVT_WORD || dbv.type == DBVT_DWORD) {
 							long value = (dbv.type == DBVT_BYTE) ? dbv.bVal : (dbv.type == DBVT_WORD ? dbv.wVal : dbv.dVal);
-							WCHAR buf[40];
+							wchar_t buf[40];
 							_ltow(value, buf, 10);
 							return mir_wstrdup(buf);
 						}
@@ -230,7 +230,7 @@ MIR_APP_DLL(wchar_t*) Contact_GetInfo(int type, MCONTACT hContact, const char *s
 					DBVARIANT dbv2;
 					if (!db_get_ws(hContact, szProto, nameOrder[i] == 6 ? "LastName" : "FirstName", &dbv2)) {
 						size_t len = mir_wstrlen(dbv.pwszVal) + mir_wstrlen(dbv2.pwszVal) + 2;
-						WCHAR* buf = (WCHAR*)mir_alloc(sizeof(WCHAR)*len);
+						wchar_t *buf = (wchar_t*)mir_alloc(sizeof(wchar_t)*len);
 						if (buf != nullptr)
 							mir_wstrcat(mir_wstrcat(mir_wstrcpy(buf, dbv.pwszVal), L" "), dbv2.pwszVal);
 
@@ -349,7 +349,7 @@ public:
 		while (tvi.hItem != nullptr) {
 			tvi.mask = TVIF_PARAM | TVIF_HANDLE;
 			m_nameOrder.GetItem(&tvi);
-			nameOrder[i++] = (BYTE)tvi.lParam;
+			nameOrder[i++] = (uint8_t)tvi.lParam;
 			tvi.hItem = m_nameOrder.GetNextSibling(tvi.hItem);
 		}
 		db_set_blob(0, "Contact", "NameOrder", nameOrder, _countof(nameOrderDescr));
@@ -379,7 +379,7 @@ static int ContactOptInit(WPARAM wParam, LPARAM)
 
 int LoadContactsModule(void)
 {
-	for (BYTE i = 0; i < NAMEORDERCOUNT; i++)
+	for (uint8_t i = 0; i < NAMEORDERCOUNT; i++)
 		nameOrder[i] = i;
 
 	DBVARIANT dbv;

@@ -15,7 +15,7 @@ namespace mu
 
 	namespace clist
 	{
-		HGENMENU addMainMenuItem(const wchar_t* pszName, DWORD flags, int position, HICON hIcon, const char* pszService, HGENMENU hRoot)
+		HGENMENU addMainMenuItem(const wchar_t* pszName, uint32_t flags, int position, HICON hIcon, const char* pszService, HGENMENU hRoot)
 		{
 			// TODO: support for unicode-core with unicode-aware CList
 			CMenuItem mi(&g_plugin);
@@ -29,7 +29,7 @@ namespace mu
 			return Menu_AddMainMenuItem(&mi);
 		}
 
-		HGENMENU addContactMenuItem(const wchar_t* pszName, DWORD flags, int position, HICON hIcon, const char* pszService)
+		HGENMENU addContactMenuItem(const wchar_t* pszName, uint32_t flags, int position, HICON hIcon, const char* pszService)
 		{
 			// TODO: support for unicode-core with unicode-aware CList
 			CMenuItem mi(&g_plugin);
@@ -78,9 +78,9 @@ namespace mu
 
 	namespace protosvc
 	{
-		DWORD getCaps(const char* szProto, int flagNum)
+		uint32_t getCaps(const char* szProto, int flagNum)
 		{
-			return (DWORD)CallProtoService(szProto, PS_GETCAPS, static_cast<WPARAM>(flagNum), 0);
+			return (uint32_t)CallProtoService(szProto, PS_GETCAPS, static_cast<WPARAM>(flagNum), 0);
 		}
 
 		HICON loadIcon(const char* szProto, int whichIcon)
@@ -105,13 +105,13 @@ namespace mu
 	void unload()
 	{}
 
-	DWORD getMinimalMirandaVersion()
+	uint32_t getMinimalMirandaVersion()
 	{
 		// MEMO: version dependency check
 		return PLUGIN_MAKE_VERSION(0, 6, 7, 0);
 	}
 
-	bool isMirandaVersionOk(DWORD version)
+	bool isMirandaVersionOk(uint32_t version)
 	{
 		return (version >= getMinimalMirandaVersion());
 	}
@@ -125,7 +125,7 @@ namespace mu
 	 * string handling
 	 */
 
-	char* wideToAnsiDup(const WCHAR* pszWide, UINT uCP /* = CP_ACP */)
+	char* wideToAnsiDup(const wchar_t* pszWide, UINT uCP /* = CP_ACP */)
 	{
 		if (!pszWide)
 			return nullptr;
@@ -140,13 +140,13 @@ namespace mu
 		return result;
 	}
 
-	WCHAR* ansiToWideDup(const char* pszAnsi, UINT uCP /* = CP_ACP */)
+	wchar_t* ansiToWideDup(const char* pszAnsi, UINT uCP /* = CP_ACP */)
 	{
 		if (!pszAnsi)
 			return nullptr;
 
 		int len = MultiByteToWideChar(uCP, 0, pszAnsi, -1, nullptr, 0);
-		WCHAR* result = reinterpret_cast<WCHAR*>(malloc(sizeof(WCHAR)* len));
+		wchar_t* result = reinterpret_cast<wchar_t*>(malloc(sizeof(wchar_t)* len));
 		if (!result)
 			return nullptr;
 
@@ -155,7 +155,7 @@ namespace mu
 		return result;
 	}
 
-	char* wideToAnsi(const WCHAR* pszWide, char* pszRes, int maxLen, UINT uCP /* = CP_ACP */)
+	char* wideToAnsi(const wchar_t* pszWide, char* pszRes, int maxLen, UINT uCP /* = CP_ACP */)
 	{
 		if (!pszWide)
 			return nullptr;
@@ -164,7 +164,7 @@ namespace mu
 		return pszRes;
 	}
 
-	WCHAR* ansiToWide(const char* pszAnsi, WCHAR* pszRes, int maxLen, UINT uCP /* = CP_ACP */)
+	wchar_t* ansiToWide(const char* pszAnsi, wchar_t* pszRes, int maxLen, UINT uCP /* = CP_ACP */)
 	{
 		if (!pszAnsi)
 			return nullptr;

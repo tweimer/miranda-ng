@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org),
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org),
 Copyright (c) 2000-12 Miranda IM project,
 all portions of this codebase are copyrighted to the people
 listed in contributors.txt.
@@ -194,7 +194,7 @@ static INT_PTR MenuItem_DeleteContact(WPARAM wParam, LPARAM lParam)
 		char *szProto = Proto_GetBaseAccountName(wParam);
 		if (szProto != nullptr) {
 			// Check if protocol uses server side lists
-			DWORD caps = CallProtoServiceInt(0, szProto, PS_GETCAPS, PFLAGNUM_1, 0);
+			uint32_t caps = CallProtoServiceInt(0, szProto, PS_GETCAPS, PFLAGNUM_1, 0);
 			if (caps & PF1_SERVERCLIST) {
 				int status = Proto_GetStatus(szProto);
 				if (status == ID_STATUS_OFFLINE || IsStatusConnecting(status)) {
@@ -452,7 +452,7 @@ LRESULT CALLBACK fnContactListWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM
 
 		if (cluiopt.transparent) {
 			SetWindowLongPtr(hwnd, GWL_EXSTYLE, GetWindowLongPtr(hwnd, GWL_EXSTYLE) | WS_EX_LAYERED);
-			SetLayeredWindowAttributes(hwnd, RGB(0, 0, 0), (BYTE)cluiopt.alpha, LWA_ALPHA);
+			SetLayeredWindowAttributes(hwnd, RGB(0, 0, 0), (uint8_t)cluiopt.alpha, LWA_ALPHA);
 		}
 		transparentFocus = 1;
 		return FALSE;
@@ -476,7 +476,7 @@ LRESULT CALLBACK fnContactListWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM
 
 	// Power management
 	case WM_POWERBROADCAST:
-		switch ((DWORD)wParam) {
+		switch ((uint32_t)wParam) {
 		case PBT_APMSUSPEND:
 			// Computer is suspending, disconnect all protocols
 			DisconnectAll();
@@ -530,11 +530,11 @@ LRESULT CALLBACK fnContactListWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM
 
 			//if docked, dont remember pos (except for width)
 			if (!Clist_IsDocked()) {
-				db_set_dw(0, "CList", "Height", (DWORD)(rc.bottom - rc.top));
-				db_set_dw(0, "CList", "x", (DWORD)rc.left);
-				db_set_dw(0, "CList", "y", (DWORD)rc.top);
+				db_set_dw(0, "CList", "Height", (uint32_t)(rc.bottom - rc.top));
+				db_set_dw(0, "CList", "x", (uint32_t)rc.left);
+				db_set_dw(0, "CList", "y", (uint32_t)rc.top);
 			}
-			db_set_dw(0, "CList", "Width", (DWORD)(rc.right - rc.left));
+			db_set_dw(0, "CList", "Width", (uint32_t)(rc.right - rc.left));
 		}
 		return FALSE;
 
@@ -552,7 +552,7 @@ LRESULT CALLBACK fnContactListWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM
 		else {
 			if (cluiopt.transparent) {
 				KillTimer(hwnd, TM_AUTOALPHA);
-				SetLayeredWindowAttributes(hwnd, RGB(0, 0, 0), (BYTE)cluiopt.alpha, LWA_ALPHA);
+				SetLayeredWindowAttributes(hwnd, RGB(0, 0, 0), (uint8_t)cluiopt.alpha, LWA_ALPHA);
 				transparentFocus = 1;
 			}
 		}
@@ -561,7 +561,7 @@ LRESULT CALLBACK fnContactListWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM
 	case WM_SETCURSOR:
 		if (cluiopt.transparent) {
 			if (!transparentFocus && GetForegroundWindow() != hwnd) {
-				SetLayeredWindowAttributes(hwnd, RGB(0, 0, 0), (BYTE)cluiopt.alpha, LWA_ALPHA);
+				SetLayeredWindowAttributes(hwnd, RGB(0, 0, 0), (uint8_t)cluiopt.alpha, LWA_ALPHA);
 				transparentFocus = 1;
 				SetTimer(hwnd, TM_AUTOALPHA, 250, nullptr);
 			}
@@ -598,9 +598,9 @@ LRESULT CALLBACK fnContactListWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM
 			if (inwnd != transparentFocus) {        //change
 				transparentFocus = inwnd;
 				if (transparentFocus)
-					SetLayeredWindowAttributes(hwnd, RGB(0, 0, 0), (BYTE)cluiopt.alpha, LWA_ALPHA);
+					SetLayeredWindowAttributes(hwnd, RGB(0, 0, 0), (uint8_t)cluiopt.alpha, LWA_ALPHA);
 				else
-					SetLayeredWindowAttributes(hwnd, RGB(0, 0, 0), (BYTE)db_get_b(0, "CList", "AutoAlpha", SETTING_AUTOALPHA_DEFAULT), LWA_ALPHA);
+					SetLayeredWindowAttributes(hwnd, RGB(0, 0, 0), (uint8_t)db_get_b(0, "CList", "AutoAlpha", SETTING_AUTOALPHA_DEFAULT), LWA_ALPHA);
 			}
 			if (!transparentFocus)
 				KillTimer(hwnd, TM_AUTOALPHA);
@@ -615,18 +615,18 @@ LRESULT CALLBACK fnContactListWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM
 		if (!db_get_b(0, "CLUI", "FadeInOut", 0))
 			break;
 		if (GetWindowLongPtr(hwnd, GWL_EXSTYLE) & WS_EX_LAYERED) {
-			DWORD thisTick, startTick;
+			uint32_t thisTick, startTick;
 			int sourceAlpha, destAlpha;
 			if (wParam) {
 				sourceAlpha = 0;
-				destAlpha = (BYTE)cluiopt.alpha;
+				destAlpha = (uint8_t)cluiopt.alpha;
 				SetLayeredWindowAttributes(hwnd, RGB(0, 0, 0), 0, LWA_ALPHA);
 				noRecurse = 1;
 				ShowWindow(hwnd, SW_SHOW);
 				noRecurse = 0;
 			}
 			else {
-				sourceAlpha = (BYTE)cluiopt.alpha;
+				sourceAlpha = (uint8_t)cluiopt.alpha;
 				destAlpha = 0;
 			}
 			for (startTick = GetTickCount();;) {
@@ -634,9 +634,9 @@ LRESULT CALLBACK fnContactListWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM
 				if (thisTick >= startTick + 200)
 					break;
 				SetLayeredWindowAttributes(hwnd, RGB(0, 0, 0),
-					(BYTE)(sourceAlpha + (destAlpha - sourceAlpha) * (int)(thisTick - startTick) / 200), LWA_ALPHA);
+					(uint8_t)(sourceAlpha + (destAlpha - sourceAlpha) * (int)(thisTick - startTick) / 200), LWA_ALPHA);
 			}
-			SetLayeredWindowAttributes(hwnd, RGB(0, 0, 0), (BYTE)destAlpha, LWA_ALPHA);
+			SetLayeredWindowAttributes(hwnd, RGB(0, 0, 0), (uint8_t)destAlpha, LWA_ALPHA);
 		}
 		else {
 			if (wParam)
@@ -808,7 +808,7 @@ LRESULT CALLBACK fnContactListWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM
 					if (GetMonitorInfo(hMon, &mi))
 						rcWorkArea = mi.rcWork;
 
-					newHeight = max(nmc->pt.y, 9) + 1 + (rcWindow.bottom - rcWindow.top) - (rcTree.bottom - rcTree.top);
+					newHeight = max(nmc->pt.y, LONG(9)) + 1 + (rcWindow.bottom - rcWindow.top) - (rcTree.bottom - rcTree.top);
 					if (newHeight > (rcWorkArea.bottom - rcWorkArea.top) * maxHeight / 100)
 						newHeight = (rcWorkArea.bottom - rcWorkArea.top) * maxHeight / 100;
 					if (db_get_b(0, "CLUI", "AutoSizeUpward", 0)) {
@@ -827,7 +827,7 @@ LRESULT CALLBACK fnContactListWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM
 				}
 			case NM_CLICK:
 				{
-					DWORD hitFlags;
+					uint32_t hitFlags;
 					HANDLE hItem = (HANDLE)SendMessage(g_clistApi.hwndContactTree, CLM_HITTEST, (WPARAM)&hitFlags, MAKELPARAM(nmc->pt.x, nmc->pt.y));
 					if (hItem) {
 						if (hitFlags & CLCHT_ONITEMEXTRA) {
@@ -954,7 +954,7 @@ LRESULT CALLBACK fnContactListWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM
 				if (szProto == nullptr) return 0;
 				int status, x;
 				SIZE textSize;
-				BYTE showOpts = db_get_b(0, "CLUI", "SBarShow", 1);
+				uint8_t showOpts = db_get_b(0, "CLUI", "SBarShow", 1);
 				status = Proto_GetStatus(szProto);
 				SetBkMode(dis->hDC, TRANSPARENT);
 				x = dis->rcItem.left;
@@ -1020,11 +1020,11 @@ LRESULT CALLBACK fnContactListWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM
 
 			//if docked, dont remember pos (except for width)
 			if (!Clist_IsDocked()) {
-				db_set_dw(0, "CList", "Height", (DWORD)(rc.bottom - rc.top));
-				db_set_dw(0, "CList", "x", (DWORD)rc.left);
-				db_set_dw(0, "CList", "y", (DWORD)rc.top);
+				db_set_dw(0, "CList", "Height", (uint32_t)(rc.bottom - rc.top));
+				db_set_dw(0, "CList", "x", (uint32_t)rc.left);
+				db_set_dw(0, "CList", "y", (uint32_t)rc.top);
 			}
-			db_set_dw(0, "CList", "Width", (DWORD)(rc.right - rc.left));
+			db_set_dw(0, "CList", "Width", (uint32_t)(rc.right - rc.left));
 		}
 
 		RemoveMenu(g_clistApi.hMenuMain, 0, MF_BYPOSITION);

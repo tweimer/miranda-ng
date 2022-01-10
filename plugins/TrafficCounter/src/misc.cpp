@@ -25,10 +25,10 @@ InputString - строка для разбора;
 RowItemsList - список найденных элементов.
 Возвращаемое значение - количество элементов в списках. */
 
-WORD GetRowItems(wchar_t *InputString, RowItemInfo **RowItemsList)
+uint16_t GetRowItems(wchar_t *InputString, RowItemInfo **RowItemsList)
 {
 	wchar_t *begin, *end;
-	WORD c = 0;
+	uint16_t c = 0;
 
 	// Ищем слева открывающую скобку.
 	begin = wcschr(InputString, '{');
@@ -75,7 +75,7 @@ WORD GetRowItems(wchar_t *InputString, RowItemInfo **RowItemsList)
 }
 
 /* Функция возвращает количество дней в указанном месяце указанного года. */
-BYTE DaysInMonth(BYTE Month, WORD Year)
+uint8_t DaysInMonth(uint8_t Month, uint16_t Year)
 {
 	switch (Month) {
 	case 1:
@@ -89,16 +89,16 @@ BYTE DaysInMonth(BYTE Month, WORD Year)
 	case 6:
 	case 9:
 	case 11: return 30;
-	case 2: return 28 + (BYTE)!((Year % 4) && ((Year % 100) || !(Year % 400)));
+	case 2: return 28 + (uint8_t)!((Year % 4) && ((Year % 100) || !(Year % 400)));
 	}
 	return 0;
 }
 
 // Функция определяет день недели по дате
 // 7 - ВС, 1 - ПН и т. д.
-BYTE DayOfWeek(BYTE Day, BYTE Month, WORD Year)
+uint8_t DayOfWeek(uint8_t Day, uint8_t Month, uint16_t Year)
 {
-	WORD a, y, m;
+	uint16_t a, y, m;
 
 	a = (14 - Month) / 12;
 	y = Year - a;
@@ -118,10 +118,10 @@ Buffer - адрес строки для записи результата;
 Size - размер буфера.
 Возвращаемое значение: требуемый размер буфера.
 */
-size_t GetFormattedTraffic(DWORD Value, BYTE Unit, wchar_t *Buffer, size_t Size)
+size_t GetFormattedTraffic(uint32_t Value, uint8_t Unit, wchar_t *Buffer, size_t Size)
 {
 	wchar_t Str1[32], szUnit[4] = { ' ', 0 };
-	DWORD Divider;
+	uint32_t Divider;
 	NUMBERFMT nf = { 0, 1, 3, L",", L" ", 0 };
 	wchar_t *Res; // Промежуточный результат.
 
@@ -174,7 +174,7 @@ Format: строка формата;
 Buffer: адрес буфера, куда функция помещает результат.
 Size - размер буфера. */
 
-size_t GetDurationFormatM(DWORD Duration, wchar_t *Format, wchar_t *Buffer, size_t Size)
+size_t GetDurationFormatM(uint32_t Duration, wchar_t *Format, wchar_t *Buffer, size_t Size)
 {
 	size_t Length;
 	wchar_t Token[256];  // Аккумулятор.

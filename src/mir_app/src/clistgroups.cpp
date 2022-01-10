@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org),
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org),
 Copyright (c) 2000-12 Miranda IM project,
 all portions of this codebase are copyrighted to the people
 listed in contributors.txt.
@@ -165,7 +165,7 @@ MIR_APP_DLL(MGROUP) Clist_GroupCreate(MGROUP hParent, LPCTSTR ptszGroupName)
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-MIR_APP_DLL(wchar_t*) Clist_GroupGetName(MGROUP hGroup, DWORD *pdwFlags)
+MIR_APP_DLL(wchar_t*) Clist_GroupGetName(MGROUP hGroup, uint32_t *pdwFlags)
 {
 	CGroupInternal *p = arByIds.find(hGroup-1);
 	if (p == nullptr)
@@ -471,7 +471,7 @@ MIR_APP_DLL(HMENU) Clist_GroupBuildMenu(int startId)
 				pNextField = nullptr;
 			}
 			else {
-				mir_wstrncpy(szThisField, pNextField, min(_countof(szThisField), pBackslash - pNextField + 1));
+				mir_wstrncpy(szThisField, pNextField, min(_countof(szThisField), size_t(pBackslash - pNextField + 1)));
 				pNextField = pBackslash + 1;
 			}
 			int compareResult = 1;

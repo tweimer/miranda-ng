@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org)
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org)
 Copyright (c) 2000-05 Miranda ICQ/IM project,
 all portions of this codebase are copyrighted to the people
 listed in contributors.txt.
@@ -77,7 +77,7 @@ BOOL GetSettingBool(const char *section, const char *key, BOOL defaultValue)
 BOOL GetSettings(const char *section, char *buffer, size_t bufferSize)
 {
 	buffer[0] = '\0\0';
-	return (BOOL)GetPrivateProfileSectionA(section, buffer, (DWORD)bufferSize, gIniFile) != 0;
+	return (BOOL)GetPrivateProfileSectionA(section, buffer, (uint32_t)bufferSize, gIniFile) != 0;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -85,7 +85,7 @@ BOOL GetSettings(const char *section, char *buffer, size_t bufferSize)
 
 void DeleteFileOrFolder(const char *name)
 {
-	DWORD attibs = GetFileAttributesA(name);
+	uint32_t attibs = GetFileAttributesA(name);
 
 	if (attibs == INVALID_FILE_ATTRIBUTES) { // Not exists
 														  // Try to find it

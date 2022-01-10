@@ -103,11 +103,11 @@ static void LoadOpt(OptPageControl *ctrl, char *module)
 	wchar_t tmp[1024];
 	switch (ctrl->type) {
 	case CONTROL_CHECKBOX:
-		*((BYTE *)ctrl->var) = db_get_b(0, module, ctrl->setting, ctrl->dwDefValue);
+		*((uint8_t *)ctrl->var) = db_get_b(0, module, ctrl->setting, ctrl->dwDefValue);
 		break;
 
 	case CONTROL_SPIN:
-		*((WORD *)ctrl->var) = db_get_w(0, module, ctrl->setting, ctrl->dwDefValue);
+		*((uint16_t *)ctrl->var) = db_get_w(0, module, ctrl->setting, ctrl->dwDefValue);
 		break;
 
 	case CONTROL_COLOR:
@@ -115,11 +115,11 @@ static void LoadOpt(OptPageControl *ctrl, char *module)
 		break;
 
 	case CONTROL_RADIO:
-		*((WORD *)ctrl->var) = db_get_w(0, module, ctrl->setting, ctrl->dwDefValue);
+		*((uint16_t *)ctrl->var) = db_get_w(0, module, ctrl->setting, ctrl->dwDefValue);
 		break;
 
 	case CONTROL_COMBO:
-		*((WORD *)ctrl->var) = db_get_w(0, module, ctrl->setting, ctrl->dwDefValue);
+		*((uint16_t *)ctrl->var) = db_get_w(0, module, ctrl->setting, ctrl->dwDefValue);
 		break;
 
 	case CONTROL_PROTOCOL_LIST:
@@ -313,24 +313,24 @@ INT_PTR CALLBACK SaveOptsDlgProc(OptPageControl *controls, int controlsSize, cha
 
 					switch (ctrl->type) {
 					case CONTROL_CHECKBOX:
-						db_set_b(0, module, ctrl->setting, (BYTE)IsDlgButtonChecked(hwndDlg, ctrl->nID));
+						db_set_b(0, module, ctrl->setting, (uint8_t)IsDlgButtonChecked(hwndDlg, ctrl->nID));
 						break;
 
 					case CONTROL_SPIN:
-						db_set_w(0, module, ctrl->setting, (WORD)SendDlgItemMessage(hwndDlg, ctrl->nIDSpin, UDM_GETPOS, 0, 0));
+						db_set_w(0, module, ctrl->setting, (uint16_t)SendDlgItemMessage(hwndDlg, ctrl->nIDSpin, UDM_GETPOS, 0, 0));
 						break;
 
 					case CONTROL_COLOR:
-						db_set_dw(0, module, ctrl->setting, (DWORD)SendDlgItemMessage(hwndDlg, ctrl->nID, CPM_GETCOLOUR, 0, 0));
+						db_set_dw(0, module, ctrl->setting, (uint32_t)SendDlgItemMessage(hwndDlg, ctrl->nID, CPM_GETCOLOUR, 0, 0));
 						break;
 
 					case CONTROL_RADIO:
 						if (IsDlgButtonChecked(hwndDlg, ctrl->nID))
-							db_set_w(0, module, ctrl->setting, (BYTE)ctrl->value);
+							db_set_w(0, module, ctrl->setting, (uint8_t)ctrl->value);
 						break;
 
 					case CONTROL_COMBO:
-						db_set_w(0, module, ctrl->setting, (WORD)SendDlgItemMessage(hwndDlg, ctrl->nID, CB_GETCURSEL, 0, 0));
+						db_set_w(0, module, ctrl->setting, (uint16_t)SendDlgItemMessage(hwndDlg, ctrl->nID, CB_GETCURSEL, 0, 0));
 						break;
 
 					case CONTROL_PROTOCOL_LIST:
@@ -345,7 +345,7 @@ INT_PTR CALLBACK SaveOptsDlgProc(OptPageControl *controls, int controlsSize, cha
 								ListView_GetItem(hwndProtocols, &lvi);
 
 								char *setting = (char *)lvi.lParam;
-								db_set_b(0, module, setting, (BYTE)ListView_GetCheckState(hwndProtocols, k));
+								db_set_b(0, module, setting, (uint8_t)ListView_GetCheckState(hwndProtocols, k));
 							}
 						}
 						break;

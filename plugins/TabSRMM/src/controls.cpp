@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////////////////
 // Miranda NG: the free IM client for Microsoft* Windows*
 //
-// Copyright (C) 2012-21 Miranda NG team,
+// Copyright (C) 2012-22 Miranda NG team,
 // Copyright (c) 2000-09 Miranda ICQ/IM project,
 // all portions of this codebase are copyrighted to the people
 // listed in contributors.txt.
@@ -436,7 +436,7 @@ void CMenuBar::Cancel(void)
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-static void MY_CheckMenu(const HMENU hMenu, int id, DWORD key)
+static void MY_CheckMenu(const HMENU hMenu, int id, uint32_t key)
 {
 	::CheckMenuItem(hMenu, id, MF_BYCOMMAND | (key ? MF_CHECKED : MF_UNCHECKED));
 }

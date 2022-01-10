@@ -1,6 +1,6 @@
 /*
 Copyright (c) 2012-13 Vladimir Lyubimov
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org)
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org)
 
 all portions of this codebase are copyrighted to the people
 listed in contributors.txt.
@@ -29,16 +29,16 @@ CMPlugin g_plugin;
 HANDLE hTTBarloaded = nullptr;
 HANDLE Buttons = nullptr;
 
-BYTE Enabled;
-DWORD delay;
-BYTE PopUp;
-DWORD PopUpTime;
-BYTE TTBButtons;
-BYTE DefSound;
-BYTE DefPopup;
-BYTE DefEnabled;
-BYTE NonStatusAllow;
-BYTE timer;
+uint8_t Enabled;
+uint32_t delay;
+uint8_t PopUp;
+uint32_t PopUpTime;
+uint8_t TTBButtons;
+uint8_t DefSound;
+uint8_t DefPopup;
+uint8_t DefEnabled;
+uint8_t NonStatusAllow;
+uint8_t timer;
 char hostname[MAX_PATH] = "";
 char EnabledComp[MAX_PATH] = "";
 char DelayComp[MAX_PATH] = "";
@@ -184,13 +184,13 @@ void LoadSettings()
 	DefEnabled = g_plugin.getByte(DefEnabledComp);
 	NonStatusAllow = g_plugin.getByte(NonStatusAllowComp);
 	if (PopUpTime < 1)
-		PopUpTime = (DWORD)1;
+		PopUpTime = (uint32_t)1;
 	if (PopUpTime > 30)
-		PopUpTime = (DWORD)30;
+		PopUpTime = (uint32_t)30;
 	if (delay < 10)
-		delay = (DWORD)10;
+		delay = (uint32_t)10;
 	if (delay > 300)
-		delay = (DWORD)300;
+		delay = (uint32_t)300;
 	g_plugin.setDword(DelayComp, delay);
 	g_plugin.setDword(PopUpTimeComp, PopUpTime);
 }
@@ -218,7 +218,7 @@ static INT_PTR StartupSilenceEnabled(WPARAM, LPARAM)
 
 static INT_PTR SilenceConnection(WPARAM wParam, LPARAM)
 {
-	timer = (BYTE)wParam;
+	timer = (uint8_t)wParam;
 	return 0;
 }
 
@@ -311,12 +311,12 @@ static INT_PTR CALLBACK DlgProcOptions(HWND hwndDlg, UINT msg, WPARAM wParam, LP
 	case WM_COMMAND:
 		switch (LOWORD(wParam)) {
 		case IDC_SSTIME:
-			DWORD min;
+			uint32_t min;
 			if ((HWND)lParam != GetFocus() || HIWORD(wParam) != EN_CHANGE) return FALSE;
 			min = GetDlgItemInt(hwndDlg, IDC_SSTIME, nullptr, FALSE);
 			if (min == 0 && GetWindowTextLength(GetDlgItem(hwndDlg, IDC_SSTIME)))
 				SendDlgItemMessage(hwndDlg, IDC_SSSPIN, UDM_SETPOS, 0, MAKELONG((short)1, 0));
-			delay = db_set_dw(0, MODULENAME, DelayComp, (DWORD)(SendDlgItemMessage(hwndDlg, IDC_SSSPIN, UDM_GETPOS, 0, 0)));
+			delay = db_set_dw(0, MODULENAME, DelayComp, (uint32_t)(SendDlgItemMessage(hwndDlg, IDC_SSSPIN, UDM_GETPOS, 0, 0)));
 			break;
 
 		case IDC_SSPOPUPTIME:
@@ -324,7 +324,7 @@ static INT_PTR CALLBACK DlgProcOptions(HWND hwndDlg, UINT msg, WPARAM wParam, LP
 			min = GetDlgItemInt(hwndDlg, IDC_SSPOPUPTIME, nullptr, FALSE);
 			if (min == 0 && GetWindowTextLength(GetDlgItem(hwndDlg, IDC_SSPOPUPTIME)))
 				SendDlgItemMessage(hwndDlg, IDC_SSSPIN2, UDM_SETPOS, 0, MAKELONG((short)1, 0));
-			PopUpTime = db_set_dw(0, MODULENAME, PopUpTimeComp, (DWORD)(SendDlgItemMessage(hwndDlg, IDC_SSSPIN2, UDM_GETPOS, 0, 0)));
+			PopUpTime = db_set_dw(0, MODULENAME, PopUpTimeComp, (uint32_t)(SendDlgItemMessage(hwndDlg, IDC_SSSPIN2, UDM_GETPOS, 0, 0)));
 			break;
 
 		case IDC_DELAY:

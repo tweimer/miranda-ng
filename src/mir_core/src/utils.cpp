@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org),
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org),
 Copyright (c) 2000-12 Miranda IM project,
 all portions of this codebase are copyrighted to the people
 listed in contributors.txt.
@@ -256,7 +256,7 @@ static char szHexTable[] = "0123456789abcdef";
 
 MIR_CORE_DLL(char*) bin2hex(const void *pData, size_t len, char *dest)
 {
-	const BYTE *p = (const BYTE*)pData;
+	const uint8_t *p = (const uint8_t*)pData;
 	char *d = dest;
 
 	for (size_t i = 0; i < len; i++, p++) {
@@ -270,7 +270,7 @@ MIR_CORE_DLL(char*) bin2hex(const void *pData, size_t len, char *dest)
 
 MIR_CORE_DLL(wchar_t*) bin2hexW(const void *pData, size_t len, wchar_t *dest)
 {
-	const BYTE *p = (const BYTE*)pData;
+	const uint8_t *p = (const uint8_t*)pData;
 	wchar_t *d = dest;
 
 	for (size_t i = 0; i < len; i++, p++) {
@@ -302,7 +302,7 @@ MIR_CORE_DLL(bool) hex2bin(const char *pSrc, void *pData, size_t len)
 	if (pSrc[bufLen*2] != 0 || bufLen > len)
 		return false;
 
-	BYTE *pDest = (BYTE*)pData;
+	uint8_t *pDest = (uint8_t*)pData;
 	const char *p = (const char *)pSrc;
 	for (size_t i = 0; i < bufLen; i++, p += 2)
 		pDest[i] = hex2dec(p[0]) * 16 + hex2dec(p[1]);
@@ -321,7 +321,7 @@ MIR_CORE_DLL(bool) hex2binW(const wchar_t *pSrc, void *pData, size_t len)
 	if (pSrc[bufLen * 2] != 0 || bufLen > len)
 		return false;
 
-	BYTE *pDest = (BYTE*)pData;
+	uint8_t *pDest = (uint8_t*)pData;
 	const wchar_t *p = (const wchar_t *)pSrc;
 	for (size_t i = 0; i < bufLen; i++, p += 2)
 		pDest[i] = hex2dec(p[0]) * 16 + hex2dec(p[1]);
@@ -558,7 +558,7 @@ MIR_CORE_DLL(bool) Utils_IsRtl(const wchar_t *pszwText)
 {
    #ifdef _MSC_VER
       size_t iLen = mir_wstrlen(pszwText);
-      mir_ptr<WORD> infoTypeC2((WORD*)mir_calloc(sizeof(WORD) * (iLen + 2)));
+      mir_ptr<uint16_t> infoTypeC2((uint16_t*)mir_calloc(sizeof(uint16_t) * (iLen + 2)));
       GetStringTypeW(CT_CTYPE2, pszwText, (int)iLen, infoTypeC2);
 
       for (size_t i = 0; i < iLen; i++)

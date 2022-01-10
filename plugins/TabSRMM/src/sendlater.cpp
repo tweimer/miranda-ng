@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////////////////
 // Miranda NG: the free IM client for Microsoft* Windows*
 //
-// Copyright (C) 2012-21 Miranda NG team,
+// Copyright (C) 2012-22 Miranda NG team,
 // Copyright (c) 2000-09 Miranda ICQ/IM project,
 // all portions of this codebase are copyrighted to the people
 // listed in contributors.txt.
@@ -58,11 +58,11 @@ struct CSendLaterJob : public MZeroedObject
 	time_t   created;             // job was created at this time (important to kill jobs, that are too old)
 	time_t   lastSent;            // time at which the delivery was initiated. used to handle timeouts
 	char    *sendBuffer;          // utf-8 send buffer
-	PBYTE    pBuf;                // conventional send buffer (for non-utf8 protocols)
-	DWORD    dwFlags;
+	uint8_t *pBuf;                // conventional send buffer (for non-utf8 protocols)
+	uint32_t    dwFlags;
 	int      iSendCount;          // # of times we tried to send it...
 	bool     fSuccess, fFailed;
-	BYTE     bCode;               // error/progress code (for the UI)
+	uint8_t     bCode;               // error/progress code (for the UI)
 
 	// returns true if this job is persistent (saved to the database).
 	// such a job will survive a restart of Miranda
@@ -135,7 +135,7 @@ struct CSendLaterJob : public MZeroedObject
 	{
 		if (isPersistentJob()) {
 			char szKey[100];
-			DWORD localFlags;
+			uint32_t localFlags;
 
 			mir_snprintf(szKey, "$%s", szId);
 			localFlags = db_get_dw(hContact, "SendLater", szKey, 0);
@@ -150,7 +150,7 @@ struct CSendLaterJob : public MZeroedObject
 	void writeFlags()
 	{
 		if (isPersistentJob()) {
-			DWORD localFlags = (bCode == JOB_HOLD ? SLF_SUSPEND : 0);
+			uint32_t localFlags = (bCode == JOB_HOLD ? SLF_SUSPEND : 0);
 			char szKey[100];
 
 			mir_snprintf(szKey, "$%s", szId);
@@ -472,7 +472,7 @@ public:
 
 		LVITEM lvItem = { 0 };
 
-		BYTE bCode = '-';
+		uint8_t bCode = '-';
 		unsigned uIndex = 0;
 		for (auto &p : g_sendLaterJobList) {
 			CContactCache *c = CContactCache::getContactCache(p->hContact);
@@ -731,7 +731,7 @@ int SendLater::addJob(const char *szSetting, void *lParam)
 	if (szWchar)
 		required += (mir_wstrlen(szWchar) + 1) * sizeof(wchar_t);
 
-	job->pBuf = (PBYTE)mir_calloc(required);
+	job->pBuf = (uint8_t*)mir_calloc(required);
 
 	strncpy((char*)job->pBuf, szAnsi, iLen);
 	job->pBuf[iLen] = 0;
@@ -793,7 +793,7 @@ HANDLE SendLater::processAck(const ACKDATA *ack)
 				dbei.szModule = Proto_GetBaseAccountName((p->hContact));
 				dbei.timestamp = time(0);
 				dbei.cbBlob = (int)mir_strlen(p->sendBuffer) + 1;
-				dbei.pBlob = (PBYTE)(p->sendBuffer);
+				dbei.pBlob = (uint8_t*)(p->sendBuffer);
 				db_event_add(p->hContact, &dbei);
 
 				p->cleanDB();

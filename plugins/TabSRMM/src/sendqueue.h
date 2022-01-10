@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////////////////
 // Miranda NG: the free IM client for Microsoft* Windows*
 //
-// Copyright (C) 2012-21 Miranda NG team,
+// Copyright (C) 2012-22 Miranda NG team,
 // Copyright (c) 2000-09 Miranda ICQ/IM project,
 // all portions of this codebase are copyrighted to the people
 // listed in contributors.txt.
@@ -48,11 +48,11 @@ struct SendJob
 	HWND     hOwnerWnd;
 	unsigned iStatus;
 	wchar_t    szErrorMsg[128];
-	DWORD    dwFlags;
+	uint32_t    dwFlags;
 	int      iAcksNeeded;
 	HANDLE   hEventSplit;
 	int      chunkSize;
-	DWORD    dwTime;
+	uint32_t    dwTime;
 };
 
 class SendQueue {

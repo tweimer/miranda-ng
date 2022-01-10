@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////////////////
 // Miranda NG: the free IM client for Microsoft* Windows*
 //
-// Copyright (C) 2012-21 Miranda NG team,
+// Copyright (C) 2012-22 Miranda NG team,
 // Copyright (c) 2000-09 Miranda ICQ/IM project,
 // all portions of this codebase are copyrighted to the people
 // listed in contributors.txt.
@@ -69,7 +69,7 @@ static int EventToIndex(LOGINFO *lin)
 	return 0;
 }
 
-static BYTE EventToSymbol(LOGINFO *lin)
+static uint8_t EventToSymbol(LOGINFO *lin)
 {
 	switch (lin->iType) {
 	case GC_EVENT_MESSAGE:
@@ -214,7 +214,7 @@ static void Log_AppendRTF(LOGSTREAMDATA *streamData, bool simpleMode, CMStringA 
 		else if (*line > 0 && *line < 128) {
 			res.AppendChar((char)*line);
 		}
-		else res.AppendFormat("\\u%u ?", (WORD)*line);
+		else res.AppendFormat("\\u%u ?", (uint16_t)*line);
 	}
 
 	str += res;

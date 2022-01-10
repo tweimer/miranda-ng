@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org),
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org),
 Copyright (c) 2000-12 Miranda IM project,
 all portions of this codebase are copyrighted to the people
 listed in contributors.txt.
@@ -24,6 +24,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
 #include "stdafx.h"
+#include "clc.h"
 
 #if defined(VLD_ENABLED)
 #include "msapi\vld.h"
@@ -35,26 +36,61 @@ int LoadDefaultModules(void);
 void UnloadNewPluginsModule(void);
 void UnloadDefaultModules(void);
 
-pfnDrawThemeTextEx drawThemeTextEx;
-pfnSetWindowThemeAttribute setWindowThemeAttribute;
+typedef HRESULT(STDAPICALLTYPE* pfnBufferedPaintInit)(void);
 pfnBufferedPaintInit bufferedPaintInit;
+
+typedef HRESULT(STDAPICALLTYPE* pfnBufferedPaintUninit)(void);
 pfnBufferedPaintUninit bufferedPaintUninit;
+
+typedef HANDLE(STDAPICALLTYPE* pfnBeginBufferedPaint)(HDC, RECT*, BP_BUFFERFORMAT, BP_PAINTPARAMS*, HDC*);
 pfnBeginBufferedPaint beginBufferedPaint;
+
+typedef HRESULT(STDAPICALLTYPE* pfnEndBufferedPaint)(HANDLE, BOOL);
 pfnEndBufferedPaint endBufferedPaint;
-pfnGetBufferedPaintBits getBufferedPaintBits;
-
-pfnDwmExtendFrameIntoClientArea dwmExtendFrameIntoClientArea;
-pfnDwmIsCompositionEnabled dwmIsCompositionEnabled;
-
-ITaskbarList3 *pTaskbarInterface;
 
 HANDLE hOkToExitEvent, hModulesLoadedEvent;
 HANDLE hShutdownEvent, hPreShutdownEvent;
-DWORD hMainThreadId;
+uint32_t hMainThreadId;
 bool g_bModulesLoadedFired = false, g_bMirandaTerminated = false;
 int g_iIconX, g_iIconY, g_iIconSX, g_iIconSY;
 
 CMPlugin g_plugin;
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+HBITMAP ConvertIconToBitmap(HIMAGELIST hIml, int iconId)
+{
+	BITMAPINFO bmi = { 0 };
+	bmi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
+	bmi.bmiHeader.biPlanes = 1;
+	bmi.bmiHeader.biCompression = BI_RGB;
+	bmi.bmiHeader.biBitCount = 32;
+	bmi.bmiHeader.biWidth = g_iIconSX;
+	bmi.bmiHeader.biHeight = g_iIconSY;
+
+	HDC hdc = CreateCompatibleDC(nullptr);
+	HBITMAP hbmp = CreateDIBSection(hdc, &bmi, DIB_RGB_COLORS, nullptr, nullptr, 0);
+	HBITMAP hbmpOld = (HBITMAP)SelectObject(hdc, hbmp);
+
+	BLENDFUNCTION bfAlpha = { AC_SRC_OVER, 0, 255, AC_SRC_ALPHA };
+	BP_PAINTPARAMS paintParams = { 0 };
+	paintParams.cbSize = sizeof(paintParams);
+	paintParams.dwFlags = BPPF_ERASE;
+	paintParams.pBlendFunction = &bfAlpha;
+
+	HDC hdcBuffer;
+	RECT rcIcon = { 0, 0, g_iIconSX, g_iIconSY };
+	HANDLE hPaintBuffer = beginBufferedPaint(hdc, &rcIcon, BPBF_DIB, &paintParams, &hdcBuffer);
+	if (hPaintBuffer) {
+		ImageList_Draw(hIml, iconId, hdc, 0, 0, ILD_TRANSPARENT);
+		endBufferedPaint(hPaintBuffer, TRUE);
+	}
+
+	SelectObject(hdc, hbmpOld);
+	DeleteDC(hdc);
+
+	return hbmp;
+}
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
@@ -128,7 +164,7 @@ MIR_APP_DLL(void) Miranda_WaitOnHandleEx(MWaitableStubEx pFunc, void *pInfo)
 /////////////////////////////////////////////////////////////////////////////////////////
 // dll entry point
 
-BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD dwReason, LPVOID)
+BOOL WINAPI DllMain(HINSTANCE hinstDLL, uint32_t dwReason, LPVOID)
 {
 	if (dwReason == DLL_PROCESS_ATTACH) {
 		g_plugin.setInst(hinstDLL);
@@ -160,10 +196,10 @@ static void __cdecl compactHeapsThread(void*)
 		SleepEx((1000 * 60) * 5, TRUE); // every 5 minutes
 
 		HANDLE hHeaps[256];
-		DWORD hc = GetProcessHeaps(255, (PHANDLE)&hHeaps);
+		uint32_t hc = GetProcessHeaps(255, (PHANDLE)&hHeaps);
 		if (hc != 0 && hc < 256) {
 			__try {
-				for (DWORD j = 0; j < hc; j++)
+				for (uint32_t j = 0; j < hc; j++)
 					HeapCompact(hHeaps[j], 0);
 			}
 			__except (EXCEPTION_EXECUTE_HANDLER)
@@ -179,7 +215,7 @@ MIR_APP_DLL(void) Miranda_SetIdleCallback(void(__cdecl *pfnCallback)(void))
 	SetIdleCallback = pfnCallback;
 }
 
-static DWORD dwEventTime = 0;
+static uint32_t dwEventTime = 0;
 void checkIdle(MSG * msg)
 {
 	switch (msg->message) {
@@ -190,7 +226,7 @@ void checkIdle(MSG * msg)
 	}
 }
 
-MIR_APP_DLL(DWORD) Miranda_GetIdle()
+MIR_APP_DLL(uint32_t) Miranda_GetIdle()
 {
 	return dwEventTime;
 }
@@ -284,7 +320,7 @@ static MSystemWindow *g_pSystemWindow;
 static void crtErrorHandler(const wchar_t*, const wchar_t*, const wchar_t*, unsigned, uintptr_t)
 {}
 
-static DWORD myWait()
+static uint32_t myWait()
 {
 	HANDLE *hWaitObjects = (HANDLE*)_alloca(arWaitableObjects.getCount() * sizeof(HANDLE));
 	for (int i = 0; i < arWaitableObjects.getCount(); i++)
@@ -311,33 +347,22 @@ int WINAPI mir_main(LPTSTR cmdLine)
 		_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 #endif
 
-	HMODULE hDwmApi, hThemeAPI;
+	HMODULE hThemeAPI;
 	if (IsWinVerVistaPlus()) {
-		hDwmApi = LoadLibrary(L"dwmapi.dll");
-		if (hDwmApi) {
-			dwmExtendFrameIntoClientArea = (pfnDwmExtendFrameIntoClientArea)GetProcAddress(hDwmApi, "DwmExtendFrameIntoClientArea");
-			dwmIsCompositionEnabled = (pfnDwmIsCompositionEnabled)GetProcAddress(hDwmApi, "DwmIsCompositionEnabled");
-		}
 		hThemeAPI = LoadLibrary(L"uxtheme.dll");
 		if (hThemeAPI) {
-			drawThemeTextEx = (pfnDrawThemeTextEx)GetProcAddress(hThemeAPI, "DrawThemeTextEx");
-			setWindowThemeAttribute = (pfnSetWindowThemeAttribute)GetProcAddress(hThemeAPI, "SetWindowThemeAttribute");
 			bufferedPaintInit = (pfnBufferedPaintInit)GetProcAddress(hThemeAPI, "BufferedPaintInit");
 			bufferedPaintUninit = (pfnBufferedPaintUninit)GetProcAddress(hThemeAPI, "BufferedPaintUninit");
 			beginBufferedPaint = (pfnBeginBufferedPaint)GetProcAddress(hThemeAPI, "BeginBufferedPaint");
 			endBufferedPaint = (pfnEndBufferedPaint)GetProcAddress(hThemeAPI, "EndBufferedPaint");
-			getBufferedPaintBits = (pfnGetBufferedPaintBits)GetProcAddress(hThemeAPI, "GetBufferedPaintBits");
 		}
 	}
-	else hDwmApi = hThemeAPI = nullptr;
+	else hThemeAPI = nullptr;
 
 	if (bufferedPaintInit)
 		bufferedPaintInit();
 
 	OleInitialize(nullptr);
-
-	if (IsWinVer7Plus())
-		CoCreateInstance(CLSID_TaskbarList, nullptr, CLSCTX_ALL, IID_ITaskbarList3, (void**)&pTaskbarInterface);
 
 	g_pSystemWindow = new MSystemWindow();
 	g_pSystemWindow->Create();
@@ -364,13 +389,13 @@ int WINAPI mir_main(LPTSTR cmdLine)
 
 		mir_forkthread(compactHeapsThread);
 		dwEventTime = GetTickCount();
-		DWORD myPid = GetCurrentProcessId();
+		uint32_t myPid = GetCurrentProcessId();
 
 		bool messageloop = true;
 		while (messageloop) {
 			MSG msg;
 			BOOL dying = FALSE;
-			DWORD rc = myWait();
+			uint32_t rc = myWait();
 			if (rc < WAIT_OBJECT_0 + arWaitableObjects.getCount()) {
 				auto &pWait = arWaitableObjects[rc - WAIT_OBJECT_0];
 				if (pWait.m_pInfo == INVALID_HANDLE_VALUE)
@@ -416,13 +441,10 @@ int WINAPI mir_main(LPTSTR cmdLine)
 	UnloadNewPluginsModule();
 	UnloadCoreModule();
 
-	if (hDwmApi)
-		FreeLibrary(hDwmApi);
 	if (hThemeAPI)
 		FreeLibrary(hThemeAPI);
 
-	if (pTaskbarInterface)
-		pTaskbarInterface->Release();
+	UninitTray();
 
 	delete g_pSystemWindow;
 
@@ -462,7 +484,7 @@ MIR_APP_DLL(void) Miranda_Close()
 /////////////////////////////////////////////////////////////////////////////////////////
 // version functions
 
-MIR_APP_DLL(DWORD) Miranda_GetVersion()
+MIR_APP_DLL(uint32_t) Miranda_GetVersion()
 {
 	wchar_t filename[MAX_PATH];
 	GetModuleFileName(g_plugin.getInst(), filename, _countof(filename));

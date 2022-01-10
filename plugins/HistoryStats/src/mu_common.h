@@ -13,8 +13,8 @@ namespace mu
 
 	namespace clist
 	{
-		HGENMENU addMainMenuItem(const wchar_t* pszName, DWORD flags, int position, HICON hIcon, const char* pszService, HGENMENU hRoot = nullptr);
-		HGENMENU addContactMenuItem(const wchar_t* pszName, DWORD flags, int position, HICON hIcon, const char* pszService);
+		HGENMENU addMainMenuItem(const wchar_t* pszName, uint32_t flags, int position, HICON hIcon, const char* pszService, HGENMENU hRoot = nullptr);
+		HGENMENU addContactMenuItem(const wchar_t* pszName, uint32_t flags, int position, HICON hIcon, const char* pszService);
 	}
 
 	/*
@@ -34,7 +34,7 @@ namespace mu
 
 	namespace protosvc
 	{
-		DWORD getCaps(const char* szProto, int flagNum);
+		uint32_t getCaps(const char* szProto, int flagNum);
 		//int getName(const char* szProto, int cchName, char* szName);
 		HICON loadIcon(const char* szProto, int whichIcon);
 	}
@@ -64,19 +64,19 @@ namespace mu
 
 	bool load();
 	void unload();
-	DWORD getMinimalMirandaVersion();
-	bool isMirandaVersionOk(DWORD version);
+	uint32_t getMinimalMirandaVersion();
+	bool isMirandaVersionOk(uint32_t version);
 	bool isMirandaUnicode();
 
 	/*
 	 * string handling
 	 */
 
-	char* wideToAnsiDup(const WCHAR* pszWide, UINT uCP = CP_ACP);
-	WCHAR* ansiToWideDup(const char* pszAnsi, UINT uCP = CP_ACP);
-	char* wideToAnsi(const WCHAR* pszWide, char* pszRes, int maxLen, UINT uCP = CP_ACP);
-	WCHAR* ansiToWide(const char* pszAnsi, WCHAR* pszRes, int maxLen, UINT uCP = CP_ACP);
-	inline void freeWide(WCHAR* pszWide) { free(pszWide); }
+	char* wideToAnsiDup(const wchar_t* pszWide, UINT uCP = CP_ACP);
+	wchar_t* ansiToWideDup(const char* pszAnsi, UINT uCP = CP_ACP);
+	char* wideToAnsi(const wchar_t* pszWide, char* pszRes, int maxLen, UINT uCP = CP_ACP);
+	wchar_t* ansiToWide(const char* pszAnsi, wchar_t* pszRes, int maxLen, UINT uCP = CP_ACP);
+	inline void freeWide(wchar_t* pszWide) { free(pszWide); }
 	inline void freeAnsi(char* pszAnsi) { free(pszAnsi); }
 }
 

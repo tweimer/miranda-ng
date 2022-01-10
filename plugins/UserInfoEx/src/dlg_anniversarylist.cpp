@@ -49,7 +49,7 @@ class CAnnivList
 	int		_sortHeader;
 	int		_curSel;
 	int		_numRows;
-	BYTE	_bRemindEnable;
+	uint8_t	_bRemindEnable;
 	HANDLE	_mHookExit;
 	bool	_wmINIT;
 
@@ -75,8 +75,8 @@ class CAnnivList
 
 	struct CFilter
 	{
-		WORD	wDaysBefore = (WORD)-1;
-		BYTE	bFilterIndex = 0;
+		uint16_t	wDaysBefore = (uint16_t)-1;
+		uint8_t	bFilterIndex = 0;
 		LPSTR	pszProto = nullptr;
 		LPTSTR pszAnniv = nullptr;
 	} _filter;
@@ -85,8 +85,8 @@ class CAnnivList
 	{
 		MCONTACT	_hContact;
 		MAnnivDate _pDate;
-		WORD		_wDaysBefore;
-		BYTE		_wReminderState;
+		uint16_t		_wDaysBefore;
+		uint8_t		_wReminderState;
 
 		CItemData(MCONTACT hContact, MAnnivDate &date) :
 			_pDate(date)
@@ -187,7 +187,7 @@ class CAnnivList
 			EndDeferWindowPos(_hdWnds);
 		}
 
-		void MoveCtrl(WORD idCtrl, int anchors)
+		void MoveCtrl(uint16_t idCtrl, int anchors)
 		{
 			if (!(_wndPos->flags & SWP_NOSIZE)) {
 				HWND hCtrl = GetDlgItem(_wndPos->hwnd, idCtrl);
@@ -421,7 +421,7 @@ class CAnnivList
 				// enable/disable reminder checkbox is clicked
 				case CHECK_REMIND:
 					if (pDlg->_bRemindEnable && HIWORD(wParam) == BN_CLICKED) {
-						BYTE checkState = Button_GetCheck((HWND)lParam);
+						uint8_t checkState = Button_GetCheck((HWND)lParam);
 
 						EnableWindow(GetDlgItem(hDlg, EDIT_REMIND), checkState == BST_CHECKED);
 						EnableWindow(GetDlgItem(hDlg, SPIN_REMIND), checkState == BST_CHECKED);
@@ -433,7 +433,7 @@ class CAnnivList
 				// number of days to remind in advance is edited
 				case EDIT_REMIND:
 					if (pid && pDlg->_bRemindEnable && HIWORD(wParam) == EN_CHANGE) {
-						WORD wDaysBefore = GetDlgItemInt(hDlg, LOWORD(wParam), nullptr, FALSE);
+						uint16_t wDaysBefore = GetDlgItemInt(hDlg, LOWORD(wParam), nullptr, FALSE);
 						if (pid->_wReminderState == BST_CHECKED && pid->_wDaysBefore != wDaysBefore) {
 							pid->_wDaysBefore = wDaysBefore;
 						}
@@ -444,10 +444,10 @@ class CAnnivList
 				// period of time is enabled/disabled
 				case CHECK_DAYS:
 					if (HIWORD(wParam) == BN_CLICKED) {
-						BYTE isChecked = Button_GetCheck((HWND)lParam);
+						uint8_t isChecked = Button_GetCheck((HWND)lParam);
 						EnableWindow(GetDlgItem(hDlg, EDIT_DAYS), isChecked);
 						EnableWindow(GetDlgItem(hDlg, TXT_DAYS), isChecked);
-						pDlg->_filter.wDaysBefore = isChecked ? GetDlgItemInt(hDlg, EDIT_DAYS, nullptr, FALSE) : (WORD)-1;
+						pDlg->_filter.wDaysBefore = isChecked ? GetDlgItemInt(hDlg, EDIT_DAYS, nullptr, FALSE) : (uint16_t)-1;
 						pDlg->RebuildList();
 					}
 					break;
@@ -455,7 +455,7 @@ class CAnnivList
 				// the number of days a contact must have an anniversary in advance to be displayed is edited
 				case EDIT_DAYS:
 					if (HIWORD(wParam) == EN_CHANGE) {
-						WORD wNewDays = GetDlgItemInt(hDlg, LOWORD(wParam), nullptr, FALSE);
+						uint16_t wNewDays = GetDlgItemInt(hDlg, LOWORD(wParam), nullptr, FALSE);
 						if (wNewDays != pDlg->_filter.wDaysBefore) {
 							pDlg->_filter.wDaysBefore = wNewDays;
 							pDlg->RebuildList();
@@ -569,7 +569,7 @@ class CAnnivList
 	 * @retval	0 if successful
 	 * @retval	1 if failed
 	 **/
-	BYTE AddColumn(int iSubItem, LPCTSTR pszText, int defaultWidth)
+	uint8_t AddColumn(int iSubItem, LPCTSTR pszText, int defaultWidth)
 	{
 		LVCOLUMN lvc;
 		CHAR pszSetting[MAXSETTING];
@@ -592,7 +592,7 @@ class CAnnivList
 	 * @retval	TRUE if successful
 	 * @retval	FALSE if failed
 	 **/
-	BYTE AddSubItem(int iItem, int iSubItem, LPTSTR pszText)
+	uint8_t AddSubItem(int iItem, int iSubItem, LPTSTR pszText)
 	{
 		LVITEM lvi;
 		if (iSubItem > 0) {
@@ -614,7 +614,7 @@ class CAnnivList
 	 * @retval	TRUE if successful
 	 * @retval	FALSE if failed
 	 **/	
-	BYTE AddItem(LPTSTR pszText, LPARAM lParam)
+	uint8_t AddItem(LPTSTR pszText, LPARAM lParam)
 	{
 		LVITEM lvi;
 
@@ -641,7 +641,7 @@ class CAnnivList
 	 * @retval	TRUE if successful
 	 * @retval	FALSE if failed
 	 **/
-	BYTE AddRow(MCONTACT hContact, LPCSTR pszProto, MAnnivDate &ad, MTime &mtNow, int wDaysBefore)
+	uint8_t AddRow(MCONTACT hContact, LPCSTR pszProto, MAnnivDate &ad, MTime &mtNow, int wDaysBefore)
 	{
 		wchar_t szText[MAX_PATH];
 		int diff, iItem = -1;
@@ -657,7 +657,7 @@ class CAnnivList
 			ad.DBGetReminderOpts(hContact);
 			if ((_filter.bFilterIndex != FILTER_DISABLED_REMINDER) || (ad.RemindOption() == BST_UNCHECKED)) {
 				// set default offset if required
-				if (ad.RemindOffset() == (WORD)-1) {
+				if (ad.RemindOffset() == (uint16_t)-1) {
 					ad.RemindOffset(wDaysBefore);
 					
 					// create data object
@@ -704,7 +704,7 @@ class CAnnivList
 	{
 		MAnnivDate ad;
 		int i = 0;
-		DWORD age = 0;
+		uint32_t age = 0;
 		int wDaysBefore = g_plugin.getWord(SET_REMIND_OFFSET, DEFVAL_REMIND_OFFSET);
 		int numMale = 0;
 		int numFemale = 0;
@@ -810,9 +810,9 @@ class CAnnivList
 	void SaveFilter()
 	{
 		if (_hDlg) {
-			g_plugin.setWord(SET_ANNIVLIST_FILTER_DAYS, (WORD)GetDlgItemInt(_hDlg, EDIT_DAYS, nullptr, FALSE));
-			g_plugin.setByte(SET_ANNIVLIST_FILTER_DAYSENABLED, (BYTE)Button_GetCheck(GetDlgItem(_hDlg, CHECK_DAYS)));
-			g_plugin.setByte(SET_ANNIVLIST_FILTER_INDEX, (BYTE)ComboBox_GetCurSel(GetDlgItem(_hDlg, EDIT_DAYS)));
+			g_plugin.setWord(SET_ANNIVLIST_FILTER_DAYS, (uint16_t)GetDlgItemInt(_hDlg, EDIT_DAYS, nullptr, FALSE));
+			g_plugin.setByte(SET_ANNIVLIST_FILTER_DAYSENABLED, (uint8_t)Button_GetCheck(GetDlgItem(_hDlg, CHECK_DAYS)));
+			g_plugin.setByte(SET_ANNIVLIST_FILTER_INDEX, (uint8_t)ComboBox_GetCurSel(GetDlgItem(_hDlg, EDIT_DAYS)));
 		}
 	}
 
@@ -857,12 +857,12 @@ public:
 
 				for (c = 0; c < cc; c++) {
 					mir_snprintf(pszSetting, "AnnivDlg_Col%d", c);
-					g_plugin.setWord(pszSetting, (WORD)ListView_GetColumnWidth(_hList, c));
+					g_plugin.setWord(pszSetting, (uint16_t)ListView_GetColumnWidth(_hList, c));
 				}
 				DeleteAllItems();
 			}
 			// remember popup setting
-			g_plugin.setByte(SET_ANNIVLIST_POPUP, (BYTE)IsDlgButtonChecked(_hDlg, CHECK_POPUP));
+			g_plugin.setByte(SET_ANNIVLIST_POPUP, (uint8_t)IsDlgButtonChecked(_hDlg, CHECK_POPUP));
 			// save window position, size and column widths
 			Utils_SaveWindowPosition(_hDlg, NULL, MODULENAME, "AnnivDlg_");
 			SaveFilter();

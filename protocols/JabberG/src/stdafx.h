@@ -5,7 +5,7 @@ Jabber Protocol Plugin for Miranda NG
 Copyright (c) 2002-04  Santithorn Bunchua
 Copyright (c) 2005-12  George Hazan
 Copyright (c) 2007     Maxim Mluhov
-Copyright (C) 2012-21 Miranda NG team
+Copyright (C) 2012-22 Miranda NG team
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -367,7 +367,7 @@ struct ThreadData
 	bool     bIsReg;
 	bool     reg_done, bIsSessionAvailable;
 	bool     bBookmarksLoaded;
-	DWORD	   dwLoginRqs;
+	uint32_t	   dwLoginRqs;
 
 	// connection & login data
 	JABBER_CONN_DATA conn;
@@ -432,7 +432,7 @@ struct filetransfer : public MZeroedObject
 
 	// Used by file receiving only
 	char* httpHostName;
-	WORD httpPort;
+	uint16_t httpPort;
 	char* httpPath;
 	unsigned __int64 dwExpectedRecvFileSize;
 
@@ -447,9 +447,9 @@ struct filetransfer : public MZeroedObject
 struct JABBER_GCLOG_FONT
 {
 	char face[LF_FACESIZE];		// LF_FACESIZE is from LOGFONT struct
-	BYTE style;
+	uint8_t style;
 	char size;	// signed
-	BYTE charset;
+	uint8_t charset;
 	COLORREF color;
 };
 

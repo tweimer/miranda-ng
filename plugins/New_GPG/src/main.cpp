@@ -1,4 +1,4 @@
-// Copyright © 2010-21 sss
+// Copyright © 2010-22 sss
 // 
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -407,7 +407,7 @@ void InitCheck()
 	}
 	{
 		CMStringW path(g_plugin.getMStringW("szHomePath"));
-		DWORD dwFileAttr = GetFileAttributes(path);
+		uint32_t dwFileAttr = GetFileAttributes(path);
 		if (dwFileAttr != INVALID_FILE_ATTRIBUTES) {
 			dwFileAttr &= ~FILE_ATTRIBUTE_READONLY;
 			SetFileAttributes(path, dwFileAttr);

@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org)
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org)
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -19,13 +19,13 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include "stdafx.h"
 
-enum ClistAlign : BYTE
+enum ClistAlign : uint8_t
 {
     left,
     right
 };
 
-enum ClistState : BYTE
+enum ClistState : uint8_t
 {
     hidden,
     minimized,
@@ -34,13 +34,13 @@ enum ClistState : BYTE
 
 struct ClistOptions
 {
-    CMOption<BYTE> isDocked;
-    CMOption<BYTE> state;
+    CMOption<uint8_t> isDocked;
+    CMOption<uint8_t> state;
 
-    CMOption<DWORD> x;
-    CMOption<DWORD> y;
-    CMOption<DWORD> width;
-    CMOption<DWORD> height;
+    CMOption<uint32_t> x;
+    CMOption<uint32_t> y;
+    CMOption<uint32_t> width;
+    CMOption<uint32_t> height;
 
     ClistOptions() :
         isDocked(CLIST_MODULE_NAME, "Docked", 0),
@@ -54,18 +54,18 @@ struct ClistOptions
 
 struct StartPositionOptions
 {
-    CMOption<BYTE> setTopPosition;
-    CMOption<BYTE> setBottomPosition;
-    CMOption<BYTE> setSidePosition;
-    CMOption<BYTE> clistAlign;
-    CMOption<BYTE> setClistWidth;
-    CMOption<BYTE> setClistStartState;
-    CMOption<BYTE> clistState;
+    CMOption<uint8_t> setTopPosition;
+    CMOption<uint8_t> setBottomPosition;
+    CMOption<uint8_t> setSidePosition;
+    CMOption<uint8_t> clistAlign;
+    CMOption<uint8_t> setClistWidth;
+    CMOption<uint8_t> setClistStartState;
+    CMOption<uint8_t> clistState;
 
-    CMOption<DWORD> pixelsFromTop;
-    CMOption<DWORD> pixelsFromBottom;
-    CMOption<DWORD> pixelsFromSide;
-    CMOption<DWORD> clistWidth;
+    CMOption<uint32_t> pixelsFromTop;
+    CMOption<uint32_t> pixelsFromBottom;
+    CMOption<uint32_t> pixelsFromSide;
+    CMOption<uint32_t> clistWidth;
 
     StartPositionOptions();
 };

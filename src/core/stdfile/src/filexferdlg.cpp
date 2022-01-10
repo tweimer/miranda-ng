@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org),
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org),
 Copyright (c) 2000-12 Miranda IM project,
 all portions of this codebase are copyrighted to the people
 listed in contributors.txt.
@@ -82,11 +82,11 @@ void FillSendData(FileDlgData *dat, DBEVENTINFO& dbei)
 	char *szFileNames = mir_utf8encodeW(dat->szFilenames), *szMsg = mir_utf8encodeW(dat->szMsg);
 	dbei.flags |= DBEF_UTF;
 
-	dbei.cbBlob = int(sizeof(DWORD) + mir_strlen(szFileNames) + mir_strlen(szMsg) + 2);
-	dbei.pBlob = (PBYTE)mir_alloc(dbei.cbBlob);
+	dbei.cbBlob = int(sizeof(uint32_t) + mir_strlen(szFileNames) + mir_strlen(szMsg) + 2);
+	dbei.pBlob = (uint8_t*)mir_alloc(dbei.cbBlob);
 	*(PDWORD)dbei.pBlob = 0;
-	mir_strcpy((char*)dbei.pBlob + sizeof(DWORD), szFileNames);
-	mir_strcpy((char*)dbei.pBlob + sizeof(DWORD) + mir_strlen(szFileNames) + 1, szMsg);
+	mir_strcpy((char*)dbei.pBlob + sizeof(uint32_t), szFileNames);
+	mir_strcpy((char*)dbei.pBlob + sizeof(uint32_t) + mir_strlen(szFileNames) + 1, szMsg);
 
 	mir_free(szFileNames), mir_free(szMsg);
 }
@@ -281,7 +281,7 @@ INT_PTR CALLBACK DlgProcFileTransfer(HWND hwndDlg, UINT msg, WPARAM wParam, LPAR
 		dat->hIcon = nullptr;
 		{
 			char *szProto = Proto_GetBaseAccountName(dat->hContact);
-			WORD status = db_get_w(dat->hContact, szProto, "Status", ID_STATUS_ONLINE);
+			uint16_t status = db_get_w(dat->hContact, szProto, "Status", ID_STATUS_ONLINE);
 			SendDlgItemMessage(hwndDlg, IDC_CONTACT, BM_SETIMAGE, IMAGE_ICON, (LPARAM)Skin_LoadProtoIcon(szProto, status));
 		}
 

@@ -63,7 +63,7 @@ int InitKeyB(pUinKey ptr, LPCSTR key)
 
 
 // store KeyX into context
-void InitKeyX(pUinKey ptr, BYTE *key)
+void InitKeyX(pUinKey ptr, uint8_t *key)
 {
 	if (!ptr->cntx)
 		ptr->cntx = cpp_create_context(isProtoSmallPackets(ptr->hContact) ? CPP_MODE_BASE64 : 0);
@@ -80,7 +80,7 @@ BOOL CalculateKeyX(pUinKey ptr, MCONTACT hContact)
 		// do this only if key exchanged is ok
 		// we use a 192bit key
 		int keysize = cpp_size_keyx();
-		PBYTE buffer = (PBYTE)alloca(keysize); // buffer for hash
+		uint8_t *buffer = (uint8_t*)alloca(keysize); // buffer for hash
 
 		// store key
 		cpp_get_keyx(ptr->cntx, buffer);

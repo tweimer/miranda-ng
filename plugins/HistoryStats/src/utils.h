@@ -9,11 +9,11 @@ namespace utils
 	// time formatting
 	ext::string timestampToString(time_t value, const wchar_t* format);
 	ext::string tmStructToString(const tm& value, const wchar_t* format);
-	inline ext::string timestampToDateTime(DWORD value) { return timestampToString(value, L"%c"); }
-	inline ext::string timestampToDate(DWORD value) { return timestampToString(value, L"%x"); }
-	inline ext::string timestampToTime(DWORD value) { return timestampToString(value, L"%X"); }
-	ext::string durationToString(DWORD value);
-	DWORD parseDate(const ext::string& date);
+	inline ext::string timestampToDateTime(uint32_t value) { return timestampToString(value, L"%c"); }
+	inline ext::string timestampToDate(uint32_t value) { return timestampToString(value, L"%x"); }
+	inline ext::string timestampToTime(uint32_t value) { return timestampToString(value, L"%X"); }
+	ext::string durationToString(uint32_t value);
+	uint32_t parseDate(const ext::string& date);
 	inline ext::string formatDate(time_t timeValue) { return timestampToString(timeValue, L"%Y-%m-%d"); }
 
 	// number formatting
@@ -39,22 +39,22 @@ namespace utils
 	ext::string toUpperCase(const ext::string& text);
 	
 	// version conversion
-	DWORD dottedToVersion(ext::string version);
-	ext::string versionToDotted(DWORD version);
+	uint32_t dottedToVersion(ext::string version);
+	ext::string versionToDotted(uint32_t version);
 
 	// character conversion (wide, ansi, utf8)
-	ext::a::string convertWToA(const WCHAR* str, size_t len);
+	ext::a::string convertWToA(const wchar_t* str, size_t len);
 	ext::w::string convertAToW(const char* str, size_t len);
 	ext::a::string convertTToUTF8(const wchar_t* str, size_t str_len);
 	ext::string convertUTF8ToT(const char* str, size_t str_len);
-	size_t rawUTF8Encode(const WCHAR* pIn, size_t lenIn, char* pOut);
+	size_t rawUTF8Encode(const wchar_t* pIn, size_t lenIn, char* pOut);
 	size_t getUTF8Len(const char* str);
 
 	// character conversion (convenience functions)
 	inline ext::a::string toA(const wchar_t* str) { return convertWToA(str, ext::strfunc::len(str)); }
 	inline ext::w::string toW(const wchar_t* str) { return str; }
 	inline ext::string fromA(const char* str) { return convertAToW(str, ext::a::strfunc::len(str)); }
-	inline ext::string fromW(const WCHAR* str) { return str; }
+	inline ext::string fromW(const wchar_t* str) { return str; }
 	inline ext::a::string toA(const ext::string& str) { return convertWToA(str.c_str(), str.length()); }
 	inline ext::w::string toW(const ext::string& str) { return str; }
 	inline ext::string fromA(const ext::a::string& str) { return convertAToW(str.c_str(), str.length()); }

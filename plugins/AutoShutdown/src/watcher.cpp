@@ -38,7 +38,7 @@ static HANDLE hHookModulesLoaded;
 
 /************************* Shared *************************************/
 
-static WORD currentWatcherType;
+static uint16_t currentWatcherType;
 
 static void __stdcall MainThreadMapping(void *param)
 {
@@ -180,18 +180,18 @@ static int StatusSettingChanged(WPARAM wParam, LPARAM lParam)
 
 /************************* Cpu Shutdown *******************************/
 
-static DWORD idCpuUsageThread;
+static uint32_t idCpuUsageThread;
 
-static BOOL CALLBACK CpuUsageWatcherProc(BYTE nCpuUsage, LPARAM lParam)
+static BOOL CALLBACK CpuUsageWatcherProc(uint8_t nCpuUsage, LPARAM lParam)
 {
-	static BYTE nTimesBelow = 0; /* only one watcher thread */
+	static uint8_t nTimesBelow = 0; /* only one watcher thread */
 	/* terminated? */
 	if (idCpuUsageThread != GetCurrentThreadId()) {
 		nTimesBelow = 0;
 		return FALSE; /* stop poll thread */
 	}
 	/* ignore random peaks */
-	if (nCpuUsage < (BYTE)lParam) ++nTimesBelow;
+	if (nCpuUsage < (uint8_t)lParam) ++nTimesBelow;
 	else nTimesBelow = 0;
 	if (nTimesBelow == 3) {
 		nTimesBelow = 0;
@@ -228,7 +228,7 @@ INT_PTR ServiceStartWatcher(WPARAM, LPARAM lParam)
 	if (lParam&SDWTF_SPECIFICTIME && !(lParam&SDWTF_ST_MASK))
 		return 2;
 
-	if (currentWatcherType == (WORD)lParam)
+	if (currentWatcherType == (uint16_t)lParam)
 		return 3;
 
 	if (currentWatcherType != 0) {
@@ -239,7 +239,7 @@ INT_PTR ServiceStartWatcher(WPARAM, LPARAM lParam)
 	}
 	SetShutdownMenuItem(true);
 	SetShutdownToolbarButton(true);
-	currentWatcherType = (WORD)lParam;
+	currentWatcherType = (uint16_t)lParam;
 	NotifyEventHooks(hEventWatcherChanged, TRUE, 0);
 
 	/* Time Shutdown */

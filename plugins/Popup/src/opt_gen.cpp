@@ -26,7 +26,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 INT_PTR CALLBACK PositionBoxDlgProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam);
 
 // Helper for Status Tree
-static int CountStatusModes(DWORD flags)
+static int CountStatusModes(uint32_t flags)
 {
 	int res = 0;
 	if (flags & PF2_ONLINE) ++res;
@@ -40,7 +40,7 @@ static int CountStatusModes(DWORD flags)
 	return res;
 }
 
-int AddStatusMode(OPTTREE_OPTION *options, int pos, LPTSTR prefix, DWORD flag)
+int AddStatusMode(OPTTREE_OPTION *options, int pos, LPTSTR prefix, uint32_t flag)
 {
 	if (!flag) return pos;
 	options[pos].dwFlag = flag;
@@ -65,7 +65,7 @@ int AddStatusMode(OPTTREE_OPTION *options, int pos, LPTSTR prefix, DWORD flag)
 	return pos + 1;
 }
 
-int AddStatusModes(OPTTREE_OPTION *options, int pos, LPTSTR prefix, DWORD flags)
+int AddStatusModes(OPTTREE_OPTION *options, int pos, LPTSTR prefix, uint32_t flags)
 {
 	pos = AddStatusMode(options, pos, prefix, PF2_IDLE);
 	pos = AddStatusMode(options, pos, prefix, flags & PF2_ONLINE);
@@ -199,11 +199,11 @@ INT_PTR CALLBACK DlgProcPopupGeneral(HWND hwnd, UINT msg, WPARAM wParam, LPARAM 
 		// new status options
 		{
 			statusOptionsCount = 0;
-			DWORD globalFlags = 0;
+			uint32_t globalFlags = 0;
 			auto &accs = Accounts();
 			for (auto &pa : accs) {
 				if (!pa->bIsVirtual) {
-					DWORD protoFlags = CallProtoService(pa->szModuleName, PS_GETCAPS, PFLAGNUM_2, 0);
+					uint32_t protoFlags = CallProtoService(pa->szModuleName, PS_GETCAPS, PFLAGNUM_2, 0);
 					globalFlags |= protoFlags;
 					statusOptionsCount += CountStatusModes(protoFlags);
 				}
@@ -215,7 +215,7 @@ INT_PTR CALLBACK DlgProcPopupGeneral(HWND hwnd, UINT msg, WPARAM wParam, LPARAM 
 			int pos = AddStatusModes(statusOptions, 0, LPGENW("Global Status"), globalFlags);
 			for (auto &pa : accs) {
 				if (!pa->bIsVirtual) {
-					DWORD protoFlags = CallProtoService(pa->szModuleName, PS_GETCAPS, PFLAGNUM_2, 0);
+					uint32_t protoFlags = CallProtoService(pa->szModuleName, PS_GETCAPS, PFLAGNUM_2, 0);
 					if (!CountStatusModes(protoFlags))
 						continue;
 
@@ -230,7 +230,7 @@ INT_PTR CALLBACK DlgProcPopupGeneral(HWND hwnd, UINT msg, WPARAM wParam, LPARAM 
 
 			for (auto &pa : accs) {
 				if (!pa->bIsVirtual) {
-					DWORD protoFlags = CallProtoService(pa->szModuleName, PS_GETCAPS, PFLAGNUM_2, 0);
+					uint32_t protoFlags = CallProtoService(pa->szModuleName, PS_GETCAPS, PFLAGNUM_2, 0);
 					if (!CountStatusModes(protoFlags))
 						continue;
 
@@ -484,7 +484,7 @@ INT_PTR CALLBACK DlgProcPopupGeneral(HWND hwnd, UINT msg, WPARAM wParam, LPARAM 
 			case PSN_APPLY:
 				// Seconds
 				g_plugin.setByte("InfiniteDelay", PopupOptions.InfiniteDelay);
-				g_plugin.setWord("Seconds", (WORD)PopupOptions.Seconds);
+				g_plugin.setWord("Seconds", (uint16_t)PopupOptions.Seconds);
 				g_plugin.setByte("LeaveHovered", PopupOptions.LeaveHovered);
 
 				// Dynamic Resize
@@ -495,17 +495,17 @@ INT_PTR CALLBACK DlgProcPopupGeneral(HWND hwnd, UINT msg, WPARAM wParam, LPARAM 
 				g_plugin.setWord("MaximumWidth", PopupOptions.MaximumWidth);
 
 				// Position
-				g_plugin.setByte("Position", (BYTE)PopupOptions.Position);
+				g_plugin.setByte("Position", (uint8_t)PopupOptions.Position);
 
 				// Configure popup area
-				g_plugin.setWord("gapTop", (WORD)PopupOptions.gapTop);
-				g_plugin.setWord("gapBottom", (WORD)PopupOptions.gapBottom);
-				g_plugin.setWord("gapLeft", (WORD)PopupOptions.gapLeft);
-				g_plugin.setWord("gapRight", (WORD)PopupOptions.gapRight);
-				g_plugin.setWord("spacing", (WORD)PopupOptions.spacing);
+				g_plugin.setWord("gapTop", (uint16_t)PopupOptions.gapTop);
+				g_plugin.setWord("gapBottom", (uint16_t)PopupOptions.gapBottom);
+				g_plugin.setWord("gapLeft", (uint16_t)PopupOptions.gapLeft);
+				g_plugin.setWord("gapRight", (uint16_t)PopupOptions.gapRight);
+				g_plugin.setWord("spacing", (uint16_t)PopupOptions.spacing);
 
 				// Spreading
-				g_plugin.setByte("Spreading", (BYTE)PopupOptions.Spreading);
+				g_plugin.setByte("Spreading", (uint8_t)PopupOptions.Spreading);
 
 				// miscellaneous
 				Check_ReorderPopups(hwnd);	// this save also PopupOptions.ReorderPopups

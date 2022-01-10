@@ -1,7 +1,7 @@
 /*
 Chat module plugin for Miranda IM
 
-Copyright 2000-12 Miranda IM, 2012-21 Miranda NG team,
+Copyright 2000-12 Miranda IM, 2012-22 Miranda NG team,
 all portions of this codebase are copyrighted to the people
 listed in contributors.txt.
 
@@ -371,7 +371,7 @@ BOOL SM_GiveStatus(const wchar_t *pszID, const char *pszModule, const wchar_t *p
 	return TRUE;
 }
 
-BOOL SM_SetContactStatus(const wchar_t *pszID, const char *pszModule, const wchar_t *pszUID, WORD wStatus)
+BOOL SM_SetContactStatus(const wchar_t *pszID, const char *pszModule, const wchar_t *pszUID, uint16_t wStatus)
 {
 	SESSION_INFO *si = SM_FindSession(pszID, pszModule);
 	if (si == nullptr)
@@ -416,7 +416,7 @@ BOOL SM_SetStatus(const char *pszModule, SESSION_INFO *si, int wStatus)
 
 	si->wStatus = wStatus;
 	if (si->hContact)
-		db_set_w(si->hContact, si->pszModule, "Status", (WORD)wStatus);
+		db_set_w(si->hContact, si->pszModule, "Status", (uint16_t)wStatus);
 
 	if (g_chatApi.OnSetStatus)
 		g_chatApi.OnSetStatus(si, wStatus);
@@ -632,7 +632,7 @@ static STATUSINFO* TM_FindStatus(STATUSINFO *pStatusList, const wchar_t *pszStat
 	return nullptr;
 }
 
-WORD TM_StringToWord(STATUSINFO *pStatusList, const wchar_t *pszStatus)
+uint16_t TM_StringToWord(STATUSINFO *pStatusList, const wchar_t *pszStatus)
 {
 	if (!pStatusList || !pszStatus)
 		return 0;
@@ -647,7 +647,7 @@ WORD TM_StringToWord(STATUSINFO *pStatusList, const wchar_t *pszStatus)
 	return 0;
 }
 
-static wchar_t* TM_WordToString(STATUSINFO *pStatusList, WORD Status)
+static wchar_t* TM_WordToString(STATUSINFO *pStatusList, uint16_t Status)
 {
 	if (!pStatusList)
 		return nullptr;
@@ -717,7 +717,7 @@ void UM_SortUser(SESSION_INFO *si)
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-USERINFO* UM_AddUser(SESSION_INFO *si, const wchar_t *pszUID, const wchar_t *pszNick, WORD wStatus)
+USERINFO* UM_AddUser(SESSION_INFO *si, const wchar_t *pszUID, const wchar_t *pszNick, uint16_t wStatus)
 {
 	if (pszNick == nullptr)
 		return nullptr;
@@ -737,8 +737,8 @@ USERINFO* UM_AddUser(SESSION_INFO *si, const wchar_t *pszUID, const wchar_t *psz
 
 static int UM_CompareItem(const USERINFO *u1, const USERINFO *u2)
 {
-	WORD dw1 = u1->Status;
-	WORD dw2 = u2->Status;
+	uint16_t dw1 = u1->Status;
+	uint16_t dw2 = u2->Status;
 
 	for (int i = 0; i < 8; i++) {
 		if ((dw1 & 1) && !(dw2 & 1))
@@ -768,7 +768,7 @@ static USERINFO* UM_FindUserFromIndex(SESSION_INFO *si, int index)
 	return nullptr;
 }
 
-static USERINFO* UM_GiveStatus(SESSION_INFO *si, const wchar_t *pszUID, WORD status)
+static USERINFO* UM_GiveStatus(SESSION_INFO *si, const wchar_t *pszUID, uint16_t status)
 {
 	USERINFO *ui = UM_FindUser(si, pszUID);
 	if (ui == nullptr)
@@ -778,7 +778,7 @@ static USERINFO* UM_GiveStatus(SESSION_INFO *si, const wchar_t *pszUID, WORD sta
 	return ui;
 }
 
-static USERINFO* UM_SetContactStatus(SESSION_INFO *si, const wchar_t *pszUID, WORD status)
+static USERINFO* UM_SetContactStatus(SESSION_INFO *si, const wchar_t *pszUID, uint16_t status)
 {
 	USERINFO *ui = UM_FindUser(si, pszUID);
 	if (ui == nullptr)
@@ -820,7 +820,7 @@ BOOL UM_SetStatusEx(SESSION_INFO *si, const wchar_t* pszText, int flags)
 	return TRUE;
 }
 
-static USERINFO* UM_TakeStatus(SESSION_INFO *si, const wchar_t *pszUID, WORD status)
+static USERINFO* UM_TakeStatus(SESSION_INFO *si, const wchar_t *pszUID, uint16_t status)
 {
 	USERINFO *ui = UM_FindUser(si, pszUID);
 	if (ui == nullptr)
@@ -964,7 +964,7 @@ MIR_APP_DLL(CHAT_MANAGER*) Chat_CustomizeApi(const CHAT_MANAGER_INITDATA *pInit)
 		return &g_chatApi;
 
 	// wipe out old junk
-	memset(PBYTE(&g_chatApi) + offsetof(CHAT_MANAGER, OnCreateModule), 0, sizeof(CHAT_MANAGER) - offsetof(CHAT_MANAGER, OnCreateModule));
+	memset((uint8_t*)&g_chatApi + offsetof(CHAT_MANAGER, OnCreateModule), 0, sizeof(CHAT_MANAGER) - offsetof(CHAT_MANAGER, OnCreateModule));
 
 	if (g_cbSession) { // reallocate old sessions
 		mir_cslock lck(csChat);
@@ -974,7 +974,7 @@ MIR_APP_DLL(CHAT_MANAGER*) Chat_CustomizeApi(const CHAT_MANAGER_INITDATA *pInit)
 
 		for (auto &p : tmp) {
 			SESSION_INFO *p1 = (SESSION_INFO*)realloc(p, pInit->cbSession);
-			memset(PBYTE(p1) + sizeof(SESSION_INFO), 0, pInit->cbSession - sizeof(SESSION_INFO));
+			memset((uint8_t*)p1 + sizeof(SESSION_INFO), 0, pInit->cbSession - sizeof(SESSION_INFO));
 			g_arSessions.insert(p1);
 		}
 	}
@@ -988,7 +988,7 @@ MIR_APP_DLL(CHAT_MANAGER*) Chat_CustomizeApi(const CHAT_MANAGER_INITDATA *pInit)
 
 		for (auto &mi : tmp) {
 			MODULEINFO *p1 = (MODULEINFO*)realloc(mi, pInit->cbModuleInfo);
-			memset(PBYTE(p1) + sizeof(GCModuleInfoBase), 0, pInit->cbModuleInfo - sizeof(GCModuleInfoBase));
+			memset((uint8_t*)p1 + sizeof(GCModuleInfoBase), 0, pInit->cbModuleInfo - sizeof(GCModuleInfoBase));
 			g_arModules.insert(p1);
 			if (p1 != mi) // realloc could change a pointer
 				bReallocated = true;

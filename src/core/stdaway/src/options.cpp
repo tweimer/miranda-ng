@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org),
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org),
 Copyright (c) 2000-12 Miranda IM project,
 all portions of this codebase are copyrighted to the people
 listed in contributors.txt.
@@ -91,9 +91,9 @@ public:
 		
 		for (int i = cmbStatus.GetCount() - 1; i >= 0; i--) {
 			int status = cmbStatus.GetItemData(i);
-			g_plugin.SetStatusModeByte(status, "Ignore", (BYTE)m_info[i].ignore);
-			g_plugin.SetStatusModeByte(status, "NoDlg", (BYTE)m_info[i].noDialog);
-			g_plugin.SetStatusModeByte(status, "UsePrev", (BYTE)m_info[i].usePrevious);
+			g_plugin.SetStatusModeByte(status, "Ignore", (uint8_t)m_info[i].ignore);
+			g_plugin.SetStatusModeByte(status, "NoDlg", (uint8_t)m_info[i].noDialog);
+			g_plugin.SetStatusModeByte(status, "UsePrev", (uint8_t)m_info[i].usePrevious);
 			g_plugin.setWString(StatusModeToDbSetting(status, "Default"), m_info[i].msg);
 		}
 		return true;

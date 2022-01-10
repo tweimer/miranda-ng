@@ -1,23 +1,23 @@
 #include "stdafx.h"
 
-WORD CToxProto::GetContactStatus(MCONTACT hContact)
+uint16_t CToxProto::GetContactStatus(MCONTACT hContact)
 {
 	return getWord(hContact, "Status", ID_STATUS_OFFLINE);
 }
 
-void CToxProto::SetContactStatus(MCONTACT hContact, WORD status)
+void CToxProto::SetContactStatus(MCONTACT hContact, uint16_t status)
 {
-	WORD oldStatus = GetContactStatus(hContact);
+	uint16_t oldStatus = GetContactStatus(hContact);
 	if (oldStatus != status)
 		setWord(hContact, "Status", status);
 }
 
 MCONTACT CToxProto::GetContactFromAuthEvent(MEVENT hEvent)
 {
-	DWORD body[3];
+	uint32_t body[3];
 	DBEVENTINFO dbei = {};
-	dbei.cbBlob = sizeof(DWORD) * 2;
-	dbei.pBlob = (PBYTE)&body;
+	dbei.cbBlob = sizeof(uint32_t) * 2;
+	dbei.pBlob = (uint8_t*)&body;
 
 	if (db_event_get(hEvent, &dbei))
 		return INVALID_CONTACT_ID;

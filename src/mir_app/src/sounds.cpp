@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org),
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org),
 Copyright (c) 2000-12 Miranda IM project,
 all portions of this codebase are copyrighted to the people
 listed in contributors.txt.
@@ -137,7 +137,7 @@ public:
 
 	bool OnApply() override
 	{
-		db_set_b(0, "Skin", "UseSound", (BYTE)IsDlgButtonChecked(m_hwnd, IDC_ENABLESOUNDS));
+		db_set_b(0, "Skin", "UseSound", (uint8_t)IsDlgButtonChecked(m_hwnd, IDC_ENABLESOUNDS));
 
 		for (auto &p : arSounds)
 			if (p->ptszTempFile)

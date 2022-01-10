@@ -27,16 +27,16 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 struct POPUPTREEDATA
 {
 	int cbSize;
-	DWORD signature;
+	uint32_t signature;
 	LPTSTR pszTreeRoot;
 	LPTSTR pszDescription;
-	BYTE typ;
+	uint8_t typ;
 	union {
 		POPUPNOTIFICATION	notification;
 		POPUPCLASS			pupClass;
 	};
-	BYTE enabled;
-	DWORD disableWhen;
+	uint8_t enabled;
+	uint32_t disableWhen;
 	int timeoutValue;
 	char leftAction[MAXMODULELABELLENGTH];
 	char rightAction[MAXMODULELABELLENGTH];
@@ -49,14 +49,14 @@ extern LIST<POPUPTREEDATA> gTreeData;
 extern HANDLE g_hntfError, g_hntfWarning, g_hntfNotification;
 
 int TreeDataSortFunc(const POPUPTREEDATA *p1, const POPUPTREEDATA *p2);
-HANDLE FindTreeData(LPTSTR group, LPTSTR name, BYTE typ);
+HANDLE FindTreeData(LPTSTR group, LPTSTR name, uint8_t typ);
 void FreePopupClass(POPUPTREEDATA *ptd);
 void UnloadTreeData();
 
 void LoadNotifications();
 HANDLE RegisterNotification(POPUPNOTIFICATION *notification);
 
-void FillNotificationData(POPUPDATA2 *ppd, DWORD *disableWhen);
+void FillNotificationData(POPUPDATA2 *ppd, uint32_t *disableWhen);
 bool PerformAction(HANDLE hNotification, HWND hwnd, UINT message, WPARAM wparal, LPARAM lparam);
 bool IsValidNotification(HANDLE hNotification);
 

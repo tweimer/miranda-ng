@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org),
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org),
 Copyright (c) 2000-12 Miranda IM project,
 all portions of this codebase are copyrighted to the people
 listed in contributors.txt.
@@ -32,8 +32,8 @@ enum THotkeyType { HKT_GLOBAL, HKT_LOCAL, HKT_MANUAL };
 
 struct THotkeyBoxData
 {
-	BYTE shift;
-	BYTE key;
+	uint8_t shift;
+	uint8_t key;
 };
 
 struct THotkeyItem
@@ -42,7 +42,7 @@ struct THotkeyItem
 	char        *pszService, *pszName; // pszName is valid _only_ for "root" hotkeys
 	wchar_t     *pwszSection, *pwszDescription;
 	LPARAM       lParam;
-	WORD         DefHotkey, Hotkey;
+	uint16_t         DefHotkey, Hotkey;
 	bool         Enabled;
 	HPLUGIN      pPlugin;
 	ATOM         idHotkey;
@@ -52,7 +52,7 @@ struct THotkeyItem
 	bool         allowSubHotkeys;
 
 	bool         OptChanged, OptDeleted, OptNew;
-	WORD         OptHotkey;
+	uint16_t         OptHotkey;
 	THotkeyType  OptType;
 	bool         OptEnabled;
 
@@ -66,7 +66,7 @@ struct THotkeyItem
 
 extern LIST<THotkeyItem> hotkeys;
 extern HWND g_hwndHkOptions, g_hwndHotkeyHost;
-extern DWORD g_pid, g_hkid;
+extern uint32_t g_pid, g_hkid;
 extern HANDLE hEvChanged;
 
 int HotkeyOptionsInit(WPARAM, LPARAM);

@@ -78,7 +78,7 @@ public:
 	int GetColorCount();
 
 	// Returns a pointer to the pixel buffer
-	PBYTE GetPixelBuffer();
+	uint8_t *GetPixelBuffer();
 
 	//----------------------------------------------
 	// Special functions to control the lights
@@ -90,8 +90,8 @@ public:
 	//----------------------------------------------
 	//----------------------------------------------
 	// Special functions for callbacks
-	void OnSoftButtonCB(DWORD state);
-	void OnNotificationCB(DWORD notificationCode, DWORD notifyParm1, DWORD notifyParm2, DWORD notifyParm3, DWORD notifyParm4);
+	void OnSoftButtonCB(uint32_t state);
+	void OnNotificationCB(uint32_t notificationCode, uint32_t notifyParm1, uint32_t notifyParm2, uint32_t notifyParm3, uint32_t notifyParm4);
 	//----------------------------------------------
 	// Special functions for the volume wheel hook
 		// Activates/Deactivates the volumewheel hook
@@ -101,7 +101,7 @@ public:
 	//----------------------------------------------
 	void runDrawingThread();
 private:
-	PBYTE m_pDrawingBuffer;
+	uint8_t *m_pDrawingBuffer;
 
 	CLgLCDDevice *m_pConnectedDevice;
 	// the connection instance
@@ -114,14 +114,14 @@ private:
 	// HID functions
 	bool HIDInit();
 	bool HIDDeInit();
-	bool HIDReadData(BYTE* data);
+	bool HIDReadData(uint8_t* data);
 
 	// Keyboard hook
 	HHOOK m_hKeyboardHook;
 	bool m_bVolumeWheelHook;
 
 	// handles API Errors
-	void HandleErrorFromAPI(DWORD dwRes);
+	void HandleErrorFromAPI(uint32_t dwRes);
 
 	int						m_iNumQVGADevices;
 	int						m_iNumBWDevices;
@@ -131,14 +131,14 @@ private:
 	tstring					m_strAppletName;
 	bool					m_bConnected;
 	lgLcdBitmap				m_lcdBitmap;
-	BYTE					*m_pPixels;
+	uint8_t					*m_pPixels;
 	int						m_iPixels;
 	int						m_hDevice;
 	int						m_hConnection;
-	DWORD					m_dwButtonState;
+	uint32_t					m_dwButtonState;
 	int						m_iPriority;
 
-	DWORD					m_dwForegroundCheck;
+	uint32_t					m_dwForegroundCheck;
 	bool					m_bSetAsForeground;
 	std::vector<CLgLCDDevice*> m_lcdDevices;
 

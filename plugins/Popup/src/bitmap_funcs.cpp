@@ -560,14 +560,14 @@ void MyBitmap::DrawIcon(HICON hic, int x, int y, int w, int h)
 			DestroyIcon(hicTmp);
 		}
 
-		BYTE *cbit = new BYTE[bmpColor.bmWidthBytes*bmpColor.bmHeight];
-		BYTE *mbit = new BYTE[bmpMask.bmWidthBytes*bmpMask.bmHeight];
+		uint8_t *cbit = new uint8_t[bmpColor.bmWidthBytes*bmpColor.bmHeight];
+		uint8_t *mbit = new uint8_t[bmpMask.bmWidthBytes*bmpMask.bmHeight];
 		GetBitmapBits(info.hbmColor, bmpColor.bmWidthBytes*bmpColor.bmHeight, cbit);
 		GetBitmapBits(info.hbmMask, bmpMask.bmWidthBytes*bmpMask.bmHeight, mbit);
 
 		for (int i = 0; i < bmpColor.bmHeight; i++) {
 			for (int j = 0; j < bmpColor.bmWidth; j++) {
-				BYTE *pixel = cbit + i*bmpColor.bmWidthBytes + j * 4;
+				uint8_t *pixel = cbit + i*bmpColor.bmWidthBytes + j * 4;
 				if (!pixel[3])
 					pixel[3] = (*(mbit + i*bmpMask.bmWidthBytes + j*bmpMask.bmBitsPixel / 8) & (1 << (7 - j % 8))) ? 0 : 255;
 
@@ -612,7 +612,7 @@ HRGN MyBitmap::buildOpaqueRgn(int level, bool opaque)
 
 	const int addRectsCount = 64;
 	int rectsCount = addRectsCount;
-	PRGNDATA pRgnData = (PRGNDATA)(new BYTE[sizeof(RGNDATAHEADER) + (rectsCount)*sizeof(RECT)]);
+	PRGNDATA pRgnData = (PRGNDATA)(new uint8_t[sizeof(RGNDATAHEADER) + (rectsCount)*sizeof(RECT)]);
 	LPRECT pRects = (LPRECT)(&pRgnData->Buffer);
 
 	memset(pRgnData, 0, sizeof(RGNDATAHEADER) + (rectsCount)*sizeof(RECT));
@@ -625,13 +625,13 @@ HRGN MyBitmap::buildOpaqueRgn(int level, bool opaque)
 	for (int i = 0; i < height; i++) {
 		int j; // we will need j after the loop!
 		for (j = 0; j < width; j++) {
-			ismask = opaque ? geta(this->getRow(i)[j]) > (DWORD)level : geta(this->getRow(i)[j]) < (DWORD)level;
+			ismask = opaque ? geta(this->getRow(i)[j]) > (uint32_t)level : geta(this->getRow(i)[j]) < (uint32_t)level;
 			if (wasfirst) {
 				if (!ismask) {
 					SetRect(&pRects[pRgnData->rdh.nCount++], first, i, j, i + 1);
-					if (pRgnData->rdh.nCount >= (DWORD)rectsCount) {
+					if (pRgnData->rdh.nCount >= (uint32_t)rectsCount) {
 						rectsCount += addRectsCount;
-						LPRGNDATA pRgnDataNew = (LPRGNDATA)(new BYTE[sizeof(RGNDATAHEADER) + (rectsCount)*sizeof(RECT)]);
+						LPRGNDATA pRgnDataNew = (LPRGNDATA)(new uint8_t[sizeof(RGNDATAHEADER) + (rectsCount)*sizeof(RECT)]);
 						memcpy(pRgnDataNew, pRgnData, sizeof(RGNDATAHEADER) + pRgnData->rdh.nCount * sizeof(RECT));
 						delete[] pRgnData;
 						pRgnData = pRgnDataNew;
@@ -648,9 +648,9 @@ HRGN MyBitmap::buildOpaqueRgn(int level, bool opaque)
 
 		if (wasfirst && ismask) {
 			SetRect(&pRects[pRgnData->rdh.nCount++], first, i, j, i + 1);
-			if (pRgnData->rdh.nCount >= (DWORD)rectsCount) {
+			if (pRgnData->rdh.nCount >= (uint32_t)rectsCount) {
 				rectsCount += addRectsCount;
-				LPRGNDATA pRgnDataNew = (LPRGNDATA)(new BYTE[sizeof(RGNDATAHEADER) + (rectsCount)*sizeof(RECT)]);
+				LPRGNDATA pRgnDataNew = (LPRGNDATA)(new uint8_t[sizeof(RGNDATAHEADER) + (rectsCount)*sizeof(RECT)]);
 				memcpy(pRgnDataNew, pRgnData, sizeof(RGNDATAHEADER) + pRgnData->rdh.nCount * sizeof(RECT));
 				delete[] pRgnData;
 				pRgnData = pRgnDataNew;

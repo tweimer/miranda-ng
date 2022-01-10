@@ -22,8 +22,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #pragma once
 
 /* Error Output */
-void ShowInfoMessage(BYTE flags,const char *pszTitle,const char *pszTextFmt,...);
-char* GetWinErrorDescription(DWORD dwLastError);
+void ShowInfoMessage(uint8_t flags,const char *pszTitle,const char *pszTextFmt,...);
+char* GetWinErrorDescription(uint32_t dwLastError);
 
 /* Time */
 BOOL SystemTimeToTimeStamp(SYSTEMTIME *st,time_t *timestamp);

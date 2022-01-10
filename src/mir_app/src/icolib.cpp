@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org),
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org),
 Copyright (c) 2000-12 Miranda IM project,
 all portions of this codebase are copyrighted to the people
 listed in contributors.txt.
@@ -62,7 +62,7 @@ LIST<IcolibItem> iconList(20, sttCompareIcons);
 /////////////////////////////////////////////////////////////////////////////////////////
 // Utility functions
 
-void __fastcall SafeDestroyIcon(HICON &hIcon)
+void SafeDestroyIcon(HICON &hIcon)
 {
 	if (hIcon != nullptr) {
 		DestroyIcon(hIcon);
@@ -144,7 +144,7 @@ static int InitializeBitmapInfoHeader(HBITMAP bitmap, BITMAPINFOHEADER *bi)
 	if (bytes == 0) // Failure
 		return 1;
 
-	if ((bytes >= (sizeof(DS.dsBm) + sizeof(DS.dsBmih))) && (DS.dsBmih.biSize >= DWORD(sizeof(DS.dsBmih))))
+	if ((bytes >= (sizeof(DS.dsBm) + sizeof(DS.dsBmih))) && (DS.dsBmih.biSize >= uint32_t(sizeof(DS.dsBmih))))
 		*bi = DS.dsBmih;
 	else {
 		memset(bi, 0, sizeof(BITMAPINFOHEADER));
@@ -254,11 +254,11 @@ int IconSourceItem::getIconData(HICON hIcon)
 		return 1; // Failure
 	}
 
-	mir_ptr<BYTE>
-		MonoInfo((BYTE*)mir_calloc(MonoInfoSize)),
-		MonoBits((BYTE*)mir_calloc(MonoBitsSize)),
-		ColorInfo((BYTE*)mir_calloc(ColorInfoSize)),
-		ColorBits((BYTE*)mir_calloc(ColorBitsSize));
+	mir_ptr<uint8_t>
+		MonoInfo((uint8_t*)mir_calloc(MonoInfoSize)),
+		MonoBits((uint8_t*)mir_calloc(MonoBitsSize)),
+		ColorInfo((uint8_t*)mir_calloc(ColorInfoSize)),
+		ColorBits((uint8_t*)mir_calloc(ColorBitsSize));
 
 	if (InternalGetDIB(iconInfo.hbmMask, nullptr, MonoInfo, MonoBits)
 		|| InternalGetDIB(iconInfo.hbmColor, nullptr, ColorInfo, ColorBits)) {
@@ -268,10 +268,10 @@ int IconSourceItem::getIconData(HICON hIcon)
 	}
 
 	icon_size = ColorInfoSize + ColorBitsSize + MonoBitsSize;
-	icon_data = (BYTE*)mir_alloc(icon_size);
+	icon_data = (uint8_t*)mir_alloc(icon_size);
 
-	BYTE *buf = icon_data;
-	((BITMAPINFOHEADER*)(BYTE*)ColorInfo)->biHeight *= 2; // color height includes mono bits
+	uint8_t *buf = icon_data;
+	((BITMAPINFOHEADER*)(uint8_t*)ColorInfo)->biHeight *= 2; // color height includes mono bits
 	memcpy(buf, ColorInfo, ColorInfoSize);
 	buf += ColorInfoSize;
 	memcpy(buf, ColorBits, ColorBitsSize);

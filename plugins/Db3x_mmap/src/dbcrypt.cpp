@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org)
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org)
 all portions of this codebase are copyrighted to the people
 listed in contributors.txt.
 
@@ -39,7 +39,7 @@ struct VarDescr
 		iLen(0)
 	{}
 
-	VarDescr(LPCSTR var, PBYTE value, int len) :
+	VarDescr(LPCSTR var, uint8_t *value, int len) :
 		szVar(mir_strdup(var)),
 		szValue((char*)memcpy(mir_alloc(len), value, len)),
 		iLen(len)
@@ -74,12 +74,12 @@ STDMETHODIMP_(BOOL) CDb3Mmap::ReadCryptoKey(MBinBuffer &buf)
 STDMETHODIMP_(BOOL) CDb3Mmap::StoreCryptoKey()
 {
 	size_t iKeyLength = m_crypto->getKeyLength();
-	BYTE *pKey = (BYTE*)_alloca(iKeyLength);
+	uint8_t *pKey = (uint8_t*)_alloca(iKeyLength);
 	m_crypto->getKey(pKey, iKeyLength);
 
 	DBCONTACTWRITESETTING dbcws = { "CryptoEngine", "StoredKey" };
 	dbcws.value.type = DBVT_BLOB;
-	dbcws.value.cpbVal = (WORD)iKeyLength;
+	dbcws.value.cpbVal = (uint16_t)iKeyLength;
 	dbcws.value.pbVal = pKey;
 	WriteContactSetting(0, &dbcws);
 
@@ -119,8 +119,8 @@ STDMETHODIMP_(BOOL) CDb3Mmap::StoreProvider(CRYPTO_PROVIDER *pProvider)
 {
 	DBCONTACTWRITESETTING dbcws = { "CryptoEngine", "Provider" };
 	dbcws.value.type = DBVT_BLOB;
-	dbcws.value.pbVal = (PBYTE)pProvider->pszName;
-	dbcws.value.cpbVal = (WORD)mir_strlen(pProvider->pszName) + 1;
+	dbcws.value.pbVal = (uint8_t*)pProvider->pszName;
+	dbcws.value.cpbVal = (uint16_t)mir_strlen(pProvider->pszName) + 1;
 	WriteContactSetting(0, &dbcws);
 	return TRUE;
 }
@@ -162,7 +162,7 @@ STDMETHODIMP_(BOOL) CDb3Mmap::EnableEncryption(BOOL bEnable)
 
 void CDb3Mmap::ToggleSettingsEncryption(MCONTACT contactID)
 {
-	DWORD ofsContact = GetContactOffset(contactID);
+	uint32_t ofsContact = GetContactOffset(contactID);
 	if (ofsContact == 0)
 		return;
 
@@ -172,7 +172,7 @@ void CDb3Mmap::ToggleSettingsEncryption(MCONTACT contactID)
 
 	// fast cycle through all settings
 	DBContactSettings *setting = (DBContactSettings*)DBRead(contact->ofsFirstSettings, nullptr);
-	DWORD offset = contact->ofsFirstSettings;
+	uint32_t offset = contact->ofsFirstSettings;
 	char *szModule = GetModuleNameByOfs(setting->ofsModuleName);
 	if (szModule == nullptr)
 		return;
@@ -181,8 +181,8 @@ void CDb3Mmap::ToggleSettingsEncryption(MCONTACT contactID)
 		OBJLIST<VarDescr> arSettings(10);
 		char szSetting[256];
 		int bytesRemaining, len;
-		DWORD ofsBlobPtr = offset + offsetof(DBContactSettings, blob), ofsNext = setting->ofsNext;
-		PBYTE pBlob = (PBYTE)DBRead(ofsBlobPtr, &bytesRemaining);
+		uint32_t ofsBlobPtr = offset + offsetof(DBContactSettings, blob), ofsNext = setting->ofsNext;
+		uint8_t *pBlob = (uint8_t*)DBRead(ofsBlobPtr, &bytesRemaining);
 		while (pBlob[0]) {
 			NeedBytes(1);
 			len = pBlob[0];
@@ -196,7 +196,7 @@ void CDb3Mmap::ToggleSettingsEncryption(MCONTACT contactID)
 				len = *(PWORD)(pBlob + 1);
 				// we need to convert a string into utf8 and encrypt it
 				if (!m_bEncrypted) {
-					BYTE bSave = pBlob[len + 3]; pBlob[len + 3] = 0;
+					uint8_t bSave = pBlob[len + 3]; pBlob[len + 3] = 0;
 					arSettings.insert(new VarDescr(szSetting, mir_utf8encode((LPCSTR)pBlob + 3)));
 					pBlob[len + 3] = bSave;
 				}
@@ -207,7 +207,7 @@ void CDb3Mmap::ToggleSettingsEncryption(MCONTACT contactID)
 				len = *(PWORD)(pBlob + 1);
 				// we need to encrypt these strings
 				if (!m_bEncrypted) {
-					BYTE bSave = pBlob[len + 3]; pBlob[len + 3] = 0;
+					uint8_t bSave = pBlob[len + 3]; pBlob[len + 3] = 0;
 					arSettings.insert(new VarDescr(szSetting, (LPCSTR)pBlob + 3));
 					pBlob[len + 3] = bSave;
 				}
@@ -234,12 +234,12 @@ void CDb3Mmap::ToggleSettingsEncryption(MCONTACT contactID)
 		for (auto &p : arSettings) {
 			if (!m_bEncrypted) {
 				size_t encodedLen;
-				BYTE *pResult = m_crypto->encodeString(p->szValue, &encodedLen);
+				uint8_t *pResult = m_crypto->encodeString(p->szValue, &encodedLen);
 				if (pResult != nullptr) {
 					DBCONTACTWRITESETTING dbcws = { szModule, p->szVar };
 					dbcws.value.type = DBVT_ENCRYPTED;
 					dbcws.value.pbVal = pResult;
-					dbcws.value.cpbVal = (WORD)encodedLen;
+					dbcws.value.cpbVal = (uint16_t)encodedLen;
 					WriteContactSetting(contactID, &dbcws);
 
 					mir_free(pResult);
@@ -247,12 +247,12 @@ void CDb3Mmap::ToggleSettingsEncryption(MCONTACT contactID)
 			}
 			else {
 				size_t realLen;
-				ptrA decoded(m_crypto->decodeString((PBYTE)(char*)p->szValue, p->iLen, &realLen));
+				ptrA decoded(m_crypto->decodeString((uint8_t*)(char*)p->szValue, p->iLen, &realLen));
 				if (decoded != nullptr) {
 					DBCONTACTWRITESETTING dbcws = { szModule, p->szVar };
 					dbcws.value.type = DBVT_UNENCRYPTED;
 					dbcws.value.pszVal = decoded;
-					dbcws.value.cchVal = (WORD)realLen;
+					dbcws.value.cchVal = (uint16_t)realLen;
 					WriteContactSetting(contactID, &dbcws);
 				}
 			}
@@ -269,7 +269,7 @@ void CDb3Mmap::ToggleSettingsEncryption(MCONTACT contactID)
 
 void CDb3Mmap::ToggleEventsEncryption(MCONTACT contactID)
 {
-	DWORD ofsContact = GetContactOffset(contactID);
+	uint32_t ofsContact = GetContactOffset(contactID);
 	if (ofsContact == 0)
 		return;
 
@@ -278,20 +278,20 @@ void CDb3Mmap::ToggleEventsEncryption(MCONTACT contactID)
 		return;
 
 	// fast cycle through all events
-	for (DWORD offset = contact.ofsFirstEvent; offset != 0;) {
+	for (uint32_t offset = contact.ofsFirstEvent; offset != 0;) {
 		DBEvent evt = *(DBEvent*)DBRead(offset, nullptr);
 		if (evt.signature != DBEVENT_SIGNATURE)
 			return;
 
 		size_t len;
-		DWORD ofsDest;
-		mir_ptr<BYTE> pBlob;
-		BYTE *pSource = DBRead(offset + offsetof(DBEvent, blob), nullptr);
+		uint32_t ofsDest;
+		mir_ptr<uint8_t> pBlob;
+		uint8_t *pSource = DBRead(offset + offsetof(DBEvent, blob), nullptr);
 		if (!m_bEncrypted) { // we need more space
 			if ((pBlob = m_crypto->encodeBuffer(pSource, evt.cbBlob, &len)) == nullptr)
 				return;
 
-			ofsDest = ReallocSpace(offset, offsetof(DBEvent, blob) + evt.cbBlob, offsetof(DBEvent, blob) + (DWORD)len);
+			ofsDest = ReallocSpace(offset, offsetof(DBEvent, blob) + evt.cbBlob, offsetof(DBEvent, blob) + (uint32_t)len);
 
 			if (evt.ofsNext) {
 				DBEvent *e = (DBEvent*)DBRead(evt.ofsNext, nullptr);
@@ -313,19 +313,19 @@ void CDb3Mmap::ToggleEventsEncryption(MCONTACT contactID)
 			evt.flags |= DBEF_ENCRYPTED;
 		}
 		else {
-			if ((pBlob = (BYTE*)m_crypto->decodeBuffer(pSource, evt.cbBlob, &len)) == nullptr)
+			if ((pBlob = (uint8_t*)m_crypto->decodeBuffer(pSource, evt.cbBlob, &len)) == nullptr)
 				return;
 
 			ofsDest = offset; // reuse the old space
 			evt.flags &= ~DBEF_ENCRYPTED;
 
 			if (len < evt.cbBlob)
-				DBFill(ofsDest + offsetof(DBEvent, blob) + (DWORD)len, evt.cbBlob - (DWORD)len);
+				DBFill(ofsDest + offsetof(DBEvent, blob) + (uint32_t)len, evt.cbBlob - (uint32_t)len);
 		}
-		evt.cbBlob = (DWORD)len;
+		evt.cbBlob = (uint32_t)len;
 
 		DBWrite(ofsDest, &evt, offsetof(DBEvent, blob));
-		DBWrite(ofsDest + offsetof(DBEvent, blob), pBlob, (DWORD)len);
+		DBWrite(ofsDest + offsetof(DBEvent, blob), pBlob, (uint32_t)len);
 
 		offset = evt.ofsNext;
 	}

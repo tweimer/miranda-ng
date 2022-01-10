@@ -1,7 +1,7 @@
 // -----------------------------------------------------------------------------
 // ICQ plugin for Miranda NG
 // -----------------------------------------------------------------------------
-// Copyright © 2018-21 Miranda NG team
+// Copyright © 2018-22 Miranda NG team
 // 
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -318,7 +318,7 @@ MCONTACT CIcqProto::ParseBuddyInfo(const JSONNode &buddy, MCONTACT hContact, boo
 		if (wszCap.GetLength() != 32)
 			continue;
 
-		BYTE cap[16];
+		uint8_t cap[16];
 		hex2binW(wszCap, cap, sizeof(cap));
 		if (!memcmp(cap, "MiNG", 4)) { // Miranda
 			int v[4];
@@ -451,7 +451,7 @@ void CIcqProto::ParseMessage(MCONTACT hContact, __int64 &lastMsgId, const JSONNo
 				DB::AUTH_BLOB blob(hContact, nick, nullptr, nullptr, id, nullptr);
 
 				PROTORECVEVENT pre = {};
-				pre.timestamp = (DWORD)time(0);
+				pre.timestamp = (uint32_t)time(0);
 				pre.lParam = blob.size();
 				pre.szMessage = blob;
 				ProtoChainRecv(hContact, PSR_AUTH, 0, (LPARAM)&pre);
@@ -629,22 +629,18 @@ void CIcqProto::RetrieveUserHistory(MCONTACT hContact, __int64 startMsgId, bool 
 	if (startMsgId == 0)
 		startMsgId = -1;
 
-	auto *pReq = new AsyncHttpRequest(CONN_RAPI, REQUEST_POST, ICQ_ROBUST_SERVER, &CIcqProto::OnGetUserHistory);
+	__int64 patchVer = getId(hContact, DB_KEY_PATCHVER);
+	if (patchVer == 0)
+		patchVer = 1;
+
+	auto *pReq = new AsyncRapiRequest(this, "getHistory", &CIcqProto::OnGetUserHistory);
 	#ifndef _DEBUG
 		pReq->flags |= NLHRF_NODUMPSEND;
 	#endif
 	pReq->hContact = hContact;
 	pReq->pUserInfo = (bCreateRead) ? pReq : 0;
-
-	__int64 patchVer = getId(hContact, DB_KEY_PATCHVER);
-	if (patchVer == 0)
-		patchVer = 1;
-
-	JSONNode request, params; params.set_name("params");
-	params << WCHAR_PARAM("sn", GetUserId(hContact)) << INT64_PARAM("fromMsgId", startMsgId);
-	params << INT_PARAM("count", 1000) << CHAR_PARAM("aimSid", m_aimsid) << SINT64_PARAM("patchVersion", patchVer) << CHAR_PARAM("language", "ru-ru");
-	request << CHAR_PARAM("method", "getHistory") << CHAR_PARAM("reqId", pReq->m_reqId) << params;
-	pReq->m_szParam = ptrW(json_write(&request));
+	pReq->params << WCHAR_PARAM("sn", GetUserId(hContact)) << INT64_PARAM("fromMsgId", startMsgId) << INT_PARAM("count", 1000)
+		<< SINT64_PARAM("patchVersion", patchVer) << CHAR_PARAM("language", "ru-ru");
 	Push(pReq);
 }
 
@@ -819,8 +815,8 @@ void CIcqProto::OnCheckPassword(NETLIBHTTPREQUEST *pReply, AsyncHttpRequest*)
 	CMStringA szPassTemp = m_szPassword;
 
 	unsigned int len;
-	BYTE hashOut[MIR_SHA256_HASH_SIZE];
-	HMAC(EVP_sha256(), szPassTemp, szPassTemp.GetLength(), (BYTE*)szSessionSecret.c_str(), szSessionSecret.GetLength(), hashOut, &len);
+	uint8_t hashOut[MIR_SHA256_HASH_SIZE];
+	HMAC(EVP_sha256(), szPassTemp, szPassTemp.GetLength(), (uint8_t*)szSessionSecret.c_str(), szSessionSecret.GetLength(), hashOut, &len);
 	m_szSessionKey = ptrA(mir_base64_encode(hashOut, sizeof(hashOut)));
 	setString(DB_KEY_SESSIONKEY, m_szSessionKey);
 
@@ -1174,13 +1170,11 @@ void CIcqProto::OnSearchResults(NETLIBHTTPREQUEST *pReply, AsyncHttpRequest *pRe
 	PROTOSEARCHRESULT psr = {};
 	psr.cbSize = sizeof(psr);
 	psr.flags = PSR_UNICODE;
-	for (auto &it : results["data"]) {
-		const JSONNode &anketa = it["anketa"];
-
+	for (auto &it : results["persons"]) {
 		CMStringW wszId = it["sn"].as_mstring();
-		CMStringW wszNick = anketa["nickname"].as_mstring();
-		CMStringW wszFirst = anketa["firstName"].as_mstring();
-		CMStringW wszLast = anketa["lastName"].as_mstring();
+		CMStringW wszNick = it["friendly"].as_mstring();
+		CMStringW wszFirst = it["firstName"].as_mstring();
+		CMStringW wszLast = it["lastName"].as_mstring();
 
 		psr.id.w = wszId.GetBuffer();
 		psr.nick.w = wszNick.GetBuffer();

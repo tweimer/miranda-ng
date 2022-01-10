@@ -78,7 +78,7 @@ INT_PTR CALLBACK DlgProcPluginOpt(HWND hDlg, UINT msg, WPARAM wParam, LPARAM)
 
 	case WM_COMMAND:
 		{
-			WORD wNotifyCode = HIWORD(wParam);
+			uint16_t wNotifyCode = HIWORD(wParam);
 			switch (LOWORD(wParam)) {
 			case IDC_COMBOPLUGINS:
 				if (wNotifyCode == CBN_SELCHANGE) {
@@ -260,7 +260,7 @@ BOOL DlgShowAccountStatus(HWND hDlg, WPARAM wParam, LPARAM lParam)
 {
 	HPOP3ACCOUNT ActualAccount = (HPOP3ACCOUNT)lParam;
 
-	if ((DWORD)wParam == M_SHOWACTUAL) {
+	if ((uint32_t)wParam == M_SHOWACTUAL) {
 		#ifdef DEBUG_SYNCHRO
 		DebugLog(SynchroFile, "Options:SHOWACCOUNT:ActualAccountSO-read wait\n");
 		#endif
@@ -294,7 +294,7 @@ BOOL DlgShowAccountPopup(HWND hDlg, WPARAM wParam, LPARAM lParam)
 {
 	HPOP3ACCOUNT ActualAccount = (HPOP3ACCOUNT)lParam;
 
-	if ((DWORD)wParam == M_SHOWACTUAL) {
+	if ((uint32_t)wParam == M_SHOWACTUAL) {
 		#ifdef DEBUG_SYNCHRO
 		DebugLog(SynchroFile, "Options:SHOWACCOUNT:ActualAccountSO-read wait\n");
 		#endif
@@ -342,7 +342,7 @@ BOOL DlgShowAccount(HWND hDlg, WPARAM wParam, LPARAM lParam)
 	HPOP3ACCOUNT ActualAccount = (HPOP3ACCOUNT)lParam;
 	int i;
 
-	if ((DWORD)wParam == M_SHOWACTUAL) {
+	if ((uint32_t)wParam == M_SHOWACTUAL) {
 		wchar_t accstatus[256];
 		#ifdef DEBUG_SYNCHRO
 		DebugLog(SynchroFile, "Options:SHOWACCOUNT:ActualAccountSO-read wait\n");
@@ -508,7 +508,7 @@ BOOL DlgSetItemText(HWND hDlg, WPARAM wParam, const char* str)
 	return TRUE;
 }
 
-BOOL DlgSetItemTextW(HWND hDlg, WPARAM wParam, const WCHAR* str)
+BOOL DlgSetItemTextW(HWND hDlg, WPARAM wParam, const wchar_t* str)
 {
 	if (str == nullptr)
 		SetDlgItemTextW(hDlg, wParam, L"");
@@ -641,7 +641,7 @@ INT_PTR CALLBACK DlgProcPOP3AccOpt(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lP
 	case WM_YAMN_CHANGETIME:
 		if ((HPOP3ACCOUNT)wParam == ActualAccount) {
 			wchar_t Text[256];
-			mir_snwprintf(Text, TranslateT("Time left to next check [s]: %d"), (DWORD)lParam);
+			mir_snwprintf(Text, TranslateT("Time left to next check [s]: %d"), (uint32_t)lParam);
 			SetDlgItemText(hDlg, IDC_STTIMELEFT, Text);
 		}
 		return TRUE;
@@ -846,7 +846,7 @@ INT_PTR CALLBACK DlgProcPOP3AccOpt(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lP
 	case WM_NOTIFY:
 		if (((LPNMHDR)lParam)->idFrom == 0 && ((LPNMHDR)lParam)->code == PSN_APPLY) {
 			char  Text[MAX_PATH];
-			WCHAR TextW[MAX_PATH];
+			wchar_t TextW[MAX_PATH];
 			BOOL Translated, NewAcc = FALSE, Check, CheckMsg, CheckSnd, CheckIco, CheckApp, CheckAPOP;
 			BOOL CheckNMsgP, CheckFMsg, CheckFSnd, CheckFIco;
 			BOOL CheckKBN, CheckContact, CheckContactNick, CheckContactNoEvent;
@@ -981,13 +981,13 @@ INT_PTR CALLBACK DlgProcPOP3AccOpt(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lP
 				GetDlgItemTextW(hDlg, IDC_EDITAPP, TextW, _countof(TextW));
 				if (nullptr != ActualAccount->NewMailN.App)
 					delete[] ActualAccount->NewMailN.App;
-				ActualAccount->NewMailN.App = new WCHAR[mir_wstrlen(TextW) + 1];
+				ActualAccount->NewMailN.App = new wchar_t[mir_wstrlen(TextW) + 1];
 				mir_wstrcpy(ActualAccount->NewMailN.App, TextW);
 
 				GetDlgItemTextW(hDlg, IDC_EDITAPPPARAM, TextW, _countof(TextW));
 				if (nullptr != ActualAccount->NewMailN.AppParam)
 					delete[] ActualAccount->NewMailN.AppParam;
-				ActualAccount->NewMailN.AppParam = new WCHAR[mir_wstrlen(TextW) + 1];
+				ActualAccount->NewMailN.AppParam = new wchar_t[mir_wstrlen(TextW) + 1];
 				mir_wstrcpy(ActualAccount->NewMailN.AppParam, TextW);
 
 				ActualAccount->Server->Port = Port;
@@ -1158,7 +1158,7 @@ INT_PTR CALLBACK DlgProcPOP3AccPopup(HWND hDlg, UINT msg, WPARAM wParam, LPARAM 
 
 	case WM_COMMAND:
 		{
-			WORD wNotifyCode = HIWORD(wParam);
+			uint16_t wNotifyCode = HIWORD(wParam);
 			switch (LOWORD(wParam)) {
 				LONG Result;
 			case IDC_COMBOACCOUNT:

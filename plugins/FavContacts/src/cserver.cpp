@@ -11,7 +11,7 @@ void CServer::Start(int port, IConnectionProcessorFactory *connectionProcessorFa
 	sockaddr_in addr = { 0 };
 	addr.sin_family = AF_INET;
 	addr.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
-	addr.sin_port = htons((WORD)port);
+	addr.sin_port = htons((uint16_t)port);
 	if (bind(m_socket, (sockaddr *)&addr, sizeof(addr)) == SOCKET_ERROR) {
 		closesocket(m_socket);
 		m_socket = INVALID_SOCKET;
@@ -34,7 +34,7 @@ void CServer::Stop()
 	closesocket(m_socket);
 }
 
-DWORD CServer::ConnectionAcceptThread()
+uint32_t CServer::ConnectionAcceptThread()
 {
 	while (1) {
 		SOCKET s = accept(m_socket, nullptr, nullptr);
@@ -45,7 +45,7 @@ DWORD CServer::ConnectionAcceptThread()
 	return 0;
 }
 
-DWORD CServer::ConnectionProcessThread(SOCKET s)
+uint32_t CServer::ConnectionProcessThread(SOCKET s)
 {
 	CSocket sock(s);
 	IConnectionProcessor *processor = m_connectionProcessorFactory->Create(&sock);

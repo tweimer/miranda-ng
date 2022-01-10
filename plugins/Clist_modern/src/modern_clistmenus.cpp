@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org),
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org),
 Copyright (c) 2000-08 Miranda ICQ/IM project,
 all portions of this codebase are copyrighted to the people
 listed in contributors.txt.
@@ -57,7 +57,7 @@ static IconItem iconList[] =
 
 static int FAV_OnContactMenuBuild(WPARAM hContact, LPARAM)
 {
-	BYTE bContactRate = g_plugin.getByte(hContact, "Rate");
+	uint8_t bContactRate = g_plugin.getByte(hContact, "Rate");
 	if (bContactRate > _countof(rates) - 1)
 		bContactRate = _countof(rates) - 1;
 
@@ -78,7 +78,7 @@ static int FAV_OnContactMenuBuild(WPARAM hContact, LPARAM)
 INT_PTR FAV_SetRate(WPARAM hContact, LPARAM nRate)
 {
 	if (hContact)
-		g_plugin.setByte(hContact, "Rate", (BYTE)nRate);
+		g_plugin.setByte(hContact, "Rate", (uint8_t)nRate);
 
 	return 0;
 }

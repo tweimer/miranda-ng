@@ -73,8 +73,8 @@
 #define TXT_COL_DEF	0x00000000
 
 struct LISTELEMENT {
-	BYTE direction;
-	BYTE type;
+	uint8_t direction;
+	uint8_t type;
 	wchar_t date[DATE_SIZE];
 	wchar_t time[TIME_SIZE];
 	wchar_t link[LINK_MAX];
@@ -84,22 +84,22 @@ struct LISTELEMENT {
 };
 
 typedef struct {
-	BYTE openNewWindow;
-	BYTE updateWindow;
-	BYTE mouseEvent;
-	BYTE saveSpecial;
-	BYTE showDate;
-	BYTE showLine;
-	BYTE showTime;
-	BYTE showDirection;
-	BYTE showType;
+	uint8_t openNewWindow;
+	uint8_t updateWindow;
+	uint8_t mouseEvent;
+	uint8_t saveSpecial;
+	uint8_t showDate;
+	uint8_t showLine;
+	uint8_t showTime;
+	uint8_t showDirection;
+	uint8_t showType;
 } LISTOPTIONS;
 
 typedef struct {
-	DWORD incoming;
-	DWORD outgoing;
-	DWORD background;
-	DWORD text;
+	uint32_t incoming;
+	uint32_t outgoing;
+	uint32_t background;
+	uint32_t text;
 } MYCOLOURSET;
 
 #include "linklist_fct.h"
@@ -135,7 +135,7 @@ struct CMPlugin : public PLUGIN<CMPlugin>
 };
 
 #define _mstrlen(x) (_countof(x) - 1)
-#define MAKE_TXT_COL(BGCol) ((DWORD)~BGCol & 0x00FFFFFF)
+#define MAKE_TXT_COL(BGCol) ((uint32_t)~BGCol & 0x00FFFFFF)
 
 #define DM_LINKSPLITTER			WM_USER+99
 

@@ -1,6 +1,6 @@
 /*
 
-Copyright 2000-12 Miranda IM, 2012-21 Miranda NG team,
+Copyright 2000-12 Miranda IM, 2012-22 Miranda NG team,
 all portions of this codebase are copyrighted to the people
 listed in contributors.txt.
 
@@ -55,15 +55,15 @@ struct GlobalMessageData
 	CMOption<bool> bUseStatusWinIcon;
 
 	CMOption<bool> bLimitAvatarHeight;
-	CMOption<WORD> iAvatarHeight;
+	CMOption<uint16_t> iAvatarHeight;
 
-	CMOption<DWORD> popupFlags;
-	CMOption<DWORD> msgTimeout;
-	CMOption<DWORD> nFlashMax;
-	CMOption<BYTE>  iGap;
+	CMOption<uint32_t> popupFlags;
+	CMOption<uint32_t> msgTimeout;
+	CMOption<uint32_t> nFlashMax;
+	CMOption<uint8_t>  iGap;
 
-	CMOption<BYTE>  iLoadHistory;
-	CMOption<WORD>  nLoadCount, nLoadTime;
+	CMOption<uint8_t>  iLoadHistory;
+	CMOption<uint16_t>  nLoadCount, nLoadTime;
 
 	bool bSmileyInstalled = false;
 };

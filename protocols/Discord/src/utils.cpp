@@ -1,5 +1,5 @@
 /*
-Copyright © 2016-21 Miranda NG team
+Copyright © 2016-22 Miranda NG team
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -336,7 +336,7 @@ void CDiscordProto::ProcessType(CDiscordUser *pUser, const JSONNode &pRoot)
 			DB::AUTH_BLOB blob(pUser->hContact, T2Utf(pUser->wszUsername), nullptr, nullptr, szId, nullptr);
 
 			PROTORECVEVENT pre = { 0 };
-			pre.timestamp = (DWORD)time(0);
+			pre.timestamp = (uint32_t)time(0);
 			pre.lParam = blob.size();
 			pre.szMessage = blob;
 			ProtoChainRecv(pUser->hContact, PSR_AUTH, 0, (LPARAM)&pre);

@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org),
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org),
 Copyright (c) 2000-12 Miranda IM project,
 all portions of this codebase are copyrighted to the people
 listed in contributors.txt.
@@ -36,7 +36,7 @@ MIR_APP_DLL(HANDLE) Netlib_CreatePacketReceiver(HNETLIBCONN nlc, int iMaxSize)
 	nlpr->handleType = NLH_PACKETRECVER;
 	nlpr->nlc = nlc;
 	nlpr->packetRecver.bufferSize = iMaxSize;
-	nlpr->packetRecver.buffer = (PBYTE)mir_alloc(nlpr->packetRecver.bufferSize);
+	nlpr->packetRecver.buffer = (uint8_t*)mir_alloc(nlpr->packetRecver.bufferSize);
 	nlpr->packetRecver.bytesUsed = 0;
 	nlpr->packetRecver.bytesAvailable = 0;
 	return nlpr;

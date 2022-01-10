@@ -42,8 +42,8 @@ static const CLSID CLSID_MozillaBrowser =
 typedef struct _DOCHOSTUIINFO
 {
 	ULONG cbSize;
-	DWORD dwFlags;
-	DWORD dwDoubleClick;
+	uint32_t dwFlags;
+	uint32_t dwDoubleClick;
 	OLECHAR *pchHostCss;
 	OLECHAR *pchHostNS;
 } DOCHOSTUIINFO;
@@ -358,12 +358,12 @@ extern "C" {
 
 		STDMETHOD(SetSecuritySite)(THIS_ IInternetSecurityMgrSite*) PURE;
 		STDMETHOD(GetSecuritySite)(THIS_ IInternetSecurityMgrSite**) PURE;
-		STDMETHOD(MapUrlToZone)(THIS_ LPCWSTR,DWORD*,DWORD) PURE;
-		STDMETHOD(GetSecurityId)(THIS_ LPCWSTR,BYTE*,DWORD*,DWORD_PTR) PURE;
-		STDMETHOD(ProcessUrlAction)(THIS_ LPCWSTR,DWORD,BYTE*,DWORD,BYTE*,DWORD,DWORD,DWORD) PURE;
-		STDMETHOD(QueryCustomPolicy)(THIS_ LPCWSTR,REFGUID,BYTE**,DWORD*,BYTE*,DWORD,DWORD) PURE;
-		STDMETHOD(SetZoneMapping)(THIS_ DWORD,LPCWSTR,DWORD) PURE;
-		STDMETHOD(GetZoneMappings)(THIS_ DWORD,IEnumString**,DWORD) PURE;
+		STDMETHOD(MapUrlToZone)(THIS_ LPCWSTR,uint32_t*,uint32_t) PURE;
+		STDMETHOD(GetSecurityId)(THIS_ LPCWSTR,uint8_t*,uint32_t*,DWORD_PTR) PURE;
+		STDMETHOD(ProcessUrlAction)(THIS_ LPCWSTR,uint32_t,uint8_t*,uint32_t,uint8_t*,uint32_t,uint32_t,uint32_t) PURE;
+		STDMETHOD(QueryCustomPolicy)(THIS_ LPCWSTR,REFGUID,uint8_t**,uint32_t*,uint8_t*,uint32_t,uint32_t) PURE;
+		STDMETHOD(SetZoneMapping)(THIS_ uint32_t,LPCWSTR,uint32_t) PURE;
+		STDMETHOD(GetZoneMappings)(THIS_ uint32_t,IEnumString**,uint32_t) PURE;
 	};
 #undef INTERFACE
 
@@ -389,7 +389,7 @@ public:
 	STDMETHOD(GetTypeInfoCount)(UINT*);
 	STDMETHOD(GetTypeInfo)(UINT, LCID, LPTYPEINFO*);
 	STDMETHOD(GetIDsOfNames)(REFIID, LPOLESTR*, UINT, LCID, DISPID*);
-	STDMETHOD(Invoke)(DISPID, REFIID, LCID, WORD, DISPPARAMS*, VARIANT*, EXCEPINFO*, UINT*);
+	STDMETHOD(Invoke)(DISPID, REFIID, LCID, uint16_t, DISPPARAMS*, VARIANT*, EXCEPINFO*, UINT*);
 	// DWebBrowserEvents2
 	STDMETHODIMP_(void)StatusTextChange(BSTR);
 	STDMETHODIMP_(void)ProgressChange(long, long);
@@ -502,14 +502,14 @@ class IEView :public IDispatch, public IOleClientSite, public IOleInPlaceSite, p
 	STDMETHOD(SetSecuritySite)(IInternetSecurityMgrSite *pSite);
 	STDMETHOD(GetSecuritySite)(IInternetSecurityMgrSite **ppSite);
 	STDMETHOD(MapUrlToZone)(LPCWSTR pwszUrl, DWORD *pdwZone, DWORD dwFlags);
-	STDMETHOD(GetSecurityId)(LPCWSTR pwszUrl, BYTE *pbSecurityId, DWORD *pcbSecurityId, DWORD_PTR dwReserved);
-	STDMETHOD(ProcessUrlAction)(LPCWSTR pwszUrl, DWORD dwAction, BYTE *pPolicy, DWORD cbPolicy, BYTE *pContext, DWORD cbContext, DWORD dwFlags, DWORD dwReserved);
-	STDMETHOD(QueryCustomPolicy)(LPCWSTR pwszUrl, REFGUID guidKey, BYTE **ppPolicy, DWORD *pcbPolicy, BYTE *pContext, DWORD cbContext, DWORD dwReserved);
+	STDMETHOD(GetSecurityId)(LPCWSTR pwszUrl, uint8_t *pbSecurityId, DWORD *pcbSecurityId, DWORD_PTR dwReserved);
+	STDMETHOD(ProcessUrlAction)(LPCWSTR pwszUrl, DWORD dwAction, uint8_t *pPolicy, DWORD cbPolicy, uint8_t *pContext, DWORD cbContext, DWORD dwFlags, DWORD dwReserved);
+	STDMETHOD(QueryCustomPolicy)(LPCWSTR pwszUrl, REFGUID guidKey, uint8_t **ppPolicy, DWORD *pcbPolicy, uint8_t *pContext, DWORD cbContext, DWORD dwReserved);
 	STDMETHOD(SetZoneMapping)(DWORD dwZone, LPCWSTR lpszPattern, DWORD dwFlags);
 	STDMETHOD(GetZoneMappings)(DWORD dwZone, IEnumString **ppenumString, DWORD dwFlags);
 
 	IHTMLDocument2 *getDocument();
-	WCHAR*  getSelection();
+	wchar_t*  getSelection();
 	wchar_t* getHrefFromAnchor(CComPtr<IHTMLElement> element);
 	void     setBorder();
 protected:

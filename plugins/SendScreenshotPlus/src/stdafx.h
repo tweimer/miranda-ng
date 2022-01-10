@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org),
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org),
 Copyright (c) 2000-09 Miranda ICQ/IM project,
 
 This file is part of Send Screenshot Plus, a Miranda IM plugin.
@@ -95,7 +95,7 @@ using namespace std;
 #define MSGINFO	(text) MessageBox(NULL, text, L"SendSS", MB_OK | MB_ICONINFORMATION)
 
 typedef struct _MGLOBAL {
-	DWORD   mirandaVersion;          // mirandaVersion
+	uint32_t   mirandaVersion;          // mirandaVersion
 	BOOLEAN PopupActionsExist   : 1; // Popup+ or MS_POPUP_REGISTERACTIONS exist
 	BOOLEAN PluginHTTPExist     : 1;	// HTTPServer or MS_HTTP_ACCEPT_CONNECTIONS exist
 	BOOLEAN PluginFTPExist      : 1; // FTPFile or MS_FTPFILE_UPLOAD exist

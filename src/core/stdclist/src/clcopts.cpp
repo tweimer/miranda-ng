@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org),
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org),
 Copyright (c) 2000-12 Miranda IM project,
 all portions of this codebase are copyrighted to the people
 listed in contributors.txt.
@@ -31,7 +31,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 struct CheckBoxToStyleEx_t
 {
 	int id;
-	DWORD flag;
+	uint32_t flag;
 	int not;
 }
 
@@ -53,7 +53,7 @@ static const checkBoxToStyleEx[] =
 
 struct CheckBoxValues_t
 {
-	DWORD  style;
+	uint32_t  style;
 	wchar_t* szDescr;
 }
 static const greyoutValues[] =
@@ -69,7 +69,7 @@ static const greyoutValues[] =
 	{ PF2_INVISIBLE,  LPGENW("Invisible")     }
 };
 
-static void FillCheckBoxTree(HWND hwndTree, const struct CheckBoxValues_t *values, int nValues, DWORD style)
+static void FillCheckBoxTree(HWND hwndTree, const struct CheckBoxValues_t *values, int nValues, uint32_t style)
 {
 	TVINSERTSTRUCT tvis;
 	tvis.hParent = nullptr;
@@ -84,9 +84,9 @@ static void FillCheckBoxTree(HWND hwndTree, const struct CheckBoxValues_t *value
 	}
 }
 
-static DWORD MakeCheckBoxTreeFlags(HWND hwndTree)
+static uint32_t MakeCheckBoxTreeFlags(HWND hwndTree)
 {
-	DWORD flags = 0;
+	uint32_t flags = 0;
 
 	TVITEM tvi;
 	tvi.mask = TVIF_HANDLE | TVIF_PARAM | TVIF_STATE;
@@ -130,7 +130,7 @@ static INT_PTR CALLBACK DlgProcClcMainOpts(HWND hwndDlg, UINT msg, WPARAM wParam
 		SetWindowLongPtr(GetDlgItem(hwndDlg, IDC_GREYOUTOPTS), GWL_STYLE,
 			GetWindowLongPtr(GetDlgItem(hwndDlg, IDC_GREYOUTOPTS), GWL_STYLE) | TVS_NOHSCROLL | TVS_CHECKBOXES);
 		{
-			DWORD exStyle = db_get_dw(0, "CLC", "ExStyle", Clist_GetDefaultExStyle());
+			uint32_t exStyle = db_get_dw(0, "CLC", "ExStyle", Clist_GetDefaultExStyle());
 			for (auto &it : checkBoxToStyleEx)
 				CheckDlgButton(hwndDlg, it.id, (exStyle & it.flag) ^ (it.flag * it.not) ? BST_CHECKED : BST_UNCHECKED);
 		}
@@ -217,27 +217,27 @@ static INT_PTR CALLBACK DlgProcClcMainOpts(HWND hwndDlg, UINT msg, WPARAM wParam
 
 		case 0:
 			if (((LPNMHDR)lParam)->code == PSN_APPLY) {
-				DWORD exStyle = 0;
+				uint32_t exStyle = 0;
 				for (auto &it : checkBoxToStyleEx)
 					if ((IsDlgButtonChecked(hwndDlg, it.id) == 0) == it.not)
 						exStyle |= it.flag;
 
 				db_set_dw(0, "CLC", "ExStyle", exStyle);
 				{
-					DWORD fullGreyoutFlags = MakeCheckBoxTreeFlags(GetDlgItem(hwndDlg, IDC_GREYOUTOPTS));
+					uint32_t fullGreyoutFlags = MakeCheckBoxTreeFlags(GetDlgItem(hwndDlg, IDC_GREYOUTOPTS));
 					db_set_dw(0, "CLC", "FullGreyoutFlags", fullGreyoutFlags);
 					if (IsDlgButtonChecked(hwndDlg, IDC_GREYOUT))
 						db_set_dw(0, "CLC", "GreyoutFlags", fullGreyoutFlags);
 					else
 						db_set_dw(0, "CLC", "GreyoutFlags", 0);
 				}
-				db_set_b(0, "CLC", "ShowIdle", (BYTE)(IsDlgButtonChecked(hwndDlg, IDC_IDLE) ? 1 : 0));
-				db_set_b(0, "CLC", "LeftMargin", (BYTE)SendDlgItemMessage(hwndDlg, IDC_LEFTMARGINSPIN, UDM_GETPOS, 0, 0));
-				db_set_w(0, "CLC", "ScrollTime", (WORD)SendDlgItemMessage(hwndDlg, IDC_SMOOTHTIMESPIN, UDM_GETPOS, 0, 0));
-				db_set_b(0, "CLC", "GroupIndent", (BYTE)SendDlgItemMessage(hwndDlg, IDC_GROUPINDENTSPIN, UDM_GETPOS, 0, 0));
-				db_set_b(0, "CLC", "NoVScrollBar", (BYTE)(IsDlgButtonChecked(hwndDlg, IDC_NOSCROLLBAR) ? 1 : 0));
-				db_set_b(0, "CLC", "RowHeight", (BYTE)SendDlgItemMessage(hwndDlg, IDC_ROWHEIGHTSPIN, UDM_GETPOS, 0, 0));
-				db_set_b(0, "CLC", "GammaCorrect", (BYTE)IsDlgButtonChecked(hwndDlg, IDC_GAMMACORRECT));
+				db_set_b(0, "CLC", "ShowIdle", (uint8_t)(IsDlgButtonChecked(hwndDlg, IDC_IDLE) ? 1 : 0));
+				db_set_b(0, "CLC", "LeftMargin", (uint8_t)SendDlgItemMessage(hwndDlg, IDC_LEFTMARGINSPIN, UDM_GETPOS, 0, 0));
+				db_set_w(0, "CLC", "ScrollTime", (uint16_t)SendDlgItemMessage(hwndDlg, IDC_SMOOTHTIMESPIN, UDM_GETPOS, 0, 0));
+				db_set_b(0, "CLC", "GroupIndent", (uint8_t)SendDlgItemMessage(hwndDlg, IDC_GROUPINDENTSPIN, UDM_GETPOS, 0, 0));
+				db_set_b(0, "CLC", "NoVScrollBar", (uint8_t)(IsDlgButtonChecked(hwndDlg, IDC_NOSCROLLBAR) ? 1 : 0));
+				db_set_b(0, "CLC", "RowHeight", (uint8_t)SendDlgItemMessage(hwndDlg, IDC_ROWHEIGHTSPIN, UDM_GETPOS, 0, 0));
+				db_set_b(0, "CLC", "GammaCorrect", (uint8_t)IsDlgButtonChecked(hwndDlg, IDC_GAMMACORRECT));
 				Clist_ClcOptionsChanged();
 				return TRUE;
 			}
@@ -280,7 +280,7 @@ static INT_PTR CALLBACK DlgProcClcBkgOpts(HWND hwndDlg, UINT msg, WPARAM wParam,
 			}
 		}
 		{
-			WORD bmpUse = db_get_w(0, "CLC", "BkBmpUse", CLCDEFAULT_BKBMPUSE);
+			uint16_t bmpUse = db_get_w(0, "CLC", "BkBmpUse", CLCDEFAULT_BKBMPUSE);
 			CheckDlgButton(hwndDlg, IDC_STRETCHH, bmpUse & CLB_STRETCHH ? BST_CHECKED : BST_UNCHECKED);
 			CheckDlgButton(hwndDlg, IDC_STRETCHV, bmpUse & CLB_STRETCHV ? BST_CHECKED : BST_UNCHECKED);
 			CheckDlgButton(hwndDlg, IDC_TILEH, bmpUse & CLBF_TILEH ? BST_CHECKED : BST_UNCHECKED);
@@ -347,7 +347,7 @@ static INT_PTR CALLBACK DlgProcClcBkgOpts(HWND hwndDlg, UINT msg, WPARAM wParam,
 		case 0:
 			switch (((LPNMHDR)lParam)->code) {
 			case PSN_APPLY:
-				db_set_b(0, "CLC", "UseBitmap", (BYTE)IsDlgButtonChecked(hwndDlg, IDC_BITMAP));
+				db_set_b(0, "CLC", "UseBitmap", (uint8_t)IsDlgButtonChecked(hwndDlg, IDC_BITMAP));
 				{
 					COLORREF col;
 					col = SendDlgItemMessage(hwndDlg, IDC_BKGCOLOUR, CPM_GETCOLOUR, 0, 0);
@@ -360,7 +360,7 @@ static INT_PTR CALLBACK DlgProcClcBkgOpts(HWND hwndDlg, UINT msg, WPARAM wParam,
 						db_unset(0, "CLC", "SelBkColour");
 					else
 						db_set_dw(0, "CLC", "SelBkColour", col);
-					db_set_b(0, "CLC", "UseWinColours", (BYTE)(IsDlgButtonChecked(hwndDlg, IDC_WINCOLOUR)));
+					db_set_b(0, "CLC", "UseWinColours", (uint8_t)(IsDlgButtonChecked(hwndDlg, IDC_WINCOLOUR)));
 				}
 				{
 					char str[MAX_PATH], strrel[MAX_PATH];
@@ -371,7 +371,7 @@ static INT_PTR CALLBACK DlgProcClcBkgOpts(HWND hwndDlg, UINT msg, WPARAM wParam,
 						db_set_s(0, "CLC", "BkBitmap", str);
 				}
 				{
-					WORD flags = 0;
+					uint16_t flags = 0;
 					if (IsDlgButtonChecked(hwndDlg, IDC_STRETCHH))
 						flags |= CLB_STRETCHH;
 					if (IsDlgButtonChecked(hwndDlg, IDC_STRETCHV))

@@ -27,7 +27,7 @@ extern SECKFMGETUSERNAME SECKFMGetUserName1;
 typedef STATUS (CALLBACK LNPUBLIC *NSFDBGETUNREADNOTETABLE)(
 	DBHANDLE  hDB,
 	char far *UserName,
-	WORD  UserNameLength,
+	uint16_t  UserNameLength,
 	BOOL  fCreateIfNotAvailable,
 	HANDLE far *rethUnreadList);
 extern NSFDBGETUNREADNOTETABLE NSFDbGetUnreadNoteTable1;
@@ -40,13 +40,13 @@ extern NSFDBUPDATEUNREAD NSFDbUpdateUnread1;
 typedef BOOL (CALLBACK LNPUBLIC *IDSCAN)(
 	HANDLE  hTable,///DHANDLE
 	BOOL  fFirst,
-	DWORD far *retID);
+	uint32_t far *retID);
 extern IDSCAN IDScan1;
 
 typedef STATUS (CALLBACK LNPUBLIC *NSFNOTEOPEN)(
 	DBHANDLE  db_handle,
 	NOTEID  note_id,
-	WORD  open_flags,
+	uint16_t  open_flags,
 	NOTEHANDLE far *note_handle);
 extern NSFNOTEOPEN NSFNoteOpen1;
 
@@ -55,14 +55,14 @@ typedef STATUS (CALLBACK LNPUBLIC *NSFDBGETNOTEINFO)(
 	NOTEID  NoteID,
 	OID far *retNoteOID,
 	TIMEDATE far *retModified,
-	WORD far *retNoteClass);
+	uint16_t far *retNoteClass);
 extern NSFDBGETNOTEINFO NSFDbGetNoteInfo1;
 
-typedef WORD (CALLBACK LNPUBLIC *NSFITEMGETTEXT)(
+typedef uint16_t (CALLBACK LNPUBLIC *NSFITEMGETTEXT)(
 	NOTEHANDLE  note_handle,
 	const char far *item_name,
 	char far *item_text,
-	WORD  text_len);
+	uint16_t  text_len);
 extern NSFITEMGETTEXT NSFItemGetText1;
 
 typedef BOOL (CALLBACK LNPUBLIC *NSFITEMGETTIME)(
@@ -76,26 +76,26 @@ typedef STATUS (CALLBACK LNPUBLIC *CONVERTTIMEDATETOTEXT)(
 	const TFMT far *TextFormat,
 	const TIMEDATE far *InputTime,
 	char far *retTextBuffer,
-	WORD  TextBufferLength,
-	WORD far *retTextLength);
+	uint16_t  TextBufferLength,
+	uint16_t far *retTextLength);
 extern CONVERTTIMEDATETOTEXT ConvertTIMEDATEToText1;
 
-typedef WORD (CALLBACK LNPUBLIC *OSTRANSLATE)(
-	WORD  TranslateMode,
+typedef uint16_t (CALLBACK LNPUBLIC *OSTRANSLATE)(
+	uint16_t  TranslateMode,
 	const char far *In,
-	WORD  InLength,
+	uint16_t  InLength,
 	char far *Out,
-	WORD  OutLength);
+	uint16_t  OutLength);
 extern OSTRANSLATE OSTranslate1;
 
 typedef BOOL (CALLBACK LNPUBLIC *MAILGETMESSAGEATTACHMENTINFO)(
 	HANDLE  hMessage, ///DHANDLE
-	WORD  Num,
+	uint16_t  Num,
 	BLOCKID far *bhItem,
 	char far *FileName,
-	DWORD far *FileSize,
-	WORD far *FileAttributes,
-	WORD far *FileHostType,
+	uint32_t far *FileSize,
+	uint16_t far *FileAttributes,
+	uint16_t far *FileHostType,
 	TIMEDATE *FileCreated,
 	TIMEDATE far *FileModified);
 extern MAILGETMESSAGEATTACHMENTINFO MailGetMessageAttachmentInfo1;
@@ -112,11 +112,11 @@ typedef STATUS (CALLBACK LNPUBLIC *NSFDBCLOSE)(
 	DBHANDLE hDB);
 extern NSFDBCLOSE NSFDbClose1;
 
-typedef WORD (CALLBACK LNPUBLIC *OSLOADSTRING)(
+typedef uint16_t (CALLBACK LNPUBLIC *OSLOADSTRING)(
 	HMODULE  hModule,
 	STATUS  StringCode,
 	char far *retBuffer,
-	WORD  BufferLength);
+	uint16_t  BufferLength);
 extern OSLOADSTRING OSLoadString1;
 
 typedef void (CALLBACK LNPUBLIC *NOTESTERM)(void);
@@ -125,7 +125,7 @@ extern NOTESTERM NotesTerm1;
 typedef BOOL (CALLBACK LNPUBLIC *OSGETENVIRONMENTSTRING)(
 	const char far *VariableName,
 	char far *retValueBuffer,
-	WORD  BufferLength);
+	uint16_t  BufferLength);
 extern OSGETENVIRONMENTSTRING OSGetEnvironmentString1;
 
 typedef void (CALLBACK LNPUBLIC *OSSETENVIRONMENTVARIABLE)(
@@ -152,9 +152,9 @@ extern OSMEMFREE OSMemFree1;
 
 typedef STATUS  (CALLBACK LNPUBLIC *EMREGISTER)(
 	EID  EmID,
-	DWORD  Flags,
+	uint32_t  Flags,
 	EMHANDLER  Proc,
-	WORD  RecursionID,
+	uint16_t  RecursionID,
 	HEMREGISTRATION far *rethRegistration);
 extern EMREGISTER EMRegister1;
 
@@ -167,9 +167,6 @@ extern NOTESINITTHREAD NotesInitThread1;
 
 typedef void  (CALLBACK LNPUBLIC *NOTESTERMTHREAD)(void);
 extern NOTESTERMTHREAD NotesTermThread1;
-
-
-
 
 BOOL HookLotusFunctions();
 void GetLotusPath(wchar_t *sTemp, DWORD size);

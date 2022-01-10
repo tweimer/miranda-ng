@@ -32,8 +32,8 @@ class COptMainDlg : public CDlgBase
 
 	void ComboboxSelState()
 	{
-		BYTE bSelection = (BYTE)m_cbStatusList.GetCurSel();
-		WORD wMode = STATUS_ARR_TO_ID[bSelection];
+		uint8_t bSelection = (uint8_t)m_cbStatusList.GetCurSel();
+		uint16_t wMode = STATUS_ARR_TO_ID[bSelection];
 		if (m_chkUsrDefMsg.GetState()) {
 			wchar_t *ptszDefMsg = GetDefStatusMsg(wMode, nullptr);
 			m_edtStatMsg.SetText(ptszDefMsg);
@@ -128,13 +128,13 @@ public:
 
 	bool OnApply() override
 	{
-		WORD wMask = 0;
+		uint16_t wMask = 0;
 		// we apply changes here
 		// this plugin ain't that big, no need for a seperate routine
 
 		// write down status type
 		if (m_chkChangeStatus.GetState()) {
-			g_plugin.setByte("stattype", (BYTE)m_cbStatusList.GetCurSel());
+			g_plugin.setByte("stattype", (uint8_t)m_cbStatusList.GetCurSel());
 
 			// status msg, if needed
 			if (m_edtStatMsg.Enabled()) { // meaning we should save it
@@ -244,7 +244,7 @@ public:
 
 	bool OnApply() override
 	{
-		WORD wMaskAdv = 0;
+		uint16_t wMaskAdv = 0;
 		if (m_chkHideIfLock.GetState())
 			wMaskAdv |= OPT_HIDEIFLOCK;
 		if (m_chkHideIfWinIdle.GetState())

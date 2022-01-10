@@ -31,7 +31,7 @@ struct
 	const wchar_t *szDescr;
 	COLORREF defColour;
 	const wchar_t *szDefFace;
-	BYTE defStyle;
+	uint8_t defStyle;
 	char defSize;
 	const wchar_t *szBkgName;
 }
@@ -193,7 +193,7 @@ public:
 
 struct CheckBoxValues_t
 {
-	DWORD style;
+	uint32_t style;
 	const wchar_t *szDescr;
 };
 
@@ -211,7 +211,7 @@ static const struct CheckBoxValues_t statusValues[] =
 
 class CMainOptionsDlg : public CBaseOptionDlg
 {
-	void FillCheckBoxTree(const struct CheckBoxValues_t *values, int nValues, DWORD style)
+	void FillCheckBoxTree(const struct CheckBoxValues_t *values, int nValues, uint32_t style)
 	{
 		TVINSERTSTRUCT tvis;
 		tvis.hParent = nullptr;
@@ -226,9 +226,9 @@ class CMainOptionsDlg : public CBaseOptionDlg
 		}
 	}
 
-	DWORD MakeCheckBoxTreeFlags()
+	uint32_t MakeCheckBoxTreeFlags()
 	{
-		DWORD flags = 0;
+		uint32_t flags = 0;
 		TVITEMEX tvi;
 		tvi.mask = TVIF_HANDLE | TVIF_PARAM | TVIF_STATE;
 		tvi.hItem = m_tree.GetRoot();
@@ -769,7 +769,7 @@ public:
 
 	void onRebuildClist(CCtrlClc *)
 	{
-		BYTE defType = g_plugin.bTypingNew;
+		uint8_t defType = g_plugin.bTypingNew;
 		if (hItemNew && defType)
 			m_list.SetCheck(hItemNew, 1);
 

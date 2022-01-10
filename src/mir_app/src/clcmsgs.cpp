@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org),
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org),
 Copyright (c) 2000-12 Miranda IM project,
 all portions of this codebase are copyrighted to the people
 listed in contributors.txt.
@@ -42,7 +42,7 @@ LRESULT fnProcessExternalMessages(HWND hwnd, ClcData *dat, UINT msg, WPARAM wPar
 
 	case CLM_ADDGROUP:
 		{
-			DWORD groupFlags;
+			uint32_t groupFlags;
 			wchar_t *szName = Clist_GroupGetName(wParam, &groupFlags);
 			if (szName == nullptr)
 				break;
@@ -67,7 +67,7 @@ LRESULT fnProcessExternalMessages(HWND hwnd, ClcData *dat, UINT msg, WPARAM wPar
 			
 			ClcContact *cc;
 			if (msg == CLM_ADDINFOITEMA) {
-				WCHAR* wszText = mir_a2u((char*)cii->pszText);
+				wchar_t* wszText = mir_a2u((char*)cii->pszText);
 				cc = g_clistApi.pfnAddInfoItemToGroup(group, cii->flags, wszText);
 				mir_free(wszText);
 			}
@@ -281,7 +281,7 @@ LRESULT fnProcessExternalMessages(HWND hwnd, ClcData *dat, UINT msg, WPARAM wPar
 		return (LRESULT)dat->fontInfo[wParam].colour;
 
 	case CLM_HITTEST:
-		DWORD hitFlags;
+		uint32_t hitFlags;
 		{
 			int hit = g_clistApi.pfnHitTest(hwnd, dat, (short)LOWORD(lParam), (short)HIWORD(lParam), &contact, nullptr, &hitFlags);
 			if (wParam)
@@ -375,7 +375,7 @@ LRESULT fnProcessExternalMessages(HWND hwnd, ClcData *dat, UINT msg, WPARAM wPar
 		break;
 
 	case CLM_SETHIDEOFFLINEROOT:
-		db_set_b(0, "CLC", "HideOfflineRoot", (BYTE)wParam);
+		db_set_b(0, "CLC", "HideOfflineRoot", (uint8_t)wParam);
 		Clist_InitAutoRebuild(hwnd);
 		break;
 

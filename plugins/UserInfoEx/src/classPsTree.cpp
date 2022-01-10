@@ -70,9 +70,9 @@ CPsTree::~CPsTree()
  * param:	none
  * return:	none
  **/
-BYTE CPsTree::Create(HWND hWndTree, CPsHdr* pPsh)
+uint8_t CPsTree::Create(HWND hWndTree, CPsHdr* pPsh)
 {
-	BYTE rc;
+	uint8_t rc;
 
 	if (hWndTree && pPsh->_hImages && pPsh->_pPages && pPsh->_numPages)
 	{
@@ -154,7 +154,7 @@ void CPsTree::Remove(HINSTANCE hInst)
  * param:	needWidth	- width to expand the tree by
  * return:	TRUE if initialization is ok, FALSE otherwise
  **/
-BYTE CPsTree::InitTreeItems(LPWORD needWidth)
+uint8_t CPsTree::InitTreeItems(LPWORD needWidth)
 {
 	if (!_hWndTree || !_pages.getCount())
 		return FALSE;
@@ -380,7 +380,7 @@ HTREEITEM CPsTree::ShowItem(const int iPageIndex, LPWORD needWidth)
 		// calculate width of treeview
 		if (needWidth && TreeView_GetItemRect(_hWndTree, pti->Hti(), &rc, TRUE) && rc.right > *needWidth)
 		{
-			*needWidth = (WORD)rc.right;
+			*needWidth = (uint16_t)rc.right;
 		}
 	}
 	return tvii.itemex.hItem;
@@ -396,7 +396,7 @@ HTREEITEM CPsTree::ShowItem(const int iPageIndex, LPWORD needWidth)
  *			bAsChild			- tells, whether to try to add hItem as child of hInsertAfter or not
  * return:	handle to new (moved) treeitem if successful or NULL otherwise
  **/
-HTREEITEM CPsTree::MoveItem(HTREEITEM hItem, HTREEITEM hInsertAfter, BYTE bAsChild)
+HTREEITEM CPsTree::MoveItem(HTREEITEM hItem, HTREEITEM hInsertAfter, uint8_t bAsChild)
 {
 	TVINSERTSTRUCT tvis;
 	HTREEITEM hParent, hChild, hNewItem;
@@ -483,7 +483,7 @@ HTREEITEM CPsTree::MoveItem(HTREEITEM hItem, HTREEITEM hInsertAfter, BYTE bAsChi
  * return:	0 on success or 1 otherwise
  **/
 
-WORD CPsTree::SaveItemsState(LPCSTR pszGroup, HTREEITEM hRootItem, int& iItem)
+uint16_t CPsTree::SaveItemsState(LPCSTR pszGroup, HTREEITEM hRootItem, int& iItem)
 {
 	TVITEMEX tvi;
 	tvi.mask = TVIF_CHILDREN|TVIF_STATE|TVIF_PARAM;
@@ -492,7 +492,7 @@ WORD CPsTree::SaveItemsState(LPCSTR pszGroup, HTREEITEM hRootItem, int& iItem)
 	tvi.lParam = (LPARAM)-1;
 
 	// save all visible items
-	WORD numErrors = 0;
+	uint16_t numErrors = 0;
 	for (tvi.hItem = TreeView_GetChild(_hWndTree, hRootItem); TreeView_GetItem(_hWndTree, &tvi); tvi.hItem = TreeView_GetNextSibling(_hWndTree, tvi.hItem)) {
 		auto &it = _pages[tvi.lParam];
 		numErrors += it.DBSaveItemState(pszGroup, iItem++, tvi.state, _dwFlags);
@@ -518,7 +518,7 @@ void CPsTree::SaveState()
 		int iItem = 0;
 
 		// save all visible items
-		WORD numErrors = SaveItemsState(TREE_ROOTITEM, TVGN_ROOT, iItem);
+		uint16_t numErrors = SaveItemsState(TREE_ROOTITEM, TVGN_ROOT, iItem);
 
 		// save all invisible items of the current subtree
 		for (auto &it : _pages) {
@@ -658,11 +658,11 @@ int CPsTree::BeginLabelEdit(HTREEITEM hItem)
  * return:	0
  **/
 
-int CPsTree::EndLabelEdit(const BYTE bSave)
+int CPsTree::EndLabelEdit(const uint8_t bSave)
 {
 	wchar_t szEdit[MAX_TINAME];
 	TVITEM tvi;
-	WORD cchEdit;
+	uint16_t cchEdit;
 
 	if (bSave && (cchEdit = Edit_GetText(_hLabelEdit, szEdit, MAX_TINAME)) > 0)
 	{
@@ -808,10 +808,10 @@ void CPsTree::OnIconsChanged()
  * return:	TRUE if any page holds changed information
  **/
 
-BYTE CPsTree::OnInfoChanged()
+uint8_t CPsTree::OnInfoChanged()
 {
 	PSHNOTIFY pshn;
-	BYTE bChanged = 0;
+	uint8_t bChanged = 0;
 
 	pshn.hdr.idFrom = 0;
 	pshn.hdr.code = PSN_INFOCHANGED;
@@ -836,7 +836,7 @@ BYTE CPsTree::OnInfoChanged()
  * param:	none
  * return:	nothing
  **/
-BYTE CPsTree::OnSelChanging()
+uint8_t CPsTree::OnSelChanging()
 {
 	CPsTreeItem *pti = CurrentItem();
 

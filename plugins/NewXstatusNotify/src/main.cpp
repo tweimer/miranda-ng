@@ -34,7 +34,7 @@ STATUS StatusList[STATUS_COUNT];
 STATUS StatusListEx[STATUSEX_COUNT];
 HWND SecretWnd;
 
-int ContactStatusChanged(MCONTACT hContact, WORD oldStatus, WORD newStatus);
+int ContactStatusChanged(MCONTACT hContact, uint16_t oldStatus, uint16_t newStatus);
 
 IconItem iconList[ICO_MAXID] =
 {
@@ -77,7 +77,7 @@ extern "C" __declspec(dllexport) const MUUID MirandaInterfaces[] = { MIID_USERON
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-BYTE GetGender(MCONTACT hContact)
+uint8_t GetGender(MCONTACT hContact)
 {
 	char *szProto = Proto_GetBaseAccountName(hContact);
 	if (szProto) {
@@ -104,7 +104,7 @@ static int __inline CheckStr(char *str, int not_empty, int empty)
 		return not_empty;
 }
 
-static int __inline CheckStrW(WCHAR *str, int not_empty, int empty)
+static int __inline CheckStrW(wchar_t *str, int not_empty, int empty)
 {
 	if (str == nullptr || str[0] == L'\0')
 		return empty;
@@ -271,11 +271,11 @@ void LogSMsgToDB(STATUSMSGINFO *smi, const wchar_t *tmplt)
 	T2Utf blob(str);
 
 	DBEVENTINFO dbei = {};
-	dbei.cbBlob = (DWORD)mir_strlen(blob) + 1;
-	dbei.pBlob = (PBYTE)blob;
+	dbei.cbBlob = (uint32_t)mir_strlen(blob) + 1;
+	dbei.pBlob = (uint8_t*)blob;
 	dbei.eventType = EVENTTYPE_STATUSCHANGE;
 	dbei.flags = DBEF_READ | DBEF_UTF;
-	dbei.timestamp = (DWORD)time(0);
+	dbei.timestamp = (uint32_t)time(0);
 	dbei.szModule = MODULENAME;
 
 	MEVENT hDBEvent = db_event_add(smi->hContact, &dbei);
@@ -287,7 +287,7 @@ void LogSMsgToDB(STATUSMSGINFO *smi, const wchar_t *tmplt)
 	}
 }
 
-void GetStatusText(MCONTACT hContact, WORD newStatus, WORD oldStatus, wchar_t *stzStatusText)
+void GetStatusText(MCONTACT hContact, uint16_t newStatus, uint16_t oldStatus, wchar_t *stzStatusText)
 {
 	if (opt.UseAlternativeText) {
 		switch (GetGender(hContact)) {
@@ -347,7 +347,7 @@ void PlayChangeSound(MCONTACT hContact, const char *name)
 		Skin_PlaySound(name);
 }
 
-int ContactStatusChanged(MCONTACT hContact, WORD oldStatus, WORD newStatus)
+int ContactStatusChanged(MCONTACT hContact, uint16_t oldStatus, uint16_t newStatus)
 {
 	if (opt.LogToDB && (!opt.LogToDB_WinOpen || CheckMsgWnd(hContact))) {
 		wchar_t stzStatusText[MAX_SECONDLINE] = { 0 };
@@ -355,11 +355,11 @@ int ContactStatusChanged(MCONTACT hContact, WORD oldStatus, WORD newStatus)
 		T2Utf blob(stzStatusText);
 
 		DBEVENTINFO dbei = {};
-		dbei.cbBlob = (DWORD)mir_strlen(blob) + 1;
-		dbei.pBlob = (PBYTE)blob;
+		dbei.cbBlob = (uint32_t)mir_strlen(blob) + 1;
+		dbei.pBlob = (uint8_t*)blob;
 		dbei.eventType = EVENTTYPE_STATUSCHANGE;
 		dbei.flags = DBEF_READ | DBEF_UTF;
-		dbei.timestamp = (DWORD)time(0);
+		dbei.timestamp = (uint32_t)time(0);
 		dbei.szModule = MODULENAME;
 
 		MEVENT hDBEvent = db_event_add(hContact, &dbei);
@@ -469,7 +469,7 @@ int ContactStatusChanged(MCONTACT hContact, WORD oldStatus, WORD newStatus)
 
 int ProcessStatus(DBCONTACTWRITESETTING *cws, MCONTACT hContact)
 {
-	WORD newStatus = cws->value.wVal;
+	uint16_t newStatus = cws->value.wVal;
 	if (newStatus < ID_STATUS_MIN || newStatus > ID_STATUS_MAX)
 		return 0;
 
@@ -481,7 +481,7 @@ int ProcessStatus(DBCONTACTWRITESETTING *cws, MCONTACT hContact)
 	if (db_get_b(hContact, szProto, "ChatRoom", 0) == 1)
 		return 0;
 
-	WORD oldStatus = DBGetContactSettingRangedWord(hContact, "UserOnline", "LastStatus", ID_STATUS_OFFLINE, ID_STATUS_MIN, ID_STATUS_MAX);
+	uint16_t oldStatus = DBGetContactSettingRangedWord(hContact, "UserOnline", "LastStatus", ID_STATUS_OFFLINE, ID_STATUS_MIN, ID_STATUS_MAX);
 	if (oldStatus == newStatus)
 		return 0;
 
@@ -803,7 +803,7 @@ int StatusModeChanged(WPARAM wParam, LPARAM lParam)
 		if (opt.DisablePopupGlobally) {
 			char szSetting[12];
 			mir_snprintf(szSetting, "p%d", wParam);
-			BYTE hlpDisablePopup = g_plugin.getByte(szSetting, 0);
+			uint8_t hlpDisablePopup = g_plugin.getByte(szSetting, 0);
 
 			if (hlpDisablePopup != opt.PopupAutoDisabled) {
 				bool hlpPopupStatus = Popup_Enabled();
@@ -821,10 +821,10 @@ int StatusModeChanged(WPARAM wParam, LPARAM lParam)
 		if (opt.DisableSoundGlobally) {
 			char szSetting[12];
 			mir_snprintf(szSetting, "s%d", wParam);
-			BYTE hlpDisableSound = g_plugin.getByte(szSetting, 0);
+			uint8_t hlpDisableSound = g_plugin.getByte(szSetting, 0);
 
 			if (hlpDisableSound != opt.SoundAutoDisabled) {
-				BYTE hlpUseSound = db_get_b(0, "Skin", "UseSound", 1);
+				uint8_t hlpUseSound = db_get_b(0, "Skin", "UseSound", 1);
 				opt.SoundAutoDisabled = hlpDisableSound;
 
 				if (hlpDisableSound) {
@@ -1004,8 +1004,8 @@ int ProtoAck(WPARAM, LPARAM lParam)
 	ACKDATA *ack = (ACKDATA *)lParam;
 
 	if (ack->type == ACKTYPE_STATUS) {
-		WORD newStatus = (WORD)ack->lParam;
-		WORD oldStatus = (DWORD_PTR)ack->hProcess;
+		uint16_t newStatus = (uint16_t)ack->lParam;
+		uint16_t oldStatus = (DWORD_PTR)ack->hProcess;
 		if (oldStatus == newStatus)
 			return 0;
 

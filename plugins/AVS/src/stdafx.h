@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org)
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org)
 Copyright (c) 2000-04 Miranda ICQ/IM project,
 all portions of this codebase are copyrighted to the people
 listed in contributors.txt.
@@ -136,7 +136,7 @@ extern HANDLE hLoaderEvent, hShutdownEvent;
 extern HANDLE hEventChanged, hEventContactAvatarChanged, hMyAvatarChanged;
 
 int   GetFileHash(wchar_t* filename);
-DWORD GetFileSize(wchar_t *szFilename);
+uint32_t GetFileSize(wchar_t *szFilename);
 void  MakePathRelative(MCONTACT hContact);
 void  MakePathRelative(MCONTACT hContact, wchar_t *dest);
 void  MyPathToAbsolute(const wchar_t *ptszPath, wchar_t *ptszDest);
@@ -147,14 +147,14 @@ void DeleteAvatarFromCache(MCONTACT hContact, bool bForever);
 void PicLoader(LPVOID param);
 void NotifyMetaAware(MCONTACT hContact, CacheNode *node = nullptr, AVATARCACHEENTRY *ace = (AVATARCACHEENTRY*)-1);
 
-void InternalDrawAvatar(AVATARDRAWREQUEST *r, HBITMAP hbm, LONG bmWidth, LONG bmHeight, DWORD dwFlags);
+void InternalDrawAvatar(AVATARDRAWREQUEST *r, HBITMAP hbm, LONG bmWidth, LONG bmHeight, uint32_t dwFlags);
 
 int ChangeAvatar(MCONTACT hContact, bool fLoad, bool fNotifyHist = false, int pa_format = 0);
 void DeleteGlobalUserAvatar();
 int  FetchAvatarFor(MCONTACT hContact, char *szProto = nullptr);
 CacheNode* FindAvatarInCache(MCONTACT hContact, bool add, bool findAny = false);
 void PushAvatarRequest(CacheNode *cc);
-int  SetAvatarAttribute(MCONTACT hContact, DWORD attrib, int mode);
+int  SetAvatarAttribute(MCONTACT hContact, uint32_t attrib, int mode);
 void SetIgnoreNotify(char *protocol, BOOL ignore);
 
 INT_PTR DrawAvatarPicture(WPARAM wParam, LPARAM lParam);

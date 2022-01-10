@@ -138,13 +138,13 @@ static INT_PTR CALLBACK OptionsDlgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARA
 
 				mis.CtlID = 0;
 				mis.CtlType = ODT_MENU;
-				mis.itemData = (DWORD)hSelectedContact;
+				mis.itemData = (uint32_t)hSelectedContact;
 				MenuMeasureItem(&mis, &options);
 				dis.rcItem.bottom = dis.rcItem.top + mis.itemHeight;
 
 				dis.CtlID = 0;
 				dis.CtlType = ODT_MENU;
-				dis.itemData = (DWORD)hSelectedContact;
+				dis.itemData = (uint32_t)hSelectedContact;
 				MenuDrawItem(&dis, &options);
 
 				RECT rc = lpdis->rcItem;
@@ -208,7 +208,7 @@ static INT_PTR CALLBACK OptionsDlgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARA
 			sttSaveOptions();
 
 			for (auto &hContact : Contacts()) {
-				BYTE fav = SendDlgItemMessage(hwnd, IDC_CLIST, CLM_GETCHECKMARK,
+				uint8_t fav = SendDlgItemMessage(hwnd, IDC_CLIST, CLM_GETCHECKMARK,
 					SendDlgItemMessage(hwnd, IDC_CLIST, CLM_FINDCONTACT, hContact, 0), 0);
 				if (fav != g_plugin.getByte(hContact, "IsFavourite"))
 					g_plugin.setByte(hContact, "IsFavourite", fav);

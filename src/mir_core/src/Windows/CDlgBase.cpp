@@ -2,7 +2,7 @@
 
 Object UI extensions
 Copyright (c) 2008  Victor Pavlychko, George Hazan
-Copyright (C) 2012-21 Miranda NG team
+Copyright (C) 2012-22 Miranda NG team
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -151,7 +151,7 @@ void CDlgBase::Show(int nCmdShow)
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-void CDlgBase::CreateLink(CCtrlData& ctrl, const char *szSetting, BYTE type, DWORD iValue)
+void CDlgBase::CreateLink(CCtrlData& ctrl, const char *szSetting, uint8_t type, uint32_t iValue)
 {
 	ctrl.CreateDbLink(m_pPlugin.getModule(), szSetting, type, iValue);
 }
@@ -279,8 +279,8 @@ INT_PTR CDlgBase::DlgProc(UINT msg, WPARAM wParam, LPARAM lParam)
 	case WM_COMMAND:
 		{
 			HWND hwndCtrl = (HWND)lParam;
-			WORD idCtrl = LOWORD(wParam);
-			WORD idCode = HIWORD(wParam);
+			uint16_t idCtrl = LOWORD(wParam);
+			uint16_t idCode = HIWORD(wParam);
 			if (CCtrlBase *ctrl = FindControl(idCtrl)) {
 				BOOL result = ctrl->OnCommand(hwndCtrl, idCtrl, idCode);
 				if (result != FALSE)

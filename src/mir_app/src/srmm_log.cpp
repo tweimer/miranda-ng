@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team,
+Copyright (C) 2012-22 Miranda NG team,
 all portions of this codebase are copyrighted to the people
 listed in contributors.txt.
 
@@ -42,7 +42,7 @@ struct LoggerClass
 
 static OBJLIST<LoggerClass> g_arLogClasses(1, PtrKeySortT);
 
-static CMOption<BYTE> g_bEnableCustomLogs("SRMM", "EnableCustomLogs", 0);
+static CMOption<uint8_t> g_bEnableCustomLogs("SRMM", "EnableCustomLogs", 0);
 
 /////////////////////////////////////////////////////////////////////////////////////////
 

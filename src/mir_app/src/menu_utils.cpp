@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org),
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org),
 Copyright (c) 2000-12 Miranda IM project,
 all portions of this codebase are copyrighted to the people
 listed in contributors.txt.
@@ -489,7 +489,7 @@ MIR_APP_DLL(int) Menu_ConfigureItem(HGENMENU hItem, int iOption, INT_PTR value)
 		return 0;
 
 	case MCI_OPT_HOTKEY:
-		pimi->hotKey = (DWORD)value;
+		pimi->hotKey = (uint32_t)value;
 		return 0;
 
 	case MCI_OPT_EXECPARAM:
@@ -783,7 +783,7 @@ static int WhereToPlace(HMENU hMenu, TMO_MenuItem *mi)
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-static DWORD GetMenuItemType(HMENU hMenu, int uItem)
+static uint32_t GetMenuItemType(HMENU hMenu, int uItem)
 {
 	MENUITEMINFO mii = { 0 };
 	mii.cbSize = sizeof(mii);
@@ -947,7 +947,7 @@ static void CALLBACK sttUpdateMenuService()
 				mi.flags = CMIF_CUSTOM;
 				mi.name.a = LPGEN("New submenu");
 				mi.position = 500050000;
-				BYTE *p = (BYTE*)&mi.uid;
+				uint8_t *p = (uint8_t*)&mi.uid;
 				for (int k = 0; k < sizeof(MUUID); k++) {
 					int tmp;
 					sscanf(&szCustomMenu[k*2], "%02x", &tmp);

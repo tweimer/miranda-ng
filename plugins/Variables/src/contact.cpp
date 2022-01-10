@@ -76,7 +76,7 @@ static builtinCnfs[] =
 /* contact cache entry */
 struct CONTACTCE
 {
-	DWORD    flags;
+	uint32_t    flags;
 	wchar_t* tszContact;
 	MCONTACT hContact;
 };
@@ -94,7 +94,7 @@ static OBJLIST<CONTACTCE> arContactCache(20, SortContactCache);
 static mir_cs csContactCache;
 
 // converts a string into a CNF_ type
-BYTE getContactInfoType(wchar_t* type)
+uint8_t getContactInfoType(wchar_t* type)
 {
 	if (type == nullptr || mir_wstrlen(type) == 0)
 		return 0;
@@ -107,7 +107,7 @@ BYTE getContactInfoType(wchar_t* type)
 }
 
 // returns info about a contact as a string
-wchar_t* getContactInfoT(BYTE type, MCONTACT hContact)
+wchar_t* getContactInfoT(uint8_t type, MCONTACT hContact)
 {
 	/* returns dynamic allocated buffer with info, or NULL if failed */
 	if (hContact == NULL)
@@ -140,7 +140,7 @@ wchar_t* getContactInfoT(BYTE type, MCONTACT hContact)
 	case CCNF_INTERNALIP:
 	case CCNF_EXTERNALIP:
 		{
-			DWORD ip = db_get_dw(hContact, szProto, (type == CCNF_INTERNALIP) ? "RealIP" : "IP", 0);
+			uint32_t ip = db_get_dw(hContact, szProto, (type == CCNF_INTERNALIP) ? "RealIP" : "IP", 0);
 			if (ip != 0) {
 				struct in_addr in;
 				in.s_addr = htonl(ip);
@@ -168,7 +168,7 @@ wchar_t* getContactInfoT(BYTE type, MCONTACT hContact)
 }
 
 // MS_VARS_GETCONTACTFROMSTRING
-MCONTACT getContactFromString(const wchar_t *tszContact, DWORD dwFlags, int nMatch)
+MCONTACT getContactFromString(const wchar_t *tszContact, uint32_t dwFlags, int nMatch)
 {
 	/* service to retrieve a contact's HANDLE from a given string */
 	if (tszContact == nullptr || *tszContact == 0)
@@ -262,7 +262,7 @@ MCONTACT getContactFromString(const wchar_t *tszContact, DWORD dwFlags, int nMat
 
 		// CNF_ (exact)
 		if ((dwFlags & CI_CNFINFO) && !bMatch) {
-			ptrW szFind(getContactInfoT((BYTE)(dwFlags & ~CI_CNFINFO), hContact));
+			ptrW szFind(getContactInfoT((uint8_t)(dwFlags & ~CI_CNFINFO), hContact));
 			if (!mir_wstrcmp(tszContact, szFind))
 				bMatch = true;
 		}

@@ -38,11 +38,11 @@ struct ICONCTRL
 {
 	int   iIcon;
 	UINT  Message;
-	WORD  idCtrl;
+	uint16_t  idCtrl;
 };
 
 LPTSTR	IcoLib_GetDefaultIconFileName();
-void	IcoLib_SetCtrlIcons(HWND hDlg, const ICONCTRL* pCtrl, BYTE numCtrls);
+void	IcoLib_SetCtrlIcons(HWND hDlg, const ICONCTRL* pCtrl, uint8_t numCtrls);
 
 void	IcoLib_LoadModule();
 

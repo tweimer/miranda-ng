@@ -1,6 +1,6 @@
 /*
 Weather Protocol plugin for Miranda NG
-Copyright (C) 2012-21 Miranda NG team
+Copyright (C) 2012-22 Miranda NG team
 Copyright (c) 2005-2011 Boris Krasnovskiy All Rights Reserved
 Copyright (c) 2002-2005 Calvin Che
 
@@ -179,49 +179,49 @@ enum EWeatherCondition
 struct MYOPTIONS
 {
 	// main options
-	BYTE AutoUpdate;
-	BYTE CAutoUpdate;
-	BYTE StartupUpdate;
-	BYTE NoProtoCondition;
-	BYTE UpdateOnlyConditionChanged;
-	BYTE RemoveOldData;
-	BYTE MakeItalic;
+	uint8_t AutoUpdate;
+	uint8_t CAutoUpdate;
+	uint8_t StartupUpdate;
+	uint8_t NoProtoCondition;
+	uint8_t UpdateOnlyConditionChanged;
+	uint8_t RemoveOldData;
+	uint8_t MakeItalic;
 
-	WORD UpdateTime;
-	WORD AvatarSize;
+	uint16_t UpdateTime;
+	uint16_t AvatarSize;
 
 	// units
-	WORD tUnit;
-	WORD wUnit;
-	WORD vUnit;
-	WORD pUnit;
-	WORD dUnit;
-	WORD eUnit;
+	uint16_t tUnit;
+	uint16_t wUnit;
+	uint16_t vUnit;
+	uint16_t pUnit;
+	uint16_t dUnit;
+	uint16_t eUnit;
 	wchar_t DegreeSign[4];
-	BYTE DoNotAppendUnit;
-	BYTE NoFrac;
+	uint8_t DoNotAppendUnit;
+	uint8_t NoFrac;
 
 	// advanced
-	BYTE DisCondIcon;
+	uint8_t DisCondIcon;
 
 	// popup options
-	BYTE UsePopup;
-	BYTE UpdatePopup;
-	BYTE AlertPopup;
-	BYTE PopupOnChange;
-	BYTE ShowWarnings;
+	uint8_t UsePopup;
+	uint8_t UpdatePopup;
+	uint8_t AlertPopup;
+	uint8_t PopupOnChange;
+	uint8_t ShowWarnings;
 
 	// popup colors
-	BYTE UseWinColors;
+	uint8_t UseWinColors;
 	COLORREF BGColour;
 	COLORREF TextColour;
 
 	// popup actions
-	DWORD LeftClickAction;
-	DWORD RightClickAction;
+	uint32_t LeftClickAction;
+	uint32_t RightClickAction;
 
 	// popup delay
-	DWORD pDelay;
+	uint32_t pDelay;
 
 	// other misc stuff
 	wchar_t Default[64];
@@ -407,10 +407,10 @@ int MapCondToStatus(MCONTACT hContact);
 HICON GetStatusIcon(MCONTACT hContact);
 HICON GetStatusIconBig(MCONTACT hContact);
 
-WORD GetIcon(const wchar_t* cond, WIDATA *Data);
+uint16_t GetIcon(const wchar_t* cond, WIDATA *Data);
 void CaseConv(wchar_t *str);
 void TrimString(char *str);
-void TrimString(WCHAR *str);
+void TrimString(wchar_t *str);
 void ConvertBackslashes(char *str);
 char *GetSearchStr(char *dis);
 
@@ -432,12 +432,12 @@ void EraseAllInfo(void);
 void GetDataValue(WIDATAITEM *UpdateData, wchar_t *Data, wchar_t** szInfo);
 void ConvertDataValue(WIDATAITEM *UpdateData, wchar_t *Data);
 void wSetData(char *&Data, const char *Value);
-void wSetData(WCHAR *&Data, const char *Value);
-void wSetData(WCHAR *&Data, const WCHAR *Value);
+void wSetData(wchar_t *&Data, const char *Value);
+void wSetData(wchar_t *&Data, const wchar_t *Value);
 void wfree(char *&Data);
-void wfree(WCHAR *&Data);
+void wfree(wchar_t *&Data);
 
-void DBDataManage(MCONTACT hContact, WORD Mode, WPARAM wParam, LPARAM lParam);
+void DBDataManage(MCONTACT hContact, uint16_t Mode, WPARAM wParam, LPARAM lParam);
 
 // functions in weather_http.c
 int InternetDownloadFile (char *szUrl, char *cookie, char *userAgent, wchar_t** szData);
@@ -471,7 +471,7 @@ const wchar_t* GetDefaultText(int c);
 // functions in weather_popup.c
 int WeatherPopup(WPARAM wParam, LPARAM lParam);
 int WeatherError(WPARAM wParam, LPARAM lParam);
-int WPShowMessage(const wchar_t* lpzText, WORD kind);
+int WPShowMessage(const wchar_t* lpzText, uint16_t kind);
 
 LRESULT CALLBACK PopupWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 

@@ -328,8 +328,8 @@ void CMLan::RecvMessageUrl(CCSDATA *ccs)
 	dbei.szModule = MODULENAME;
 	dbei.timestamp = pre->timestamp;
 	dbei.flags = DBEF_UTF + ((pre->flags & PREF_CREATEREAD) ? DBEF_READ : 0);
-	dbei.cbBlob = (DWORD)mir_strlen(szMessage) + 1;
-	dbei.pBlob = (PBYTE)szMessage.get();
+	dbei.cbBlob = (uint32_t)mir_strlen(szMessage) + 1;
+	dbei.pBlob = (uint8_t*)szMessage.get();
 	db_event_add(ccs->hContact, &dbei);
 }
 
@@ -573,7 +573,7 @@ u_char* CMLan::CreatePacket(TPacket &pak, int *pBufLen)
 	}
 
 	if (pak.strName) {
-		*pb++ = 1 + (BYTE)nameLen + 1;
+		*pb++ = 1 + (uint8_t)nameLen + 1;
 		*pb++ = MCODE_SND_NAME;
 		memcpy(pb, pak.strName, nameLen);
 		pb += nameLen;
@@ -587,7 +587,7 @@ u_char* CMLan::CreatePacket(TPacket &pak, int *pBufLen)
 
 	if (pak.strMessage) {
 		*pb++ = 255;
-		*((u_short*)pb) = 1 + 4 + (BYTE)mesLen + 1;
+		*((u_short*)pb) = 1 + 4 + (uint8_t)mesLen + 1;
 		pb += sizeof(u_short);
 		*pb++ = MCODE_SND_MESSAGE;
 		*((u_int*)pb) = pak.idMessage;
@@ -614,7 +614,7 @@ u_char* CMLan::CreatePacket(TPacket &pak, int *pBufLen)
 
 	if (pak.strAwayMessage) {
 		*pb++ = 255;
-		*((u_short*)pb) = 1 + 4 + (BYTE)awayLen + 1;
+		*((u_short*)pb) = 1 + 4 + (uint8_t)awayLen + 1;
 		pb += sizeof(u_short);
 		*pb++ = MCODE_SND_AWAYMSG;
 		*((u_int*)pb) = pak.idAckAwayMessage;
@@ -904,7 +904,7 @@ void CMLan::RecvFile(CCSDATA *ccs)
 
 	Contact_Hide(ccs->hContact, false);
 
-	char *szFile = pre->szMessage + sizeof(DWORD);
+	char *szFile = pre->szMessage + sizeof(uint32_t);
 	char *szDesc = szFile + mir_strlen(szFile) + 1;
 
 	DBEVENTINFO dbei = {};
@@ -912,8 +912,8 @@ void CMLan::RecvFile(CCSDATA *ccs)
 	dbei.timestamp = pre->timestamp;
 	dbei.flags = pre->flags & (PREF_CREATEREAD ? DBEF_READ : 0);
 	dbei.eventType = EVENTTYPE_FILE;
-	dbei.cbBlob = DWORD(sizeof(DWORD) + mir_strlen(szFile) + mir_strlen(szDesc) + 2);
-	dbei.pBlob = (PBYTE)pre->szMessage;
+	dbei.cbBlob = uint32_t(sizeof(uint32_t) + mir_strlen(szFile) + mir_strlen(szDesc) + 2);
+	dbei.pBlob = (uint8_t*)pre->szMessage;
 	db_event_add(ccs->hContact, &dbei);
 }
 

@@ -1,5 +1,5 @@
 /*
-Copyright © 2016-21 Miranda NG team
+Copyright © 2016-22 Miranda NG team
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -416,7 +416,7 @@ void CDiscordProto::OnCommandMessage(const JSONNode &pRoot, bool bIsNew)
 			debugLogA("store a message from private user %lld, channel id %lld", pUser->id, pUser->channelId);
 			ptrA buf(mir_utf8encodeW(wszText));
 
-			recv.timestamp = (DWORD)StringToDate(pRoot["timestamp"].as_mstring());
+			recv.timestamp = (uint32_t)StringToDate(pRoot["timestamp"].as_mstring());
 			recv.szMessage = buf;
 			recv.szMsgId = szMsgId;
 			ProtoChainRecvMsg(pUser->hContact, &recv);
@@ -440,7 +440,7 @@ void CDiscordProto::OnCommandMessage(const JSONNode &pRoot, bool bIsNew)
 			gce.dwFlags = GCEF_ADDTOLOG;
 			gce.pszUID.w = wszUserId;
 			gce.pszText.w = wszText;
-			gce.time = (DWORD)StringToDate(pRoot["timestamp"].as_mstring());
+			gce.time = (uint32_t)StringToDate(pRoot["timestamp"].as_mstring());
 			gce.bIsMe = bOurMessage;
 			Chat_Event(&gce);
 

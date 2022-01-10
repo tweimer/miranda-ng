@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org),
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org),
 Copyright (c) 2000-12 Miranda IM project,
 all portions of this codebase are copyrighted to the people
 listed in contributors.txt.
@@ -38,11 +38,11 @@ CMOption<bool> Clist::Tray1Click(MODULENAME, "Tray1Click", IsWinVer7Plus());
 CMOption<bool> Clist::TrayAlwaysStatus(MODULENAME, "AlwaysStatus", false);
 
 CMOption<bool>  Clist::FilterSearch("CLC", "FilterSearch", false);
-CMOption<DWORD> Clist::OfflineModes("CLC", "OfflineModes", MODEF_OFFLINE);
+CMOption<uint32_t> Clist::OfflineModes("CLC", "OfflineModes", MODEF_OFFLINE);
 
 struct
 {
-	DWORD style;
+	uint32_t style;
 	wchar_t *szDescr;
 }
 static const offlineValues[] =
@@ -113,7 +113,7 @@ public:
 
 	bool OnApply() override
 	{
-		DWORD flags = 0;
+		uint32_t flags = 0;
 
 		TVITEMEX tvi;
 		tvi.mask = TVIF_HANDLE | TVIF_PARAM | TVIF_STATE;

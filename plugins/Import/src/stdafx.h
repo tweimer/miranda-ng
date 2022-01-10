@@ -2,7 +2,7 @@
 
 Import plugin for Miranda NG
 
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org)
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org)
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -267,7 +267,7 @@ class CImportBatch : public MZeroedObject
 	OBJLIST<ContactMap> m_contacts;
 	LIST<DBCachedContact> m_metas;
 
-	DWORD nDupes, nContactsCount, nMessagesCount, nGroupsCount, nSkippedEvents, nSkippedContacts;
+	uint32_t nDupes, nContactsCount, nMessagesCount, nGroupsCount, nSkippedEvents, nSkippedContacts;
 	MDatabaseCommon *srcDb, *dstDb;
 
 	bool     ImportAccounts(OBJLIST<char> &arSkippedModules);
@@ -285,7 +285,7 @@ class CImportBatch : public MZeroedObject
 
 	MCONTACT HContactFromID(const char *pszProtoName, const char *pszSetting, wchar_t *pwszID);
 	MCONTACT HContactFromChatID(const char *pszProtoName, const wchar_t *pszChatID);
-	MCONTACT HContactFromNumericID(const char *pszProtoName, const char *pszSetting, DWORD dwID);
+	MCONTACT HContactFromNumericID(const char *pszProtoName, const char *pszSetting, uint32_t dwID);
 
 public:
 	CImportBatch();

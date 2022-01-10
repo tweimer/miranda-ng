@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org),
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org),
 Copyright (c) 2000-03 Miranda ICQ/IM project,
 all portions of this codebase are copyrighted to the people
 listed in contributors.txt.
@@ -425,23 +425,23 @@ int DBStoreFrameSettingsAtPos(int pos, int Frameid)
 
 	db_set_ws(0, CLUIFrameModule, buf.Format("Name%d", pos), Frames[Frameid].name);
 	//boolean
-	db_set_b(0, CLUIFrameModule, buf.Format("Collapse%d", pos), (BYTE)btoint(Frames[Frameid].collapsed));
-	db_set_b(0, CLUIFrameModule, buf.Format("Locked%d", pos), (BYTE)btoint(Frames[Frameid].Locked));
-	db_set_b(0, CLUIFrameModule, buf.Format("Visible%d", pos), (BYTE)btoint(Frames[Frameid].visible));
-	db_set_b(0, CLUIFrameModule, buf.Format("TBVisile%d", pos), (BYTE)btoint(Frames[Frameid].TitleBar.ShowTitleBar));
+	db_set_b(0, CLUIFrameModule, buf.Format("Collapse%d", pos), (uint8_t)btoint(Frames[Frameid].collapsed));
+	db_set_b(0, CLUIFrameModule, buf.Format("Locked%d", pos), (uint8_t)btoint(Frames[Frameid].Locked));
+	db_set_b(0, CLUIFrameModule, buf.Format("Visible%d", pos), (uint8_t)btoint(Frames[Frameid].visible));
+	db_set_b(0, CLUIFrameModule, buf.Format("TBVisile%d", pos), (uint8_t)btoint(Frames[Frameid].TitleBar.ShowTitleBar));
 
-	db_set_w(0, CLUIFrameModule, buf.Format("Height%d", pos), (WORD)Frames[Frameid].height);
-	db_set_w(0, CLUIFrameModule, buf.Format("HeightCollapsed%d", pos), (WORD)Frames[Frameid].HeightWhenCollapsed);
-	db_set_w(0, CLUIFrameModule, buf.Format("Align%d", pos), (WORD)Frames[Frameid].align);
+	db_set_w(0, CLUIFrameModule, buf.Format("Height%d", pos), (uint16_t)Frames[Frameid].height);
+	db_set_w(0, CLUIFrameModule, buf.Format("HeightCollapsed%d", pos), (uint16_t)Frames[Frameid].HeightWhenCollapsed);
+	db_set_w(0, CLUIFrameModule, buf.Format("Align%d", pos), (uint16_t)Frames[Frameid].align);
 	//FloatingPos
-	db_set_w(0, CLUIFrameModule, buf.Format("FloatX%d", pos), (WORD)Frames[Frameid].FloatingPos.x);
-	db_set_w(0, CLUIFrameModule, buf.Format("FloatY%d", pos), (WORD)Frames[Frameid].FloatingPos.y);
-	db_set_w(0, CLUIFrameModule, buf.Format("FloatW%d", pos), (WORD)Frames[Frameid].FloatingSize.x);
-	db_set_w(0, CLUIFrameModule, buf.Format("FloatH%d", pos), (WORD)Frames[Frameid].FloatingSize.y);
+	db_set_w(0, CLUIFrameModule, buf.Format("FloatX%d", pos), (uint16_t)Frames[Frameid].FloatingPos.x);
+	db_set_w(0, CLUIFrameModule, buf.Format("FloatY%d", pos), (uint16_t)Frames[Frameid].FloatingPos.y);
+	db_set_w(0, CLUIFrameModule, buf.Format("FloatW%d", pos), (uint16_t)Frames[Frameid].FloatingSize.x);
+	db_set_w(0, CLUIFrameModule, buf.Format("FloatH%d", pos), (uint16_t)Frames[Frameid].FloatingSize.y);
 
-	db_set_b(0, CLUIFrameModule, buf.Format("Floating%d", pos), (BYTE)btoint(Frames[Frameid].floating));
-	db_set_b(0, CLUIFrameModule, buf.Format("UseBorder%d", pos), (BYTE)btoint(Frames[Frameid].UseBorder));
-	db_set_w(0, CLUIFrameModule, buf.Format("Order%d", pos), (WORD)Frames[Frameid].order);
+	db_set_b(0, CLUIFrameModule, buf.Format("Floating%d", pos), (uint8_t)btoint(Frames[Frameid].floating));
+	db_set_b(0, CLUIFrameModule, buf.Format("UseBorder%d", pos), (uint8_t)btoint(Frames[Frameid].UseBorder));
+	db_set_w(0, CLUIFrameModule, buf.Format("Order%d", pos), (uint16_t)Frames[Frameid].order);
 
 	db_set_b(0, CLUIFrameModule, buf.Format("Skinned%d", pos), Frames[Frameid].Skinned);
 	return 0;
@@ -500,7 +500,7 @@ int CLUIFramesStoreFrameSettings(int Frameid)
 	}
 
 	DBStoreFrameSettingsAtPos(storpos, Frameid);
-	db_set_w(0, CLUIFrameModule, "StoredFrames", (WORD)maxstored);
+	db_set_w(0, CLUIFrameModule, "StoredFrames", (uint16_t)maxstored);
 	return 0;
 }
 
@@ -1426,7 +1426,7 @@ int FrameNCCalcSize(HWND hwnd, WNDPROC oldWndProc, WPARAM wParam, LPARAM lParam,
 	StatusItems_t *item = (arStatusItems.getCount() != 0) ? (hasTitleBar ? arStatusItems[ID_EXTBKOWNEDFRAMEBORDERTB - ID_STATUS_OFFLINE] : arStatusItems[ID_EXTBKOWNEDFRAMEBORDER - ID_STATUS_OFFLINE]) : nullptr;
 	LRESULT orig = oldWndProc ? CallWindowProc(oldWndProc, hwnd, WM_NCCALCSIZE, wParam, lParam) : 0;
 	NCCALCSIZE_PARAMS *nccp = (NCCALCSIZE_PARAMS *)lParam;
-	DWORD dwStyle = GetWindowLongPtr(hwnd, GWL_STYLE);
+	uint32_t dwStyle = GetWindowLongPtr(hwnd, GWL_STYLE);
 
 	if (item == nullptr)
 		return orig;

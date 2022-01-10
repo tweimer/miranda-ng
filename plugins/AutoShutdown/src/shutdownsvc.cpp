@@ -67,7 +67,7 @@ static void BroadcastEndSession(DWORD dwRecipients, LPARAM lParam)
 }
 
 /************************* Workers ************************************/
-static BOOL IsShutdownTypeEnabled(BYTE shutdownType)
+static BOOL IsShutdownTypeEnabled(uint8_t shutdownType)
 {
 	BOOL bReturn = FALSE;
 	switch (shutdownType) {
@@ -128,14 +128,14 @@ static BOOL IsShutdownTypeEnabled(BYTE shutdownType)
 	return bReturn;
 }
 
-static DWORD ShutdownNow(BYTE shutdownType)
+static uint32_t ShutdownNow(uint8_t shutdownType)
 {
-	DWORD dwErrCode = ERROR_SUCCESS;
+	uint32_t dwErrCode = ERROR_SUCCESS;
 	switch (shutdownType) {
 	case SDSDT_CLOSEMIRANDA:
 		if (!Miranda_IsTerminated()) {
 			/* waiting for short until ready (but not too long...) */
-			DWORD dwLastTickCount = GetTickCount();
+			uint32_t dwLastTickCount = GetTickCount();
 			while (!Miranda_OkToExit()) {
 				/* infinite loop protection (max 5 sec) */
 				if (GetTickCount() - dwLastTickCount >= 5000) { /* wraparound works */
@@ -174,9 +174,9 @@ static DWORD ShutdownNow(BYTE shutdownType)
 		ShutdownNow(SDSDT_SETMIRANDAOFFLINE); /* set Miranda offline */
 		/* hang up all ras connections */
 		{
-			DWORD dwRetries;
+			uint32_t dwRetries;
 			RASCONNSTATUS rcs;
-			DWORD dw, dwLastTickCount;
+			uint32_t dw, dwLastTickCount;
 
 			DWORD dwConnSize = sizeof(RASCONN);
 			DWORD dwConnItems = 0;
@@ -297,8 +297,8 @@ static DWORD ShutdownNow(BYTE shutdownType)
 #define M_UPDATE_COUNTDOWN  (WM_APP+112)
 static INT_PTR CALLBACK ShutdownDlgProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam)
 {
-	BYTE shutdownType = (BYTE)GetWindowLongPtr(hwndDlg, DWLP_USER);
-	WORD countdown = (WORD)GetWindowLongPtr(GetDlgItem(hwndDlg, IDC_TEXT_HEADER), GWLP_USERDATA);
+	uint8_t shutdownType = (uint8_t)GetWindowLongPtr(hwndDlg, DWLP_USER);
+	uint16_t countdown = (uint16_t)GetWindowLongPtr(GetDlgItem(hwndDlg, IDC_TEXT_HEADER), GWLP_USERDATA);
 
 	switch (msg) {
 	case WM_INITDIALOG:
@@ -357,7 +357,7 @@ static INT_PTR CALLBACK ShutdownDlgProc(HWND hwndDlg, UINT msg, WPARAM wParam, L
 		if (IsWindowEnabled(GetDlgItem(hwndDlg, IDC_BUTTON_SHUTDOWNNOW))) {
 			EnableWindow(GetDlgItem(hwndDlg, IDC_BUTTON_SHUTDOWNNOW), FALSE);
 			ShowWindow(hwndDlg, SW_HIDE);  /* get rid of the dialog immediately */
-			DWORD dwErrCode = ShutdownNow(shutdownType);
+			uint32_t dwErrCode = ShutdownNow(shutdownType);
 			if (dwErrCode != ERROR_SUCCESS) {
 				char *pszErr = GetWinErrorDescription(dwErrCode);
 				ShowInfoMessage(NIIF_ERROR, Translate("Automatic shutdown error"), Translate("The shutdown process failed!\nReason: %s"), (pszErr != nullptr) ? pszErr : Translate("Unknown"));
@@ -380,7 +380,7 @@ static INT_PTR CALLBACK ShutdownDlgProc(HWND hwndDlg, UINT msg, WPARAM wParam, L
 		PostMessage(hwndDlg, M_UPDATE_COUNTDOWN, 0, countdown);
 		return TRUE;
 
-	case M_UPDATE_COUNTDOWN:  /* lParam=(WORD)countdown */
+	case M_UPDATE_COUNTDOWN:  /* lParam=(uint16_t)countdown */
 		{
 			wchar_t szText[256];
 			mir_snwprintf(szText, TranslateW(desc[shutdownType - 1]), lParam);
@@ -417,7 +417,7 @@ INT_PTR ServiceShutdown(WPARAM wParam, LPARAM lParam)
 {
 	/* passing 0 as wParam is only to be used internally, undocumented */
 	if (!wParam) wParam = g_plugin.getByte("ShutdownType", SETTING_SHUTDOWNTYPE_DEFAULT);
-	if (!IsShutdownTypeEnabled((BYTE)wParam)) return 1; /* does shutdownType range check */
+	if (!IsShutdownTypeEnabled((uint8_t)wParam)) return 1; /* does shutdownType range check */
 	if ((BOOL)lParam && hwndShutdownDlg != nullptr) return 2;
 
 	/* ask others if allowed */
@@ -429,11 +429,11 @@ INT_PTR ServiceShutdown(WPARAM wParam, LPARAM lParam)
 	NotifyEventHooks(hEventShutdown, wParam, lParam);
 	/* show dialog */
 	if (lParam && g_plugin.getByte("ShowConfirmDlg", SETTING_SHOWCONFIRMDLG_DEFAULT))
-		if (CreateDialogParam(g_plugin.getInst(), MAKEINTRESOURCE(IDD_SHUTDOWNNOW), nullptr, ShutdownDlgProc, (BYTE)wParam) != nullptr)
+		if (CreateDialogParam(g_plugin.getInst(), MAKEINTRESOURCE(IDD_SHUTDOWNNOW), nullptr, ShutdownDlgProc, (uint8_t)wParam) != nullptr)
 			return 0;
 	/* show error */
 
-	DWORD dwErrCode = ShutdownNow((BYTE)wParam);
+	uint32_t dwErrCode = ShutdownNow((uint8_t)wParam);
 	if (dwErrCode != ERROR_SUCCESS) {
 		char *pszErr = GetWinErrorDescription(dwErrCode);
 		ShowInfoMessage(NIIF_ERROR, Translate("Automatic shutdown error"), Translate("Initiating the shutdown process failed!\nReason: %s"), (pszErr != nullptr) ? pszErr : Translate("Unknown"));
@@ -447,7 +447,7 @@ INT_PTR ServiceShutdown(WPARAM wParam, LPARAM lParam)
 
 INT_PTR ServiceIsTypeEnabled(WPARAM wParam, LPARAM)
 {
-	return IsShutdownTypeEnabled((BYTE)wParam); /* does shutdownType range check */
+	return IsShutdownTypeEnabled((uint8_t)wParam); /* does shutdownType range check */
 }
 
 const wchar_t *apszShort[] = {
@@ -473,7 +473,7 @@ const wchar_t *apszLong[] = {
 INT_PTR ServiceGetTypeDescription(WPARAM wParam, LPARAM lParam)
 {
 	/* shutdownType range check */
-	if (!wParam || (BYTE)wParam > SDSDT_MAX) return 0;
+	if (!wParam || (uint8_t)wParam > SDSDT_MAX) return 0;
 	/* select description */
 	wchar_t *pszDesc = (wchar_t*)((lParam & GSTDF_LONGDESC) ? apszLong : apszShort)[wParam - 1];
 	if (!(lParam & GSTDF_UNTRANSLATED))

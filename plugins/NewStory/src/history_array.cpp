@@ -66,7 +66,7 @@ bool ItemData::isLink(POINT pt) const
 	CHARFORMAT2 cf = {};
 	cf.cbSize = sizeof(cf);
 	cf.dwMask = CFM_LINK;
-	DWORD res = MTextSendMessage(0, data, EM_GETCHARFORMAT, SCF_SELECTION, LPARAM(&cf));
+	uint32_t res = MTextSendMessage(0, data, EM_GETCHARFORMAT, SCF_SELECTION, LPARAM(&cf));
 	return ((res & CFM_LINK) && (cf.dwEffects & CFE_LINK)) || ((res & CFM_REVISED) && (cf.dwEffects & CFE_REVISED));
 }
 
@@ -76,7 +76,7 @@ void ItemData::load(bool bFullLoad)
 		return;
 
 	dbe.cbBlob = db_event_getBlobSize(hEvent);
-	mir_ptr<BYTE> pData((BYTE *)mir_calloc(dbe.cbBlob + 1));
+	mir_ptr<uint8_t> pData((uint8_t *)mir_calloc(dbe.cbBlob + 1));
 	dbe.pBlob = pData;
 	if (!db_event_get(hEvent, &dbe)) {
 		bLoaded = true;

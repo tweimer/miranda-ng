@@ -78,12 +78,12 @@ int OnDbEventFilterAdd(WPARAM w, LPARAM l)
 	tstring message;
 
 	if (dbei->flags & DBEF_UTF) {
-		WCHAR* msg_u = mir_utf8decodeW((char*)dbei->pBlob);
+		wchar_t* msg_u = mir_utf8decodeW((char*)dbei->pBlob);
 		message = msg_u;
 		mir_free(msg_u);
 	}
 	else {
-		WCHAR* msg_u = mir_a2u((char*)(dbei->pBlob));
+		wchar_t* msg_u = mir_a2u((char*)(dbei->pBlob));
 		message = msg_u;
 		mir_free(msg_u);
 	}
@@ -137,7 +137,7 @@ int OnDbEventFilterAdd(WPARAM w, LPARAM l)
 
 
 		// increment question count
-		DWORD questCount = g_plugin.getDword(hContact, DB_KEY_QUESTCOUNT);
+		uint32_t questCount = g_plugin.getDword(hContact, DB_KEY_QUESTCOUNT);
 		g_plugin.setDword(hContact, DB_KEY_QUESTCOUNT, questCount + 1);
 	}
 

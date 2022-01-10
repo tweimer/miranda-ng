@@ -214,14 +214,14 @@ static INT_PTR MenuHistoryPaste(WPARAM wParam, LPARAM lParam)
 		mu::db::setSafetyMode(false);
 
 		// copy history
-		DWORD dwCountSuccess = 0, dwCountFailRead = 0, dwCountFailAdd = 0;
+		uint32_t dwCountSuccess = 0, dwCountFailRead = 0, dwCountFailAdd = 0;
 		DBEVENTINFO dbe;
 		int blobBuffer = 4096;
 		HANDLE hEvent = mu::db_event::findFirst(g_hHistoryCopyContact);
 
 		memset(&dbe, 0, sizeof(dbe));
 		dbe.cbSize = sizeof(dbe);
-		dbe.pBlob = reinterpret_cast<BYTE*>(malloc(blobBuffer));
+		dbe.pBlob = reinterpret_cast<uint8_t*>(malloc(blobBuffer));
 
 		while (hEvent)
 		{
@@ -230,7 +230,7 @@ static INT_PTR MenuHistoryPaste(WPARAM wParam, LPARAM lParam)
 			if (blobBuffer < dbe.cbBlob)
 			{
 				blobBuffer = 4096 * ((4095 + dbe.cbBlob) / 4096);
-				dbe.pBlob = reinterpret_cast<BYTE*>(realloc(dbe.pBlob, blobBuffer));
+				dbe.pBlob = reinterpret_cast<uint8_t*>(realloc(dbe.pBlob, blobBuffer));
 			}
 
 			if (db_event_get(hEvent, &dbe) == 0) {

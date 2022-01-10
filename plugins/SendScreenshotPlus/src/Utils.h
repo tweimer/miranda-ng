@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org),
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org),
 Copyright (c) 2000-09 Miranda ICQ/IM project,
 
 This file is part of Send Screenshot Plus, a Miranda IM plugin.
@@ -66,7 +66,7 @@ public:
 	inline ~EventHandle() { CloseHandle(_hEvent); }
 	inline void Set() { SetEvent(_hEvent); }
 	inline void Wait() { WaitForSingleObject(_hEvent, INFINITE); }
-	inline void Wait(DWORD dwMilliseconds) { WaitForSingleObject(_hEvent, dwMilliseconds); }
+	inline void Wait(uint32_t dwMilliseconds) { WaitForSingleObject(_hEvent, dwMilliseconds); }
 	inline operator HANDLE() { return _hEvent; }
 };
 

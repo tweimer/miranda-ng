@@ -30,7 +30,7 @@ struct branch_t
 	wchar_t  *szDescr;
 	char     *szDBName;
 	int       iMode;
-	BYTE      bDefault;
+	uint8_t      bDefault;
 	HTREEITEM hItem;
 };
 
@@ -71,7 +71,7 @@ static HTREEITEM InsertBranch(HWND hwndTree, wchar_t *pszDescr, BOOL bExpanded)
 	return TreeView_InsertItem(hwndTree, &tvis);
 }
 
-static void FillBranch(HWND hwndTree, HTREEITEM hParent, struct branch_t *branch, int nValues, DWORD defaultval)
+static void FillBranch(HWND hwndTree, HTREEITEM hParent, struct branch_t *branch, int nValues, uint32_t defaultval)
 {
 	int iState;
 
@@ -100,13 +100,13 @@ static void SaveBranch(HWND hwndTree, struct branch_t *branch, int nValues)
 	for (int i = 0; i < nValues; i++) {
 		tvi.hItem = branch[i].hItem;
 		TreeView_GetItem(hwndTree, &tvi);
-		BYTE bChecked = ((tvi.state&TVIS_STATEIMAGEMASK) >> 12 == 1) ? 0 : 1;
+		uint8_t bChecked = ((tvi.state&TVIS_STATEIMAGEMASK) >> 12 == 1) ? 0 : 1;
 		if (branch[i].iMode) {
 			if (bChecked)
 				iState |= branch[i].iMode;
 			if (iState&GC_EVENT_ADDSTATUS)
 				iState |= GC_EVENT_REMOVESTATUS;
-			db_set_dw(0, CHAT_MODULE, branch[i].szDBName, (DWORD)iState);
+			db_set_dw(0, CHAT_MODULE, branch[i].szDBName, (uint32_t)iState);
 		}
 		else db_set_b(0, CHAT_MODULE, branch[i].szDBName, bChecked);
 	}
@@ -256,7 +256,7 @@ static INT_PTR CALLBACK DlgProcOptions1(HWND hwndDlg, UINT uMsg, WPARAM wParam, 
 
 				iLen = SendDlgItemMessage(hwndDlg, IDC_CHAT_SPIN2, UDM_GETPOS, 0, 0);
 				if (iLen > 0)
-					db_set_b(0, CHAT_MODULE, "NicklistRowDist", (BYTE)iLen);
+					db_set_b(0, CHAT_MODULE, "NicklistRowDist", (uint8_t)iLen);
 				else
 					db_unset(0, CHAT_MODULE, "NicklistRowDist");
 				SaveBranch(GetDlgItem(hwndDlg, IDC_CHAT_CHECKBOXES), branch1, _countof(branch1));
@@ -266,7 +266,7 @@ static INT_PTR CALLBACK DlgProcOptions1(HWND hwndDlg, UINT uMsg, WPARAM wParam, 
 		break;
 
 	case WM_DESTROY:
-		BYTE b = TreeView_GetItemState(GetDlgItem(hwndDlg, IDC_CHAT_CHECKBOXES), hListHeading1, TVIS_EXPANDED)&TVIS_EXPANDED ? 1 : 0;
+		uint8_t b = TreeView_GetItemState(GetDlgItem(hwndDlg, IDC_CHAT_CHECKBOXES), hListHeading1, TVIS_EXPANDED)&TVIS_EXPANDED ? 1 : 0;
 		db_set_b(0, CHAT_MODULE, "Branch1Exp", b);
 		break;
 	}
@@ -509,15 +509,15 @@ static INT_PTR CALLBACK DlgProcOptions2(HWND hwndDlg, UINT uMsg, WPARAM wParam, 
 				else db_unset(0, CHAT_MODULE, "HeaderOutgoing");
 
 				g_Settings.bHighlightEnabled = IsDlgButtonChecked(hwndDlg, IDC_CHAT_HIGHLIGHT) == BST_CHECKED ? TRUE : FALSE;
-				db_set_b(0, CHAT_MODULE, "HighlightEnabled", (BYTE)g_Settings.bHighlightEnabled);
+				db_set_b(0, CHAT_MODULE, "HighlightEnabled", (uint8_t)g_Settings.bHighlightEnabled);
 
 				g_Settings.bLoggingEnabled = IsDlgButtonChecked(hwndDlg, IDC_CHAT_LOGGING) == BST_CHECKED ? TRUE : FALSE;
-				db_set_b(0, CHAT_MODULE, "LoggingEnabled", (BYTE)g_Settings.bLoggingEnabled);
+				db_set_b(0, CHAT_MODULE, "LoggingEnabled", (uint8_t)g_Settings.bLoggingEnabled);
 
 				iLen = SendDlgItemMessage(hwndDlg, IDC_CHAT_SPIN2, UDM_GETPOS, 0, 0);
-				db_set_w(0, CHAT_MODULE, "LogLimit", (WORD)iLen);
+				db_set_w(0, CHAT_MODULE, "LogLimit", (uint16_t)iLen);
 				iLen = SendDlgItemMessage(hwndDlg, IDC_CHAT_SPIN3, UDM_GETPOS, 0, 0);
-				db_set_w(0, CHAT_MODULE, "LoggingLimit", (WORD)iLen);
+				db_set_w(0, CHAT_MODULE, "LoggingLimit", (uint16_t)iLen);
 
 				SaveBranch(GetDlgItem(hwndDlg, IDC_CHAT_CHECKBOXES), branch2, _countof(branch2));
 
@@ -547,7 +547,7 @@ static INT_PTR CALLBACK DlgProcOptions2(HWND hwndDlg, UINT uMsg, WPARAM wParam, 
 			hPathTip = nullptr;
 		}
 
-		BYTE b = TreeView_GetItemState(GetDlgItem(hwndDlg, IDC_CHAT_CHECKBOXES), hListHeading2, TVIS_EXPANDED) & TVIS_EXPANDED ? 1 : 0;
+		uint8_t b = TreeView_GetItemState(GetDlgItem(hwndDlg, IDC_CHAT_CHECKBOXES), hListHeading2, TVIS_EXPANDED) & TVIS_EXPANDED ? 1 : 0;
 		db_set_b(0, CHAT_MODULE, "Branch2Exp", b);
 		break;
 	}
@@ -607,16 +607,16 @@ static INT_PTR CALLBACK DlgProcOptionsPopup(HWND hwndDlg, UINT uMsg, WPARAM wPar
 					iLen = 1;
 
 				g_Settings.iPopupStyle = iLen;
-				db_set_b(0, CHAT_MODULE, "PopupStyle", (BYTE)iLen);
+				db_set_b(0, CHAT_MODULE, "PopupStyle", (uint8_t)iLen);
 
 				iLen = SendDlgItemMessage(hwndDlg, IDC_CHAT_SPIN1, UDM_GETPOS, 0, 0);
 				g_Settings.iPopupTimeout = iLen;
-				db_set_w(0, CHAT_MODULE, "PopupTimeout", (WORD)iLen);
+				db_set_w(0, CHAT_MODULE, "PopupTimeout", (uint16_t)iLen);
 
 				g_Settings.crPUBkgColour = SendDlgItemMessage(hwndDlg, IDC_CHAT_BKG, CPM_GETCOLOUR, 0, 0);
-				db_set_dw(0, CHAT_MODULE, "PopupColorBG", (DWORD)SendDlgItemMessage(hwndDlg, IDC_CHAT_BKG, CPM_GETCOLOUR, 0, 0));
+				db_set_dw(0, CHAT_MODULE, "PopupColorBG", (uint32_t)SendDlgItemMessage(hwndDlg, IDC_CHAT_BKG, CPM_GETCOLOUR, 0, 0));
 				g_Settings.crPUTextColour = SendDlgItemMessage(hwndDlg, IDC_CHAT_TEXT, CPM_GETCOLOUR, 0, 0);
-				db_set_dw(0, CHAT_MODULE, "PopupColorText", (DWORD)SendDlgItemMessage(hwndDlg, IDC_CHAT_TEXT, CPM_GETCOLOUR, 0, 0));
+				db_set_dw(0, CHAT_MODULE, "PopupColorText", (uint32_t)SendDlgItemMessage(hwndDlg, IDC_CHAT_TEXT, CPM_GETCOLOUR, 0, 0));
 			}
 			return TRUE;
 		}

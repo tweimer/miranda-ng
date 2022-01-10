@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org),
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org),
 Copyright (c) 2000-08 Miranda ICQ/IM project,
 all portions of this codebase are copyrighted to the people
 listed in contributors.txt.
@@ -50,7 +50,7 @@ void AddSubcontacts(ClcData *dat, ClcContact *cont, BOOL showOfflineHereGroup)
 		if (pdnce->szProto == nullptr)
 			continue;
 
-		WORD wStatus = pdnce->getStatus();
+		uint16_t wStatus = pdnce->getStatus();
 		if (!showOfflineHereGroup && bHideOffline && !pdnce->m_bNoHiddenOffline && wStatus == ID_STATUS_OFFLINE)
 			continue;
 
@@ -132,7 +132,7 @@ static void _LoadDataToContact(ClcContact *cont, ClcCacheEntry *pdnce, ClcGroup 
 	if (szProto != nullptr && !Clist_IsHiddenMode(dat, pdnce->m_iStatus))
 		cont->flags |= CONTACTF_ONLINE;
 
-	WORD apparentMode = szProto != nullptr ? pdnce->ApparentMode : 0;
+	uint16_t apparentMode = szProto != nullptr ? pdnce->ApparentMode : 0;
 	if (apparentMode)
 		switch (apparentMode) {
 		case ID_STATUS_OFFLINE:
@@ -148,7 +148,7 @@ static void _LoadDataToContact(ClcContact *cont, ClcCacheEntry *pdnce, ClcGroup 
 	if (pdnce->NotOnList)
 		cont->flags |= CONTACTF_NOTONLIST;
 
-	DWORD idleMode = szProto != nullptr ? pdnce->IdleTS : 0;
+	uint32_t idleMode = szProto != nullptr ? pdnce->IdleTS : 0;
 	if (idleMode)
 		cont->flags |= CONTACTF_IDLE;
 
@@ -198,7 +198,7 @@ bool CLCItems_IsShowOfflineGroup(ClcGroup *group)
 	if (!group) return false;
 	if (group->hideOffline) return false;
 
-	DWORD groupFlags = 0;
+	uint32_t groupFlags = 0;
 	Clist_GroupGetName(group->groupId, &groupFlags);
 	return (groupFlags & GROUPF_SHOWOFFLINE) != 0;
 }
@@ -420,9 +420,9 @@ int CLVM_GetContactHiddenStatus(MCONTACT hContact, char *szProto, ClcData *dat)
 			szProto = Proto_GetBaseAccountName(hContact);
 		// check stickies first (priority), only if we really have stickies defined (CLVM_STICKY_CONTACTS is set).
 		if (g_CluiData.bFilterEffective & CLVM_STICKY_CONTACTS) {
-			if (DWORD dwLocalMask = db_get_dw(hContact, CLVM_MODULE, g_CluiData.current_viewmode, 0)) {
+			if (uint32_t dwLocalMask = db_get_dw(hContact, CLVM_MODULE, g_CluiData.current_viewmode, 0)) {
 				if (g_CluiData.bFilterEffective & CLVM_FILTER_STICKYSTATUS) {
-					WORD wStatus = db_get_w(hContact, szProto, "Status", ID_STATUS_OFFLINE);
+					uint16_t wStatus = db_get_w(hContact, szProto, "Status", ID_STATUS_OFFLINE);
 					return !((1 << (wStatus - ID_STATUS_OFFLINE)) & HIWORD(dwLocalMask)) | searchResult;
 				}
 				return 0 | searchResult;
@@ -459,13 +459,13 @@ int CLVM_GetContactHiddenStatus(MCONTACT hContact, char *szProto, ClcData *dat)
 		}
 
 		if (g_CluiData.bFilterEffective & CLVM_FILTER_STATUS) {
-			WORD wStatus = db_get_w(hContact, szProto, "Status", ID_STATUS_OFFLINE);
+			uint16_t wStatus = db_get_w(hContact, szProto, "Status", ID_STATUS_OFFLINE);
 			filterResult = (g_CluiData.filterFlags & CLVM_GROUPSTATUS_OP) ? ((filterResult | ((1 << (wStatus - ID_STATUS_OFFLINE)) & g_CluiData.statusMaskFilter ? 1 : 0))) : (filterResult & ((1 << (wStatus - ID_STATUS_OFFLINE)) & g_CluiData.statusMaskFilter ? 1 : 0));
 		}
 
 		if (g_CluiData.bFilterEffective & CLVM_FILTER_LASTMSG) {
 			if (pdnce->dwLastMsgTime != -1) {
-				DWORD now = g_CluiData.t_now;
+				uint32_t now = g_CluiData.t_now;
 				now -= g_CluiData.lastMsgFilter;
 				if (g_CluiData.bFilterEffective & CLVM_FILTER_LASTMSG_OLDERTHAN)
 					filterResult = filterResult & (pdnce->dwLastMsgTime < now);

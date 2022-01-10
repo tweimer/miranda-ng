@@ -302,15 +302,15 @@ void checkStringForSaveN(CMStringA &str)
 				switch (D[0]) {
 				case '0':
 				case 'b':
-					db_set_b(0, A, B, (BYTE)atoi(C));
+					db_set_b(0, A, B, (uint8_t)atoi(C));
 					break;
 				case '1':
 				case 'w':
-					db_set_w(0, A, B, (WORD)atoi(C));
+					db_set_w(0, A, B, (uint16_t)atoi(C));
 					break;
 				case '2':
 				case 'd':
-					db_set_dw(0, A, B, (DWORD)atoi(C));
+					db_set_dw(0, A, B, (uint32_t)atoi(C));
 					break;
 				case '3':
 				case 's':
@@ -433,7 +433,7 @@ void checkIcon(MCONTACT hContact, char* string)
 	if (str) {
 		int icon = getNumber(str + 5);
 		if (icon >= 0)
-			g_plugin.setWord(hContact, "Status", (WORD)(ID_STATUS_OFFLINE + icon));
+			g_plugin.setWord(hContact, "Status", (uint16_t)(ID_STATUS_OFFLINE + icon));
 	}
 }
 
@@ -606,7 +606,7 @@ void WriteSetting(MCONTACT hContact, char* module1, char* setting1, char* module
 		if ((status == ID_STATUS_ONLINE) || (status == ID_STATUS_AWAY) ||
 			 (status == g_plugin.getWord(hContact, "Icon", ID_STATUS_ONLINE)) ||
 			 g_plugin.getByte(hContact, "AlwaysVisible", 0))
-			g_plugin.setWord(hContact, "Status", (WORD)g_plugin.getWord(hContact, "Icon", ID_STATUS_ONLINE));
+			g_plugin.setWord(hContact, "Status", (uint16_t)g_plugin.getWord(hContact, "Icon", ID_STATUS_ONLINE));
 		else
 			g_plugin.setWord(hContact, "Status", ID_STATUS_OFFLINE);
 	}

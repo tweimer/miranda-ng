@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org),
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org),
 Copyright (c) 2000-12 Miranda IM project,
 all portions of this codebase are copyrighted to the people
 listed in contributors.txt.
@@ -43,7 +43,7 @@ HINSTANCE g_hInst = nullptr;
 
 HCURSOR g_hCursorNS, g_hCursorWE;
 HANDLE hThreadQueueEmpty;
-DWORD mir_tls = 0;
+uint32_t mir_tls = 0;
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
@@ -133,7 +133,7 @@ MIR_CORE_DLL(void) UnloadCoreModule(void)
 /////////////////////////////////////////////////////////////////////////////////////////
 // entry point
 
-BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID)
+BOOL WINAPI DllMain(HINSTANCE hinstDLL, uint32_t fdwReason, LPVOID)
 {
 	if (fdwReason == DLL_PROCESS_ATTACH) {
 		g_hInst = hinstDLL;

@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org),
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org),
 Copyright (c) 2000-12 Miranda IM project,
 all portions of this codebase are copyrighted to the people
 listed in contributors.txt.
@@ -121,8 +121,8 @@ static void SetValue(HWND hwndDlg, int idCtrl, MCONTACT hContact, char *szModule
 
 		case DBVT_WORD:
 			if (special == SVS_COUNTRY) {
-				WORD wSave = dbv.wVal;
-				if (wSave == (WORD)-1) {
+				uint16_t wSave = dbv.wVal;
+				if (wSave == (uint16_t)-1) {
 					char szSettingName[100];
 					mir_snprintf(szSettingName, "%sName", szSetting);
 					if (!db_get_ws(hContact, szModule, szSettingName, &dbv)) {

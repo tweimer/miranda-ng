@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////////////////
 // Miranda NG: the free IM client for Microsoft* Windows*
 //
-// Copyright (C) 2012-21 Miranda NG team,
+// Copyright (C) 2012-22 Miranda NG team,
 // Copyright (c) 2000-09 Miranda ICQ/IM project,
 // all portions of this codebase are copyrighted to the people
 // listed in contributors.txt.
@@ -32,7 +32,7 @@
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-void TreeViewInit(CCtrlTreeView &ctrl, TOptionListGroup *lvGroups, TOptionListItem *lvItems, const char *DBPath, DWORD dwFlags, bool bFromMem)
+void TreeViewInit(CCtrlTreeView &ctrl, TOptionListGroup *lvGroups, TOptionListItem *lvItems, const char *DBPath, uint32_t dwFlags, bool bFromMem)
 {
 	SetWindowLongPtr(ctrl.GetHwnd(), GWL_STYLE, GetWindowLongPtr(ctrl.GetHwnd(), GWL_STYLE) | (TVS_HASBUTTONS | TVS_CHECKBOXES | TVS_NOHSCROLL));
 
@@ -83,7 +83,7 @@ void TreeViewInit(CCtrlTreeView &ctrl, TOptionListGroup *lvGroups, TOptionListIt
 	}
 }
 
-void TreeViewSetFromDB(CCtrlTreeView &ctrl, TOptionListItem *lvItems, DWORD dwFlags)
+void TreeViewSetFromDB(CCtrlTreeView &ctrl, TOptionListItem *lvItems, uint32_t dwFlags)
 {
 	for (auto *p = lvItems; p->szName != nullptr; p++) {
 		bool bCheck = false;
@@ -95,7 +95,7 @@ void TreeViewSetFromDB(CCtrlTreeView &ctrl, TOptionListItem *lvItems, DWORD dwFl
 	}
 }
 
-void TreeViewToDB(CCtrlTreeView &ctrl, TOptionListItem *lvItems, const char *DBPath, DWORD *dwFlags)
+void TreeViewToDB(CCtrlTreeView &ctrl, TOptionListItem *lvItems, const char *DBPath, uint32_t *dwFlags)
 {
 	for (auto *p = lvItems; p->szName != nullptr; p++) {
 		UINT iState = ctrl.GetCheckState(p->handle);
@@ -366,7 +366,7 @@ public:
 			return;
 
 		const wchar_t *szFilename = GetThemeFileName(0);
-		DWORD dwFlags = THEME_READ_FONTS;
+		uint32_t dwFlags = THEME_READ_FONTS;
 
 		if (szFilename != nullptr) {
 			int result = MessageBox(nullptr, TranslateT("Do you want to also read message templates from the theme?\nCaution: This will overwrite the stored template set which may affect the look of your message window significantly.\nSelect Cancel to not load anything at all."),
@@ -732,7 +732,7 @@ public:
 		dbei.eventType = (iIndex == 7) ? EVENTTYPE_ERRMSG : dbei.eventType;
 		if (dbei.eventType == EVENTTYPE_ERRMSG)
 			dbei.szModule = (char *)L"Sample error message";
-		dbei.pBlob = (iIndex == 6) ? (BYTE *)"is now offline (was online)" : (BYTE *)"The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog.";
+		dbei.pBlob = (iIndex == 6) ? (uint8_t *)"is now offline (was online)" : (uint8_t *)"The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog.";
 		dbei.cbBlob = (int)mir_strlen((char *)dbei.pBlob) + 1;
 		dbei.flags = (iIndex == 1 || iIndex == 3 || iIndex == 5) ? DBEF_SENT : 0;
 		dbei.flags |= (m_bRtl ? DBEF_RTL : 0);
@@ -901,7 +901,7 @@ public:
 
 	bool OnInitDialog() override
 	{
-		DWORD dwFlags = M.GetDword("mwflags", MWF_LOG_DEFAULT);
+		uint32_t dwFlags = M.GetDword("mwflags", MWF_LOG_DEFAULT);
 
 		switch (g_plugin.getByte(SRMSGSET_LOADHISTORY, SRMSGDEFSET_LOADHISTORY)) {
 		case LOADHISTORY_UNREAD:
@@ -927,7 +927,7 @@ public:
 		spnLoadCount.SetPosition(g_plugin.getWord(SRMSGSET_LOADCOUNT, SRMSGDEFSET_LOADCOUNT));
 		spnLoadTime.SetPosition(g_plugin.getWord(SRMSGSET_LOADTIME, SRMSGDEFSET_LOADTIME));
 
-		DWORD maxhist = M.GetDword("maxhist", 0);
+		uint32_t maxhist = M.GetDword("maxhist", 0);
 		spnTrim.SetPosition(maxhist);
 		spnTrim.Enable(maxhist != 0);
 		Utils::enableDlgControl(m_hwnd, IDC_TRIM, maxhist != 0);
@@ -937,7 +937,7 @@ public:
 
 	bool OnApply() override
 	{
-		DWORD dwFlags = M.GetDword("mwflags", MWF_LOG_DEFAULT);
+		uint32_t dwFlags = M.GetDword("mwflags", MWF_LOG_DEFAULT);
 
 		dwFlags &= ~(MWF_LOG_ALL);
 
@@ -1017,7 +1017,7 @@ class COptTypingDlg : public CDlgBase
 
 	void RebuildList(CCtrlClc* = nullptr)
 	{
-		BYTE defType = g_plugin.getByte(SRMSGSET_TYPINGNEW, SRMSGDEFSET_TYPINGNEW);
+		uint8_t defType = g_plugin.getByte(SRMSGSET_TYPINGNEW, SRMSGDEFSET_TYPINGNEW);
 		if (hItemNew && defType)
 			m_clist.SetCheck(hItemNew, true);
 
@@ -1104,14 +1104,14 @@ public:
 	bool OnApply() override
 	{
 		SaveList();
-		g_plugin.setByte(SRMSGSET_SHOWTYPING, (BYTE)IsDlgButtonChecked(m_hwnd, IDC_SHOWNOTIFY));
-		g_plugin.setByte(SRMSGSET_SHOWTYPINGWINFLASH, (BYTE)IsDlgButtonChecked(m_hwnd, IDC_TYPEFLASHWIN));
-		g_plugin.setByte(SRMSGSET_SHOWTYPINGNOWINOPEN, (BYTE)IsDlgButtonChecked(m_hwnd, IDC_TYPENOWIN));
-		g_plugin.setByte(SRMSGSET_SHOWTYPINGWINOPEN, (BYTE)IsDlgButtonChecked(m_hwnd, IDC_TYPEWIN));
-		g_plugin.setByte(SRMSGSET_SHOWTYPINGCLIST, (BYTE)IsDlgButtonChecked(m_hwnd, IDC_NOTIFYTRAY));
-		g_plugin.setByte("ShowTypingBalloon", (BYTE)IsDlgButtonChecked(m_hwnd, IDC_NOTIFYBALLOON));
-		g_plugin.setByte("ShowTypingPopup", (BYTE)IsDlgButtonChecked(m_hwnd, IDC_NOTIFYPOPUP));
-		db_set_b(0, SRMSGMOD_T, "MTN_PopupMode", (BYTE)SendDlgItemMessage(m_hwnd, IDC_MTN_POPUPMODE, CB_GETCURSEL, 0, 0));
+		g_plugin.setByte(SRMSGSET_SHOWTYPING, (uint8_t)IsDlgButtonChecked(m_hwnd, IDC_SHOWNOTIFY));
+		g_plugin.setByte(SRMSGSET_SHOWTYPINGWINFLASH, (uint8_t)IsDlgButtonChecked(m_hwnd, IDC_TYPEFLASHWIN));
+		g_plugin.setByte(SRMSGSET_SHOWTYPINGNOWINOPEN, (uint8_t)IsDlgButtonChecked(m_hwnd, IDC_TYPENOWIN));
+		g_plugin.setByte(SRMSGSET_SHOWTYPINGWINOPEN, (uint8_t)IsDlgButtonChecked(m_hwnd, IDC_TYPEWIN));
+		g_plugin.setByte(SRMSGSET_SHOWTYPINGCLIST, (uint8_t)IsDlgButtonChecked(m_hwnd, IDC_NOTIFYTRAY));
+		g_plugin.setByte("ShowTypingBalloon", (uint8_t)IsDlgButtonChecked(m_hwnd, IDC_NOTIFYBALLOON));
+		g_plugin.setByte("ShowTypingPopup", (uint8_t)IsDlgButtonChecked(m_hwnd, IDC_NOTIFYPOPUP));
+		db_set_b(0, SRMSGMOD_T, "MTN_PopupMode", (uint8_t)SendDlgItemMessage(m_hwnd, IDC_MTN_POPUPMODE, CB_GETCURSEL, 0, 0));
 		PluginConfig.reloadSettings();
 		return true;
 	}
@@ -1234,7 +1234,7 @@ public:
 	INT_PTR DlgProc(UINT msg, WPARAM wParam, LPARAM lParam) override
 	{
 		if (msg == WM_COMMAND && wParam == DM_STATUSMASKSET)
-			db_set_dw(0, SRMSGMOD_T, "autopopupmask", (DWORD)lParam);
+			db_set_dw(0, SRMSGMOD_T, "autopopupmask", (uint32_t)lParam);
 
 		return CDlgBase::DlgProc(msg, wParam, lParam);
 	}
@@ -1420,11 +1420,11 @@ public:
 
 struct
 {
-	BYTE sameAsFlags, sameAs;
+	uint8_t sameAsFlags, sameAs;
 	COLORREF colour;
 	char size;
-	BYTE style;
-	BYTE charset;
+	uint8_t style;
+	uint8_t charset;
 	char szFace[LF_FACESIZE];
 }
 static fontSettings[MSGDLGFONTCOUNT + 1];
@@ -1447,27 +1447,27 @@ struct OptCheckBox
 {
 	UINT idc;
 
-	DWORD defValue;		// should be full combined value for masked items!
-	DWORD dwBit;
+	uint32_t defValue;		// should be full combined value for masked items!
+	uint32_t dwBit;
 
-	BYTE dbType;
+	uint8_t dbType;
 	char *dbModule;
 	char *dbSetting;
 
-	BYTE valueType;
+	uint8_t valueType;
 	union
 	{
 		void *pValue;
 
 		char *charValue;
 		int *intValue;
-		BYTE *byteValue;
-		DWORD *dwordValue;
+		uint8_t *byteValue;
+		uint32_t *dwordValue;
 		BOOL *boolValue;
 	};
 };
 
-DWORD OptCheckBox_LoadValue(struct OptCheckBox *cb)
+uint32_t OptCheckBox_LoadValue(struct OptCheckBox *cb)
 {
 	switch (cb->valueType) {
 	case CBVT_NONE:
@@ -1498,29 +1498,29 @@ DWORD OptCheckBox_LoadValue(struct OptCheckBox *cb)
 
 void OptCheckBox_Load(HWND hwnd, OptCheckBox *cb)
 {
-	DWORD value = OptCheckBox_LoadValue(cb);
+	uint32_t value = OptCheckBox_LoadValue(cb);
 	if (cb->dwBit) value &= cb->dwBit;
 	CheckDlgButton(hwnd, cb->idc, value ? BST_CHECKED : BST_UNCHECKED);
 }
 
 void OptCheckBox_Save(HWND hwnd, OptCheckBox *cb)
 {
-	DWORD value = IsDlgButtonChecked(hwnd, cb->idc) == BST_CHECKED;
+	uint32_t value = IsDlgButtonChecked(hwnd, cb->idc) == BST_CHECKED;
 
 	if (cb->dwBit) {
-		DWORD curValue = OptCheckBox_LoadValue(cb);
+		uint32_t curValue = OptCheckBox_LoadValue(cb);
 		value = value ? (curValue | cb->dwBit) : (curValue & ~cb->dwBit);
 	}
 
 	switch (cb->dbType) {
 	case DBVT_BYTE:
-		db_set_b(0, cb->dbModule, cb->dbSetting, (BYTE)value);
+		db_set_b(0, cb->dbModule, cb->dbSetting, (uint8_t)value);
 		break;
 	case DBVT_WORD:
-		db_set_w(0, cb->dbModule, cb->dbSetting, (WORD)value);
+		db_set_w(0, cb->dbModule, cb->dbSetting, (uint16_t)value);
 		break;
 	case DBVT_DWORD:
-		db_set_dw(0, cb->dbModule, cb->dbSetting, (DWORD)value);
+		db_set_dw(0, cb->dbModule, cb->dbSetting, (uint32_t)value);
 		break;
 	}
 
@@ -1532,10 +1532,10 @@ void OptCheckBox_Save(HWND hwnd, OptCheckBox *cb)
 		*cb->intValue = (int)value;
 		break;
 	case CBVT_BYTE:
-		*cb->byteValue = (BYTE)value;
+		*cb->byteValue = (uint8_t)value;
 		break;
 	case CBVT_DWORD:
-		*cb->dwordValue = (DWORD)value;
+		*cb->dwordValue = (uint32_t)value;
 		break;
 	case CBVT_BOOL:
 		*cb->boolValue = (BOOL)value;
@@ -1545,8 +1545,8 @@ void OptCheckBox_Save(HWND hwnd, OptCheckBox *cb)
 
 INT_PTR CALLBACK DlgProcSetupStatusModes(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam)
 {
-	DWORD dwStatusMask = GetWindowLongPtr(hwndDlg, GWLP_USERDATA);
-	static DWORD dwNewStatusMask = 0;
+	uint32_t dwStatusMask = GetWindowLongPtr(hwndDlg, GWLP_USERDATA);
+	static uint32_t dwNewStatusMask = 0;
 
 	switch (msg) {
 	case WM_INITDIALOG:

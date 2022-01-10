@@ -25,11 +25,11 @@ char* m_wwstrcat(LPCSTR strA, LPCSTR strB)
 {
 	int lenA = (int)mir_strlen(strA);
 	int lenB = (int)mir_strlen(strB);
-	LPSTR str = (LPSTR)mir_alloc((lenA + lenB + 1)*(sizeof(WCHAR) + 1));
+	LPSTR str = (LPSTR)mir_alloc((lenA + lenB + 1)*(sizeof(wchar_t) + 1));
 	memcpy(str, strA, lenA);
 	memcpy(str + lenA, strB, lenB + 1);
-	memcpy(str + lenA + lenB + 1, strA + lenA + 1, lenA*sizeof(WCHAR));
-	memcpy(str + lenA + lenB + 1 + lenA*sizeof(WCHAR), strB + lenB + 1, (lenB + 1)*sizeof(WCHAR));
+	memcpy(str + lenA + lenB + 1, strA + lenA + 1, lenA*sizeof(wchar_t));
+	memcpy(str + lenA + lenB + 1 + lenA*sizeof(wchar_t), strB + lenB + 1, (lenB + 1)*sizeof(wchar_t));
 	return str;
 }
 
@@ -37,9 +37,9 @@ char* m_wwstrcat(LPCSTR strA, LPCSTR strB)
 char* m_awstrcat(LPCSTR strA, LPCSTR strB)
 {
 	int lenA = (int)mir_strlen(strA);
-	LPSTR tmpA = (LPSTR)mir_alloc((lenA + 1)*(sizeof(WCHAR) + 1));
+	LPSTR tmpA = (LPSTR)mir_alloc((lenA + 1)*(sizeof(wchar_t) + 1));
 	mir_strcpy(tmpA, strA);
-	MultiByteToWideChar(CP_ACP, 0, strA, -1, (LPWSTR)(tmpA + lenA + 1), (lenA + 1)*sizeof(WCHAR));
+	MultiByteToWideChar(CP_ACP, 0, strA, -1, (LPWSTR)(tmpA + lenA + 1), (lenA + 1)*sizeof(wchar_t));
 	LPSTR str = m_wwstrcat(tmpA, strB);
 	mir_free(tmpA);
 	return str;
@@ -50,10 +50,10 @@ char* m_aastrcat(LPCSTR strA, LPCSTR strB)
 {
 	int lenA = (int)mir_strlen(strA);
 	int lenB = (int)mir_strlen(strB);
-	LPSTR str = (LPSTR)mir_alloc((lenA + lenB + 1)*(sizeof(WCHAR) + 1));
+	LPSTR str = (LPSTR)mir_alloc((lenA + lenB + 1)*(sizeof(wchar_t) + 1));
 	mir_strcpy(str, strA);
 	mir_strcat(str, strB);
-	MultiByteToWideChar(CP_ACP, 0, str, -1, (LPWSTR)(str + lenA + lenB + 1), (lenA + lenB + 1)*sizeof(WCHAR));
+	MultiByteToWideChar(CP_ACP, 0, str, -1, (LPWSTR)(str + lenA + lenB + 1), (lenA + lenB + 1)*sizeof(wchar_t));
 	return str;
 }
 
@@ -70,7 +70,7 @@ char* m_ustrcat(LPCSTR strA, LPCSTR strB)
 
 LPSTR m_hex = nullptr;
 
-LPSTR to_hex(PBYTE bin, int len)
+LPSTR to_hex(uint8_t *bin, int len)
 {
 	SAFE_FREE(m_hex);
 	m_hex = (LPSTR)mir_alloc(len * 3 + 1);
@@ -103,13 +103,13 @@ void __fastcall safe_delete(void** p)
 }
 
 // преобразуем текст из чистого UTF8 в формат миранды
-LPSTR utf8_to_miranda(LPCSTR szUtfMsg, DWORD& flags)
+LPSTR utf8_to_miranda(LPCSTR szUtfMsg, uint32_t& flags)
 {
 	return mir_strdup(szUtfMsg);
 }
 
 // преобразуем текст из формата миранды в чистый UTF8
-LPSTR miranda_to_utf8(LPCSTR szMirMsg, DWORD flags)
+LPSTR miranda_to_utf8(LPCSTR szMirMsg, uint32_t flags)
 {
 	return mir_strdup(szMirMsg);
 }

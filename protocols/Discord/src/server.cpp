@@ -1,5 +1,5 @@
 /*
-Copyright © 2016-21 Miranda NG team
+Copyright © 2016-22 Miranda NG team
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -89,7 +89,7 @@ void CDiscordProto::OnReceiveHistory(NETLIBHTTPREQUEST *pReply, AsyncHttpRequest
 		CMStringW wszUserId = pNode["author"]["id"].as_mstring();
 		SnowFlake msgid = ::getId(pNode["id"]);
 		SnowFlake authorid = _wtoi64(wszUserId);
-		DWORD dwTimeStamp = StringToDate(pNode["timestamp"].as_mstring());
+		uint32_t dwTimeStamp = StringToDate(pNode["timestamp"].as_mstring());
 
 		if (pUser->bIsPrivate) {
 			DBEVENTINFO dbei = {};
@@ -109,8 +109,8 @@ void CDiscordProto::OnReceiveHistory(NETLIBHTTPREQUEST *pReply, AsyncHttpRequest
 
 			ptrA szBody(mir_utf8encodeW(wszText));
 			dbei.timestamp = dwTimeStamp;
-			dbei.pBlob = (PBYTE)szBody.get();
-			dbei.cbBlob = (DWORD)mir_strlen(szBody);
+			dbei.pBlob = (uint8_t*)szBody.get();
+			dbei.cbBlob = (uint32_t)mir_strlen(szBody);
 
 			bool bSucceeded = false;
 			char szMsgId[100];

@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org),
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org),
 Copyright (c) 2000-12 Miranda IM project,
 Copyright (c) 2007 Artem Shpynov
 all portions of this codebase are copyrighted to the people
@@ -25,7 +25,19 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "stdafx.h"
 
-static BOOL IsAeroMode()
+typedef HRESULT(STDAPICALLTYPE* pfnDrawThemeTextEx)(HTHEME, HDC, int, int, LPCWSTR, int, uint32_t, LPRECT, const struct _DTTOPTS*);
+static pfnDrawThemeTextEx drawThemeTextEx;
+
+typedef HRESULT(STDAPICALLTYPE* pfnSetWindowThemeAttribute)(HWND, enum WINDOWTHEMEATTRIBUTETYPE, PVOID, uint32_t);
+static pfnSetWindowThemeAttribute setWindowThemeAttribute;
+
+typedef HRESULT(STDAPICALLTYPE* pfnDwmExtendFrameIntoClientArea)(HWND hwnd, const MARGINS* margins);
+static pfnDwmExtendFrameIntoClientArea dwmExtendFrameIntoClientArea;
+
+typedef HRESULT(STDAPICALLTYPE* pfnDwmIsCompositionEnabled)(BOOL*);
+static pfnDwmIsCompositionEnabled dwmIsCompositionEnabled;
+
+BOOL IsAeroMode()
 {
 	BOOL result;
 	return dwmIsCompositionEnabled && (dwmIsCompositionEnabled(&result) == S_OK) && result;
@@ -327,6 +339,20 @@ static LRESULT CALLBACK MHeaderbarWndProc(HWND hwndDlg, UINT  msg, WPARAM wParam
 
 int LoadHeaderbarModule()
 {
+	if (IsWinVerVistaPlus()) {
+		HINSTANCE hThemeAPI = LoadLibraryA("uxtheme.dll");
+		if (hThemeAPI) {
+			drawThemeTextEx = (pfnDrawThemeTextEx)GetProcAddress(hThemeAPI, "DrawThemeTextEx");
+			setWindowThemeAttribute = (pfnSetWindowThemeAttribute)GetProcAddress(hThemeAPI, "SetWindowThemeAttribute");
+		}
+
+		HINSTANCE hDwmApi = LoadLibrary(L"dwmapi.dll");
+		if (hDwmApi) {
+			dwmExtendFrameIntoClientArea = (pfnDwmExtendFrameIntoClientArea)GetProcAddress(hDwmApi, "DwmExtendFrameIntoClientArea");
+			dwmIsCompositionEnabled = (pfnDwmIsCompositionEnabled)GetProcAddress(hDwmApi, "DwmIsCompositionEnabled");
+		}
+	}
+
 	WNDCLASSEX wc = { 0 };
 	wc.cbSize = sizeof(wc);
 	wc.lpszClassName = L"MHeaderbarCtrl";

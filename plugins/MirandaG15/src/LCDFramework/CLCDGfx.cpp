@@ -49,7 +49,7 @@ CLCDGfx::~CLCDGfx(void)
 //************************************************************************
 // CLCDGfx::Initialize
 //************************************************************************
-bool CLCDGfx::Initialize(int nWidth, int nHeight, int nBPP, PBYTE pLcdBitmapBits)
+bool CLCDGfx::Initialize(int nWidth, int nHeight, int nBPP, uint8_t *pLcdBitmapBits)
 {
 	m_pLcdBitmapBits = pLcdBitmapBits;
 
@@ -65,7 +65,7 @@ bool CLCDGfx::Initialize(int nWidth, int nHeight, int nBPP, PBYTE pLcdBitmapBits
 	}
 
 	int nBMISize = sizeof(BITMAPINFO) + 256 * sizeof(RGBQUAD);
-	m_pBitmapInfo = (BITMAPINFO *) new BYTE[nBMISize];
+	m_pBitmapInfo = (BITMAPINFO *) new uint8_t[nBMISize];
 	if (nullptr == m_pBitmapInfo) {
 		TRACE(L"CLCDGfx::Initialize(): failed to allocate bitmap info.\n");
 		Shutdown();
@@ -87,9 +87,9 @@ bool CLCDGfx::Initialize(int nWidth, int nHeight, int nBPP, PBYTE pLcdBitmapBits
 
 	if (m_nBPP == 1) {
 		for (int nColor = 0; nColor < 256; ++nColor) {
-			m_pBitmapInfo->bmiColors[nColor].rgbRed = (BYTE)((nColor > 128) ? 255 : 0);
-			m_pBitmapInfo->bmiColors[nColor].rgbGreen = (BYTE)((nColor > 128) ? 255 : 0);
-			m_pBitmapInfo->bmiColors[nColor].rgbBlue = (BYTE)((nColor > 128) ? 255 : 0);
+			m_pBitmapInfo->bmiColors[nColor].rgbRed = (uint8_t)((nColor > 128) ? 255 : 0);
+			m_pBitmapInfo->bmiColors[nColor].rgbGreen = (uint8_t)((nColor > 128) ? 255 : 0);
+			m_pBitmapInfo->bmiColors[nColor].rgbBlue = (uint8_t)((nColor > 128) ? 255 : 0);
 			m_pBitmapInfo->bmiColors[nColor].rgbReserved = 0;
 		}
 	}
@@ -217,7 +217,7 @@ void CLCDGfx::SetPixel(int nX, int nY, COLORREF color)
 	::SetPixel(m_hDC, nX, nY, color);
 }
 
-void CLCDGfx::SetPixel(int nX, int nY, BYTE r, BYTE g, BYTE b)
+void CLCDGfx::SetPixel(int nX, int nY, uint8_t r, uint8_t g, uint8_t b)
 {
 	COLORREF ref;
 	if (m_nBPP == 1) {
@@ -365,10 +365,10 @@ void CLCDGfx::EndDraw(void)
 			Cache();
 		}
 
-		PBYTE pScreen1 = m_pSavedBitmapBits;
-		PBYTE pScreen2 = m_pBitmapBits;
+		uint8_t *pScreen1 = m_pSavedBitmapBits;
+		uint8_t *pScreen2 = m_pBitmapBits;
 
-		DWORD dwTimeElapsed = GetTickCount() - m_dwTransitionStart;
+		uint32_t dwTimeElapsed = GetTickCount() - m_dwTransitionStart;
 
 		/*	if(m_eTransition == TRANSITION_BT || m_eTransition == TRANSITION_TB)
 		{
@@ -550,7 +550,7 @@ HBITMAP CLCDGfx::GetHBITMAP(void)
 	return m_hBitmap;
 }
 
-int CLCDGfx::findNearestMatch(PBYTE targetArray, int iSourceIndex)
+int CLCDGfx::findNearestMatch(uint8_t *targetArray, int iSourceIndex)
 {
 	int startY = iSourceIndex / m_nWidth;
 	int startX = iSourceIndex - (iSourceIndex / m_nWidth)*m_nWidth;
@@ -587,7 +587,7 @@ int CLCDGfx::findNearestMatch(PBYTE targetArray, int iSourceIndex)
 //************************************************************************
 void CLCDGfx::Cache()
 {
-	DWORD dwStart = GetTickCount();
+	uint32_t dwStart = GetTickCount();
 
 	// Initialize pixels
 	if (m_eTransition == TRANSITION_MORPH) {
@@ -721,13 +721,13 @@ void CLCDGfx::StartTransition(ETransitionType eType, LPRECT rect)
 
 	if (m_bTransition) {
 		EndTransition();
-		memcpy(m_pBitmapBits, m_pLcdBitmapBits, sizeof(BYTE)*m_nWidth*m_nHeight*m_nBPP);
+		memcpy(m_pBitmapBits, m_pLcdBitmapBits, sizeof(uint8_t)*m_nWidth*m_nHeight*m_nBPP);
 	}
 
 	if (m_pSavedBitmapBits == nullptr)
-		m_pSavedBitmapBits = (BYTE*)malloc(sizeof(BYTE)*m_nWidth*m_nHeight*m_nBPP);
+		m_pSavedBitmapBits = (uint8_t*)malloc(sizeof(uint8_t)*m_nWidth*m_nHeight*m_nBPP);
 
-	memcpy(m_pSavedBitmapBits, m_pBitmapBits, sizeof(BYTE)* m_nWidth * m_nHeight * m_nBPP);
+	memcpy(m_pSavedBitmapBits, m_pBitmapBits, sizeof(uint8_t)* m_nWidth * m_nHeight * m_nBPP);
 
 	m_dwTransitionStart = 0;
 

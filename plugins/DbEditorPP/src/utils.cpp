@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org)
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org)
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -17,7 +17,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include "stdafx.h"
 
-extern BYTE nameOrder[NAMEORDERCOUNT];
+extern uint8_t nameOrder[NAMEORDERCOUNT];
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
@@ -40,7 +40,7 @@ int ListView_SetItemTextA(HWND hwndLV, int i, int iSubItem, const char *pszText)
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-char* StringFromBlob(BYTE *blob, WORD len)
+char* StringFromBlob(uint8_t *blob, uint16_t len)
 {
 	int j;
 	char tmp[16];
@@ -58,9 +58,9 @@ char* StringFromBlob(BYTE *blob, WORD len)
 int WriteBlobFromString(MCONTACT hContact, const char *szModule, const char *szSetting, const char *szValue, int len)
 {
 	int j = 0, i = 0;
-	BYTE b;
+	uint8_t b;
 	int tmp, res = 0;
-	BYTE *data = (BYTE*)mir_alloc(2 + len / 2);
+	uint8_t *data = (uint8_t*)mir_alloc(2 + len / 2);
 
 	if (!data)
 		return 0;
@@ -72,7 +72,7 @@ int WriteBlobFromString(MCONTACT hContact, const char *szModule, const char *szS
 			(b >= 'A' && b <= 'F') ||
 			(b >= 'a' && b <= 'f')) {
 			if (sscanf(&szValue[j], "%02X", &tmp) == 1) {
-				data[i++] = (BYTE)(tmp & 0xFF);
+				data[i++] = (uint8_t)(tmp & 0xFF);
 				j++;
 			}
 		}
@@ -81,18 +81,18 @@ int WriteBlobFromString(MCONTACT hContact, const char *szModule, const char *szS
 
 
 	if (i)
-		res = !db_set_blob(hContact, szModule, szSetting, data, (WORD)i);
+		res = !db_set_blob(hContact, szModule, szSetting, data, (uint16_t)i);
 
 	mir_free(data);
 	return res;
 }
 
-wchar_t* DBVType(BYTE type)
+wchar_t* DBVType(uint8_t type)
 {
 	switch (type) {
-	case DBVT_BYTE:     return L"BYTE";
-	case DBVT_WORD:     return L"WORD";
-	case DBVT_DWORD:    return L"DWORD";
+	case DBVT_BYTE:     return L"uint8_t";
+	case DBVT_WORD:     return L"uint16_t";
+	case DBVT_DWORD:    return L"uint32_t";
 	case DBVT_ASCIIZ:   return L"STRING";
 	case DBVT_WCHAR:
 	case DBVT_UTF8:     return L"UNICODE";
@@ -102,7 +102,7 @@ wchar_t* DBVType(BYTE type)
 	return L"";
 }
 
-DWORD getNumericValue(DBVARIANT *dbv)
+uint32_t getNumericValue(DBVARIANT *dbv)
 {
 	switch (dbv->type) {
 	case DBVT_DWORD:
@@ -115,17 +115,17 @@ DWORD getNumericValue(DBVARIANT *dbv)
 	return 0;
 }
 
-int setNumericValue(MCONTACT hContact, const char *module, const char *setting, DWORD value, int type)
+int setNumericValue(MCONTACT hContact, const char *module, const char *setting, uint32_t value, int type)
 {
 	switch (type) {
 	case DBVT_BYTE:
 		if (value <= 0xFF)
-			return !db_set_b(hContact, module, setting, (BYTE)value);
+			return !db_set_b(hContact, module, setting, (uint8_t)value);
 		break;
 
 	case DBVT_WORD:
 		if (value <= 0xFFFF)
-			return !db_set_w(hContact, module, setting, (WORD)value);
+			return !db_set_w(hContact, module, setting, (uint16_t)value);
 		break;
 
 	case DBVT_DWORD:
@@ -366,7 +366,7 @@ void saveListSettings(HWND hwnd, ColumnsSettings *cs)
 	while (cs[i].name) {
 		if (ListView_GetColumn(hwnd, cs[i].index, &sLC)) {
 			mir_snprintf(tmp, cs[i].dbname, i);
-			g_plugin.setWord(tmp, (WORD)sLC.cx);
+			g_plugin.setWord(tmp, (uint16_t)sLC.cx);
 		}
 		i++;
 	}

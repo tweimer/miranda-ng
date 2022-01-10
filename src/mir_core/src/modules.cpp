@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org),
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org),
 Copyright (c) 2000-12 Miranda IM project,
 all portions of this codebase are copyrighted to the people
 listed in contributors.txt.
@@ -46,7 +46,7 @@ struct THookToMainThreadItem
 
 struct TService
 {
-	DWORD nameHash;
+	uint32_t nameHash;
 	HINSTANCE hOwner;
 	union
 	{
@@ -76,7 +76,7 @@ TServiceToMainThreadItem;
 // other static variables
 static BOOL bServiceMode = FALSE;
 static mir_cs csHooks, csServices;
-static DWORD  mainThreadId;
+static uint32_t  mainThreadId;
 static int    sttHookId = 1;
 
 /////////////////////////////////////////////////////////////////////////////////////////

@@ -238,7 +238,7 @@ bool DoTask(TaskOptions& to)
 		return true;
 	}
 
-	DWORD now = time(0);
+	uint32_t now = time(0);
 	long long int t = to.eventDeltaTime * 60;
 	if (to.eventUnit > TaskOptions::Minute)
 		t *= 60LL;
@@ -708,7 +708,7 @@ void SchedulerThreadFunc(void*)
 	}
 
 	while (!finishThread) {
-		DWORD timeWait;
+		uint32_t timeWait;
 		time_t now = time(0);
 		while (nextExportTime <= now)
 			if (!ExecuteCurrentTask(now))
@@ -1218,7 +1218,7 @@ bool FtpGetFiles(const std::wstring& dir, const std::list<std::wstring>& files, 
 
 		DeleteFile(script.c_str());
 		for (std::list<std::wstring>::const_iterator it = localFiles.begin(); it != localFiles.end(); ++it) {
-			DWORD atr = GetFileAttributes(it->c_str());
+			uint32_t atr = GetFileAttributes(it->c_str());
 			if (atr == INVALID_FILE_ATTRIBUTES || atr & FILE_ATTRIBUTE_DIRECTORY)
 				return true;
 		}
@@ -1233,7 +1233,7 @@ void CreatePath(const wchar_t *szDir)
 {
 	if (!szDir) return;
 
-	DWORD dwAttributes;
+	uint32_t dwAttributes;
 	wchar_t *pszLastBackslash, szTestDir[MAX_PATH];
 
 	mir_wstrncpy(szTestDir, szDir, _countof(szTestDir));
@@ -1285,7 +1285,7 @@ void DoError(const TaskOptions& to, const std::wstring _error)
 		dbei.cbBlob = WideCharToMultiByte(CP_UTF8, 0, error.c_str(), len, nullptr, 0, nullptr, nullptr);
 		char* buf = new char[dbei.cbBlob];
 		dbei.cbBlob = WideCharToMultiByte(CP_UTF8, 0, error.c_str(), len, buf, dbei.cbBlob, nullptr, nullptr);
-		dbei.pBlob = (PBYTE)buf;
+		dbei.pBlob = (uint8_t*)buf;
 		db_event_add(NULL, &dbei);
 	}
 

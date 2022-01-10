@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org),
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org),
 Copyright (c) 2000-12 Miranda IM project,
 all portions of this codebase are copyrighted to the people
 listed in contributors.txt.
@@ -58,7 +58,7 @@ struct FindAddDlgData
 
 int CALLBACK SearchResultsCompareFunc(LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort);
 void FreeSearchResults(HWND hwndResults);
-int BeginSearch(HWND hwndDlg, struct FindAddDlgData *dat, const char *szProto, const char *szSearchService, DWORD requiredCapability, void *pvSearchParams);
+int BeginSearch(HWND hwndDlg, struct FindAddDlgData *dat, const char *szProto, const char *szSearchService, uint32_t requiredCapability, void *pvSearchParams);
 void SetStatusBarSearchInfo(HWND hwndStatus, struct FindAddDlgData *dat);
 void SetStatusBarResultInfo(HWND hwndDlg);
 void CreateResultsColumns(HWND hwndResults, struct FindAddDlgData *dat, char *szProto);

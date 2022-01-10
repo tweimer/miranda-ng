@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org)
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org)
 Copyright (c) 2000-08 Miranda ICQ/IM project,
 all portions of this codebase are copyrighted to the people
 listed in contributors.txt.
@@ -112,7 +112,7 @@ struct ACKDATA
 struct PROTOFILETRANSFERSTATUS
 {
 	MCONTACT        hContact;
-	DWORD           flags;      // one of PFTS_* constants
+	uint32_t        flags;      // one of PFTS_* constants
 	MAllStringArray pszFiles;
 	int             totalFiles;
 	int             currentFileNumber;

@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org),
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org),
 Copyright (c) 2000-12 Miranda IM project,
 all portions of this codebase are copyrighted to the people
 listed in contributors.txt.
@@ -68,7 +68,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #define MODULENAME "SRAway"
 
-extern DWORD protoModeMsgFlags;
+extern uint32_t protoModeMsgFlags;
 
 int AwayMsgOptInitialise(WPARAM wParam, LPARAM);
 
@@ -86,7 +86,7 @@ struct CMPlugin : public PLUGIN<CMPlugin>
 		return getByte(StatusModeToDbSetting(status, suffix), bDefault) != 0;
 	}
 
-	void SetStatusModeByte(int status, const char *suffix, BYTE value)
+	void SetStatusModeByte(int status, const char *suffix, uint8_t value)
 	{
 		setByte(StatusModeToDbSetting(status, suffix), value);
 	}

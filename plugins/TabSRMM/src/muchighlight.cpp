@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////////////////
 // Miranda NG: the free IM client for Microsoft* Windows*
 //
-// Copyright (C) 2012-21 Miranda NG team,
+// Copyright (C) 2012-22 Miranda NG team,
 // Copyright (c) 2000-09 Miranda ICQ/IM project,
 // all portions of this codebase are copyrighted to the people
 // listed in contributors.txt.
@@ -109,7 +109,7 @@ void CMUCHighlight::tokenize(wchar_t *tszString, wchar_t**& patterns, UINT& nr)
 	}
 }
 
-bool CMUCHighlight::match(const GCEVENT *pgce, const SESSION_INFO *psi, DWORD dwFlags)
+bool CMUCHighlight::match(const GCEVENT *pgce, const SESSION_INFO *psi, uint32_t dwFlags)
 {
 	int result = 0, nResult = 0;
 

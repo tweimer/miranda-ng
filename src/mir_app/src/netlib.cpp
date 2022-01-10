@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org),
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org),
 Copyright (c) 2000-12 Miranda IM project,
 all portions of this codebase are copyrighted to the people
 listed in contributors.txt.
@@ -28,12 +28,12 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 static BOOL bModuleInitialized = FALSE;
 
 HANDLE hConnectionHeaderMutex, hConnectionOpenMutex, hEventConnected = NULL, hEventDisconnected = NULL;
-DWORD g_LastConnectionTick;
+uint32_t g_LastConnectionTick;
 int connectionTimeout;
 HANDLE hSendEvent = nullptr, hRecvEvent = nullptr;
 static char szUserAgent[100];
 
-typedef BOOL(WINAPI *tGetProductInfo)(DWORD, DWORD, DWORD, DWORD, PDWORD);
+typedef BOOL(WINAPI *tGetProductInfo)(uint32_t, uint32_t, uint32_t, uint32_t, PDWORD);
 
 static int CompareNetlibUser(const NetlibUser* p1, const NetlibUser* p2)
 {
@@ -78,7 +78,7 @@ void NetlibDeleteNestedCS(NetlibNestedCriticalSection *nlncs)
 int NetlibEnterNestedCS(NetlibConnection *nlc, int which)
 {
 	NetlibNestedCriticalSection *nlncs;
-	DWORD dwCurrentThreadId = GetCurrentThreadId();
+	uint32_t dwCurrentThreadId = GetCurrentThreadId();
 
 	WaitForSingleObject(hConnectionHeaderMutex, INFINITE);
 	if (nlc == nullptr || nlc->handleType != NLH_CONNECTION) {
@@ -315,7 +315,7 @@ MIR_APP_DLL(int) Netlib_CloseHandle(HANDLE hNetlib)
 				ReleaseMutex(hConnectionHeaderMutex);
 
 				HANDLE waitHandles[4] = { hConnectionHeaderMutex, nlc->hOkToCloseEvent, nlc->ncsRecv.hMutex, nlc->ncsSend.hMutex };
-				DWORD waitResult = WaitForMultipleObjects(_countof(waitHandles), waitHandles, TRUE, INFINITE);
+				uint32_t waitResult = WaitForMultipleObjects(_countof(waitHandles), waitHandles, TRUE, INFINITE);
 				if (waitResult >= WAIT_OBJECT_0 + _countof(waitHandles)) {
 					ReleaseMutex(hConnectionHeaderMutex);
 					SetLastError(ERROR_INVALID_PARAMETER);  //already been closed
@@ -494,7 +494,7 @@ int LoadNetlibModule(void)
 			if (RegOpenKeyExA(HKEY_LOCAL_MACHINE, keyn, 0, KEY_QUERY_VALUE, &hSettings) == ERROR_SUCCESS) {
 				DWORD tValueLen, enabled;
 				tValueLen = sizeof(enabled);
-				if (RegQueryValueExA(hSettings, valn, nullptr, nullptr, (BYTE*)&enabled, &tValueLen) == ERROR_SUCCESS && enabled)
+				if (RegQueryValueExA(hSettings, valn, nullptr, nullptr, (uint8_t*)&enabled, &tValueLen) == ERROR_SUCCESS && enabled)
 					connectionTimeout = 150;  // if enabled limit is set to 10 / sec
 				RegCloseKey(hSettings);
 			}

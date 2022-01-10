@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org)
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org)
 Copyright (c) 2000-08 Miranda ICQ/IM project,
 all portions of this codebase are copyrighted to the people
 listed in contributors.txt.
@@ -152,7 +152,7 @@ typedef struct {
 	int cbSize;
 	const wchar_t *pszText;
 	HANDLE hParentGroup;
-	DWORD flags;
+	uint32_t flags;
 	HICON hIcon;     //todo
 } CLCINFOITEM;
 #define CLCIIF_BELOWGROUPS    1     //put it between groups and contacts, default is at top
@@ -199,7 +199,7 @@ typedef struct {
 	HANDLE hItem;
 	int action;
 	int iColumn;	//-1 if not on an extra column
-	DWORD flags;
+	uint32_t flags;
 	POINT pt;
 } NMCLISTCONTROL;
 #endif

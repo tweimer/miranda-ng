@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org),
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org),
 Copyright (c) 2000-08 Miranda ICQ/IM project,
 all portions of this codebase are copyrighted to the people
 listed in contributors.txt.
@@ -42,7 +42,7 @@ int SkinOptInit(WPARAM wParam, LPARAM lParam);
 HICON cliGetIconFromStatusMode(MCONTACT hContact, const char *szProto, int status)
 {
 	// check if options is turned on
-	BYTE trayOption = db_get_b(0, "CLUI", "XStatusTray", SETTING_TRAYOPTION_DEFAULT);
+	uint8_t trayOption = db_get_b(0, "CLUI", "XStatusTray", SETTING_TRAYOPTION_DEFAULT);
 	if ((trayOption & 3) && szProto != nullptr) {
 		if (ProtoServiceExists(szProto, PS_GETCUSTOMSTATUSICON)) {
 			// check status is online
@@ -171,11 +171,11 @@ HRESULT CluiLoadModule()
 #define GWVS_PARTIALLY_COVERED 4
 
 int GetWindowVisibleState(HWND, int, int);
-__inline DWORD GetDIBPixelColor(int X, int Y, int Width, int Height, int ByteWidth, BYTE * ptr)
+__inline uint32_t GetDIBPixelColor(int X, int Y, int Width, int Height, int ByteWidth, uint8_t * ptr)
 {
-	DWORD res = 0;
+	uint32_t res = 0;
 	if (X >= 0 && X < Width && Y >= 0 && Y < Height && ptr)
-		res = *((DWORD*)(ptr + ByteWidth*(Height - Y - 1) + X * 4));
+		res = *((uint32_t*)(ptr + ByteWidth*(Height - Y - 1) + X * 4));
 	return res;
 }
 
@@ -203,13 +203,13 @@ int GetWindowVisibleState(HWND hWnd, int iStepX, int iStepY)
 	int maxx = 0;
 	int maxy = 0;
 	int wx = 0;
-	BYTE *ptr = nullptr;
+	uint8_t *ptr = nullptr;
 	HRGN rgn = nullptr;
 	HBITMAP WindowImage = g_CluiData.fLayered ? ske_GetCurrentWindowImage() : nullptr;
 	if (WindowImage && g_CluiData.fLayered) {
 		BITMAP bmp;
 		GetObject(WindowImage, sizeof(BITMAP), &bmp);
-		ptr = (BYTE*)bmp.bmBits;
+		ptr = (uint8_t*)bmp.bmBits;
 		maxx = bmp.bmWidth;
 		maxy = bmp.bmHeight;
 		wx = bmp.bmWidthBytes;
@@ -255,7 +255,7 @@ int GetWindowVisibleState(HWND hWnd, int iStepX, int iStepY)
 			if (rgn)
 				po = PtInRegion(rgn, j, i);
 			else {
-				DWORD a = (GetDIBPixelColor(j + dx, i + dy, maxx, maxy, wx, ptr) & 0xFF000000) >> 24;
+				uint32_t a = (GetDIBPixelColor(j + dx, i + dy, maxx, maxy, wx, ptr) & 0xFF000000) >> 24;
 				a = ((a*g_CluiData.bCurrentAlpha) >> 8);
 				po = (a > 16);
 			}
@@ -301,7 +301,7 @@ int GetWindowVisibleState(HWND hWnd, int iStepX, int iStepY)
 	return GWVS_PARTIALLY_COVERED;
 }
 
-BYTE g_bCalledFromShowHide = 0;
+uint8_t g_bCalledFromShowHide = 0;
 
 int cliShowHide(bool bAlwaysShow)
 {

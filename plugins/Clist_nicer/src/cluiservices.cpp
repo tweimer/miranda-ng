@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org),
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org),
 Copyright (c) 2000-03 Miranda ICQ/IM project,
 all portions of this codebase are copyrighted to the people
 listed in contributors.txt.
@@ -87,7 +87,7 @@ void CluiProtocolStatusChanged(int, const char*)
 		partCount = toshow;
 	}
 	else {
-		BYTE showOpts = db_get_b(0, "CLUI", "SBarShow", 1);
+		uint8_t showOpts = db_get_b(0, "CLUI", "SBarShow", 1);
 		wchar_t szName[32];
 
 		HDC hdc = GetDC(nullptr);
@@ -134,7 +134,7 @@ void CluiProtocolStatusChanged(int, const char*)
 	SendMessage(g_clistApi.hwndStatus, SB_SIMPLE, FALSE, 0);
 
 	partWidths[partCount - 1] = -1;
-	BYTE windowStyle = db_get_b(0, "CLUI", "WindowStyle", 0);
+	uint8_t windowStyle = db_get_b(0, "CLUI", "WindowStyle", 0);
 	SendMessage(g_clistApi.hwndStatus, SB_SETMINHEIGHT, 18 + cfg::dat.bClipBorder + ((windowStyle == SETTING_WINDOWSTYLE_THINBORDER || windowStyle == SETTING_WINDOWSTYLE_NOBORDER) ? 3 : 0), 0);
 	SendMessage(g_clistApi.hwndStatus, SB_SETPARTS, partCount, (LPARAM)partWidths);
 

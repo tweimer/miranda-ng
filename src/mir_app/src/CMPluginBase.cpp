@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org),
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org),
 Copyright (c) 2000-12 Miranda IM project,
 all portions of this codebase are copyrighted to the people
 listed in contributors.txt.
@@ -288,6 +288,7 @@ void CMPluginBase::debugLogW(LPCWSTR wszFormat, ...)
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
+#ifdef _WINDOWS
 int CMPluginBase::addImgListIcon(HIMAGELIST himl, int iconId)
 {
 	HICON hIcon = getIcon(iconId);
@@ -295,6 +296,7 @@ int CMPluginBase::addImgListIcon(HIMAGELIST himl, int iconId)
 	IcoLib_ReleaseIcon(hIcon);
 	return ret;
 }
+#endif
 
 HICON CMPluginBase::getIcon(int iconId, bool big)
 {

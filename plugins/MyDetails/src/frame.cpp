@@ -70,7 +70,7 @@ COLORREF font_colour[NUM_FONTS];
 char *font_settings[] = { "NicknameFont", "AccountFont", "StatusFont", "StatusMessageFont", "ListeningToFont" };
 wchar_t *font_names[] = { LPGENW("Nickname"), LPGENW("Account"), LPGENW("Status"), LPGENW("Status message"), LPGENW("Listening to") };
 char font_sizes[] = { 13, 8, 8, 8, 8 };
-BYTE font_styles[] = { DBFONTF_BOLD, 0, 0, DBFONTF_ITALIC, DBFONTF_ITALIC };
+uint8_t font_styles[] = { DBFONTF_BOLD, 0, 0, DBFONTF_ITALIC, DBFONTF_ITALIC };
 COLORREF font_colors[] = { RGB(0, 0, 0), RGB(0, 0, 0), RGB(0, 0, 0), RGB(150, 150, 150), RGB(150, 150, 150) };
 
 static ColourID bg_colour, av_colour;
@@ -1463,7 +1463,7 @@ static void ShowProtocolStatusMenu(HWND hwnd, MyDetailsFrameData *data, Protocol
 		TranslateMenu(submenu);
 
 		// Hide menu
-		DWORD flags = CallProtoService(proto->name, PS_GETCAPS, PFLAGNUM_2, 0);
+		uint32_t flags = CallProtoService(proto->name, PS_GETCAPS, PFLAGNUM_2, 0);
 		for (int i = GetMenuItemCount(submenu) - 1; i >= 0; i--)
 			if (!(flags & statusModePf2List[i]))
 				RemoveMenu(submenu, i, MF_BYPOSITION);

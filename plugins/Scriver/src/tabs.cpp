@@ -332,7 +332,7 @@ void ParentWindowData::SetContainerWindowStyle()
 {
 	ShowWindow(m_hwndStatus, (flags2.bShowStatusBar) ? SW_SHOW : SW_HIDE);
 
-	DWORD ws = GetWindowLongPtr(m_hwnd, GWL_STYLE) & ~(WS_CAPTION);
+	uint32_t ws = GetWindowLongPtr(m_hwnd, GWL_STYLE) & ~(WS_CAPTION);
 	if (flags2.bShowTitleBar)
 		ws |= WS_CAPTION;
 
@@ -342,7 +342,7 @@ void ParentWindowData::SetContainerWindowStyle()
 	ws |= flags2.bUseTransparency ? WS_EX_LAYERED : 0;
 	SetWindowLongPtr(m_hwnd, GWL_EXSTYLE, ws);
 	if (flags2.bUseTransparency)
-		SetLayeredWindowAttributes(m_hwnd, RGB(255, 255, 255), (BYTE)(255 - g_dat.inactiveAlpha), LWA_ALPHA);
+		SetLayeredWindowAttributes(m_hwnd, RGB(255, 255, 255), (uint8_t)(255 - g_dat.inactiveAlpha), LWA_ALPHA);
 
 	ws = GetWindowLongPtr(m_hwndTabs, GWL_STYLE) & ~(TCS_BOTTOM | 0x2000);
 	if (flags2.bTabsAtBottom)
@@ -393,7 +393,7 @@ void ParentWindowData::ToggleTitleBar()
 {
 	flags2.bShowTitleBar = !flags2.bShowTitleBar;
 
-	DWORD ws = GetWindowLongPtr(m_hwnd, GWL_STYLE) & ~(WS_CAPTION);
+	uint32_t ws = GetWindowLongPtr(m_hwnd, GWL_STYLE) & ~(WS_CAPTION);
 	if (flags2.bShowTitleBar)
 		ws |= WS_CAPTION;
 	SetWindowLongPtr(m_hwnd, GWL_STYLE, ws);
@@ -1030,11 +1030,11 @@ static INT_PTR CALLBACK DlgProcParentWindow(HWND hwndDlg, UINT msg, WPARAM wPara
 
 	case WM_ACTIVATE:
 		if (LOWORD(wParam) == WA_INACTIVE) {
-			DWORD ws = GetWindowLongPtr(hwndDlg, GWL_EXSTYLE) & ~WS_EX_LAYERED;
+			uint32_t ws = GetWindowLongPtr(hwndDlg, GWL_EXSTYLE) & ~WS_EX_LAYERED;
 			ws |= dat->flags2.bUseTransparency ? WS_EX_LAYERED : 0;
 			SetWindowLongPtr(hwndDlg, GWL_EXSTYLE, ws);
 			if (dat->flags2.bUseTransparency)
-				SetLayeredWindowAttributes(hwndDlg, RGB(255, 255, 255), (BYTE)(255 - g_dat.inactiveAlpha), LWA_ALPHA);
+				SetLayeredWindowAttributes(hwndDlg, RGB(255, 255, 255), (uint8_t)(255 - g_dat.inactiveAlpha), LWA_ALPHA);
 			break;
 		}
 		if (dat->m_hwndActive != nullptr) {
@@ -1048,12 +1048,12 @@ static INT_PTR CALLBACK DlgProcParentWindow(HWND hwndDlg, UINT msg, WPARAM wPara
 		}
 
 		{
-			DWORD ws = GetWindowLongPtr(hwndDlg, GWL_EXSTYLE) & ~WS_EX_LAYERED;
+			uint32_t ws = GetWindowLongPtr(hwndDlg, GWL_EXSTYLE) & ~WS_EX_LAYERED;
 			ws |= dat->flags2.bUseTransparency ? WS_EX_LAYERED : 0;
 			SetWindowLongPtr(hwndDlg, GWL_EXSTYLE, ws);
 		}
 		if (dat->flags2.bUseTransparency)
-			SetLayeredWindowAttributes(hwndDlg, RGB(255, 255, 255), (BYTE)(255 - g_dat.activeAlpha), LWA_ALPHA);
+			SetLayeredWindowAttributes(hwndDlg, RGB(255, 255, 255), (uint8_t)(255 - g_dat.activeAlpha), LWA_ALPHA);
 		break;
 
 	case WM_LBUTTONDOWN:

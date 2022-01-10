@@ -5,7 +5,7 @@ Jabber Protocol Plugin for Miranda NG
 Copyright (c) 2002-04  Santithorn Bunchua
 Copyright (c) 2005-12  George Hazan
 Copyright (c) 2007     Maxim Mluhov
-Copyright (C) 2012-21 Miranda NG team
+Copyright (C) 2012-22 Miranda NG team
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -53,7 +53,7 @@ void CJabberProto::DBAddAuthRequest(const char *jid, const char *nick)
 	DB::AUTH_BLOB blob(hContact, nick, nullptr, nullptr, jid, nullptr);
 
 	PROTORECVEVENT pre = {};
-	pre.timestamp = (DWORD)time(0);
+	pre.timestamp = (uint32_t)time(0);
 	pre.lParam = blob.size();
 	pre.szMessage = blob;
 	ProtoChainRecv(hContact, PSR_AUTH, 0, (LPARAM)&pre);
@@ -101,7 +101,7 @@ MCONTACT CJabberProto::DBCreateContact(const char *jid, const char *nick, bool t
 	return hNewContact;
 }
 
-bool CJabberProto::AddDbPresenceEvent(MCONTACT hContact, BYTE btEventType)
+bool CJabberProto::AddDbPresenceEvent(MCONTACT hContact, uint8_t btEventType)
 {
 	if (!hContact)
 		return false;
@@ -468,7 +468,7 @@ static bool SaveBlobToFile(const wchar_t *pwszFileName, const CMStringA &body)
 	DWORD n;
 	size_t bufferLen;
 	ptrA buffer((char *)mir_base64_decode(body, &bufferLen));
-	WriteFile(h, buffer, (DWORD)bufferLen, &n, nullptr);
+	WriteFile(h, buffer, (uint32_t)bufferLen, &n, nullptr);
 	CloseHandle(h);
 	return true;
 }

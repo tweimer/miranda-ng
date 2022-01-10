@@ -46,8 +46,8 @@ wchar_t *TRAFFIC_COUNTER_WINDOW_CLASS = L"TrafficCounterWnd";
 //TRAFFIC COUNTER
 /*-------------------------------------------------------------------------------------------------------------------*/
 
-WORD notify_send_size = 0;
-WORD notify_recv_size = 0;
+uint16_t notify_send_size = 0;
+uint16_t notify_recv_size = 0;
 //
 // Цвет шрифта и фона
 COLORREF Traffic_BkColor, Traffic_FontColor;
@@ -76,7 +76,7 @@ HGENMENU hTrafficMainMenuItem = nullptr;
 /*-------------------------------------------------------------------------------------------------------------------*/
 //TIME COUNTER
 /*-------------------------------------------------------------------------------------------------------------------*/
-BYTE online_count = 0;
+uint8_t online_count = 0;
 
 /*-------------------------------------------------------------------------------------------------------------------*/
 //font service support
@@ -152,7 +152,7 @@ int ModuleLoad(WPARAM, LPARAM)
 	return 0;
 }
 
-void SaveSettings(BYTE OnlyCnt)
+void SaveSettings(uint8_t OnlyCnt)
 {
 	unsigned short int i;
 
@@ -215,7 +215,7 @@ int TrafficSend(WPARAM wParam, LPARAM lParam)
 	return 0;
 }
 
-int TrafficCounter_PaintCallbackProc(HWND hWnd, HDC hDC, RECT*, HRGN, DWORD, void*)
+int TrafficCounter_PaintCallbackProc(HWND hWnd, HDC hDC, RECT*, HRGN, uint32_t, void*)
 {
 	return TrafficCounter_Draw(hWnd, hDC);
 }
@@ -230,7 +230,7 @@ int TrafficCounter_Draw(HWND hwnd, HDC hDC)
 	return 0;
 }
 
-static void TC_AlphaText(HDC hDC, LPCTSTR lpString, RECT* lpRect, UINT format, BYTE ClistModernPresent)
+static void TC_AlphaText(HDC hDC, LPCTSTR lpString, RECT* lpRect, UINT format, uint8_t ClistModernPresent)
 {
 	int nCount = (int)mir_wstrlen(lpString);
 
@@ -240,7 +240,7 @@ static void TC_AlphaText(HDC hDC, LPCTSTR lpString, RECT* lpRect, UINT format, B
 		DrawText(hDC, lpString, nCount, lpRect, format);
 }
 
-static void TC_DrawIconEx(HDC hdc, int xLeft, int yTop, HICON hIcon, HBRUSH hbrFlickerFreeDraw, BYTE ClistModernPresent)
+static void TC_DrawIconEx(HDC hdc, int xLeft, int yTop, HICON hIcon, HBRUSH hbrFlickerFreeDraw, uint8_t ClistModernPresent)
 {
 	if (ClistModernPresent)
 		mod_DrawIconEx_helper(hdc, xLeft, yTop, hIcon, 16, 16, 0, hbrFlickerFreeDraw, DI_NORMAL);
@@ -252,9 +252,9 @@ int PaintTrafficCounterWindow(HWND hwnd, HDC hDC)
 {
 	RECT        rect, rect2;
 	BLENDFUNCTION aga = { AC_SRC_OVER, 0, 0xFF, AC_SRC_ALPHA };
-	DWORD SummarySession, SummaryTotal;
+	uint32_t SummarySession, SummaryTotal;
 
-	BYTE ClistModernPresent = (GetModuleHandleA("clist_modern.dll") || GetModuleHandleA("clist_modern_dora.dll"))
+	uint8_t ClistModernPresent = (GetModuleHandleA("clist_modern.dll") || GetModuleHandleA("clist_modern_dora.dll"))
 		&& !db_get_b(0, "ModernData", "DisableEngine", 0)
 		&& db_get_b(0, "ModernData", "EnableLayering", 1);
 
@@ -474,7 +474,7 @@ int PaintTrafficCounterWindow(HWND hwnd, HDC hDC)
 		// Если есть Variables - рисуем по-новому
 		//-------------
 		RowItemInfo *ItemsList;
-		WORD ItemsNumber, RowsNumber;
+		uint16_t ItemsNumber, RowsNumber;
 
 		// Готовим список строк для Variables и иконок.
 		wchar_t **ExtraText = (wchar_t**)mir_alloc(sizeof(wchar_t*));
@@ -570,7 +570,7 @@ int PaintTrafficCounterWindow(HWND hwnd, HDC hDC)
 
 void ProtocolIsOnLine(int num)
 {
-	DWORD CurrentTimeMs;
+	uint32_t CurrentTimeMs;
 
 	if (ProtoList[num].State) return;
 
@@ -688,7 +688,7 @@ LRESULT CALLBACK TrafficCounterWndProc_MW(HWND hwnd, UINT msg, WPARAM wParam, LP
 
 		case TIMER_REDRAW: // Перерисовка раз в полсекунды.
 			{
-				DWORD CurrentTimeMs;
+				uint32_t CurrentTimeMs;
 				SYSTEMTIME stNow;
 
 				SaveSettings(1);
@@ -710,7 +710,7 @@ LRESULT CALLBACK TrafficCounterWndProc_MW(HWND hwnd, UINT msg, WPARAM wParam, LP
 					Stat_CheckStatistics(p);
 
 					// Здесь на основании статистики вычисляются значения всех трафиков и времени.
-					DWORD Sum1 = 0, Sum2 = 0;
+					uint32_t Sum1 = 0, Sum2 = 0;
 						
 					// Значения для текущей сессии.
 					for (int j = p.StartIndex; j < p.NumberOfRecords; j++) {

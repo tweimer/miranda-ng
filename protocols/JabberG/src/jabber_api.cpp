@@ -5,7 +5,7 @@ Jabber Protocol Plugin for Miranda NG
 Copyright (c) 2002-04  Santithorn Bunchua
 Copyright (c) 2005-12  George Hazan
 Copyright (c) 2007     Maxim Mluhov
-Copyright (C) 2012-21 Miranda NG team
+Copyright (C) 2012-22 Miranda NG team
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -35,7 +35,7 @@ INT_PTR __cdecl CJabberProto::JabberGetApi(WPARAM, LPARAM lParam)
 	return 0;
 }
 
-DWORD CJabberProto::GetFlags() const
+uint32_t CJabberProto::GetFlags() const
 {
 	return JIF_UNICODE;
 }
@@ -45,7 +45,7 @@ int CJabberProto::GetVersion() const
 	return 1;
 }
 
-DWORD CJabberProto::GetJabberVersion() const
+uint32_t CJabberProto::GetJabberVersion() const
 {
 	return PLUGIN_MAKE_VERSION(__MAJOR_VERSION, __MINOR_VERSION, __RELEASE_NUM, __BUILD_NUM);
 }

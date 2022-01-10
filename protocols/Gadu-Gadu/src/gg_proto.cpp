@@ -74,7 +74,7 @@ GaduProto::GaduProto(const char *pszProtoName, const wchar_t *tszUserName) :
 	mir_snwprintf(szPath, L"%s\\%s\\ImageCache", (wchar_t*)VARSW(L"%miranda_userdata%"), m_tszUserName);
 	hImagesFolder = FoldersRegisterCustomPathW(LPGEN("Images"), m_szModuleName, szPath, m_tszUserName);
 
-	DWORD pluginVersion = getDword(GG_PLUGINVERSION, 0);
+	uint32_t pluginVersion = getDword(GG_PLUGINVERSION, 0);
 	if (pluginVersion < pluginInfoEx.version)
 		cleanuplastplugin(pluginVersion);
 
@@ -506,7 +506,7 @@ int GaduProto::SendMsg(MCONTACT hContact, int, const char *msg)
 		return 0;
 
 	gg_EnterCriticalSection(&sess_mutex, "SendMsg", 53, "sess_mutex", 1);
-	int seq = gg_send_message(m_sess, GG_CLASS_CHAT, uin, (BYTE*)msg);
+	int seq = gg_send_message(m_sess, GG_CLASS_CHAT, uin, (uint8_t*)msg);
 	gg_LeaveCriticalSection(&sess_mutex, "SendMsg", 53, 1, "sess_mutex", 1);
 
 	// Auto-ack message without waiting for server ack
@@ -521,7 +521,7 @@ int GaduProto::SendMsg(MCONTACT hContact, int, const char *msg)
 //
 int GaduProto::SetApparentMode(MCONTACT hContact, int mode)
 {
-	setWord(hContact, GG_KEY_APPARENT, (WORD)mode);
+	setWord(hContact, GG_KEY_APPARENT, (uint16_t)mode);
 	notifyuser(hContact, 1);
 
 	return 0;

@@ -23,7 +23,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "stdafx.h"
 
-WORD Stat_SelAcc; // Выбранные аккаунты в окне статистики
+uint16_t Stat_SelAcc; // Выбранные аккаунты в окне статистики
 
 HWND hListAccs;
 
@@ -102,8 +102,8 @@ INT_PTR CALLBACK DlgProcOptStatistics(HWND hwndDlg, UINT msg, WPARAM wParam, LPA
 		break; // WM_INITDIALOG
 	case WM_COMMAND:
 		if ((HWND)lParam == hListAccs) {
-			DWORD SelItems[16];
-			BYTE SelItemsCount;
+			uint32_t SelItems[16];
+			uint8_t SelItemsCount;
 			if (HIWORD(wParam) == LBN_SELCHANGE) {
 				SelItemsCount = SendMessage(hListAccs, LB_GETSELCOUNT, 0, 0);
 				SendMessage(hListAccs,
@@ -171,10 +171,10 @@ INT_PTR CALLBACK DlgProcOptStatistics(HWND hwndDlg, UINT msg, WPARAM wParam, LPA
 					{
 						NMLVDISPINFO* pdi = (NMLVDISPINFO*)lParam;
 						SYSTEMTIME st = { 0 };
-						DWORD Index, Value;
+						uint32_t Index, Value;
 						double vartime;
 						wchar_t szBufW[64];
-						BYTE EldestAcc;
+						uint8_t EldestAcc;
 
 						if (!(pdi->item.mask & LVIF_TEXT)) return 0;
 
@@ -239,7 +239,7 @@ INT_PTR CALLBACK DlgProcOptStatistics(HWND hwndDlg, UINT msg, WPARAM wParam, LPA
 				case NM_CLICK:
 				case LVN_ITEMCHANGED:
 					{
-						DWORD j = -1, dwTotalIncoming = 0, dwTotalOutgoing = 0;
+						uint32_t j = -1, dwTotalIncoming = 0, dwTotalOutgoing = 0;
 
 						int i = SendDlgItemMessage(hwndDlg, IDC_LIST_DATA, LVM_GETSELECTEDCOUNT, 0, 0);
 						for (; i--;) {
@@ -262,7 +262,7 @@ INT_PTR CALLBACK DlgProcOptStatistics(HWND hwndDlg, UINT msg, WPARAM wParam, LPA
 						case CDDS_ITEMPREPAINT: // Перед началом рисования строки.
 							{
 								COLORREF Color;
-								BYTE r, g, b;
+								uint8_t r, g, b;
 
 								if (lplvcd->nmcd.dwItemSpec & 0x01) {
 									Color = SendDlgItemMessage(hwndDlg, IDC_LIST_DATA, LVM_GETBKCOLOR, 0, 0);
@@ -311,7 +311,7 @@ void Stat_ReadFile(PROTOLIST &p)
 	if (Size.QuadPart != 0) // Если файл со статистикой существует и имеет ненулевой размер...
 	{
 		// ...то читаем статистику из файла
-		p.NumberOfRecords = DWORD(Size.QuadPart / sizeof(HOURLYSTATS));
+		p.NumberOfRecords = uint32_t(Size.QuadPart / sizeof(HOURLYSTATS));
 		p.AllStatistics = (HOURLYSTATS*)mir_alloc(sizeof(HOURLYSTATS)*p.NumberOfRecords);
 		ReadFile(p.hFile, &p.AllStatistics[0], sizeof(HOURLYSTATS)*p.NumberOfRecords, &BytesRead, nullptr);
 		if (!BytesRead) {
@@ -336,7 +336,7 @@ void Stat_ReadFile(PROTOLIST &p)
 Аргументы: hwndDialog - хэндл окна диалога. */
 void Stat_Show(HWND hwndDialog)
 {
-	DWORD MaxRecords;
+	uint32_t MaxRecords;
 
 	// Нужно узнать количество записей.
 	MaxRecords = Stat_GetRecordsNumber(Stat_GetEldestAcc(Stat_SelAcc), unOptions.Stat_Tab);
@@ -346,7 +346,7 @@ void Stat_Show(HWND hwndDialog)
 	SendDlgItemMessage(hwndDialog, IDC_LIST_DATA, LVM_ENSUREVISIBLE, (WPARAM)(MaxRecords - 1), 0);
 }
 
-void Stat_UpdateTotalTraffic(HWND hwndDialog, DWORD Incoming, DWORD Outgoing)
+void Stat_UpdateTotalTraffic(HWND hwndDialog, uint32_t Incoming, uint32_t Outgoing)
 {
 	wchar_t tmp[32];
 
@@ -415,7 +415,7 @@ void Stat_CheckStatistics(PROTOLIST &p)
 
 		// Последняя запись из статистики понадобится для вычисления новых записей, поэтому копируем её (кроме трафика и времени).
 		memcpy(&htTmp, &p.AllStatistics[p.NumberOfRecords - 1],
-			sizeof(HOURLYSTATS) - 2 * sizeof(DWORD) - sizeof(WORD));
+			sizeof(HOURLYSTATS) - 2 * sizeof(uint32_t) - sizeof(uint16_t));
 		// Счётчик времени каждый час должен начинать считать с нуля.
 		p.Total.TimeAtStart = GetTickCount() - stNow.wMilliseconds;
 
@@ -453,7 +453,7 @@ void Stat_CheckStatistics(PROTOLIST &p)
 ItemNumber - номер строки в ListView (номер периода).
 stReq - дата, соответствующая вычисленному индексу.
 */
-DWORD Stat_GetStartIndex(BYTE AccNum, BYTE Interval, int ItemNumber, SYSTEMTIME *stReq)
+uint32_t Stat_GetStartIndex(uint8_t AccNum, uint8_t Interval, int ItemNumber, SYSTEMTIME *stReq)
 {
 	int Left, Right, Probe; // Границы интервала для поиска (индексы статистики).
 	SYSTEMTIME stProbe = { 0 }; // Время тыка.
@@ -527,9 +527,9 @@ DWORD Stat_GetStartIndex(BYTE AccNum, BYTE Interval, int ItemNumber, SYSTEMTIME 
 /* Функция устанавливает величину сдвига для заданного аккаунта,
 то есть номер записи в статистике старейшего из выбранных аккаунтов,
 дата которой соответствует началу статистики указанного аккаунта. */
-void Stat_SetAccShift(BYTE AccNum, BYTE EldestAccount)
+void Stat_SetAccShift(uint8_t AccNum, uint8_t EldestAccount)
 {
-	DWORD Left, Right, Probe = 0; // Границы интервала для поиска (индексы статистики).
+	uint32_t Left, Right, Probe = 0; // Границы интервала для поиска (индексы статистики).
 	SYSTEMTIME stReq = { 0 }, stProbe;
 	signed short int d = 1;
 
@@ -571,13 +571,13 @@ Interval - выбранный интервал;
 ItemNum - номер строки в ListVew;
 SubitemNum - номер колонки, определяет вид информации. */
 
-DWORD Stat_GetItemValue(WORD SelectedAccs, BYTE Interval, DWORD ItemNum, BYTE SubItemNum)
+uint32_t Stat_GetItemValue(uint16_t SelectedAccs, uint8_t Interval, uint32_t ItemNum, uint8_t SubItemNum)
 {
-	DWORD Result = 0;
+	uint32_t Result = 0;
 	SYSTEMTIME st = { 0 };
 	int Index, IndexP, i;
 	signed long int IndexM;
-	BYTE a, EldestAcc;
+	uint8_t a, EldestAcc;
 
 	EldestAcc = Stat_GetEldestAcc(SelectedAccs);
 	Index = Stat_GetStartIndex(EldestAcc, Interval, ItemNum, &st);
@@ -644,9 +644,9 @@ DWORD Stat_GetItemValue(WORD SelectedAccs, BYTE Interval, DWORD ItemNum, BYTE Su
 
 /* Функция возвращает количество записей в статистике для
 заданного аккаунта и заданного интервала. */
-DWORD Stat_GetRecordsNumber(BYTE AccNum, BYTE Interval)
+uint32_t Stat_GetRecordsNumber(uint8_t AccNum, uint8_t Interval)
 {
-	DWORD Result, i;
+	uint32_t Result, i;
 
 	// Нужно узнать количество записей.
 	switch (Interval) {
@@ -683,9 +683,9 @@ DWORD Stat_GetRecordsNumber(BYTE AccNum, BYTE Interval)
 	return Result;
 }
 
-BYTE Stat_GetEldestAcc(WORD SelectedAccs)
+uint8_t Stat_GetEldestAcc(uint16_t SelectedAccs)
 {
-	BYTE Result, i;
+	uint8_t Result, i;
 
 	// Узнаём номер аккаунта из числа выбранных, имеющего самую старую первую запись.
 	// (Это аккаунт с максимальным количеством записей.)

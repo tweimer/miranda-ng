@@ -4,7 +4,7 @@ Jabber Protocol Plugin for Miranda NG
 
 Copyright (c) 2002-04  Santithorn Bunchua
 Copyright (c) 2005-12  George Hazan
-Copyright (C) 2012-21 Miranda NG team
+Copyright (C) 2012-22 Miranda NG team
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -78,7 +78,7 @@ void CJabberProto::OnIqResultGetCollectionList(const TiXmlElement *iqNode, CJabb
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-static DWORD dwPreviousTimeStamp = -1;
+static uint32_t dwPreviousTimeStamp = -1;
 static MCONTACT hPreviousContact = INVALID_CONTACT_ID;
 static MEVENT hPreviousDbEvent = 0;
 
@@ -92,7 +92,7 @@ bool IsDuplicateEvent(MCONTACT hContact, DBEVENTINFO& dbei)
 
 	DBEVENTINFO dbeiExisting = {};
 	db_event_get(hExistingDbEvent, &dbeiExisting);
-	DWORD dwEventTimeStamp = dbeiExisting.timestamp;
+	uint32_t dwEventTimeStamp = dbeiExisting.timestamp;
 
 	// compare with last timestamp
 	if (dbei.timestamp > dwEventTimeStamp) {
@@ -255,9 +255,9 @@ void CJabberProto::OnIqResultGetCollection(const TiXmlElement *iqNode, CJabberIq
 		DBEVENTINFO dbei = {};
 		dbei.eventType = EVENTTYPE_MESSAGE;
 		dbei.szModule = m_szModuleName;
-		dbei.cbBlob = (DWORD)mir_strlen(tszBody) + 1;
+		dbei.cbBlob = (uint32_t)mir_strlen(tszBody) + 1;
 		dbei.flags = DBEF_READ + DBEF_UTF + from;
-		dbei.pBlob = (BYTE*)tszBody;
+		dbei.pBlob = (uint8_t*)tszBody;
 		dbei.timestamp = tmStart + atol(tszSecs);
 		if (!IsDuplicateEvent(hContact, dbei))
 			db_event_add(hContact, &dbei);

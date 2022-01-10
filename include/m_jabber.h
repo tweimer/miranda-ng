@@ -6,7 +6,7 @@ Copyright (c) 2002-04 Santithorn Bunchua
 Copyright (c) 2005-08 George Hazan
 Copyright (c) 2007    Maxim Mluhov
 Copyright (c) 2008-09 Dmitriy Chervov
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org)
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org)
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -93,13 +93,13 @@ enum
 struct IJabberInterface
 {
 	// Set of JIF_* flags.
-	virtual DWORD STDMETHODCALLTYPE GetFlags() const = 0;
+	virtual uint32_t STDMETHODCALLTYPE GetFlags() const = 0;
 
 	// Returns version of IJabberInterface.
 	virtual int STDMETHODCALLTYPE GetVersion() const = 0;
 
 	// Returns Jabber plugin version.
-	virtual DWORD STDMETHODCALLTYPE GetJabberVersion() const = 0;
+	virtual uint32_t STDMETHODCALLTYPE GetJabberVersion() const = 0;
 
 	// Returns contact handle for given JID, or NULL on error.
 	virtual MCONTACT STDMETHODCALLTYPE	ContactFromJID(LPCSTR jid) = 0;

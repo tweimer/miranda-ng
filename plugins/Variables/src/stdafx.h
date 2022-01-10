@@ -163,9 +163,9 @@ int  getTokenRegisterCount();
 int  initTokenRegister();
 int  deinitTokenRegister();
 // contact.c
-BYTE getContactInfoType(wchar_t* type);
-wchar_t* getContactInfoT(BYTE type, MCONTACT hContact);
-MCONTACT getContactFromString(const wchar_t *tszContact, DWORD dwFlags, int nMatch = 0);
+uint8_t getContactInfoType(wchar_t* type);
+wchar_t* getContactInfoT(uint8_t type, MCONTACT hContact);
+MCONTACT getContactFromString(const wchar_t *tszContact, uint32_t dwFlags, int nMatch = 0);
 int  initContactModule();
 int  deinitContactModule();
 // alias

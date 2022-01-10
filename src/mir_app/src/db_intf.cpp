@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team,
+Copyright (C) 2012-22 Miranda NG team,
 all portions of this codebase are copyrighted to the people
 listed in contributors.txt.
 
@@ -48,7 +48,7 @@ MIR_APP_DLL(DATABASELINK*) FindDatabasePlugin(const wchar_t *ptszFileName)
 {
 	for (auto &it : arDbPlugins) {
 		int error = it->grokHeader(ptszFileName);
-		if (error == ERROR_SUCCESS || error == EGROKPRF_OBSOLETE)
+		if (error == EGROKPRF_NOERROR || error == EGROKPRF_OBSOLETE)
 			return it;
 	}
 

@@ -21,7 +21,7 @@
 
 #include "stdafx.h"
 
-void ShowChangePopup(MCONTACT hContact, HICON hIcon, WORD newStatus, const wchar_t *stzText, PLUGINDATA *pdp)
+void ShowChangePopup(MCONTACT hContact, HICON hIcon, uint16_t newStatus, const wchar_t *stzText, PLUGINDATA *pdp)
 {
 	POPUPDATAW ppd;
 	ppd.lchContact = hContact;
@@ -110,7 +110,7 @@ void QueryAwayMessage(HWND hWnd, PLUGINDATA *pdp)
 	}
 }
 
-void PopupAction(HWND hWnd, BYTE action)
+void PopupAction(HWND hWnd, uint8_t action)
 {
 	MCONTACT hContact = PUGetContact(hWnd);
 	if (hContact && hContact != INVALID_CONTACT_ID) {

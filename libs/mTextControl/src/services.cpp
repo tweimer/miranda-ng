@@ -22,7 +22,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 struct TextObject
 {
-	DWORD options;
+	uint32_t options;
 	const char *szProto;
 	IFormattedTextDraw *ftd;
 	TextObject() : options(0), ftd(nullptr) {}
@@ -32,7 +32,7 @@ struct TextObject
 /////////////////////////////////////////////////////////////////////////////////////////
 // elper functions
 
-void MText_InitFormatting0(IFormattedTextDraw *ftd, DWORD)
+void MText_InitFormatting0(IFormattedTextDraw *ftd, uint32_t)
 {
 	LRESULT lResult;
 
@@ -72,7 +72,7 @@ MTEXTCONTROL_DLL(HANDLE) MTextCreateW(HANDLE userHandle, const char *szProto, co
 	InitRichEdit(result->ftd->getTextService());
 
 	MText_InitFormatting0(result->ftd, result->options);
-	result->ftd->putTextW((WCHAR*)text);
+	result->ftd->putTextW((wchar_t*)text);
 	MText_InitFormatting1(result);
 
 	return (HANDLE)result;
@@ -81,7 +81,7 @@ MTEXTCONTROL_DLL(HANDLE) MTextCreateW(HANDLE userHandle, const char *szProto, co
 /////////////////////////////////////////////////////////////////////////////////////////
 // allocate text object (advanced)
 
-MTEXTCONTROL_DLL(HANDLE) MTextCreateEx(HANDLE userHandle, void *text, DWORD flags)
+MTEXTCONTROL_DLL(HANDLE) MTextCreateEx(HANDLE userHandle, void *text, uint32_t flags)
 {
 	TextObject *result = new TextObject;
 	result->options = TextUserGetOptions(userHandle);
@@ -91,7 +91,7 @@ MTEXTCONTROL_DLL(HANDLE) MTextCreateEx(HANDLE userHandle, void *text, DWORD flag
 
 	MText_InitFormatting0(result->ftd, result->options);
 	if (flags & MTEXT_FLG_WCHAR)
-		result->ftd->putTextW((WCHAR *)text);
+		result->ftd->putTextW((wchar_t *)text);
 	else
 		result->ftd->putTextA((char *)text);
 	MText_InitFormatting1(result);

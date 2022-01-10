@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team,
+Copyright (C) 2012-22 Miranda NG team,
 all portions of this codebase are copyrighted to the people
 listed in contributors.txt.
 
@@ -183,9 +183,9 @@ void MDatabaseCache::SetCachedVariant(DBVARIANT* s /* new */, DBVARIANT* d /* ca
 			}
 
 			if (szSave != nullptr)
-				d->pbVal = (BYTE*)mir_realloc(szSave, s->cpbVal);
+				d->pbVal = (uint8_t*)mir_realloc(szSave, s->cpbVal);
 			else
-				d->pbVal = (BYTE*)mir_alloc(s->cpbVal);
+				d->pbVal = (uint8_t*)mir_alloc(s->cpbVal);
 			memcpy(d->pbVal, s->pbVal, s->cpbVal);
 		}
 	}

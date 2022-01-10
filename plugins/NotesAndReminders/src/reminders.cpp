@@ -20,7 +20,7 @@ static void RemoveReminderSystemEvent(struct REMINDERDATA *p);
 struct REMINDERDATA : public MZeroedObject
 {
 	HWND handle;
-	DWORD uid;
+	uint32_t uid;
 	CMStringW wszText;
 	ULONGLONG When;	// FILETIME in UTC
 	UINT RepeatSound;
@@ -58,7 +58,7 @@ static bool bNewReminderVisible = false;
 static UINT QueuedReminderCount = 0;
 
 int WS_Send(SOCKET s, char *data, int datalen);
-unsigned long WS_ResolveName(char *name, WORD *port, int defaultPort);
+unsigned long WS_ResolveName(char *name, uint16_t *port, int defaultPort);
 
 void Send(char *user, char *host, const char *Msg, char* server);
 wchar_t* GetPreviewString(const wchar_t *lpsz);
@@ -82,7 +82,7 @@ void TzLocalSTToFileTime(const SYSTEMTIME *tmLocal, FILETIME *lpUtc)
 	SystemTimeToFileTime(&tm, lpUtc);
 }
 
-static REMINDERDATA* FindReminder(DWORD uid)
+static REMINDERDATA* FindReminder(uint32_t uid)
 {
 	for (auto &pReminder : arReminders)
 		if (pReminder->uid == uid)
@@ -98,13 +98,13 @@ static void InsertReminder(REMINDERDATA *p)
 	arReminders.insert(p);
 }
 
-static DWORD CreateUid()
+static uint32_t CreateUid()
 {
 	if (!arReminders.getCount())
 		return 1;
 
 	// check existing reminders if uid is in use
-	for (DWORD uid = 1;; uid++)
+	for (uint32_t uid = 1;; uid++)
 		if (!FindReminder(uid)) // uid in use
 			return uid;
 }
@@ -359,9 +359,9 @@ static void Skin_PlaySoundPoly(LPCSTR pszSoundName)
 	}
 }
 
-static void UpdateReminderEvent(REMINDERDATA *pReminder, UINT nElapsedSeconds, DWORD *pHasPlayedSound)
+static void UpdateReminderEvent(REMINDERDATA *pReminder, UINT nElapsedSeconds, uint32_t *pHasPlayedSound)
 {
-	DWORD dwSoundMask;
+	uint32_t dwSoundMask;
 
 	if (pReminder->RepeatSound) {
 		if (nElapsedSeconds >= pReminder->RepeatSoundTTL) {
@@ -384,7 +384,7 @@ static void UpdateReminderEvent(REMINDERDATA *pReminder, UINT nElapsedSeconds, D
 	}
 }
 
-static void FireReminder(REMINDERDATA *pReminder, DWORD *pHasPlayedSound)
+static void FireReminder(REMINDERDATA *pReminder, uint32_t *pHasPlayedSound)
 {
 	if (pReminder->bSystemEventQueued)
 		return;
@@ -404,7 +404,7 @@ static void FireReminder(REMINDERDATA *pReminder, DWORD *pHasPlayedSound)
 	if (pReminder->SoundSel < 0) // sound disabled
 		return;
 
-	DWORD dwSoundMask = 1 << pReminder->SoundSel;
+	uint32_t dwSoundMask = 1 << pReminder->SoundSel;
 
 	pReminder->RepeatSoundTTL = pReminder->RepeatSound;
 
@@ -738,7 +738,7 @@ protected:
 
 		// tweak style of picker
 		if (IsWinVerVistaPlus()) {
-			DWORD dw = m_date.SendMsg(DTM_GETMCSTYLE, 0, 0);
+			uint32_t dw = m_date.SendMsg(DTM_GETMCSTYLE, 0, 0);
 			dw |= MCS_WEEKNUMBERS | MCS_NOSELCHANGEONNAV;
 			m_date.SendMsg(DTM_SETMCSTYLE, 0, dw);
 		}
@@ -800,8 +800,8 @@ protected:
 
 			// cur time
 			FileTimeToTzLocalST((FILETIME *)&li, &tm2);
-			WORD wCurHour = tm2.wHour;
-			WORD wCurMinute = tm2.wMinute;
+			uint16_t wCurHour = tm2.wHour;
+			uint16_t wCurMinute = tm2.wMinute;
 			mir_snwprintf(s, L"%02d:%02d", (UINT)tm2.wHour, (UINT)tm2.wMinute);
 			cmbTime.AddString(s, (li - ref) / FILETIME_TICKS_PER_SEC);
 
@@ -938,8 +938,8 @@ protected:
 
 			SYSTEMTIME tmTriggerLocal, tmTriggerLocal2;
 			tmTriggerLocal = tmRefLocal;
-			tmTriggerLocal.wHour = (WORD)h;
-			tmTriggerLocal.wMinute = (WORD)m;
+			tmTriggerLocal.wHour = (uint16_t)h;
+			tmTriggerLocal.wMinute = (uint16_t)m;
 			tmTriggerLocal.wSecond = 0;
 			tmTriggerLocal.wMilliseconds = 0;
 
@@ -1267,7 +1267,7 @@ INT_PTR OpenTriggeredReminder(WPARAM, LPARAM l)
 
 	l = ((CLISTEVENT*)l)->lParam;
 
-	REMINDERDATA *pReminder = (REMINDERDATA*)FindReminder((DWORD)l);
+	REMINDERDATA *pReminder = (REMINDERDATA*)FindReminder((uint32_t)l);
 	if (!pReminder || !pReminder->bSystemEventQueued)
 		return 0;
 
@@ -1785,7 +1785,7 @@ bool CheckRemindersAndStart(void)
 	bool bResult = false;
 
 	// var used to avoid playing multiple alarm sounds during a single update
-	DWORD bHasPlayedSound = 0;
+	uint32_t bHasPlayedSound = 0;
 
 	// if there are queued (triggered) reminders then iterate through entire list, becaue of WM_TIMECHANGE events
 	// and for example daylight saving changes it's possible for an already triggered event to end up with When>curT

@@ -112,7 +112,7 @@ public:
 		for (int i = ID_STATUS_OFFLINE; i <= ID_STATUS_MAX; i++) {
 			char szSetting[100];
 			mir_snprintf(szSetting, "Col_%d", i - ID_STATUS_OFFLINE);
-			DWORD sett = g_plugin.getDword(szSetting, StatusColors15bits[i - ID_STATUS_OFFLINE]);
+			uint32_t sett = g_plugin.getDword(szSetting, StatusColors15bits[i - ID_STATUS_OFFLINE]);
 
 			COLORREF back, text;
 			GetColorsFromDWord(&back, &text, sett);
@@ -137,7 +137,7 @@ public:
 		for (int i = ID_STATUS_OFFLINE; i <= ID_STATUS_MAX; i++) {
 			COLORREF back = SendDlgItemMessage(m_hwnd, i, CPM_GETCOLOUR, 0, 0);
 			COLORREF text = SendDlgItemMessage(m_hwnd, i + 20, CPM_GETCOLOUR, 0, 0);
-			DWORD sett = GetDWordFromColors(back, text);
+			uint32_t sett = GetDWordFromColors(back, text);
 
 			char szSetting[100];
 			mir_snprintf(szSetting, "Col_%d", i - ID_STATUS_OFFLINE);
@@ -152,7 +152,7 @@ public:
 	LRESULT OnCommand(UINT, WPARAM wParam, LPARAM)
 	{
 		if (HIWORD(wParam) == CPN_COLOURCHANGED) {
-			WORD idText, idBack;
+			uint16_t idText, idBack;
 			if (LOWORD(wParam) > ID_STATUS_MAX) // we have clicked a text color
 				idText = wParam, idBack = wParam - 20;
 			else
@@ -161,7 +161,7 @@ public:
 			POPUPDATAW ppd;
 			ppd.colorBack = SendDlgItemMessage(m_hwnd, idBack, CPM_GETCOLOUR, 0, 0);
 			ppd.colorText = SendDlgItemMessage(m_hwnd, idText, CPM_GETCOLOUR, 0, 0);
-			DWORD temp = GetDWordFromColors(ppd.colorBack, ppd.colorText);
+			uint32_t temp = GetDWordFromColors(ppd.colorBack, ppd.colorText);
 			GetColorsFromDWord(&ppd.colorBack, &ppd.colorText, temp);
 			SendDlgItemMessage(m_hwnd, idBack, CPM_SETCOLOUR, 0, ppd.colorBack);
 			SendDlgItemMessage(m_hwnd, idText, CPM_SETCOLOUR, 0, ppd.colorText);
@@ -194,7 +194,7 @@ public:
 	void onClick_Reset(CCtrlButton *)
 	{
 		for (int i = ID_STATUS_OFFLINE; i <= ID_STATUS_MAX; i++) {
-			DWORD sett = StatusColors15bits[i - ID_STATUS_OFFLINE];
+			uint32_t sett = StatusColors15bits[i - ID_STATUS_OFFLINE];
 			COLORREF back, text;
 			GetColorsFromDWord(&back, &text, sett);
 			SendDlgItemMessage(m_hwnd, i, CPM_SETCOLOUR, 0, back);
@@ -293,7 +293,7 @@ public:
 		GetDlgItemText(m_hwnd, IDC_HISTORYSTAMP, szstamp, _countof(szstamp));
 		g_plugin.setWString("HistoryStamp", szstamp);
 
-		g_plugin.setWord("HistoryMax", (WORD)(GetDlgItemInt(m_hwnd, IDC_HISTORYSIZE, nullptr, FALSE) + 1));
+		g_plugin.setWord("HistoryMax", (uint16_t)(GetDlgItemInt(m_hwnd, IDC_HISTORYSIZE, nullptr, FALSE) + 1));
 
 		if (chkMenuItem.IsChanged()) {
 			bool bchecked = chkMenuItem.GetState();

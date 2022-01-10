@@ -4,7 +4,7 @@ Jabber Protocol Plugin for Miranda NG
 
 Copyright (c) 2002-04  Santithorn Bunchua
 Copyright (c) 2005-12  George Hazan
-Copyright (C) 2012-21 Miranda NG team
+Copyright (C) 2012-22 Miranda NG team
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -141,11 +141,11 @@ class CRosterEditorDlg : public CJabberDlgBase
 	friend struct CJabberProto;
 	typedef CJabberDlgBase CSuper;
 
-	BYTE m_bRRAction;
+	uint8_t m_bRRAction;
 	BOOL m_bReadyToDownload = true;
 	BOOL m_bReadyToUpload = false;
 
-	void _RosterSendRequest(BYTE rrAction)
+	void _RosterSendRequest(uint8_t rrAction)
 	{
 		m_bRRAction = rrAction;
 

@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org),
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org),
 Copyright (c) 2000-12 Miranda IM project,
 all portions of this codebase are copyrighted to the people
 listed in contributors.txt.
@@ -43,19 +43,19 @@ struct NtlmHandleType
 
 struct NTLM_String
 {
-	WORD     len;
-	WORD     allocedSpace;
-	DWORD    offset;
+	uint16_t     len;
+	uint16_t     allocedSpace;
+	uint32_t    offset;
 };
 
 struct NtlmType2packet
 {
 	char        sign[8];
-	DWORD       type;   // == 2
+	uint32_t       type;   // == 2
 	NTLM_String targetName;
-	DWORD       flags;
-	BYTE        challenge[8];
-	BYTE        context[8];
+	uint32_t       flags;
+	uint8_t        challenge[8];
+	uint8_t        context[8];
 	NTLM_String targetInfo;
 };
 
@@ -220,7 +220,7 @@ char* NtlmCreateResponseFromChallenge(HANDLE hSecurity, const char *szChallenge,
 		bool hasChallenge = szChallenge != nullptr && szChallenge[0] != '\0';
 		if (hasChallenge) {
 			size_t tokenLen;
-			BYTE *token = (BYTE*)mir_base64_decode(szChallenge, &tokenLen);
+			uint8_t *token = (uint8_t*)mir_base64_decode(szChallenge, &tokenLen);
 			if (token == nullptr)
 				return nullptr;
 

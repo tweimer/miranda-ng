@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org),
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org),
 Copyright (c) 2000-12 Miranda IM project,
 all portions of this codebase are copyrighted to the people
 listed in contributors.txt.
@@ -44,7 +44,7 @@ struct TMO_LinkedList
 
 struct TMO_IntMenuItem
 {
-	DWORD        signature;
+	uint32_t        signature;
 	int          iCommand;
 	int          iconId;           // icon index in the section's image list
 	TMO_MenuItem mi;               // user-defined data
@@ -55,7 +55,7 @@ struct TMO_IntMenuItem
 	int          originalPosition; // !!!!!!!!!!!!!!!!!!!!!!!!
 	bool         customVisible;
 
-	DWORD        hotKey;
+	uint32_t        hotKey;
 	WPARAM       execParam;
 	void*        pUserData;
 

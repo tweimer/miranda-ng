@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org),
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org),
 Copyright (c) 2000-12 Miranda IM project,
 all portions of this codebase are copyrighted to the people
 listed in contributors.txt.
@@ -73,7 +73,7 @@ int fnGetRowsPriorTo(ClcGroup *group, ClcGroup *subgroup, int contactIndex)
 	return -1;
 }
 
-ClcContact* fnFindItem(DWORD dwItem, ClcContact *cc)
+ClcContact* fnFindItem(uint32_t dwItem, ClcContact *cc)
 {
 	if (IsHContactGroup(dwItem) && cc->type == CLCIT_GROUP && (dwItem & ~HCONTACT_ISGROUP) == cc->groupId)
 		return cc;
@@ -87,7 +87,7 @@ ClcContact* fnFindItem(DWORD dwItem, ClcContact *cc)
 	return nullptr;
 }
 
-MIR_APP_DLL(bool) Clist_FindItem(HWND hwnd, ClcData *dat, DWORD dwItem, ClcContact **contact, ClcGroup **subgroup, int *isVisible)
+MIR_APP_DLL(bool) Clist_FindItem(HWND hwnd, ClcData *dat, uint32_t dwItem, ClcContact **contact, ClcGroup **subgroup, int *isVisible)
 {
 	int index = 0;
 	int nowVisible = 1;
@@ -190,7 +190,7 @@ int fnGetRowByIndex(ClcData *dat, int testindex, ClcContact **contact, ClcGroup 
 	return -1;
 }
 
-MIR_APP_DLL(DWORD) Clist_ContactToHItem(ClcContact *cc)
+MIR_APP_DLL(uint32_t) Clist_ContactToHItem(ClcContact *cc)
 {
 	switch (cc->type) {
 	case CLCIT_CONTACT:
@@ -203,7 +203,7 @@ MIR_APP_DLL(DWORD) Clist_ContactToHItem(ClcContact *cc)
 	return 0;
 }
 
-MIR_APP_DLL(HANDLE) Clist_ContactToItemHandle(ClcContact *cc, DWORD *nmFlags)
+MIR_APP_DLL(HANDLE) Clist_ContactToItemHandle(ClcContact *cc, uint32_t *nmFlags)
 {
 	switch (cc->type) {
 	case CLCIT_CONTACT:

@@ -4,7 +4,7 @@ Jabber Protocol Plugin for Miranda NG
 
 Copyright (c) 2002-04  Santithorn Bunchua
 Copyright (c) 2005-12  George Hazan
-Copyright (C) 2012-21 Miranda NG team
+Copyright (C) 2012-22 Miranda NG team
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -39,7 +39,7 @@ bool CJabberProto::WsInit(void)
 	return m_hNetlibUser != nullptr;
 }
 
-HNETLIBCONN CJabberProto::WsConnect(char* host, WORD port)
+HNETLIBCONN CJabberProto::WsConnect(char* host, uint16_t port)
 {
 	NETLIBOPENCONNECTION nloc = {};
 	nloc.szHost = host;

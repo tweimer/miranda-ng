@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org),
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org),
 Copyright (c) 2000-12 Miranda IM project,
 all portions of this codebase are copyrighted to the people
 listed in contributors.txt.
@@ -27,17 +27,17 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 extern mir_cs csNetlibUser;
 extern HANDLE hConnectionOpenMutex;
-extern DWORD g_LastConnectionTick;
+extern uint32_t g_LastConnectionTick;
 extern int connectionTimeout;
 static int iUPnPCleanup = 0;
 
 #define RECV_DEFAULT_TIMEOUT	60000
 
 //returns in network byte order
-DWORD DnsLookup(NetlibUser *nlu, const char *szHost)
+uint32_t DnsLookup(NetlibUser *nlu, const char *szHost)
 {
 	HOSTENT* host;
-	DWORD ip = inet_addr(szHost);
+	uint32_t ip = inet_addr(szHost);
 	if (ip != INADDR_NONE)
 		return ip;
 
@@ -53,7 +53,7 @@ DWORD DnsLookup(NetlibUser *nlu, const char *szHost)
 	return 0;
 }
 
-int WaitUntilReadable(SOCKET s, DWORD dwTimeout, bool check)
+int WaitUntilReadable(SOCKET s, uint32_t dwTimeout, bool check)
 {
 	fd_set readfd;
 	TIMEVAL tv;
@@ -71,7 +71,7 @@ int WaitUntilReadable(SOCKET s, DWORD dwTimeout, bool check)
 	return result;
 }
 
-int WaitUntilWritable(SOCKET s, DWORD dwTimeout)
+int WaitUntilWritable(SOCKET s, uint32_t dwTimeout)
 {
 	fd_set writefd;
 	TIMEVAL tv;
@@ -91,10 +91,10 @@ int WaitUntilWritable(SOCKET s, DWORD dwTimeout)
 	return 1;
 }
 
-bool RecvUntilTimeout(NetlibConnection *nlc, char *buf, int len, int flags, DWORD dwTimeout)
+bool RecvUntilTimeout(NetlibConnection *nlc, char *buf, int len, int flags, uint32_t dwTimeout)
 {
 	int nReceived = 0;
-	DWORD dwTimeNow, dwCompleteTime = GetTickCount() + dwTimeout;
+	uint32_t dwTimeNow, dwCompleteTime = GetTickCount() + dwTimeout;
 
 	while ((dwTimeNow = GetTickCount()) < dwCompleteTime) {
 		if (WaitUntilReadable(nlc->s, dwCompleteTime - dwTimeNow) <= 0) return false;
@@ -127,7 +127,7 @@ static int NetlibInitSocks4Connection(NetlibConnection *nlc, NetlibUser *nlu, NE
 	else memcpy(&pInit[8], nlu->settings.szProxyAuthUser, nUserLen);
 
 	//if cannot resolve host, try resolving through proxy (requires SOCKS4a)
-	DWORD ip = DnsLookup(nlu, nloc->szHost);
+	uint32_t ip = DnsLookup(nlu, nloc->szHost);
 	*(PDWORD)&pInit[4] = ip ? ip : 0x01000000;
 	if (!ip) {
 		memcpy(&pInit[len], nloc->szHost, nHostLen);
@@ -145,21 +145,21 @@ static int NetlibInitSocks4Connection(NetlibConnection *nlc, NetlibUser *nlu, NE
 		return 0;
 	}
 
-	switch ((BYTE)reply[1]) {
+	switch ((uint8_t)reply[1]) {
 		case 90: return 1;
 		case 91: SetLastError(ERROR_ACCESS_DENIED); break;
 		case 92: SetLastError(ERROR_CONNECTION_UNAVAIL); break;
 		case 93: SetLastError(ERROR_INVALID_ACCESS); break;
 		default: SetLastError(ERROR_INVALID_DATA); break;
 	}
-	Netlib_Logf(nlu, "%s %d: Proxy connection failed (%x %u)", __FILE__, __LINE__, (BYTE)reply[1], GetLastError());
+	Netlib_Logf(nlu, "%s %d: Proxy connection failed (%x %u)", __FILE__, __LINE__, (uint8_t)reply[1], GetLastError());
 	return 0;
 }
 
 static int NetlibInitSocks5Connection(NetlibConnection *nlc, NetlibUser *nlu, NETLIBOPENCONNECTION *nloc)
 {
 	//rfc1928
-	BYTE buf[258];
+	uint8_t buf[258];
 
 	buf[0] = 5;  //yep, socks5
 	buf[1] = 1;  //one auth method
@@ -183,11 +183,11 @@ static int NetlibInitSocks5Connection(NetlibConnection *nlc, NetlibUser *nlu, NE
 	if (buf[1] == 2) {		//rfc1929
 		size_t nUserLen = mir_strlen(nlu->settings.szProxyAuthUser);
 		size_t nPassLen = mir_strlen(nlu->settings.szProxyAuthPassword);
-		PBYTE pAuthBuf = (PBYTE)mir_alloc(3 + nUserLen + nPassLen);
+		uint8_t *pAuthBuf = (uint8_t*)mir_alloc(3 + nUserLen + nPassLen);
 		pAuthBuf[0] = 1;		//auth version
-		pAuthBuf[1] = (BYTE)nUserLen;
+		pAuthBuf[1] = (uint8_t)nUserLen;
 		memcpy(pAuthBuf + 2, nlu->settings.szProxyAuthUser, nUserLen);
-		pAuthBuf[2 + nUserLen] = (BYTE)nPassLen;
+		pAuthBuf[2 + nUserLen] = (uint8_t)nPassLen;
 		memcpy(pAuthBuf + 3 + nUserLen, nlu->settings.szProxyAuthPassword, nPassLen);
 		if (Netlib_Send(nlc, (char*)pAuthBuf, int(3 + nUserLen + nPassLen), MSG_DUMPPROXY) == SOCKET_ERROR) {
 			Netlib_Logf(nlu, "%s %d: %s() failed (%u)", __FILE__, __LINE__, "Netlib_Send", GetLastError());
@@ -208,7 +208,7 @@ static int NetlibInitSocks5Connection(NetlibConnection *nlc, NetlibUser *nlu, NE
 	}
 
 	size_t nHostLen;
-	DWORD hostIP;
+	uint32_t hostIP;
 
 	if (nlc->dnsThroughProxy) {
 		hostIP = inet_addr(nloc->szHost);
@@ -220,13 +220,13 @@ static int NetlibInitSocks5Connection(NetlibConnection *nlc, NetlibUser *nlu, NE
 			return 0;
 		nHostLen = 4;
 	}
-	PBYTE pInit = (PBYTE)mir_alloc(6 + nHostLen);
+	uint8_t *pInit = (uint8_t*)mir_alloc(6 + nHostLen);
 	pInit[0] = 5;   //SOCKS5
 	pInit[1] = nloc->flags & NLOCF_UDP ? 3 : 1; //connect or UDP
 	pInit[2] = 0;   //reserved
 	if (hostIP == INADDR_NONE) {		 //DNS lookup through proxy
 		pInit[3] = 3;
-		pInit[4] = BYTE(nHostLen - 1);
+		pInit[4] = uint8_t(nHostLen - 1);
 		memcpy(pInit + 5, nloc->szHost, nHostLen - 1);
 	}
 	else {
@@ -298,7 +298,7 @@ static bool NetlibInitHttpsConnection(NetlibConnection *nlc, NetlibUser *nlu, NE
 	if (nlc->dnsThroughProxy)
 		szUrl.Format("%s:%u", nloc->szHost, nloc->wPort);
 	else {
-		DWORD ip = DnsLookup(nlu, nloc->szHost);
+		uint32_t ip = DnsLookup(nlu, nloc->szHost);
 		if (ip == 0) return false;
 		szUrl.Format("%s:%u", inet_ntoa(*(PIN_ADDR)&ip), nloc->wPort);
 	}
@@ -334,7 +334,7 @@ static bool NetlibInitHttpsConnection(NetlibConnection *nlc, NetlibUser *nlu, NE
 
 static void FreePartiallyInitedConnection(NetlibConnection *nlc)
 {
-	DWORD dwOriginalLastError = GetLastError();
+	uint32_t dwOriginalLastError = GetLastError();
 
 	if (GetNetlibHandleType(nlc) == NLH_CONNECTION)
 		delete nlc;
@@ -346,7 +346,7 @@ static bool my_connectIPv4(NetlibConnection *nlc, NETLIBOPENCONNECTION *nloc)
 {
 	int rc = 0, retrycnt = 0;
 	u_long notblocking = 1;
-	DWORD lasterr = 0;
+	uint32_t lasterr = 0;
 	static const TIMEVAL tv = { 1, 0 };
 	NetlibUser *nlu = nlc->nlu;
 
@@ -491,7 +491,7 @@ static bool my_connectIPv6(NetlibConnection *nlc, NETLIBOPENCONNECTION *nloc)
 	NetlibUser *nlu = nlc->nlu;
 	int rc = SOCKET_ERROR, retrycnt = 0;
 	u_long notblocking = 1;
-	DWORD lasterr = 0;
+	uint32_t lasterr = 0;
 	static const TIMEVAL tv = { 1, 0 };
 	unsigned int dwTimeout = (nloc->flags & NLOCF_V2) ? nloc->timeout : 0;
 	// if dwTimeout is zero then its an old style connection or new with a 0 timeout, select() will error quicker anyway

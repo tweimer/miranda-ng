@@ -6,7 +6,7 @@
 // Copyright © 2001-2002 Jon Keating, Richard Hughes
 // Copyright © 2002-2004 Martin Öberg, Sam Kothari, Robert Rainwater
 // Copyright © 2004-2010 Joe Kucera, George Hazan
-// Copyright © 2012-2021 Miranda NG team
+// Copyright © 2012-2022 Miranda NG team
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -72,7 +72,7 @@ enum ChatMenuItems
 
 struct IcqFileInfo
 {
-	IcqFileInfo(const std::string &pszUrl, const CMStringW &pwszDescr, DWORD dwSize) :
+	IcqFileInfo(const std::string &pszUrl, const CMStringW &pwszDescr, uint32_t dwSize) :
 		szUrl(pszUrl.c_str()),
 		wszDescr(pwszDescr),
 		dwFileSize(dwSize)
@@ -80,7 +80,7 @@ struct IcqFileInfo
 
 	CMStringA szUrl;
 	CMStringW wszDescr;
-	DWORD dwFileSize;
+	uint32_t dwFileSize;
 	bool bIsSticker = false;
 };
 
@@ -194,7 +194,7 @@ struct IcqFileTransfer : public MZeroedObject
 		pReq->AddHeader("Content-Type", "application/octet-stream");
 		pReq->AddHeader("Content-Disposition", CMStringA(FORMAT, "attachment; filename=\"%s\"", T2Utf(m_wszShortName).get()));
 
-		DWORD dwPortion = pfts.currentFileSize - pfts.currentFileProgress;
+		uint32_t dwPortion = pfts.currentFileSize - pfts.currentFileProgress;
 		if (dwPortion > 1000000)
 			dwPortion = 1000000;
 
@@ -213,6 +213,8 @@ struct IcqFileTransfer : public MZeroedObject
 
 class CIcqProto : public PROTO<CIcqProto>
 {
+	friend struct AsyncRapiRequest;
+
 	class CIcqProtoImpl
 	{
 		friend class CIcqProto;
@@ -459,14 +461,14 @@ public:
 	~CIcqProto();
 
 	CMOption<wchar_t*> m_szOwnId;      // our own aim id
-	CMOption<BYTE>  m_bHideGroupchats; // don't pop up group chat windows on startup
-	CMOption<BYTE>  m_bUseTrayIcon;    // use tray icon notifications
-	CMOption<BYTE>  m_bErrorPopups;    // display popups with errors
-	CMOption<BYTE>  m_bLaunchMailbox;  // launch browser to view email
-	CMOption<DWORD> m_iTimeDiff1;		  // set this status to m_iStatus1 after this interval of secs
-	CMOption<DWORD> m_iStatus1;
-	CMOption<DWORD> m_iTimeDiff2;		  // set this status to m_iStatus2 after this interval of secs
-	CMOption<DWORD> m_iStatus2;
+	CMOption<uint8_t>  m_bHideGroupchats; // don't pop up group chat windows on startup
+	CMOption<uint8_t>  m_bUseTrayIcon;    // use tray icon notifications
+	CMOption<uint8_t>  m_bErrorPopups;    // display popups with errors
+	CMOption<uint8_t>  m_bLaunchMailbox;  // launch browser to view email
+	CMOption<uint32_t> m_iTimeDiff1;		  // set this status to m_iStatus1 after this interval of secs
+	CMOption<uint32_t> m_iStatus1;
+	CMOption<uint32_t> m_iTimeDiff2;		  // set this status to m_iStatus2 after this interval of secs
+	CMOption<uint32_t> m_iStatus2;
 
 	void CheckStatus(void);
 	CMStringW GetUserId(MCONTACT);

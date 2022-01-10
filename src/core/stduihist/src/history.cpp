@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org),
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org),
 Copyright (c) 2000-12 Miranda IM project,
 all portions of this codebase are copyrighted to the people
 listed in contributors.txt.
@@ -304,7 +304,7 @@ static INT_PTR CALLBACK DlgProcHistory(HWND hwndDlg, UINT msg, WPARAM wParam, LP
 
 			int newBlobSize = db_event_getBlobSize(hDbEvent);
 			if (newBlobSize > oldBlobSize) {
-				dbei.pBlob = (PBYTE)mir_realloc(dbei.pBlob, newBlobSize);
+				dbei.pBlob = (uint8_t*)mir_realloc(dbei.pBlob, newBlobSize);
 				oldBlobSize = newBlobSize;
 			}
 			dbei.cbBlob = oldBlobSize;

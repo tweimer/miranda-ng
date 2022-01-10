@@ -96,9 +96,9 @@ int OpenBayes()
 	return 0;
 }
 
-char *tokenhash(const char *token, BYTE *digest)
+char *tokenhash(const char *token, uint8_t *digest)
 {
-	mir_md5_hash((BYTE *)token, (int)mir_strlen(token), digest);
+	mir_md5_hash((uint8_t *)token, (int)mir_strlen(token), digest);
 	return (char*)digest;
 }
 
@@ -160,7 +160,7 @@ int get_token_score(int type, char *token)
 {
 	char sql[200];
 	int score = 0;
-	BYTE digest[16];
+	uint8_t digest[16];
 	sqlite3_stmt *stmt;
 
 	if (bayesdb == nullptr)
@@ -220,7 +220,7 @@ double get_msg_score(wchar_t *msg)
 	return tmp1 / (tmp1 + tmp2);
 }
 
-void queue_message(MCONTACT hContact, DWORD msgtime, wchar_t *message)
+void queue_message(MCONTACT hContact, uint32_t msgtime, wchar_t *message)
 {
 	char *tmp;
 	sqlite3_stmt *stmt;
@@ -235,7 +235,7 @@ void queue_message(MCONTACT hContact, DWORD msgtime, wchar_t *message)
 		OpenBayes();
 
 	sqlite3_prepare_v2(bayesdb, "INSERT INTO queue VALUES(?,?,?)", -1, &stmt, nullptr);
-	sqlite3_bind_int(stmt, 1, (DWORD)hContact);
+	sqlite3_bind_int(stmt, 1, (uint32_t)hContact);
 	sqlite3_bind_int(stmt, 2, msgtime);
 	tmp = mir_u2a(message);
 	sqlite3_bind_text(stmt, 3, tmp, (int)mir_strlen(tmp), nullptr);
@@ -255,7 +255,7 @@ void bayes_approve_contact(MCONTACT hContact)
 		return;
 
 	sqlite3_prepare_v2(bayesdb, "SELECT message FROM queue WHERE contact=?", -1, &stmt, nullptr);
-	sqlite3_bind_int(stmt, 1, (DWORD)hContact);
+	sqlite3_bind_int(stmt, 1, (uint32_t)hContact);
 	while (sqlite3_step(stmt) == SQLITE_ROW)
 	{
 		d = 1;
@@ -267,7 +267,7 @@ void bayes_approve_contact(MCONTACT hContact)
 	sqlite3_finalize(stmt);
 	if (d) {
 		sqlite3_prepare_v2(bayesdb, "DELETE FROM queue WHERE contact=?", -1, &stmt, nullptr);
-		sqlite3_bind_int(stmt, 1, (DWORD)hContact);
+		sqlite3_bind_int(stmt, 1, (uint32_t)hContact);
 		sqlite3_step(stmt);
 		sqlite3_finalize(stmt);
 	}
@@ -287,7 +287,7 @@ void dequeue_messages()
 
 	sqlite3_prepare_v2(bayesdb, "SELECT message FROM queue WHERE msgtime + ? < ?", -1, &stmt, nullptr);
 	sqlite3_bind_int(stmt, 1, g_plugin.getDword("BayesWaitApprove", defaultBayesWaitApprove)*86400);
-	sqlite3_bind_int(stmt, 2, (DWORD)t);
+	sqlite3_bind_int(stmt, 2, (uint32_t)t);
 	while (sqlite3_step(stmt) == SQLITE_ROW) {
 		d = 1;
 		message = (char*)sqlite3_column_text(stmt, 0);
@@ -299,7 +299,7 @@ void dequeue_messages()
 	if (d) {
 		sqlite3_prepare_v2(bayesdb, "DELETE FROM queue WHERE msgtime + ? < ?", -1, &stmt, nullptr);
 		sqlite3_bind_int(stmt, 1, g_plugin.getDword("BayesWaitApprove", defaultBayesWaitApprove)*86400);
-		sqlite3_bind_int(stmt, 2, (DWORD)t);
+		sqlite3_bind_int(stmt, 2, (uint32_t)t);
 		sqlite3_step(stmt);
 		sqlite3_finalize(stmt);
 	}
@@ -309,7 +309,7 @@ void dequeue_messages()
 void learn(int type, wchar_t *msg)
 {
 	char *tok, *message;
-	BYTE digest[16];
+	uint8_t digest[16];
 	char sql_select[200], sql_update[200], sql_insert[200], sql_counter[200];
 	sqlite3_stmt *stmt;
 #ifdef _DEBUG

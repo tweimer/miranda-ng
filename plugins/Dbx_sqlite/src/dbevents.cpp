@@ -92,10 +92,10 @@ MEVENT CDbxSQLite::AddEvent(MCONTACT hContact, const DBEVENTINFO *dbei)
 	}
 	else szEventId = "";
 
-	mir_ptr<BYTE> pCryptBlob;
+	mir_ptr<uint8_t> pCryptBlob;
 	if (m_bEncrypted) {
 		size_t len;
-		BYTE *pResult = m_crypto->encodeBuffer(tmp.pBlob, tmp.cbBlob, &len);
+		uint8_t *pResult = m_crypto->encodeBuffer(tmp.pBlob, tmp.cbBlob, &len);
 		if (pResult != nullptr) {
 			pCryptBlob = tmp.pBlob = pResult;
 			tmp.cbBlob = (uint16_t)len;
@@ -219,10 +219,10 @@ BOOL CDbxSQLite::EditEvent(MCONTACT hContact, MEVENT hDbEvent, const DBEVENTINFO
 		return 1;
 
 	DBEVENTINFO tmp = *dbei;
-	mir_ptr<BYTE> pCryptBlob;
+	mir_ptr<uint8_t> pCryptBlob;
 	if (m_bEncrypted) {
 		size_t len;
-		BYTE *pResult = m_crypto->encodeBuffer(tmp.pBlob, tmp.cbBlob, &len);
+		uint8_t *pResult = m_crypto->encodeBuffer(tmp.pBlob, tmp.cbBlob, &len);
 		if (pResult != nullptr) {
 			pCryptBlob = tmp.pBlob = pResult;
 			tmp.cbBlob = (uint16_t)len;
@@ -309,21 +309,21 @@ BOOL CDbxSQLite::GetEvent(MEVENT hDbEvent, DBEVENTINFO *dbei)
 	dbei->eventType = sqlite3_column_int(stmt, 2);
 	dbei->flags = sqlite3_column_int64(stmt, 3);
 
-	DWORD cbBlob = sqlite3_column_int64(stmt, 4);
+	uint32_t cbBlob = sqlite3_column_int64(stmt, 4);
 	size_t bytesToCopy = cbBlob;
 	if (dbei->cbBlob == -1)
-		dbei->pBlob = (PBYTE)mir_calloc(cbBlob + 2);
+		dbei->pBlob = (uint8_t*)mir_calloc(cbBlob + 2);
 	else if (dbei->cbBlob < cbBlob)
 		bytesToCopy = dbei->cbBlob;
 
 	dbei->cbBlob = cbBlob;
 	if (bytesToCopy && dbei->pBlob) {
-		BYTE *data = (BYTE *)sqlite3_column_blob(stmt, 5);
+		uint8_t *data = (uint8_t *)sqlite3_column_blob(stmt, 5);
 
 		if (dbei->flags & DBEF_ENCRYPTED) {
 			dbei->flags &= ~DBEF_ENCRYPTED;
 			size_t len;
-			BYTE* pBlob = (BYTE*)m_crypto->decodeBuffer(data, cbBlob, &len);
+			uint8_t* pBlob = (uint8_t*)m_crypto->decodeBuffer(data, cbBlob, &len);
 			if (pBlob == nullptr)
 				return 1;
 
@@ -348,7 +348,7 @@ BOOL CDbxSQLite::MarkEventRead(MCONTACT hContact, MEVENT hDbEvent)
 	if (cc == nullptr)
 		return -1;
 
-	DWORD flags = 0;
+	uint32_t flags = 0;
 	{
 		mir_cslock lock(m_csDbAccess);
 		sqlite3_stmt *stmt = InitQuery("SELECT flags FROM events WHERE id = ? LIMIT 1;", qEvGetFlags);

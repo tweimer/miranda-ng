@@ -34,10 +34,10 @@
 FI_STRUCT (FITAGHEADER) { 
 	char *key;			// tag field name
 	char *description;	// tag description
-	WORD id;			// tag ID
-	WORD type;			// tag data type (see FREE_IMAGE_MDTYPE)
-	DWORD count;		// number of components (in 'tag data types' units)
-	DWORD length;		// value length in bytes
+	uint16_t id;			// tag ID
+	uint16_t type;			// tag data type (see FREE_IMAGE_MDTYPE)
+	uint32_t count;		// number of components (in 'tag data types' units)
+	uint32_t length;		// value length in bytes
 	void *value;		// tag value
 };
 
@@ -51,7 +51,7 @@ FreeImage_CreateTag() {
 
 	if (tag != NULL) {
 		unsigned tag_size = sizeof(FITAGHEADER); 
-		tag->data = (BYTE *)malloc(tag_size * sizeof(BYTE));
+		tag->data = (uint8_t *)malloc(tag_size * sizeof(uint8_t));
 		if (tag->data != NULL) {
 			memset(tag->data, 0, tag_size);
 			return tag;
@@ -119,15 +119,15 @@ FreeImage_CloneTag(FITAG *tag) {
 		// tag value
 		switch(dst_tag->type) {
 			case FIDT_ASCII:
-				dst_tag->value = (BYTE*)malloc((src_tag->length + 1) * sizeof(BYTE));
+				dst_tag->value = (uint8_t*)malloc((src_tag->length + 1) * sizeof(uint8_t));
 				if(!dst_tag->value) {
 					throw FI_MSG_ERROR_MEMORY;
 				}
 				memcpy(dst_tag->value, src_tag->value, src_tag->length);
-				((BYTE*)dst_tag->value)[src_tag->length] = 0;
+				((uint8_t*)dst_tag->value)[src_tag->length] = 0;
 				break;
 			default:
-				dst_tag->value = (BYTE*)malloc(src_tag->length * sizeof(BYTE));
+				dst_tag->value = (uint8_t*)malloc(src_tag->length * sizeof(uint8_t));
 				if(!dst_tag->value) {
 					throw FI_MSG_ERROR_MEMORY;
 				}
@@ -158,7 +158,7 @@ FreeImage_GetTagDescription(FITAG *tag) {
 	return tag ? ((FITAGHEADER *)tag->data)->description : 0;
 }
 
-WORD DLL_CALLCONV 
+uint16_t DLL_CALLCONV 
 FreeImage_GetTagID(FITAG *tag) {
 	return tag ? ((FITAGHEADER *)tag->data)->id : 0;
 }
@@ -168,12 +168,12 @@ FreeImage_GetTagType(FITAG *tag) {
 	return tag ? (FREE_IMAGE_MDTYPE)(((FITAGHEADER *)tag->data)->type) : FIDT_NOTYPE;
 }
 
-DWORD DLL_CALLCONV 
+uint32_t DLL_CALLCONV 
 FreeImage_GetTagCount(FITAG *tag) {
 	return tag ? ((FITAGHEADER *)tag->data)->count : 0;
 }
 
-DWORD DLL_CALLCONV 
+uint32_t DLL_CALLCONV 
 FreeImage_GetTagLength(FITAG *tag) {
 	return tag ? ((FITAGHEADER *)tag->data)->length : 0;
 }
@@ -208,7 +208,7 @@ FreeImage_SetTagDescription(FITAG *tag, const char *description) {
 }
 
 BOOL DLL_CALLCONV 
-FreeImage_SetTagID(FITAG *tag, WORD id) {
+FreeImage_SetTagID(FITAG *tag, uint16_t id) {
 	if(tag) {
 		FITAGHEADER *tag_header = (FITAGHEADER *)tag->data;
 		tag_header->id = id;
@@ -221,14 +221,14 @@ BOOL DLL_CALLCONV
 FreeImage_SetTagType(FITAG *tag, FREE_IMAGE_MDTYPE type) {
 	if(tag) {
 		FITAGHEADER *tag_header = (FITAGHEADER *)tag->data;
-		tag_header->type = (WORD)type;
+		tag_header->type = (uint16_t)type;
 		return TRUE;
 	}
 	return FALSE;
 }
 
 BOOL DLL_CALLCONV 
-FreeImage_SetTagCount(FITAG *tag, DWORD count) {
+FreeImage_SetTagCount(FITAG *tag, uint32_t count) {
 	if(tag) {
 		FITAGHEADER *tag_header = (FITAGHEADER *)tag->data;
 		tag_header->count = count;
@@ -238,7 +238,7 @@ FreeImage_SetTagCount(FITAG *tag, DWORD count) {
 }
 
 BOOL DLL_CALLCONV 
-FreeImage_SetTagLength(FITAG *tag, DWORD length) {
+FreeImage_SetTagLength(FITAG *tag, uint32_t length) {
 	if(tag) {
 		FITAGHEADER *tag_header = (FITAGHEADER *)tag->data;
 		tag_header->length = length;
@@ -270,7 +270,7 @@ FreeImage_SetTagValue(FITAG *tag, const void *value) {
 				}
 				char *src_data = (char*)value;
 				char *dst_data = (char*)tag_header->value;
-				for(DWORD i = 0; i < tag_header->length; i++) {
+				for(uint32_t i = 0; i < tag_header->length; i++) {
 					dst_data[i] = src_data[i];
 				}
 				dst_data[tag_header->length] = '\0';
@@ -278,7 +278,7 @@ FreeImage_SetTagValue(FITAG *tag, const void *value) {
 			break;
 
 			default:
-				tag_header->value = malloc(tag_header->length * sizeof(BYTE));
+				tag_header->value = malloc(tag_header->length * sizeof(uint8_t));
 				if(!tag_header->value) {
 					return FALSE;
 				}

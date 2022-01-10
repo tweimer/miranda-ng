@@ -1,7 +1,7 @@
 /*
 
 Copyright (C) 2009 Ricardo Pescuma Domenecci
-Copyright (C) 2012-21 Miranda NG team
+Copyright (C) 2012-22 Miranda NG team
 
 This is free software; you can redistribute it and/or
 modify it under the terms of the GNU Library General Public
@@ -223,7 +223,7 @@ class CExtraIconOptsDlg : public CDlgBase
 		HMENU submenu = GetSubMenu(menu, popup);
 		TranslateMenu(submenu);
 
-		DWORD pos = GetMessagePos();
+		uint32_t pos = GetMessagePos();
 		int ret = TrackPopupMenu(submenu, TPM_TOPALIGN | TPM_RIGHTBUTTON | TPM_RETURNCMD | TPM_LEFTALIGN, LOWORD(pos), HIWORD(pos), 0, m_hwnd, nullptr);
 
 		DestroyMenu(menu);
@@ -286,7 +286,7 @@ public:
 		// Get user data and create new groups
 		LIST<ExtraIconGroup> groups(1);
 
-		BYTE pos = 0;
+		uint8_t pos = 0;
 		int firstEmptySlot = 0;
 		HTREEITEM ht = m_tree.GetRoot();
 		TVITEMEX tvi;
@@ -347,7 +347,7 @@ public:
 
 			char setting[512];
 			mir_snprintf(setting, "%d_count", k);
-			db_set_w(0, EI_MODULE_NAME "Groups", setting, (WORD)group->m_items.getCount());
+			db_set_w(0, EI_MODULE_NAME "Groups", setting, (uint16_t)group->m_items.getCount());
 
 			for (int j = 0; j < group->m_items.getCount(); j++) {
 				BaseExtraIcon *extra = group->m_items[j];

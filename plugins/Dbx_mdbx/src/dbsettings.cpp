@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org)
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org)
 all portions of this codebase are copyrighted to the people
 listed in contributors.txt.
 
@@ -36,7 +36,7 @@ void CDbxMDBX::FillSettings()
 		if (szModule == nullptr)
 			continue;
 
-		const BYTE *pBlob = (const BYTE*)data.iov_base;
+		const uint8_t *pBlob = (const uint8_t*)data.iov_base;
 		if (*pBlob == DBVT_DELETED)
 			continue;
 
@@ -49,17 +49,17 @@ void CDbxMDBX::FillSettings()
 		if (dbv == nullptr) // garbage! a setting for removed/non-existent contact
 			continue;
 
-		WORD varLen;
+		uint16_t varLen;
 
-		BYTE iType = dbv->type = pBlob[0]; pBlob++;
+		uint8_t iType = dbv->type = pBlob[0]; pBlob++;
 		switch (iType) {
 		case DBVT_BYTE:  dbv->bVal = *pBlob; break;
-		case DBVT_WORD:  dbv->wVal = *(WORD*)pBlob; break;
-		case DBVT_DWORD: dbv->dVal = *(DWORD*)pBlob; break;
+		case DBVT_WORD:  dbv->wVal = *(uint16_t*)pBlob; break;
+		case DBVT_DWORD: dbv->dVal = *(uint32_t*)pBlob; break;
 
 		case DBVT_UTF8:
 		case DBVT_ASCIIZ:
-			varLen = *(WORD*)pBlob;
+			varLen = *(uint16_t*)pBlob;
 			pBlob += 2;
 			dbv->pszVal = (char*)mir_alloc(1 + varLen);
 			memcpy(dbv->pszVal, pBlob, varLen);
@@ -68,9 +68,9 @@ void CDbxMDBX::FillSettings()
 
 		case DBVT_BLOB:
 		case DBVT_ENCRYPTED:
-			varLen = *(WORD*)pBlob;
+			varLen = *(uint16_t*)pBlob;
 			pBlob += 2;
-			dbv->pbVal = (BYTE *)mir_alloc(varLen);
+			dbv->pbVal = (uint8_t *)mir_alloc(varLen);
 			memcpy(dbv->pbVal, pBlob, varLen);
 			dbv->cpbVal = varLen;
 			break;
@@ -113,23 +113,23 @@ BOOL CDbxMDBX::WriteContactSettingWorker(MCONTACT contactID, DBCONTACTWRITESETTI
 
 	data.iov_base = _alloca(data.iov_len);
 
-	BYTE *pBlob = (BYTE*)data.iov_base;
+	uint8_t *pBlob = (uint8_t*)data.iov_base;
 	*pBlob++ = dbcws.value.type;
 	switch (dbcws.value.type) {
 	case DBVT_BYTE:  *pBlob = dbcws.value.bVal; break;
-	case DBVT_WORD:  *(WORD*)pBlob = dbcws.value.wVal; break;
-	case DBVT_DWORD: *(DWORD*)pBlob = dbcws.value.dVal; break;
+	case DBVT_WORD:  *(uint16_t*)pBlob = dbcws.value.wVal; break;
+	case DBVT_DWORD: *(uint32_t*)pBlob = dbcws.value.dVal; break;
 
 	case DBVT_ASCIIZ:
 	case DBVT_UTF8:
-		*(WORD*)pBlob = dbcws.value.cchVal;
+		*(uint16_t*)pBlob = dbcws.value.cchVal;
 		pBlob += 2;
 		memcpy(pBlob, dbcws.value.pszVal, dbcws.value.cchVal);
 		break;
 
 	case DBVT_BLOB:
 	case DBVT_ENCRYPTED:
-		*(WORD*)pBlob = dbcws.value.cpbVal;
+		*(uint16_t*)pBlob = dbcws.value.cpbVal;
 		pBlob += 2;
 		memcpy(pBlob, dbcws.value.pbVal, dbcws.value.cpbVal);
 	}

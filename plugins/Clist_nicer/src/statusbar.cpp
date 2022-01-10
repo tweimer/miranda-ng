@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org),
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org),
 Copyright (c) 2000-03 Miranda ICQ/IM project,
 all portions of this codebase are copyrighted to the people
 listed in contributors.txt.
@@ -87,7 +87,7 @@ LRESULT CALLBACK NewStatusBarWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM 
 			HDC hdc = BeginPaint(hwnd, &ps);
 			HDC hdcMem = CreateCompatibleDC(hdc);
 			RECT rcClient, rcWindow;
-			BYTE windowStyle = db_get_b(0, "CLUI", "WindowStyle", SETTING_WINDOWSTYLE_DEFAULT);
+			uint8_t windowStyle = db_get_b(0, "CLUI", "WindowStyle", SETTING_WINDOWSTYLE_DEFAULT);
 			LONG b_offset = cfg::dat.bClipBorder + (windowStyle == SETTING_WINDOWSTYLE_NOBORDER ? 2 : (windowStyle == SETTING_WINDOWSTYLE_THINBORDER ? 1 : 0));
 
 			GetClientRect(hwnd, &rcClient);

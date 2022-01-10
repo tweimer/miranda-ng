@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org),
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org),
 Copyright (c) 2000-12 Miranda IM project,
 all portions of this codebase are copyrighted to the people
 listed in contributors.txt.
@@ -102,7 +102,7 @@ void fnCluiProtocolStatusChanged(int, const char*)
 	}
 	else {
 		SIZE textSize;
-		BYTE showOpts = db_get_b(0, "CLUI", "SBarShow", 1);
+		uint8_t showOpts = db_get_b(0, "CLUI", "SBarShow", 1);
 
 		HDC hdc = GetDC(nullptr);
 		HFONT hFont = (HFONT)SelectObject(hdc, (HFONT)SendMessage(g_clistApi.hwndStatus, WM_GETFONT, 0, 0));

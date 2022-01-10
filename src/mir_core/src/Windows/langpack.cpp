@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org),
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org),
 Copyright (c) 2000-12 Miranda IM project,
 all portions of this codebase are copyrighted to the people
 listed in contributors.txt.
@@ -41,7 +41,7 @@ static BOOL bModuleInitialized = FALSE;
 
 struct LangPackEntry
 {
-	DWORD englishHash;
+	uint32_t englishHash;
 	char *szLocal;
 	char *utfLocal;
 	wchar_t *wszLocal;
@@ -182,7 +182,7 @@ static bool EnterMuuid(const char *p, MUUID &result)
 	if (*p++ != '{')
 		return false;
 
-	BYTE *d = (BYTE*)&result;
+	uint8_t *d = (uint8_t*)&result;
 
 	for (int nBytes = 0; *p && nBytes < 24; p++) {
 		if (*p == '-')
@@ -201,7 +201,7 @@ static bool EnterMuuid(const char *p, MUUID &result)
 		if (sscanf(p, "%2x", &c) != 1)
 			return false;
 
-		*d++ = (BYTE)c;
+		*d++ = (uint8_t)c;
 		nBytes++;
 		p++;
 	}
@@ -413,7 +413,7 @@ MIR_CORE_DLL(int) LoadLangPack(const wchar_t *ptszLangPack)
 	langPack.flags = 0;
 
 	// exists & not a directory?
-	DWORD dwAttrib = GetFileAttributes(tszFullPath);
+	uint32_t dwAttrib = GetFileAttributes(tszFullPath);
 	if (dwAttrib == INVALID_FILE_ATTRIBUTES || (dwAttrib & FILE_ATTRIBUTE_DIRECTORY))
 		return 3;
 
@@ -621,7 +621,7 @@ MIR_CORE_DLL(void) Langpack_SortDuplicates(void)
 		return;
 
 	LangPackEntry *s = g_pEntries + 1, *d = s, *pLast = g_pEntries;
-	DWORD dwSavedHash = g_pEntries->englishHash;
+	uint32_t dwSavedHash = g_pEntries->englishHash;
 	bool bSortNeeded = false;
 
 	for (int i = 1; i < g_entryCount; i++, s++) {

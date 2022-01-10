@@ -31,7 +31,7 @@ static INT_PTR CALLBACK ShutdownOptDlgProc(HWND hwndDlg, UINT msg, WPARAM wParam
 	case WM_INITDIALOG:
 		TranslateDialogDefault(hwndDlg);
 		{
-			WORD setting = g_plugin.getWord("ConfirmDlgCountdown", SETTING_CONFIRMDLGCOUNTDOWN_DEFAULT);
+			uint16_t setting = g_plugin.getWord("ConfirmDlgCountdown", SETTING_CONFIRMDLGCOUNTDOWN_DEFAULT);
 			if (setting < 3)
 				setting = SETTING_CONFIRMDLGCOUNTDOWN_DEFAULT;
 			SendDlgItemMessage(hwndDlg, IDC_SPIN_CONFIRMDLGCOUNTDOWN, UDM_SETRANGE, 0, MAKELPARAM(999, 3));
@@ -85,12 +85,12 @@ static INT_PTR CALLBACK ShutdownOptDlgProc(HWND hwndDlg, UINT msg, WPARAM wParam
 	case WM_NOTIFY:
 		switch (((NMHDR*)lParam)->code) {
 		case PSN_APPLY:
-			g_plugin.setByte("ShowConfirmDlg", (BYTE)(IsDlgButtonChecked(hwndDlg, IDC_CHECK_SHOWCONFIRMDLG) != 0));
-			g_plugin.setWord("ConfirmDlgCountdown", (WORD)GetDlgItemInt(hwndDlg, IDC_EDIT_CONFIRMDLGCOUNTDOWN, nullptr, FALSE));
-			g_plugin.setByte("RememberOnRestart", (BYTE)(IsDlgButtonChecked(hwndDlg, IDC_CHECK_REMEMBERONRESTART) != 0));
-			g_plugin.setByte("SmartOfflineCheck", (BYTE)(IsDlgButtonChecked(hwndDlg, IDC_CHECK_SMARTOFFLINECHECK) != 0));
+			g_plugin.setByte("ShowConfirmDlg", (uint8_t)(IsDlgButtonChecked(hwndDlg, IDC_CHECK_SHOWCONFIRMDLG) != 0));
+			g_plugin.setWord("ConfirmDlgCountdown", (uint16_t)GetDlgItemInt(hwndDlg, IDC_EDIT_CONFIRMDLGCOUNTDOWN, nullptr, FALSE));
+			g_plugin.setByte("RememberOnRestart", (uint8_t)(IsDlgButtonChecked(hwndDlg, IDC_CHECK_REMEMBERONRESTART) != 0));
+			g_plugin.setByte("SmartOfflineCheck", (uint8_t)(IsDlgButtonChecked(hwndDlg, IDC_CHECK_SMARTOFFLINECHECK) != 0));
 			if (IsWindowEnabled(GetDlgItem(hwndDlg, IDC_CHECK_WEATHER)))
-				g_plugin.setByte("WeatherShutdown", (BYTE)(IsDlgButtonChecked(hwndDlg, IDC_CHECK_WEATHER) != 0));
+				g_plugin.setByte("WeatherShutdown", (uint8_t)(IsDlgButtonChecked(hwndDlg, IDC_CHECK_WEATHER) != 0));
 			return TRUE;
 		}
 		break;

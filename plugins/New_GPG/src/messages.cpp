@@ -1,4 +1,4 @@
-// Copyright © 2010-21 sss
+// Copyright © 2010-22 sss
 // 
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -20,7 +20,7 @@ std::list<HANDLE> sent_msgs;
 
 struct RecvParams
 {
-	RecvParams(MCONTACT _p1, std::wstring _p2, const char *_p3, DWORD _p4) :
+	RecvParams(MCONTACT _p1, std::wstring _p2, const char *_p3, uint32_t _p4) :
 		hContact(_p1),
 		str(_p2),
 		msg(_p3),
@@ -30,7 +30,7 @@ struct RecvParams
 	MCONTACT hContact;
 	std::wstring str;
 	std::string msg;
-	DWORD timestamp;
+	uint32_t timestamp;
 };
 
 static void RecvMsgSvc_func(RecvParams *param)
@@ -501,7 +501,7 @@ INT_PTR RecvMsgSvc(WPARAM w, LPARAM l)
 	return 0;
 }
 
-void SendMsgSvc_func(MCONTACT hContact, char *msg, DWORD flags)
+void SendMsgSvc_func(MCONTACT hContact, char *msg, uint32_t flags)
 {
 	string str = msg;
 	if (g_plugin.bStripTags && g_plugin.bAppendTags) {
@@ -761,8 +761,8 @@ int HookSendMsg(WPARAM w, LPARAM l)
 			//mir_free(dbei->pBlob);
 			str_event.insert(0, toUTF8(globals.wszOutopentag.c_str()));
 			str_event.append(toUTF8(globals.wszOutclosetag.c_str()));
-			dbei->pBlob = (PBYTE)mir_strdup(str_event.c_str());
-			dbei->cbBlob = (DWORD)str_event.length() + 1;
+			dbei->pBlob = (uint8_t*)mir_strdup(str_event.c_str());
+			dbei->cbBlob = (uint32_t)str_event.length() + 1;
 		}
 
 		return 0;

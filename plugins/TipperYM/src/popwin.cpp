@@ -499,7 +499,7 @@ LRESULT CALLBACK PopupWindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPa
 						HDC hdcMem = CreateCompatibleDC(hdc);
 						SelectObject(hdcMem, hbmpAvatar);
 
-						blend.SourceConstantAlpha = (BYTE)(opt.iAvatarOpacity / 100.0 * 255);
+						blend.SourceConstantAlpha = (uint8_t)(opt.iAvatarOpacity / 100.0 * 255);
 						AlphaBlend(hdc, rcAvatar.left, rcAvatar.top, bm.bmWidth, bm.bmHeight, hdcMem, 0, 0, bm.bmWidth, bm.bmHeight, blend);
 						blend.SourceConstantAlpha = 255;
 
@@ -512,7 +512,7 @@ LRESULT CALLBACK PopupWindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPa
 								FrameRect(hdc, &rcAvatar, hbrBorder);
 
 							DeleteObject(hbrBorder);
-							RestoreAlpha(&rcAvatar, pBits, (BYTE)(opt.iAvatarOpacity / 100.0 * 255));
+							RestoreAlpha(&rcAvatar, pBits, (uint8_t)(opt.iAvatarOpacity / 100.0 * 255));
 						}
 
 						if (hrgnAvatar) {
@@ -1433,7 +1433,7 @@ LRESULT CALLBACK PopupWindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPa
 		pwd->rows = nullptr;
 		pwd->iRowCount = 0;
 
-		DWORD dwItems = (wParam == 0) ? opt.iFirstItems : opt.iSecondItems;
+		uint32_t dwItems = (wParam == 0) ? opt.iFirstItems : opt.iSecondItems;
 		bool bFirstItem = true;
 		wchar_t buff[64];
 
@@ -1584,7 +1584,7 @@ LRESULT CALLBACK PopupWindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPa
 						if (proto == nullptr)
 							continue;
 
-						WORD wStatus = db_get_w(hContact, proto, "Status", ID_STATUS_OFFLINE);
+						uint16_t wStatus = db_get_w(hContact, proto, "Status", ID_STATUS_OFFLINE);
 						WordToStatusDesc(hContact, proto, "Status", swzStatus, 256);
 
 						if (wStatus != ID_STATUS_OFFLINE)

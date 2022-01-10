@@ -31,23 +31,23 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 int Info(char *title, char *format, ...);
 
-char *BinToHex(int size, PBYTE data);
-void HexToBin(char *inData, ULONG &size, PBYTE &outData);
+char *BinToHex(int size, uint8_t *data);
+void HexToBin(char *inData, ULONG &size, uint8_t* &outData);
 
 void ScreenToClient(HWND hWnd, LPRECT rect);
 void AnchorMoveWindow(HWND window, const WINDOWPOS *parentPos, int anchors);
 RECT AnchorCalcPos(HWND window, const RECT *rParent, const WINDOWPOS *parentPos, int anchors);
 
 int GetStringFromDatabase(MCONTACT hContact, char *szModule, char *szSettingName, char *szError, char *szResult, size_t size);
-int GetStringFromDatabase(MCONTACT hContact, char *szModule, char *szSettingName, WCHAR *szError, WCHAR *szResult, size_t count);
+int GetStringFromDatabase(MCONTACT hContact, char *szModule, char *szSettingName, wchar_t *szError, wchar_t *szResult, size_t count);
 int GetStringFromDatabase(char *szSettingName, char *szError, char *szResult, size_t size);
-int GetStringFromDatabase(char *szSettingName, WCHAR *szError, WCHAR *szResult, size_t count);
+int GetStringFromDatabase(char *szSettingName, wchar_t *szError, wchar_t *szResult, size_t count);
 
 wchar_t* GetContactName(MCONTACT hContact, char *szProto);
 wchar_t* GetContactID(MCONTACT hContact, char *szProto);
 MCONTACT GetContactFromID(wchar_t *szID, char *szProto);
 void Proto_GetBaseAccountName(MCONTACT hContact, char *szProto, size_t size);
 
-int MyPUShowMessage(char *lpzText, BYTE kind);
+int MyPUShowMessage(char *lpzText, uint8_t kind);
 
 #endif

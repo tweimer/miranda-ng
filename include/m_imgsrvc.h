@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org)
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org)
 Copyright (c) 2000-12 Miranda ICQ/IM project,
 all portions of this codebase are copyrighted to the people
 listed in contributors.txt.
@@ -73,11 +73,11 @@ EXTERN_C MIR_APP_DLL(HBITMAP) Image_LoadFromMem(const void *pBuf, size_t cbLen, 
 
 struct IMGSRVC_INFO
 {
-    DWORD cbSize;
+    uint32_t cbSize;
 	 const wchar_t *pwszName;
     HBITMAP hbm;
     FIBITMAP *dib;
-    DWORD    dwMask;
+    uint32_t dwMask;
     FREE_IMAGE_FORMAT fif;
 };
 

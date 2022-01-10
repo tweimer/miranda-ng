@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team,
+Copyright (C) 2012-22 Miranda NG team,
 all portions of this codebase are copyrighted to the people
 listed in contributors.txt.
 
@@ -191,15 +191,15 @@ MEVENT PROTO_INTERFACE::RecvMsg(MCONTACT hContact, PROTORECVEVENT *pre)
 		return 0;
 
 	ptrA pszTemp;
-	mir_ptr<BYTE> pszBlob;
+	mir_ptr<uint8_t> pszBlob;
 
 	DBEVENTINFO dbei = {};
 	dbei.flags = DBEF_UTF;
 	dbei.szModule = Proto_GetBaseAccountName(hContact);
 	dbei.timestamp = pre->timestamp;
 	dbei.eventType = EVENTTYPE_MESSAGE;
-	dbei.cbBlob = (DWORD)mir_strlen(pre->szMessage) + 1;
-	dbei.pBlob = (PBYTE)pre->szMessage;
+	dbei.cbBlob = (uint32_t)mir_strlen(pre->szMessage) + 1;
+	dbei.pBlob = (uint8_t*)pre->szMessage;
 
 	if (pre->flags & PREF_CREATEREAD)
 		dbei.flags |= DBEF_READ;

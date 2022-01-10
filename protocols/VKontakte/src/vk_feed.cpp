@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2013-21 Miranda NG team (https://miranda-ng.org)
+Copyright (c) 2013-22 Miranda NG team (https://miranda-ng.org)
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -620,7 +620,7 @@ void CVkProto::RetrieveUnreadNews(time_t tLastNewsTime)
 		<< CHAR_PARAM("filters", szFilter)
 		<< CHAR_PARAM("source_ids", szSource));
 
-	setDword("LastNewsReqTime", (DWORD)time(0));
+	setDword("LastNewsReqTime", (uint32_t)time(0));
 }
 
 static int sttCompareVKNewsItems(const CVKNewsItem *p1, const CVKNewsItem *p2)
@@ -711,7 +711,7 @@ void CVkProto::RetrieveUnreadNotifications(time_t tLastNotificationsTime)
 		<< WCHAR_PARAM("code", code)
 	);
 
-	setDword("LastNotificationsReqTime", (DWORD)time(0));
+	setDword("LastNotificationsReqTime", (uint32_t)time(0));
 }
 
 bool CVkProto::FilterNotification(CVKNewsItem* vkNotificationItem, bool& isCommented)

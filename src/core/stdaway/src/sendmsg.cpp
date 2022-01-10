@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org),
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org),
 Copyright (c) 2000-12 Miranda IM project,
 all portions of this codebase are copyrighted to the people
 listed in contributors.txt.
@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "stdafx.h"
 
-DWORD protoModeMsgFlags;
+uint32_t protoModeMsgFlags;
 static HWND hwndStatusMsg;
 
 const wchar_t* GetDefaultMessage(int status)
@@ -133,7 +133,7 @@ static LRESULT CALLBACK MessageEditSubclassProc(HWND hwnd, UINT msg, WPARAM wPar
 		}
 		if (wParam == 127 && GetKeyState(VK_CONTROL) & 0x8000) //ctrl-backspace
 		{
-			DWORD start, end;
+			uint32_t start, end;
 			SendMessage(hwnd, EM_GETSEL, (WPARAM)&end, 0);
 			SendMessage(hwnd, WM_KEYDOWN, VK_LEFT, 0);
 			SendMessage(hwnd, EM_GETSEL, (WPARAM)&start, 0);

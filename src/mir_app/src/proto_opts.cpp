@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org),
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org),
 Copyright (c) 2000-12 Miranda IM project,
 all portions of this codebase are copyrighted to the people
 listed in contributors.txt.
@@ -688,7 +688,7 @@ BOOL CAccountListCtrl::OnDrawItem(DRAWITEMSTRUCT *lps)
 		DrawText(lps->hDC, text, -1, &lps->rcItem, DT_LEFT | DT_NOPREFIX | DT_SINGLELINE | DT_END_ELLIPSIS | DT_VCENTER);
 		lps->rcItem.bottom = tmp;
 		GetTextExtentPoint32(lps->hDC, text, (int)length, &sz);
-		lps->rcItem.top += max(cxIcon, sz.cy) + 2;
+		lps->rcItem.top += max(cxIcon, (int)sz.cy) + 2;
 	}
 
 	if (lps->itemID == (unsigned)PARENT()->m_iSelected) {

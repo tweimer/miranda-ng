@@ -31,7 +31,7 @@ static void MessageBoxIndirectFree(MSGBOXPARAMSA *mbp)
 	mir_free(mbp);
 }
 
-void ShowInfoMessage(BYTE flags, const char *pszTitle, const char *pszTextFmt, ...)
+void ShowInfoMessage(uint8_t flags, const char *pszTitle, const char *pszTextFmt, ...)
 {
 	char szText[256]; /* max for systray */
 
@@ -59,10 +59,10 @@ void ShowInfoMessage(BYTE flags, const char *pszTitle, const char *pszTextFmt, .
 }
 
 // LocalFree() the return value
-char* GetWinErrorDescription(DWORD dwLastError)
+char* GetWinErrorDescription(uint32_t dwLastError)
 {
 	char *buf = nullptr;
-	DWORD flags = FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM;
+	uint32_t flags = FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM;
 	if (!FormatMessageA(flags, nullptr, dwLastError, LANGIDFROMLCID(Langpack_GetDefaultLocale()), (char*)&buf, 0, nullptr))
 		if (GetLastError() == ERROR_RESOURCE_LANG_NOT_FOUND)
 			FormatMessageA(flags, nullptr, dwLastError, 0, (char*)&buf, 0, nullptr);
@@ -95,20 +95,20 @@ BOOL TimeStampToSystemTime(time_t timestamp, SYSTEMTIME *st)
 		return FALSE;
 
 	st->wMilliseconds = 0;                 /* 0-999 (not given in tm) */
-	st->wSecond = (WORD)ts.tm_sec;       /* 0-59 */
-	st->wMinute = (WORD)ts.tm_min;       /* 0-59 */
-	st->wHour = (WORD)ts.tm_hour;        /* 0-23 */
-	st->wDay = (WORD)ts.tm_mday;         /* 1-31 */
-	st->wDayOfWeek = (WORD)ts.tm_wday;   /* 0-6 (Sun-Sat) */
-	st->wMonth = (WORD)(ts.tm_mon + 1);    /* 1-12 (Jan-Dec) */
-	st->wYear = (WORD)(ts.tm_year + 1900); /* 1601-30827 */
+	st->wSecond = (uint16_t)ts.tm_sec;       /* 0-59 */
+	st->wMinute = (uint16_t)ts.tm_min;       /* 0-59 */
+	st->wHour = (uint16_t)ts.tm_hour;        /* 0-23 */
+	st->wDay = (uint16_t)ts.tm_mday;         /* 1-31 */
+	st->wDayOfWeek = (uint16_t)ts.tm_wday;   /* 0-6 (Sun-Sat) */
+	st->wMonth = (uint16_t)(ts.tm_mon + 1);    /* 1-12 (Jan-Dec) */
+	st->wYear = (uint16_t)(ts.tm_year + 1900); /* 1601-30827 */
 	return TRUE;
 }
 
 BOOL GetFormatedCountdown(wchar_t *pszOut, int nSize, time_t countdown)
 {
 	static BOOL fInited = FALSE;
-	static int (WINAPI *pfnGetDurationFormat)(LCID, DWORD, const SYSTEMTIME*, double, WCHAR*, WCHAR*, int);
+	static int (WINAPI *pfnGetDurationFormat)(LCID, uint32_t, const SYSTEMTIME*, double, wchar_t*, wchar_t*, int);
 	/* Init */
 	if (!fInited && IsWinVerVistaPlus()) {
 		*(PROC*)&pfnGetDurationFormat = GetProcAddress(GetModuleHandleA("KERNEL32"), "GetDurationFormat");

@@ -5,7 +5,7 @@ Jabber Protocol Plugin for Miranda NG
 Copyright (c) 2002-04  Santithorn Bunchua
 Copyright (c) 2005-12  George Hazan
 Copyright (c) 2007     Maxim Mluhov
-Copyright (C) 2012-21 Miranda NG team
+Copyright (C) 2012-22 Miranda NG team
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -124,14 +124,14 @@ void CJabberProto::OnIqResultNotes(const TiXmlElement *iqNode, CJabberIqInfo *pI
 				m_notes.LoadXml(storage);
 }
 
-void CJabberProto::OnProcessLoginRq(ThreadData *info, DWORD rq)
+void CJabberProto::OnProcessLoginRq(ThreadData *info, uint32_t rq)
 {
 	if (info == nullptr)
 		return;
 
 	info->dwLoginRqs |= rq;
 
-	DWORD dwMask = JABBER_LOGIN_ROSTER | JABBER_LOGIN_BOOKMARKS | JABBER_LOGIN_SERVERINFO;
+	uint32_t dwMask = JABBER_LOGIN_ROSTER | JABBER_LOGIN_BOOKMARKS | JABBER_LOGIN_SERVERINFO;
 	if ((info->dwLoginRqs & dwMask) == dwMask && !(info->dwLoginRqs & JABBER_LOGIN_BOOKMARKS_AJ)) {
 		if (info->jabberServerCaps & JABBER_CAPS_ARCHIVE_AUTO)
 			EnableArchive(m_bEnableMsgArchive != 0);
@@ -506,10 +506,10 @@ void CJabberProto::OnIqResultGetVcardPhoto(const TiXmlElement *n, MCONTACT hCont
 	if (szPicType == nullptr)
 		return;
 
-	BYTE digest[MIR_SHA1_HASH_SIZE];
+	uint8_t digest[MIR_SHA1_HASH_SIZE];
 	mir_sha1_ctx sha1ctx;
 	mir_sha1_init(&sha1ctx);
-	mir_sha1_append(&sha1ctx, (BYTE *)buffer.get(), bufferLen);
+	mir_sha1_append(&sha1ctx, (uint8_t *)buffer.get(), bufferLen);
 	mir_sha1_finish(&sha1ctx, digest);
 
 	char digestHex[MIR_SHA1_HASH_SIZE*2 + 1];
@@ -531,7 +531,7 @@ void CJabberProto::OnIqResultGetVcardPhoto(const TiXmlElement *n, MCONTACT hCont
 
 	debugLogA("Writing %d bytes", bufferLen);
 	DWORD nWritten;
-	bool bRes = WriteFile(hFile, buffer, (DWORD)bufferLen, &nWritten, nullptr) != 0;
+	bool bRes = WriteFile(hFile, buffer, (uint32_t)bufferLen, &nWritten, nullptr) != 0;
 	CloseHandle(hFile);
 	if (!bRes)
 		return;
@@ -703,9 +703,9 @@ void CJabberProto::OnIqResultGetVcard(const TiXmlElement *iqNode, CJabberIqInfo*
 					if (hContact != 0) {
 						if (sscanf(n->GetText(), "%d-%d-%d", &nYear, &nMonth, &nDay) == 3) {
 							hasBday = true;
-							setWord(hContact, "BirthYear", (WORD)nYear);
-							setByte(hContact, "BirthMonth", (BYTE)nMonth);
-							setByte(hContact, "BirthDay", (BYTE)nDay);
+							setWord(hContact, "BirthYear", (uint16_t)nYear);
+							setByte(hContact, "BirthMonth", (uint8_t)nMonth);
+							setByte(hContact, "BirthDay", (uint8_t)nDay);
 
 							SYSTEMTIME sToday = { 0 };
 							GetLocalTime(&sToday);
@@ -713,7 +713,7 @@ void CJabberProto::OnIqResultGetVcard(const TiXmlElement *iqNode, CJabberIqInfo*
 							if (sToday.wMonth < nMonth || (sToday.wMonth == nMonth && sToday.wDay < nDay))
 								nAge--;
 							if (nAge)
-								setWord(hContact, "Age", (WORD)nAge);
+								setWord(hContact, "Age", (uint16_t)nAge);
 						}
 					}
 					else {
@@ -728,7 +728,7 @@ void CJabberProto::OnIqResultGetVcard(const TiXmlElement *iqNode, CJabberIqInfo*
 					if (hContact != 0) {
 						if (n->GetText()[0] && strchr("mMfF", n->GetText()[0]) != nullptr) {
 							hasGender = true;
-							setByte(hContact, "Gender", (BYTE)toupper(n->GetText()[0]));
+							setByte(hContact, "Gender", (uint8_t)toupper(n->GetText()[0]));
 						}
 					}
 					else {
@@ -1291,10 +1291,10 @@ void CJabberProto::OnIqResultGotAvatar(MCONTACT hContact, const char *pszText, c
 
 	setByte(hContact, "AvatarType", pictureType);
 
-	BYTE digest[MIR_SHA1_HASH_SIZE];
+	uint8_t digest[MIR_SHA1_HASH_SIZE];
 	mir_sha1_ctx sha;
 	mir_sha1_init(&sha);
-	mir_sha1_append(&sha, (BYTE*)(char*)body, resultLen);
+	mir_sha1_append(&sha, (uint8_t*)(char*)body, resultLen);
 	mir_sha1_finish(&sha, digest);
 
 	GetAvatarFileName(hContact, tszFileName, _countof(tszFileName));

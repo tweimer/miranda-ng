@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org)
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org)
 Copyright (c) 2000-08 Miranda ICQ/IM project,
 all portions of this codebase are copyrighted to the people
 listed in contributors.txt.
@@ -38,8 +38,8 @@ struct HOTKEYDESC
 	MAllStrings szDescription;    // description for options dialog
 	MAllStrings szSection;        // section name used to group sounds (NULL is acceptable)
 	const char *pszService;       // Service to call when HotKey Pressed
-	WORD DefHotKey;               // default hot key for action
-	DWORD dwFlags;                // one of HKD_* constants
+	uint16_t DefHotKey;           // default hot key for action
+	uint32_t dwFlags;             // one of HKD_* constants
 	LPARAM lParam;                // lParam to pass to service
 };
 
@@ -84,7 +84,7 @@ EXTERN_C MIR_APP_DLL(void) Hotkey_Unsubclass(HWND hwndEdit);
 // This event is fired when hotkeys were changed
 // wParam = lParam = 0
 
-#define ME_HOTKEYS_CHANGED       "CoreHotkeys/Changed"
+#define ME_HOTKEYS_CHANGED "CoreHotkeys/Changed"
 
 /////////////////////////////////////////////////////////////////////////////////////////
 

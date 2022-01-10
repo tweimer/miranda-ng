@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////////////////
 // Miranda NG: the free IM client for Microsoft* Windows*
 //
-// Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org)
+// Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org)
 // Copyright (c) 2000-08 Miranda ICQ/IM project,
 // all portions of this codebase are copyrighted to the people
 // listed in contributors.txt.
@@ -143,21 +143,21 @@ EXTERN_C MIR_CORE_DLL(int) db_enum_settings(MCONTACT hContact, DBSETTINGENUMPROC
 
 struct DBVARIANT
 {
-	BYTE type;
+	uint8_t type;
 	union {
-		BYTE bVal; char cVal;
-		WORD wVal; short sVal;
-		DWORD dVal; long lVal;
+		uint8_t bVal; char cVal;
+		uint16_t wVal; short sVal;
+		uint32_t dVal; long lVal;
 		struct {
 			union {
 				char *pszVal;
 				wchar_t *pwszVal;
 			};
-			WORD cchVal;   //only used for db/contact/getsettingstatic
+			uint16_t cchVal;   //only used for db/contact/getsettingstatic
 		};
 		struct {
-			WORD cpbVal;
-			BYTE *pbVal;
+			uint16_t cpbVal;
+			uint8_t *pbVal;
 		};
 	};
 };
@@ -173,13 +173,13 @@ struct DBVARIANT
 struct DBEVENTINFO
 {
 	const char *szModule;       // pointer to name of the module that 'owns' this event
-	DWORD timestamp;            // seconds since 00:00, 01/01/1970. Gives us times until 2106
+	uint32_t    timestamp;      // seconds since 00:00, 01/01/1970. Gives us times until 2106
 									    // unless you use the standard C library which is
 									    // signed and can only do until 2038. In GMT.
-	DWORD flags;                // combination of DBEF_* flags
-	WORD  eventType;            // module-defined event type field
-	int   cbBlob;               // size of pBlob in bytes
-	uint8_t *pBlob;             // pointer to buffer containing module-defined event data
+	uint32_t    flags;          // combination of DBEF_* flags
+	uint16_t    eventType;      // module-defined event type field
+	int         cbBlob;         // size of pBlob in bytes
+	uint8_t    *pBlob;          // pointer to buffer containing module-defined event data
 	const char *szId;           // server id
 
 	bool __forceinline markedRead() const {
@@ -339,7 +339,7 @@ EXTERN_C MIR_CORE_DLL(MEVENT) db_event_last(MCONTACT hContact);
 
 // Changes the flags for an event to mark it as read.
 // hDbEvent should have been returned by db_event_add/first/last/next/prev()
-// Returns the entire flag DWORD for the event after the change, or -1 if hDbEvent is invalid.
+// Returns the entire flag uint32_t for the event after the change, or -1 if hDbEvent is invalid.
 // This is the one database write operation that does not trigger an event.
 // Modules should not save flags states for any length of time.
 
@@ -368,7 +368,7 @@ EXTERN_C MIR_CORE_DLL(INT_PTR)  db_get(MCONTACT hContact, const char *szModule, 
 
 EXTERN_C MIR_CORE_DLL(int)      db_get_b(MCONTACT hContact, const char *szModule, const char *szSetting, int errorValue = 0);
 EXTERN_C MIR_CORE_DLL(int)      db_get_w(MCONTACT hContact, const char *szModule, const char *szSetting, int errorValue = 0);
-EXTERN_C MIR_CORE_DLL(DWORD)    db_get_dw(MCONTACT hContact, const char *szModule, const char *szSetting, DWORD errorValue = 0);
+EXTERN_C MIR_CORE_DLL(uint32_t) db_get_dw(MCONTACT hContact, const char *szModule, const char *szSetting, uint32_t errorValue = 0);
 
 EXTERN_C MIR_CORE_DLL(char*)    db_get_sa(MCONTACT hContact, const char *szModule, const char *szSetting, const char *szValue = nullptr);
 EXTERN_C MIR_CORE_DLL(char*)    db_get_utfa(MCONTACT hContact, const char *szModule, const char *szSetting, const char *szValue = nullptr);
@@ -382,9 +382,9 @@ EXTERN_C MIR_CORE_DLL(int)      db_get_static_utf(MCONTACT hContact, const char 
 EXTERN_C MIR_CORE_DLL(int)      db_get_wstatic(MCONTACT hContact, const char *szModule, const char *szSetting, wchar_t *pDest, int cbDest);
 
 EXTERN_C MIR_CORE_DLL(INT_PTR)  db_set(MCONTACT hContact, const char *szModule, const char *szSetting, DBVARIANT *dbv);
-EXTERN_C MIR_CORE_DLL(INT_PTR)  db_set_b(MCONTACT hContact, const char *szModule, const char *szSetting, BYTE val);
-EXTERN_C MIR_CORE_DLL(INT_PTR)  db_set_w(MCONTACT hContact, const char *szModule, const char *szSetting, WORD val);
-EXTERN_C MIR_CORE_DLL(INT_PTR)  db_set_dw(MCONTACT hContact, const char *szModule, const char *szSetting, DWORD val);
+EXTERN_C MIR_CORE_DLL(INT_PTR)  db_set_b(MCONTACT hContact, const char *szModule, const char *szSetting, uint8_t val);
+EXTERN_C MIR_CORE_DLL(INT_PTR)  db_set_w(MCONTACT hContact, const char *szModule, const char *szSetting, uint16_t val);
+EXTERN_C MIR_CORE_DLL(INT_PTR)  db_set_dw(MCONTACT hContact, const char *szModule, const char *szSetting, uint32_t val);
 EXTERN_C MIR_CORE_DLL(INT_PTR)  db_set_s(MCONTACT hContact, const char *szModule, const char *szSetting, const char *val);
 EXTERN_C MIR_CORE_DLL(INT_PTR)  db_set_ws(MCONTACT hContact, const char *szModule, const char *szSetting, const wchar_t *val);
 EXTERN_C MIR_CORE_DLL(INT_PTR)  db_set_utf(MCONTACT hContact, const char *szModule, const char *szSetting, const char *val);
@@ -472,13 +472,13 @@ struct DBCONTACTWRITESETTING
 
 struct DBEVENTTYPEDESCR
 {
-	LPSTR  module;      // event module name
-	DWORD  flags;       // flags, combination of the DETF_*
-	int    eventType;   // event id, unique for this module
-	LPSTR  descr;       // event type description (i.e. "File Transfer")
-	LPSTR  textService; // service name for MS_DB_EVENT_GETTEXT (0.8+, default Module+'/GetEventText'+EvtID)
-	LPSTR  iconService; // service name for MS_DB_EVENT_GETICON (0.8+, default Module+'/GetEventIcon'+EvtID)
-	HANDLE eventIcon;  // icolib handle to eventicon (0.8+, default 'eventicon_'+Module+EvtID)
+	LPSTR    module;      // event module name
+	uint32_t flags;       // flags, combination of the DETF_*
+	int      eventType;   // event id, unique for this module
+	LPSTR    descr;       // event type description (i.e. "File Transfer")
+	LPSTR    textService; // service name for MS_DB_EVENT_GETTEXT (0.8+, default Module+'/GetEventText'+EvtID)
+	LPSTR    iconService; // service name for MS_DB_EVENT_GETICON (0.8+, default Module+'/GetEventIcon'+EvtID)
+	HANDLE   eventIcon;   // icolib handle to eventicon (0.8+, default 'eventicon_'+Module+EvtID)
 };
 
 // constants for default event behaviour
@@ -499,7 +499,7 @@ EXTERN_C MIR_APP_DLL(DBEVENTTYPEDESCR*) DbEvent_GetType(const char *szModule, in
 
 __forceinline MCONTACT DbGetAuthEventContact(DBEVENTINFO *dbei)
 {
-	return (MCONTACT)(*(DWORD*)&dbei->pBlob[sizeof(DWORD)]);
+	return (MCONTACT)(*(uint32_t*)&dbei->pBlob[sizeof(uint32_t)]);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -647,21 +647,21 @@ EXTERN_C MIR_APP_DLL(wchar_t*) DbEvent_GetString(DBEVENTINFO *dbei, const char *
 
 ///////////////////////////////////////////////////////////////////////////////////////// inlined range tolerate versions */
 
-__inline BYTE DBGetContactSettingRangedByte(MCONTACT hContact, const char *szModule, const char *szSetting, BYTE errorValue, BYTE minValue, BYTE maxValue)
+__inline uint8_t DBGetContactSettingRangedByte(MCONTACT hContact, const char *szModule, const char *szSetting, uint8_t errorValue, uint8_t minValue, uint8_t maxValue)
 {
-	BYTE bVal = db_get_b(hContact, szModule, szSetting, errorValue);
+	uint8_t bVal = db_get_b(hContact, szModule, szSetting, errorValue);
 	return (bVal < minValue || bVal > maxValue) ? errorValue : bVal;
 }
 
-__inline WORD DBGetContactSettingRangedWord(MCONTACT hContact, const char *szModule, const char *szSetting, WORD errorValue, WORD minValue, WORD maxValue)
+__inline uint16_t DBGetContactSettingRangedWord(MCONTACT hContact, const char *szModule, const char *szSetting, uint16_t errorValue, uint16_t minValue, uint16_t maxValue)
 {
-	WORD wVal = db_get_w(hContact, szModule, szSetting, errorValue);
+	uint16_t wVal = db_get_w(hContact, szModule, szSetting, errorValue);
 	return (wVal < minValue || wVal > maxValue) ? errorValue : wVal;
 }
 
-__inline DWORD DBGetContactSettingRangedDword(MCONTACT hContact, const char *szModule, const char *szSetting, DWORD errorValue, DWORD minValue, DWORD maxValue)
+__inline uint32_t DBGetContactSettingRangedDword(MCONTACT hContact, const char *szModule, const char *szSetting, uint32_t errorValue, uint32_t minValue, uint32_t maxValue)
 {
-	DWORD dwVal = db_get_dw(hContact, szModule, szSetting, errorValue);
+	uint32_t dwVal = db_get_dw(hContact, szModule, szSetting, errorValue);
 	return (dwVal < minValue || dwVal > maxValue) ? errorValue : dwVal;
 }
 
@@ -688,16 +688,16 @@ namespace DB
 
 	/////////////////////////////////////////////////////////////////////////////////////////
 	// Helper to process the auth req body
-	// blob is: 0(DWORD), hContact(DWORD), nick(UTF8), firstName(UTF8), lastName(UTF8), email(UTF8), reason(UTF8)
+	// blob is: 0(uint32_t), hContact(uint32_t), nick(UTF8), firstName(UTF8), lastName(UTF8), email(UTF8), reason(UTF8)
 
 	#pragma warning(disable : 4251)
 
 	class MIR_APP_EXPORT AUTH_BLOB
 	{
 		MCONTACT m_hContact;
-		DWORD m_dwUin;
+		uint32_t m_dwUin;
 		ptrA m_szNick, m_szFirstName, m_szLastName, m_szEmail, m_szReason;
-		DWORD m_size;
+		uint32_t m_size;
 
 		uint8_t* makeBlob();
 
@@ -707,9 +707,9 @@ namespace DB
 		~AUTH_BLOB();
 
 		__forceinline operator char*() { return (char*)makeBlob(); }
-		__forceinline operator BYTE*() { return makeBlob(); }
+		__forceinline operator uint8_t*() { return makeBlob(); }
 
-		__forceinline DWORD size() const  { return m_size; }
+		__forceinline uint32_t size() const  { return m_size; }
 
 		__forceinline MCONTACT    get_contact()   const { return m_hContact;    }
 		__forceinline const char* get_nick()      const { return m_szNick;      }
@@ -718,8 +718,8 @@ namespace DB
 		__forceinline const char* get_email()     const { return m_szEmail;     }
 		__forceinline const char* get_reason()    const { return m_szReason;    }
 
-		__forceinline DWORD get_uin() const { return m_dwUin; }
-		__forceinline void set_uin(DWORD dwValue) { m_dwUin = dwValue; }
+		__forceinline uint32_t get_uin() const { return m_dwUin; }
+		__forceinline void set_uin(uint32_t dwValue) { m_dwUin = dwValue; }
 	};
 
 	/////////////////////////////////////////////////////////////////////////////////////////

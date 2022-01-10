@@ -129,7 +129,7 @@ void EraseAllInfo()
 		g_plugin.setByte(hContact, "IsUpdated", FALSE);
 		// reset logging settings
 		if (!g_plugin.getWString(hContact, "Log", &dbv)) {
-			g_plugin.setByte(hContact, "File", (BYTE)(dbv.pwszVal[0] != 0));
+			g_plugin.setByte(hContact, "File", (uint8_t)(dbv.pwszVal[0] != 0));
 			db_free(&dbv);
 		}
 		else g_plugin.setByte(hContact, "File", FALSE);
@@ -356,7 +356,7 @@ void wSetData(char *&Data, const char *Value)
 		Data = "";
 }
 
-void wSetData(WCHAR *&Data, const char *Value)
+void wSetData(wchar_t *&Data, const char *Value)
 {
 	if (Value[0] != 0)
 		Data = (g_bIsUtf) ? mir_utf8decodeW(Value) : mir_a2u(Value);
@@ -364,7 +364,7 @@ void wSetData(WCHAR *&Data, const char *Value)
 		Data = L"";
 }
 
-void wSetData(WCHAR *&Data, const WCHAR *Value)
+void wSetData(wchar_t *&Data, const wchar_t *Value)
 {
 	if (Value[0] != 0)
 		Data = mir_wstrdup(Value);
@@ -381,7 +381,7 @@ void wfree(char *&Data)
 	Data = nullptr;
 }
 
-void wfree(WCHAR *&Data)
+void wfree(wchar_t *&Data)
 {
 	if (Data && mir_wstrlen(Data) > 0)
 		mir_free(Data);
@@ -402,7 +402,7 @@ int GetWeatherDataFromDB(const char *szSetting, void *lparam)
 // remove or display the weather information for a contact
 // hContact - the contact in which the info is going to be removed
 //
-void DBDataManage(MCONTACT hContact, WORD Mode, WPARAM wParam, LPARAM)
+void DBDataManage(MCONTACT hContact, uint16_t Mode, WPARAM wParam, LPARAM)
 {
 	// get all the settings and store them in a temporary list
 	LIST<char> arSettings(10);

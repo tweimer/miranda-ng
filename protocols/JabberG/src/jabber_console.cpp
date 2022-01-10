@@ -6,7 +6,7 @@ Copyright (c) 2002-04  Santithorn Bunchua
 Copyright (c) 2005-12  George Hazan
 Copyright (c) 2007     Maxim Mluhov
 Copyright (c) 2007     Victor Pavlychko
-Copyright (C) 2012-21 Miranda NG team
+Copyright (C) 2012-22 Miranda NG team
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -40,7 +40,7 @@ struct StringBuf
 };
 
 static void sttAppendBufRaw(StringBuf *buf, const char *str);
-static void sttAppendBufW(StringBuf *buf, const WCHAR *str);
+static void sttAppendBufW(StringBuf *buf, const wchar_t *str);
 #define sttAppendBufT(a,b)		(sttAppendBufW((a),(b)))
 static void sttEmptyBuf(StringBuf *buf);
 
@@ -70,9 +70,9 @@ static void sttEmptyBuf(StringBuf *buf);
 #define RTF_ENDPLAINXML		"\\par"
 #define RTF_SEPARATOR		"\\sl-1\\slmult0\\highlight5\\cf5\\-\\par\\sl0"
 
-static void sttRtfAppendXml(StringBuf *buf, const TiXmlElement *node, DWORD flags, int indent);
+static void sttRtfAppendXml(StringBuf *buf, const TiXmlElement *node, uint32_t flags, int indent);
 
-void CJabberProto::OnConsoleProcessXml(const TiXmlElement *node, DWORD flags)
+void CJabberProto::OnConsoleProcessXml(const TiXmlElement *node, uint32_t flags)
 {
 	if (node && m_pDlgConsole) {
 		if (node->Name()) {
@@ -93,7 +93,7 @@ void CJabberProto::OnConsoleProcessXml(const TiXmlElement *node, DWORD flags)
 	}
 }
 
-bool CJabberProto::RecursiveCheckFilter(const TiXmlElement *node, DWORD flags)
+bool CJabberProto::RecursiveCheckFilter(const TiXmlElement *node, uint32_t flags)
 {
 	for (auto *p = node->FirstAttribute(); p; p = p->Next())
 		if (JabberStrIStr(Utf2T(p->Value()), m_filterInfo.pattern))
@@ -106,7 +106,7 @@ bool CJabberProto::RecursiveCheckFilter(const TiXmlElement *node, DWORD flags)
 	return false;
 }
 
-bool CJabberProto::FilterXml(const TiXmlElement *node, DWORD flags)
+bool CJabberProto::FilterXml(const TiXmlElement *node, uint32_t flags)
 {
 	if (!m_filterInfo.msg && !mir_strcmp(node->Name(), "message")) return false;
 	if (!m_filterInfo.presence && !mir_strcmp(node->Name(), "presence")) return false;
@@ -149,14 +149,14 @@ static void sttAppendBufRaw(StringBuf *buf, const char *str)
 	buf->offset += length;
 }
 
-static void sttAppendBufW(StringBuf *buf, const WCHAR *str)
+static void sttAppendBufW(StringBuf *buf, const wchar_t *str)
 {
 	char tmp[32];
 
 	if (!str) return;
 
 	sttAppendBufRaw(buf, "{\\uc1 ");
-	for (const WCHAR *p = str; *p; ++p) {
+	for (const wchar_t *p = str; *p; ++p) {
 		if ((*p == '\\') || (*p == '{') || (*p == '}')) {
 			tmp[0] = '\\';
 			tmp[1] = (char)*p;
@@ -181,7 +181,7 @@ static void sttEmptyBuf(StringBuf *buf)
 	buf->offset = 0;
 }
 
-static void sttRtfAppendXml(StringBuf *buf, const TiXmlElement *node, DWORD flags, int indent)
+static void sttRtfAppendXml(StringBuf *buf, const TiXmlElement *node, uint32_t flags, int indent)
 {
 	char indentLevel[128];
 	mir_snprintf(indentLevel, RTF_INDENT_FMT, (int)(indent * 200));

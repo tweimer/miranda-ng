@@ -2,7 +2,7 @@
 
 Object UI extensions
 Copyright (c) 2008  Victor Pavlychko, George Hazan
-Copyright (C) 2012-21 Miranda NG team
+Copyright (C) 2012-22 Miranda NG team
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -25,7 +25,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 /////////////////////////////////////////////////////////////////////////////////////////
 // CDbLink class
 
-CDbLink::CDbLink(const char *szModule, const char *szSetting, BYTE type, DWORD iValue)
+CDbLink::CDbLink(const char *szModule, const char *szSetting, uint8_t type, uint32_t iValue)
 	: CDataLink(type)
 {
 	m_szModule = mir_strdup(szModule);
@@ -35,7 +35,7 @@ CDbLink::CDbLink(const char *szModule, const char *szSetting, BYTE type, DWORD i
 	dbv.type = DBVT_DELETED;
 }
 
-CDbLink::CDbLink(const char *szModule, const char *szSetting, BYTE type, wchar_t *szValue)
+CDbLink::CDbLink(const char *szModule, const char *szSetting, uint8_t type, wchar_t *szValue)
 	: CDataLink(type),
 	m_iDefault(0)
 {
@@ -54,7 +54,7 @@ CDbLink::~CDbLink()
 		db_free(&dbv);
 }
 
-DWORD CDbLink::LoadInt()
+uint32_t CDbLink::LoadInt()
 {
 	switch (m_type) {
 		case DBVT_BYTE:  return db_get_b(0, m_szModule, m_szSetting, m_iDefault);
@@ -64,11 +64,11 @@ DWORD CDbLink::LoadInt()
 	}
 }
 
-void CDbLink::SaveInt(DWORD value)
+void CDbLink::SaveInt(uint32_t value)
 {
 	switch (m_type) {
-		case DBVT_BYTE:  db_set_b(0, m_szModule, m_szSetting, (BYTE)value); break;
-		case DBVT_WORD:  db_set_w(0, m_szModule, m_szSetting, (WORD)value); break;
+		case DBVT_BYTE:  db_set_b(0, m_szModule, m_szSetting, (uint8_t)value); break;
+		case DBVT_WORD:  db_set_w(0, m_szModule, m_szSetting, (uint16_t)value); break;
 		case DBVT_DWORD: db_set_dw(0, m_szModule, m_szSetting, value); break;
 	}
 }

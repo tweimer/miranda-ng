@@ -316,10 +316,10 @@ bool handle_module(MCONTACT hContact, const TiXmlElement *pXmlModule)
 		}
 		else if (!mir_strcmpi(g_szXmlTypeBlob, sType)) {
 			size_t bufLen;
-			mir_ptr<BYTE> buf((PBYTE)mir_base64_decode(sValue, &bufLen));
+			mir_ptr<uint8_t> buf((uint8_t*)mir_base64_decode(sValue, &bufLen));
 			if (buf) {
 				dbs.value.pbVal = buf;
-				dbs.value.cpbVal = (WORD)bufLen;
+				dbs.value.cpbVal = (uint16_t)bufLen;
 				dbs.value.type = DBVT_BLOB;
 
 				if (set_contact_settings(hContact, dbs))

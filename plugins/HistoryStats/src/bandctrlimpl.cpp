@@ -424,19 +424,19 @@ HICON BandCtrlImpl::convertToGray(HICON hIcon)
 	BITMAP bmp;
 	if (GetObject(ii.hbmColor, sizeof(bmp), &bmp) && bmp.bmBitsPixel == 32) {
 		int nSize = bmp.bmHeight * bmp.bmWidthBytes;
-		BYTE* pBits = new BYTE[nSize];
+		uint8_t* pBits = new uint8_t[nSize];
 
 		if (GetBitmapBits(ii.hbmColor, nSize, pBits)) {
 			for (int y = 0; y < bmp.bmHeight; ++y) {
-				BYTE* pLine = pBits + y * bmp.bmWidthBytes;
+				uint8_t* pLine = pBits + y * bmp.bmWidthBytes;
 
 				for (int x = 0; x < bmp.bmWidth; ++x) {
-					DWORD color = reinterpret_cast<DWORD*>(pLine)[x];
-					BYTE gray = (77 * GetBValue(color) + 150 * GetGValue(color) + 28 * GetRValue(color)) / 255;
+					uint32_t color = reinterpret_cast<uint32_t*>(pLine)[x];
+					uint8_t gray = (77 * GetBValue(color) + 150 * GetGValue(color) + 28 * GetRValue(color)) / 255;
 
 					color = (color & 0xFF000000) | RGB(gray, gray, gray);
 
-					reinterpret_cast<DWORD*>(pLine)[x] = color;
+					reinterpret_cast<uint32_t*>(pLine)[x] = color;
 				}
 			}
 

@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org)
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org)
 Copyright (c) 2000-08 Miranda ICQ/IM project,
 all portions of this codebase are copyrighted to the people
 listed in contributors.txt.
@@ -44,27 +44,27 @@ struct CustomButtonData : public MZeroedObject
 	~CustomButtonData()
 	{}
 
-	int     m_dwPosition;    // default order pos of button, counted from window edge (left or right)
+	int      m_dwPosition;    // default order pos of button, counted from window edge (left or right)
 
-	int     m_dwButtonID;    // id of button used while button creation and to store button info in DB
-	ptrA    m_pszModuleName; // module name without spaces and underline symbols (e.g. "tabsrmm")
+	int      m_dwButtonID;    // id of button used while button creation and to store button info in DB
+	ptrA     m_pszModuleName; // module name without spaces and underline symbols (e.g. "tabsrmm")
 
-	int     m_dwButtonCID;	// button's control id
-	int     m_dwArrowCID;    // only use with BBBF_ISARROWBUTTON flag
+	int      m_dwButtonCID;	// button's control id
+	int      m_dwArrowCID;    // only use with BBBF_ISARROWBUTTON flag
 
-	ptrW    m_pwszText;      // button's text
-	ptrW    m_pwszTooltip;   // button's tooltip
+	ptrW     m_pwszText;      // button's text
+	ptrW     m_pwszTooltip;   // button's tooltip
 
-	int     m_iButtonWidth;  // must be 22 for regular button and 33 for button with arrow
-	HANDLE  m_hIcon;         // Handle to icolib registred icon
+	int      m_iButtonWidth;  // must be 22 for regular button and 33 for button with arrow
+	HANDLE   m_hIcon;         // Handle to icolib registred icon
 
-	bool    m_bIMButton, m_bChatButton;
-	bool    m_bCanBeHidden, m_bCantBeHidden, m_bHidden, m_bSeparator, m_bDisabled, m_bPushButton;
-	bool    m_bRSided;
-	BYTE    m_opFlags;
-	HPLUGIN m_pPlugin;
-	DWORD   m_dwOrigPosition;
-	struct  THotkeyItem *m_hotkey;
+	bool     m_bIMButton, m_bChatButton;
+	bool     m_bCanBeHidden, m_bCantBeHidden, m_bHidden, m_bSeparator, m_bDisabled, m_bPushButton;
+	bool     m_bRSided;
+	uint8_t  m_opFlags;
+	HPLUGIN  m_pPlugin;
+	uint32_t m_dwOrigPosition;
+	struct   THotkeyItem *m_hotkey;
 
 	struct {
 		bool bit1 : 1, bit2 : 1, bit3 : 1, bit4 : 1;
@@ -136,7 +136,7 @@ public:
 	virtual INT_PTR Notify(WPARAM, LPARAM) { return 0; }
 };
 
-typedef CSrmmLogWindow *(__cdecl *pfnSrmmLogCreator)(CMsgDialog &pDlg);
+typedef CSrmmLogWindow *(MIR_CDECL *pfnSrmmLogCreator)(CMsgDialog &pDlg);
 
 EXTERN_C MIR_APP_DLL(HANDLE) RegisterSrmmLog(const char *pszShortName, const wchar_t *pwszScreenName, pfnSrmmLogCreator fnBuilder);
 EXTERN_C MIR_APP_DLL(void) UnregisterSrmmLog(HANDLE);
@@ -197,8 +197,10 @@ protected:
 
 	bool AllowTyping() const;
 	int  NotifyEvent(int code);
+	#ifdef _WINDOWS
 	bool ProcessFileDrop(HDROP hDrop, MCONTACT hContact);
 	bool PasteFilesAsURL(HDROP hDrop);
+	#endif
 	bool ProcessHotkeys(int key, bool bShift, bool bCtrl, bool bAlt);
 	void RefreshButtonStatus(void);
 	void RunUserMenu(HWND hwndOwner, struct USERINFO *ui, const POINT &pt);
@@ -211,8 +213,8 @@ protected:
 	time_t m_iLastEnterTime;
 
 	// user typing support;
-	DWORD m_nLastTyping = 0;
-	BYTE m_bShowTyping = 0;
+	uint32_t m_nLastTyping = 0;
+	uint8_t m_bShowTyping = 0;
 	int m_nTypeSecs = 0, m_nTypeMode = 0;
 	const USERINFO* m_pUserTyping = nullptr;
 
@@ -277,7 +279,7 @@ class CMsgDialog : public CSrmmBaseDialog {};
 /////////////////////////////////////////////////////////////////////////////////////////
 // receives LOGSTREAMDATA* as the first parameter
 
-EXTERN_C MIR_APP_DLL(DWORD) CALLBACK Srmm_LogStreamCallback(DWORD_PTR dwCookie, LPBYTE pbBuff, LONG cb, LONG *pcb);
+EXTERN_C MIR_APP_DLL(DWORD) CALLBACK Srmm_LogStreamCallback(DWORD_PTR dwCookie, uint8_t *pbBuff, LONG cb, LONG *pcb);
 
 /////////////////////////////////////////////////////////////////////////////////////////
 // sends a message to all SRMM windows

@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org),
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org),
 Copyright (c) 2000-12 Miranda IM project,
 all portions of this codebase are copyrighted to the people
 listed in contributors.txt.
@@ -41,14 +41,14 @@ static int sttCompareHotkeys(const THotkeyItem *p1, const THotkeyItem *p2)
 }
 
 LIST<THotkeyItem> hotkeys(10, sttCompareHotkeys);
-DWORD g_pid = 0, g_hkid = 1;
+uint32_t g_pid = 0, g_hkid = 1;
 HWND g_hwndHotkeyHost = nullptr, g_hwndHkOptions = nullptr;
 HANDLE hEvChanged = nullptr;
 
 static BOOL bModuleInitialized = FALSE;
 static HHOOK hhkKeyboard = nullptr;
 
-WORD GetHotkeyValue(INT_PTR idHotkey)
+uint16_t GetHotkeyValue(INT_PTR idHotkey)
 {
 	for (auto &it : hotkeys)
 		if (it->idHotkey == idHotkey)
@@ -57,7 +57,7 @@ WORD GetHotkeyValue(INT_PTR idHotkey)
 	return 0;
 }
 
-static void sttWordToModAndVk(WORD w, BYTE *mod, BYTE *vk)
+static void sttWordToModAndVk(uint16_t w, uint8_t *mod, uint8_t *vk)
 {
 	*mod = 0;
 	if (HIBYTE(w) & HOTKEYF_CONTROL) *mod |= MOD_CONTROL;
@@ -89,7 +89,7 @@ static LRESULT CALLBACK sttHotkeyHostWndProc(HWND hwnd, UINT msg, WPARAM wParam,
 static LRESULT CALLBACK sttKeyboardProc(int code, WPARAM wParam, LPARAM lParam)
 {
 	if (code == HC_ACTION && !(HIWORD(lParam) & KF_UP)) {
-		BYTE mod = 0, vk = wParam;
+		uint8_t mod = 0, vk = wParam;
 
 		if (vk) {
 			if (GetAsyncKeyState(VK_CONTROL)) mod |= MOD_CONTROL;
@@ -101,7 +101,7 @@ static LRESULT CALLBACK sttKeyboardProc(int code, WPARAM wParam, LPARAM lParam)
 				if (p->type != HKT_LOCAL || !p->Enabled)
 					continue;
 
-				BYTE hkMod, hkVk;
+				uint8_t hkMod, hkVk;
 				sttWordToModAndVk(p->Hotkey, &hkMod, &hkVk);
 				if (!hkVk) continue;
 				if (p->pszService && vk == hkVk && mod == hkMod) {
@@ -168,7 +168,7 @@ MIR_APP_DLL(int) Hotkey_Register(const HOTKEYDESC *desc, HPLUGIN pPlugin)
 	p->idHotkey = GlobalAddAtomA(buf);
 	if (p->type == HKT_GLOBAL) {
 		if (p->Enabled) {
-			BYTE mod, vk;
+			uint8_t mod, vk;
 			sttWordToModAndVk(p->Hotkey, &mod, &vk);
 			if (vk)
 				RegisterHotKey(g_hwndHotkeyHost, p->idHotkey, mod, vk);
@@ -232,7 +232,7 @@ MIR_APP_DLL(int) Hotkey_Unregister(const char *pszName)
 MIR_APP_DLL(int) Hotkey_Check(MSG *msg, const char *szSection)
 {
 	if (msg->message == WM_KEYDOWN || msg->message == WM_SYSKEYDOWN) {
-		BYTE mod = 0, vk = msg->wParam;
+		uint8_t mod = 0, vk = msg->wParam;
 		if (vk) {
 			if (GetAsyncKeyState(VK_CONTROL)) mod |= MOD_CONTROL;
 			if (GetAsyncKeyState(VK_MENU)) mod |= MOD_ALT;
@@ -244,7 +244,7 @@ MIR_APP_DLL(int) Hotkey_Check(MSG *msg, const char *szSection)
 				if ((p->type != HKT_MANUAL) || mir_wstrcmp(pszSection, p->pwszSection))
 					continue;
 
-				BYTE hkMod, hkVk;
+				uint8_t hkMod, hkVk;
 				sttWordToModAndVk(p->Hotkey, &hkMod, &hkVk);
 				if (!hkVk) continue;
 				if (!p->Enabled) continue;
@@ -275,7 +275,7 @@ void RegisterHotkeys()
 		UnregisterHotKey(g_hwndHotkeyHost, p->idHotkey);
 		if (p->type != HKT_GLOBAL) continue;
 		if (p->Enabled) {
-			BYTE mod, vk;
+			uint8_t mod, vk;
 			sttWordToModAndVk(p->Hotkey, &mod, &vk);
 			if (vk)
 				RegisterHotKey(g_hwndHotkeyHost, p->idHotkey, mod, vk);
@@ -337,7 +337,7 @@ int LoadSkinHotkeys(void)
 		char szSetting[100];
 		mir_snprintf(szSetting, "HK%s", oldSettings[i]);
 
-		WORD key;
+		uint16_t key;
 		if ((key = db_get_w(0, "Clist", szSetting, 0))) {
 			db_unset(0, "Clist", szSetting);
 			db_set_w(0, DBMODULENAME, newSettings[i], key);
@@ -346,7 +346,7 @@ int LoadSkinHotkeys(void)
 		mir_snprintf(szSetting, "HKEn%s", oldSettings[i]);
 		if ((key = db_get_b(0, "Clist", szSetting, 0))) {
 			db_unset(0, "Clist", szSetting);
-			db_set_b(0, DBMODULENAME "Off", newSettings[i], (BYTE)(key == 0));
+			db_set_b(0, DBMODULENAME "Off", newSettings[i], (uint8_t)(key == 0));
 		}
 	}
 

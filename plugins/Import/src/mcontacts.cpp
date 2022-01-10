@@ -2,7 +2,7 @@
 
 Import plugin for Miranda NG
 
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org)
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org)
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -75,8 +75,8 @@ class CDbxMc : public MDatabaseReadonly, public MZeroedObject
 
 	MC_FileHeader m_hdr;
 	
-	std::vector<DWORD> m_events;
-	std::vector<DWORD>::iterator m_curr;
+	std::vector<uint32_t> m_events;
+	std::vector<uint32_t>::iterator m_curr;
 
 	CMStringA readString()
 	{
@@ -228,7 +228,7 @@ public:
 		else return 1;
 
 		if (dbei->cbBlob && cbLen) {
-			DWORD copySize = min(DWORD(cbLen), dbei->cbBlob-1);
+			uint32_t copySize = min(uint32_t(cbLen), dbei->cbBlob-1);
 			if (!ReadFile(m_hFile, dbei->pBlob, copySize, &dwRead, 0) || dwRead != copySize)
 				return 0;
 

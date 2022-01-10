@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org),
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org),
 Copyright (c) 2000-03 Miranda ICQ/IM project,
 all portions of this codebase are copyrighted to the people
 listed in contributors.txt.
@@ -332,7 +332,7 @@ static int EventArea_Draw(HWND hwnd, HDC hDC)
 	return 0;
 }
 
-static int EventArea_PaintCallbackProc(HWND hWnd, HDC hDC, RECT *, HRGN, DWORD, void *)
+static int EventArea_PaintCallbackProc(HWND hWnd, HDC hDC, RECT *, HRGN, uint32_t, void *)
 {
 	return EventArea_Draw(hWnd, hDC);
 }

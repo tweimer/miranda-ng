@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org),
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org),
 Copyright (c) 2000-08 Miranda ICQ/IM project,
 all portions of this codebase are copyrighted to the people
 listed in contributors.txt.
@@ -79,6 +79,6 @@ BOOL ImageArray_ChangeImage(IMAGE_ARRAY_DATA *iad, HBITMAP hBmp, int pos);
 BOOL ImageArray_RemoveImage(IMAGE_ARRAY_DATA *iad, int pos);
 
 // Draw an image
-BOOL ImageArray_DrawImage(IMAGE_ARRAY_DATA *iad, int pos, HDC hdcDest, int nXDest, int nYDest, BYTE Alpha);
+BOOL ImageArray_DrawImage(IMAGE_ARRAY_DATA *iad, int pos, HDC hdcDest, int nXDest, int nYDest, uint8_t Alpha);
 
 #endif // __IMAGE_ARRAY_H__

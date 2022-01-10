@@ -32,8 +32,8 @@ typedef INT_PTR(*PUpdCallback) (HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 class CUpdProgress
 {
 protected:
-	BYTE			_bBBCode;		// TRUE if text renderer can handle BBCodes
-	BYTE			_bIsCanceled;	// is set to TRUE upon click on the CANCEL button
+	uint8_t			_bBBCode;		// TRUE if text renderer can handle BBCodes
+	uint8_t			_bIsCanceled;	// is set to TRUE upon click on the CANCEL button
 	PUpdCallback	_pFnCallBack;	// a pointer to a callback function, which can be used 
 									// to catch several messages by the caller.
 	PVOID			_pData;			// application defined data
@@ -88,7 +88,7 @@ public:
 	virtual void	SetTitle(LPCTSTR szText) = 0;
 	virtual void	SetText(LPCTSTR szText) = 0;
 
-	BYTE IsVisible() const
+	uint8_t IsVisible() const
 	{
 		return _hWnd != nullptr;
 	}
@@ -96,7 +96,7 @@ public:
 	 *
 	 *
 	 **/
-	BYTE IsCanceled() const
+	uint8_t IsCanceled() const
 	{
 		return _bIsCanceled;
 	}
@@ -453,11 +453,11 @@ public:
 
 class CContactUpdater : public CContactQueue
 {
-	CUpdProgress*		_pProgress;			// pointer to the progress dialog/popup
-	HANDLE				_hProtoAckEvent;	// handle to protocol ack notification
-	MCONTACT				_hContact;			// current contact being refreshed
-	PBYTE				_hContactAcks;		// array of acknoledgements for the current contact to wait for
-	INT_PTR				_nContactAcks;		// number of acknoledgements for the current contact to wait for
+	CUpdProgress *_pProgress; // pointer to the progress dialog/popup
+	HANDLE _hProtoAckEvent;   // handle to protocol ack notification
+	MCONTACT	_hContact;       // current contact being refreshed
+	uint8_t *_hContactAcks;   // array of acknoledgements for the current contact to wait for
+	INT_PTR _nContactAcks;    // number of acknoledgements for the current contact to wait for
 
 	MIRANDA_CPP_PLUGIN_API(CContactUpdater);
 
@@ -518,7 +518,7 @@ class CContactUpdater : public CContactQueue
 			if (ack->hProcess || ack->lParam) {
 				if (!_hContactAcks) {
 					_nContactAcks = (INT_PTR)ack->hProcess;
-					_hContactAcks = (PBYTE)mir_calloc(sizeof(BYTE) * (INT_PTR)ack->hProcess);
+					_hContactAcks = (uint8_t*)mir_calloc(sizeof(uint8_t) * (INT_PTR)ack->hProcess);
 				}
 
 				if (ack->result == ACKRESULT_SUCCESS || ack->result == ACKRESULT_FAILED)
@@ -721,7 +721,7 @@ static INT_PTR RefreshService(WPARAM, LPARAM)
 
 static int OnContactAdded(WPARAM hContact, LPARAM)
 {
-	DWORD dwStmp = db_get_dw(hContact, USERINFO, SET_CONTACT_ADDEDTIME, 0);
+	uint32_t dwStmp = db_get_dw(hContact, USERINFO, SET_CONTACT_ADDEDTIME, 0);
 	if (!dwStmp) {
 		MTime mt;
 		mt.GetLocalTime();

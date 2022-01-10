@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////////////////
 // Miranda NG: the free IM client for Microsoft* Windows*
 //
-// Copyright (C) 2012-21 Miranda NG team,
+// Copyright (C) 2012-22 Miranda NG team,
 // Copyright (c) 2000-09 Miranda ICQ/IM project,
 // all portions of this codebase are copyrighted to the people
 // listed in contributors.txt.
@@ -36,11 +36,11 @@ struct FontOptionsList
 	wchar_t *szDescr;
 	COLORREF defColour;
 	wchar_t *szDefFace;
-	BYTE     defCharset, defStyle;
+	uint8_t     defCharset, defStyle;
 	char     defSize;
 	COLORREF colour;
 	wchar_t  szFace[LF_FACESIZE];
-	BYTE     charset, style;
+	uint8_t     charset, style;
 	char     size;
 };
 
@@ -560,7 +560,7 @@ public:
 
 	void OnDestroy() override
 	{
-		BYTE b = treeCheck.GetItemState(hListHeading1, TVIS_EXPANDED) & TVIS_EXPANDED ? 1 : 0;
+		uint8_t b = treeCheck.GetItemState(hListHeading1, TVIS_EXPANDED) & TVIS_EXPANDED ? 1 : 0;
 		db_set_b(0, CHAT_MODULE, "Branch1Exp", b);
 
 		b = treeCheck.GetItemState(hListHeading2, TVIS_EXPANDED) & TVIS_EXPANDED ? 1 : 0;
@@ -677,11 +677,11 @@ public:
 		g_chatApi.SM_InvalidateLogDirectories();
 
 		iLen = SendDlgItemMessage(m_hwnd, IDC_CHAT_SPIN4, UDM_GETPOS, 0, 0);
-		db_set_w(0, CHAT_MODULE, "LoggingLimit", (WORD)iLen);
+		db_set_w(0, CHAT_MODULE, "LoggingLimit", (uint16_t)iLen);
 
 		iLen = SendDlgItemMessage(m_hwnd, IDC_CHAT_SPIN3, UDM_GETPOS, 0, 0);
 		if (iLen > 0)
-			db_set_b(0, CHAT_MODULE, "NicklistRowDist", (BYTE)iLen);
+			db_set_b(0, CHAT_MODULE, "NicklistRowDist", (uint8_t)iLen);
 		else
 			db_unset(0, CHAT_MODULE, "NicklistRowDist");
 
@@ -722,7 +722,7 @@ public:
 		db_set_b(0, CHAT_MODULE, "LogSymbols", lr == 2);
 
 		iLen = SendDlgItemMessage(m_hwnd, IDC_CHAT_SPIN2, UDM_GETPOS, 0, 0);
-		db_set_w(0, CHAT_MODULE, "LogLimit", (WORD)iLen);
+		db_set_w(0, CHAT_MODULE, "LogLimit", (uint16_t)iLen);
 		mir_free(pszText);
 
 		if (g_chatApi.hListBkgBrush)
@@ -852,7 +852,7 @@ public:
 		if (wszText)
 			edtNick.SetText(wszText);
 
-		DWORD dwFlags = db_get_b(0, CHAT_MODULE, "HighlightEnabled", CMUCHighlight::MATCH_TEXT);
+		uint32_t dwFlags = db_get_b(0, CHAT_MODULE, "HighlightEnabled", CMUCHighlight::MATCH_TEXT);
 
 		chkNick.SetState(dwFlags & CMUCHighlight::MATCH_NICKNAME); onChange_Nick(0);
 		chkText.SetState(dwFlags & CMUCHighlight::MATCH_TEXT); onChange_Text(0);
@@ -881,7 +881,7 @@ public:
 		db_set_ws(0, CHAT_MODULE, "HighlightNames", ptrW(edtNick.GetText()));
 		db_set_ws(0, CHAT_MODULE, "HighlightWords", ptrW(edtText.GetText()));
 
-		BYTE dwFlags = (chkNick.GetState() ? CMUCHighlight::MATCH_NICKNAME : 0) | (chkText.GetState() ? CMUCHighlight::MATCH_TEXT : 0);
+		uint8_t dwFlags = (chkNick.GetState() ? CMUCHighlight::MATCH_NICKNAME : 0) | (chkText.GetState() ? CMUCHighlight::MATCH_TEXT : 0);
 		if (dwFlags & CMUCHighlight::MATCH_NICKNAME)
 			dwFlags |= (::IsDlgButtonChecked(m_hwnd, IDC_HIGHLIGHTNICKUID) ? CMUCHighlight::MATCH_UIN : 0);
 

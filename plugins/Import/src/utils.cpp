@@ -2,7 +2,7 @@
 
 Import plugin for Miranda NG
 
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org)
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org)
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -51,7 +51,7 @@ int CreateGroup(const wchar_t *group, MCONTACT hContact)
 // Returns TRUE if the event already exist in the database
 bool IsDuplicateEvent(MCONTACT hContact, DBEVENTINFO dbei)
 {
-	static DWORD dwPreviousTimeStamp = -1;
+	static uint32_t dwPreviousTimeStamp = -1;
 	static MCONTACT hPreviousContact = INVALID_CONTACT_ID;
 	static MEVENT hPreviousDbEvent = NULL;
 
@@ -62,7 +62,7 @@ bool IsDuplicateEvent(MCONTACT hContact, DBEVENTINFO dbei)
 
 	DBEVENTINFO dbeiExisting = {};
 	db_event_get(hExistingDbEvent, &dbeiExisting);
-	DWORD dwEventTimeStamp = dbeiExisting.timestamp;
+	uint32_t dwEventTimeStamp = dbeiExisting.timestamp;
 
 	// compare with last timestamp
 	if (dbei.timestamp > dwEventTimeStamp) {

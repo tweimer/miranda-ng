@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team,
+Copyright (C) 2012-22 Miranda NG team,
 all portions of this codebase are copyrighted to the people
 listed in contributors.txt.
 
@@ -42,7 +42,7 @@ CProtoIntDlgBase::CProtoIntDlgBase(PROTO_INTERFACE *proto, int idDialog) :
 {
 }
 
-void CProtoIntDlgBase::CreateLink(CCtrlData& ctrl, const char *szSetting, BYTE type, DWORD iValue)
+void CProtoIntDlgBase::CreateLink(CCtrlData& ctrl, const char *szSetting, uint8_t type, uint32_t iValue)
 {
 	ctrl.CreateDbLink(m_proto_interface->m_szModuleName, szSetting, type, iValue);
 }

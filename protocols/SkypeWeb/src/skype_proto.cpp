@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2015-21 Miranda NG team (https://miranda-ng.org)
+Copyright (c) 2015-22 Miranda NG team (https://miranda-ng.org)
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -315,12 +315,12 @@ int CSkypeProto::RecvContacts(MCONTACT hContact, PROTORECVEVENT* pre)
 
 	//if (GetMessageFromDb(hContact, szMessageId, pre->timestamp)) return 0;
 
-	DWORD cbBlob = 0;
+	uint32_t cbBlob = 0;
 	for (int i = 0; i < nCount; i++)
 		cbBlob += int(/*mir_wstrlen(isrList[i]->nick.w)*/0 + 2 + mir_wstrlen(isrList[i]->id.w) + mir_strlen(szMessageId));
 
-	BYTE *pBlob = (PBYTE)mir_calloc(cbBlob);
-	BYTE *pCurBlob = pBlob;
+	uint8_t *pBlob = (uint8_t*)mir_calloc(cbBlob);
+	uint8_t *pCurBlob = pBlob;
 
 	for (int i = 0; i < nCount; i++) {
 		//mir_strcpy((char*)pCurBlob, _T2A(isrList[i]->nick.w));

@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org),
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org),
 Copyright (c) 2000-08 Miranda ICQ/IM project,
 all portions of this codebase are copyrighted to the people
 listed in contributors.txt.
@@ -73,7 +73,7 @@ static LIST<TMO_IntMenuItem> g_frameMenus(10);
 
 // others
 static int _nContactListHeight = 0;
-static DWORD _dwLastStoreTick = 0;
+static uint32_t _dwLastStoreTick = 0;
 
 HWND hWndExplorerToolBar;
 static int GapBetweenFrames = 1;
@@ -88,7 +88,7 @@ static COLORREF sttBkColour;
 static COLORREF sttSelBkColour;
 static BOOL sttBkUseWinColours;
 
-BYTE AlignCOLLIconToLeft; //will hide frame icon
+uint8_t AlignCOLLIconToLeft; //will hide frame icon
 
 //for old multiwindow
 #define MPCF_CONTEXTFRAMEMENU		3
@@ -130,7 +130,7 @@ int CLUIFrames_OnMoving(HWND hwnd, RECT *r)
 	return 0;
 }
 
-int SetAlpha(BYTE Alpha)
+int SetAlpha(uint8_t Alpha)
 {
 	for (int i = 0; i < g_nFramesCount; i++) {
 		FRAMEWND &F = g_pfwFrames[i];
@@ -679,25 +679,25 @@ static int CLUIFramesStoreFrameSettings(int Frameid)
 	CMStringA buf;
 	db_set_ws(0, CLUIFrameModule, buf.Format("Name%d", storpos), F.name);
 
-	db_set_b(0, CLUIFrameModule, buf.Format("Collapse%d", storpos), (BYTE)btoint(F.collapsed));
-	db_set_b(0, CLUIFrameModule, buf.Format("Locked%d", storpos), (BYTE)btoint(F.Locked));
-	db_set_b(0, CLUIFrameModule, buf.Format("Visible%d", storpos), (BYTE)btoint(F.visible));
-	db_set_b(0, CLUIFrameModule, buf.Format("TBVisile%d", storpos), (BYTE)btoint(F.TitleBar.ShowTitleBar));
+	db_set_b(0, CLUIFrameModule, buf.Format("Collapse%d", storpos), (uint8_t)btoint(F.collapsed));
+	db_set_b(0, CLUIFrameModule, buf.Format("Locked%d", storpos), (uint8_t)btoint(F.Locked));
+	db_set_b(0, CLUIFrameModule, buf.Format("Visible%d", storpos), (uint8_t)btoint(F.visible));
+	db_set_b(0, CLUIFrameModule, buf.Format("TBVisile%d", storpos), (uint8_t)btoint(F.TitleBar.ShowTitleBar));
 
-	db_set_w(0, CLUIFrameModule, buf.Format("Height%d", storpos), (WORD)F.height);
-	db_set_w(0, CLUIFrameModule, buf.Format("HeightCollapsed%d", storpos), (WORD)F.HeightWhenCollapsed);
-	db_set_w(0, CLUIFrameModule, buf.Format("Align%d", storpos), (WORD)F.align);
+	db_set_w(0, CLUIFrameModule, buf.Format("Height%d", storpos), (uint16_t)F.height);
+	db_set_w(0, CLUIFrameModule, buf.Format("HeightCollapsed%d", storpos), (uint16_t)F.HeightWhenCollapsed);
+	db_set_w(0, CLUIFrameModule, buf.Format("Align%d", storpos), (uint16_t)F.align);
 
-	db_set_w(0, CLUIFrameModule, buf.Format("FloatX%d", storpos), (WORD)F.FloatingPos.x);
-	db_set_w(0, CLUIFrameModule, buf.Format("FloatY%d", storpos), (WORD)F.FloatingPos.y);
-	db_set_w(0, CLUIFrameModule, buf.Format("FloatW%d", storpos), (WORD)F.FloatingSize.x);
-	db_set_w(0, CLUIFrameModule, buf.Format("FloatH%d", storpos), (WORD)F.FloatingSize.y);
+	db_set_w(0, CLUIFrameModule, buf.Format("FloatX%d", storpos), (uint16_t)F.FloatingPos.x);
+	db_set_w(0, CLUIFrameModule, buf.Format("FloatY%d", storpos), (uint16_t)F.FloatingPos.y);
+	db_set_w(0, CLUIFrameModule, buf.Format("FloatW%d", storpos), (uint16_t)F.FloatingSize.x);
+	db_set_w(0, CLUIFrameModule, buf.Format("FloatH%d", storpos), (uint16_t)F.FloatingSize.y);
 
-	db_set_b(0, CLUIFrameModule, buf.Format("Floating%d", storpos), (BYTE)btoint(F.floating));
-	db_set_b(0, CLUIFrameModule, buf.Format("UseBorder%d", storpos), (BYTE)btoint(F.UseBorder));
-	db_set_w(0, CLUIFrameModule, buf.Format("Order%d", storpos), (WORD)F.order);
+	db_set_b(0, CLUIFrameModule, buf.Format("Floating%d", storpos), (uint8_t)btoint(F.floating));
+	db_set_b(0, CLUIFrameModule, buf.Format("UseBorder%d", storpos), (uint8_t)btoint(F.UseBorder));
+	db_set_w(0, CLUIFrameModule, buf.Format("Order%d", storpos), (uint16_t)F.order);
 
-	db_set_w(0, CLUIFrameModule, "StoredFrames", (WORD)maxstored);
+	db_set_w(0, CLUIFrameModule, "StoredFrames", (uint16_t)maxstored);
 	return 0;
 }
 
@@ -2302,7 +2302,7 @@ int OnFrameTitleBarBackgroundChange(WPARAM, LPARAM)
 	return 0;
 }
 
-void DrawBackGround(HWND hwnd, HDC mhdc, HBITMAP hBmpBackground, COLORREF bkColour, DWORD backgroundBmpUse)
+void DrawBackGround(HWND hwnd, HDC mhdc, HBITMAP hBmpBackground, COLORREF bkColour, uint32_t backgroundBmpUse)
 {
 	HDC hdc;
 	RECT clRect, *rcPaint;
@@ -2939,7 +2939,7 @@ static LRESULT CALLBACK CLUIFrameSubContainerProc(HWND hwnd, UINT msg, WPARAM wP
 	switch (msg) {
 	case WM_ACTIVATE:
 		if (g_bTransparentFlag) {
-			BYTE alpha;
+			uint8_t alpha;
 			if ((wParam != WA_INACTIVE || ((HWND)lParam == hwnd) || GetParent((HWND)lParam) == hwnd)) {
 				HWND hw = lParam ? GetParent((HWND)lParam) : nullptr;
 				alpha = g_plugin.getByte("Alpha", SETTING_ALPHA_DEFAULT);

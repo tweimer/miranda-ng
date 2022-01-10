@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org)
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org)
 Copyright (c) 2000-03 Miranda ICQ/IM project,
 all portions of this codebase are copyrighted to the people
 listed in contributors.txt.
@@ -82,13 +82,13 @@ public:
 	{
 		int iTrayIcon = chkDontCycle.IsChecked() ? SETTING_TRAYICON_SINGLE : (chkCycle.IsChecked() ? SETTING_TRAYICON_CYCLE : SETTING_TRAYICON_MULTI);
 
-		g_plugin.setByte("SortByStatus", (BYTE)(g_bSortByStatus = IsDlgButtonChecked(m_hwnd, IDC_SORTBYSTATUS)));
-		g_plugin.setByte("SortByProto", (BYTE)(g_bSortByProto = IsDlgButtonChecked(m_hwnd, IDC_SORTBYPROTO)));
-		g_plugin.setByte("AlwaysMulti", (BYTE)!IsDlgButtonChecked(m_hwnd, IDC_ALWAYSMULTI));
+		g_plugin.setByte("SortByStatus", (uint8_t)(g_bSortByStatus = IsDlgButtonChecked(m_hwnd, IDC_SORTBYSTATUS)));
+		g_plugin.setByte("SortByProto", (uint8_t)(g_bSortByProto = IsDlgButtonChecked(m_hwnd, IDC_SORTBYPROTO)));
+		g_plugin.setByte("AlwaysMulti", (uint8_t)!IsDlgButtonChecked(m_hwnd, IDC_ALWAYSMULTI));
 		g_plugin.setByte("TrayIcon", iTrayIcon);
-		g_plugin.setWord("CycleTime", (WORD)SendDlgItemMessage(m_hwnd, IDC_CYCLETIMESPIN, UDM_GETPOS, 0, 0));
-		g_plugin.setWord("IconFlashTime", (WORD)SendDlgItemMessage(m_hwnd, IDC_BLINKSPIN, UDM_GETPOS, 0, 0));
-		g_plugin.setByte("DisableTrayFlash", (BYTE)IsDlgButtonChecked(m_hwnd, IDC_DISABLEBLINK));
+		g_plugin.setWord("CycleTime", (uint16_t)SendDlgItemMessage(m_hwnd, IDC_CYCLETIMESPIN, UDM_GETPOS, 0, 0));
+		g_plugin.setWord("IconFlashTime", (uint16_t)SendDlgItemMessage(m_hwnd, IDC_BLINKSPIN, UDM_GETPOS, 0, 0));
+		g_plugin.setByte("DisableTrayFlash", (uint8_t)IsDlgButtonChecked(m_hwnd, IDC_DISABLEBLINK));
 
 		int cur = SendDlgItemMessage(m_hwnd, IDC_PRIMARYSTATUS, CB_GETCURSEL, 0, 0);
 		PROTOACCOUNT *pa = (PROTOACCOUNT *)SendDlgItemMessage(m_hwnd, IDC_PRIMARYSTATUS, CB_GETITEMDATA, cur, 0);

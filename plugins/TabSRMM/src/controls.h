@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////////////////
 // Miranda NG: the free IM client for Microsoft* Windows*
 //
-// Copyright (C) 2012-21 Miranda NG team,
+// Copyright (C) 2012-22 Miranda NG team,
 // Copyright (c) 2000-09 Miranda ICQ/IM project,
 // all portions of this codebase are copyrighted to the people
 // listed in contributors.txt.
@@ -40,7 +40,7 @@ public:
 	~CMenuBar();
 
 	const RECT&  getClientRect();
-	void         Resize(WORD wWidth) const
+	void         Resize(uint16_t wWidth) const
 	{
 		::SetWindowPos(m_hwndToolbar, nullptr, 4, 0, wWidth, m_size_y, SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOCOPYBITS | SWP_NOREDRAW);
 	}

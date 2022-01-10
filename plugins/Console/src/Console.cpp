@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org),
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org),
 Copyright (c) 2000-08 Miranda ICQ/IM project,
 all portions of this codebase are copyrighted to the people
 listed in contributors.txt.
@@ -98,10 +98,10 @@ static int gSingleMode = 0;
 static int gLimit = 0;
 static int gSeparator = 0;
 
-static DWORD gWrapLen = DEFAULT_WRAPLEN;
+static uint32_t gWrapLen = DEFAULT_WRAPLEN;
 
-static DWORD OutMsgs = 0;
-static DWORD InMsgs = 0;
+static uint32_t OutMsgs = 0;
+static uint32_t InMsgs = 0;
 
 static HICON hIcons[15] = {};
 static HGENMENU hMenu = nullptr;
@@ -154,7 +154,7 @@ static void ShowConsole(int show)
 			ScrollDown(pActive);
 	}
 	ShowWindow(hwndConsole, show ? SW_SHOW : SW_HIDE);
-	g_plugin.setByte("Show", (BYTE)(show ? 1 : 0));
+	g_plugin.setByte("Show", (uint8_t)(show ? 1 : 0));
 
 	if (hwnd)
 		SetForegroundWindow(hwnd);
@@ -371,8 +371,8 @@ static INT_PTR CALLBACK LogDlgProc(HWND hwndDlg, UINT message, WPARAM wParam, LP
 			LVITEM lvi = { 0 };
 			int last = 0x7fffffff;
 			wchar_t szBreak;
-			DWORD len, tmplen;
-			DWORD wraplen = gWrapLen;
+			uint32_t len, tmplen;
+			uint32_t wraplen = gWrapLen;
 			wchar_t *str = ((DUMPMSG *)lParam)->szMsg;
 
 			lvi.iItem = 0x7fffffff;
@@ -402,7 +402,7 @@ static INT_PTR CALLBACK LogDlgProc(HWND hwndDlg, UINT message, WPARAM wParam, LP
 
 			while (str != nullptr) {
 				lvi.pszText = &str[0];
-				tmplen = len = (DWORD)mir_wstrlen(lvi.pszText);
+				tmplen = len = (uint32_t)mir_wstrlen(lvi.pszText);
 
 				while (len > wraplen) {
 					szBreak = lvi.pszText[wraplen];
@@ -924,9 +924,9 @@ static int OnFastDump(WPARAM wParam, LPARAM lParam)
 {
 	if (pActive) {
 		LOGMSG *logMsg = (LOGMSG *)lParam;
-		DWORD headlen = (DWORD)mir_strlen(logMsg->pszHead);
-		DWORD msglen = (DWORD)mir_strlen(logMsg->pszMsg);
-		DWORD len = (headlen + msglen + 1) * sizeof(wchar_t) + sizeof(DUMPMSG);
+		uint32_t headlen = (uint32_t)mir_strlen(logMsg->pszHead);
+		uint32_t msglen = (uint32_t)mir_strlen(logMsg->pszMsg);
+		uint32_t len = (headlen + msglen + 1) * sizeof(wchar_t) + sizeof(DUMPMSG);
 		DUMPMSG *dumpMsg = (DUMPMSG *)mir_alloc(len);
 		wchar_t *str = dumpMsg->szMsg;
 
@@ -979,7 +979,7 @@ static void SaveSettings(HWND hwndDlg)
 
 	gWrapLen = len;
 	SetDlgItemInt(hwndDlg, IDC_WRAP, gWrapLen, FALSE);
-	g_plugin.setByte("Wrap", (BYTE)len);
+	g_plugin.setByte("Wrap", (uint8_t)len);
 
 	len = GetDlgItemInt(hwndDlg, IDC_LIMIT, nullptr, FALSE);
 	if (len < MIN_LIMIT)
@@ -991,11 +991,11 @@ static void SaveSettings(HWND hwndDlg)
 	SetDlgItemInt(hwndDlg, IDC_LIMIT, gLimit, FALSE);
 	g_plugin.setDword("Limit", len);
 
-	g_plugin.setByte("SingleMode", (BYTE)IsDlgButtonChecked(hwndDlg, IDC_SINGLE));
-	g_plugin.setByte("Separator", (BYTE)IsDlgButtonChecked(hwndDlg, IDC_SEPARATOR));
-	g_plugin.setByte("ShowIcons", (BYTE)IsDlgButtonChecked(hwndDlg, IDC_SHOWICONS));
+	g_plugin.setByte("SingleMode", (uint8_t)IsDlgButtonChecked(hwndDlg, IDC_SINGLE));
+	g_plugin.setByte("Separator", (uint8_t)IsDlgButtonChecked(hwndDlg, IDC_SEPARATOR));
+	g_plugin.setByte("ShowIcons", (uint8_t)IsDlgButtonChecked(hwndDlg, IDC_SHOWICONS));
 
-	g_plugin.setByte("ShowAtStart", (BYTE)IsDlgButtonChecked(hwndDlg, IDC_START));
+	g_plugin.setByte("ShowAtStart", (uint8_t)IsDlgButtonChecked(hwndDlg, IDC_START));
 }
 
 

@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2015-21 Miranda NG team (https://miranda-ng.org)
+Copyright (c) 2015-22 Miranda NG team (https://miranda-ng.org)
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -169,9 +169,9 @@ INT_PTR CSkypeProto::SvcSetMyAvatar(WPARAM, LPARAM lParam)
 				if (length != -1) {
 					rewind(hFile);
 
-					mir_ptr<BYTE> data((PBYTE)mir_alloc(length));
+					mir_ptr<uint8_t> data((uint8_t*)mir_alloc(length));
 
-					if (data != NULL && fread(data, sizeof(BYTE), length, hFile) == length) {
+					if (data != NULL && fread(data, sizeof(uint8_t), length, hFile) == length) {
 						const char *szMime = FreeImage_GetFIFMimeType(FreeImage_GetFIFFromFilenameU(path));
 
 						PushRequest(new SetAvatarRequest(data, length, szMime, this));

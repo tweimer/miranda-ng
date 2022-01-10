@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org),
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org),
 Copyright (c) 2000-12 Miranda IM project,
 all portions of this codebase are copyrighted to the people
 listed in contributors.txt.
@@ -117,7 +117,7 @@ static void GetDefaultFontSetting(LOGFONT *lf, COLORREF *colour)
 	ReleaseDC(nullptr, hdc);
 }
 
-int GetFontSettingFromDB(char *settings_group, char *prefix, LOGFONT *lf, COLORREF *colour, DWORD flags)
+int GetFontSettingFromDB(char *settings_group, char *prefix, LOGFONT *lf, COLORREF *colour, uint32_t flags)
 {
 	GetDefaultFontSetting(lf, colour);
 
@@ -143,7 +143,7 @@ int GetFontSettingFromDB(char *settings_group, char *prefix, LOGFONT *lf, COLORR
 	lf->lfHeight = (char)db_get_b(0, settings_group, idstr, lf->lfHeight);
 
 	mir_snprintf(idstr, "%sSty", prefix);
-	BYTE style = (BYTE)db_get_b(0, settings_group, idstr,
+	uint8_t style = (uint8_t)db_get_b(0, settings_group, idstr,
 		(lf->lfWeight == FW_NORMAL ? 0 : DBFONTF_BOLD) | (lf->lfItalic ? DBFONTF_ITALIC : 0) | (lf->lfUnderline ? DBFONTF_UNDERLINE : 0) | lf->lfStrikeOut ? DBFONTF_STRIKEOUT : 0);
 
 	lf->lfWidth = lf->lfEscapement = lf->lfOrientation = 0;

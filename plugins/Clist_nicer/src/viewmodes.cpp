@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org),
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org),
 Copyright (c) 2000-03 Miranda ICQ/IM project,
 all portions of this codebase are copyrighted to the people
 listed in contributors.txt.
@@ -39,7 +39,7 @@ static int nullImage;
 static HWND hwndSelector = nullptr;
 static HANDLE hInfoItem = nullptr;
 static HIMAGELIST himlViewModes = nullptr;
-static DWORD sttStickyStatusMask = 0;
+static uint32_t sttStickyStatusMask = 0;
 static char sttModeName[2048];
 
 static int g_ViewModeOptDlg = FALSE;
@@ -113,7 +113,7 @@ static void ShowPage(HWND hwnd, int page)
 	}
 }
 
-static int UpdateClistItem(MCONTACT hContact, DWORD mask)
+static int UpdateClistItem(MCONTACT hContact, uint32_t mask)
 {
 	for (int i = ID_STATUS_OFFLINE; i <= ID_STATUS_MAX; i++)
 		SendDlgItemMessage(sttClvmHwnd, IDC_CLIST, CLM_SETEXTRAIMAGE, hContact, MAKELONG(i - ID_STATUS_OFFLINE,
@@ -122,9 +122,9 @@ static int UpdateClistItem(MCONTACT hContact, DWORD mask)
 	return 0;
 }
 
-static DWORD GetMaskForItem(HANDLE hItem)
+static uint32_t GetMaskForItem(HANDLE hItem)
 {
-	DWORD dwMask = 0;
+	uint32_t dwMask = 0;
 
 	for (int i = 0; i <= ID_STATUS_MAX - ID_STATUS_OFFLINE; i++)
 		dwMask |= (SendDlgItemMessage(sttClvmHwnd, IDC_CLIST, CLM_GETEXTRAIMAGE, (WPARAM)hItem, i) == nullImage ? 0 : 1 << i);
@@ -138,7 +138,7 @@ static void UpdateStickies()
 		MCONTACT hItem = (MCONTACT)SendDlgItemMessage(sttClvmHwnd, IDC_CLIST, CLM_FINDCONTACT, hContact, 0);
 		if (hItem)
 			SendDlgItemMessage(sttClvmHwnd, IDC_CLIST, CLM_SETCHECKMARK, (WPARAM)hItem, db_get_b(hContact, "CLVM", sttModeName, 0) ? 1 : 0);
-		DWORD localMask = HIWORD(db_get_dw(hContact, "CLVM", sttModeName, 0));
+		uint32_t localMask = HIWORD(db_get_dw(hContact, "CLVM", sttModeName, 0));
 		UpdateClistItem(hItem, (localMask == 0 || localMask == sttStickyStatusMask) ? sttStickyStatusMask : localMask);
 	}
 
@@ -288,7 +288,7 @@ static void SetIconsForColumn(HWND hwndList, HANDLE hItem, HANDLE hItemAll, int 
 	}
 }
 
-void SaveViewMode(const char *name, const wchar_t *szGroupFilter, const char *szProtoFilter, DWORD statusMask, DWORD stickyStatusMask, unsigned int options,
+void SaveViewMode(const char *name, const wchar_t *szGroupFilter, const char *szProtoFilter, uint32_t statusMask, uint32_t stickyStatusMask, unsigned int options,
 	unsigned int stickies, unsigned int operators, unsigned int lmdat)
 {
 	char szSetting[512];
@@ -314,8 +314,8 @@ void SaveState()
 {
 	CMStringW newGroupFilter(L"|");
 	CMStringA newProtoFilter("|");
-	DWORD statusMask = 0;
-	DWORD operators = 0;
+	uint32_t statusMask = 0;
+	uint32_t operators = 0;
 
 	if (sttClvm_curItem == -1)
 		return;
@@ -368,14 +368,14 @@ void SaveState()
 		char *szModeName = (char*)malloc(iLen + 1);
 		if (szModeName) {
 			SendDlgItemMessageA(sttClvmHwnd, IDC_VIEWMODES, LB_GETTEXT, sttClvm_curItem, (LPARAM)szModeName);
-			DWORD dwGlobalMask = GetMaskForItem(hInfoItem);
+			uint32_t dwGlobalMask = GetMaskForItem(hInfoItem);
 
 			unsigned int stickies = 0;
 			for (auto &hContact : Contacts()) {
 				HANDLE hItem = (HANDLE)SendDlgItemMessage(sttClvmHwnd, IDC_CLIST, CLM_FINDCONTACT, hContact, 0);
 				if (hItem) {
 					if (SendDlgItemMessage(sttClvmHwnd, IDC_CLIST, CLM_GETCHECKMARK, (WPARAM)hItem, 0)) {
-						DWORD dwLocalMask = GetMaskForItem(hItem);
+						uint32_t dwLocalMask = GetMaskForItem(hItem);
 						db_set_dw(hContact, "CLVM", szModeName, MAKELONG(1, (unsigned short)dwLocalMask));
 						stickies++;
 					}
@@ -389,10 +389,10 @@ void SaveState()
 				(IsDlgButtonChecked(sttClvmHwnd, IDC_AUTOCLEAR) ? CLVM_AUTOCLEAR : 0) |
 				(IsDlgButtonChecked(sttClvmHwnd, IDC_LASTMSG) ? CLVM_USELASTMSG : 0));
 
-			DWORD options = SendDlgItemMessage(sttClvmHwnd, IDC_AUTOCLEARSPIN, UDM_GETPOS, 0, 0);
+			uint32_t options = SendDlgItemMessage(sttClvmHwnd, IDC_AUTOCLEARSPIN, UDM_GETPOS, 0, 0);
 
 			BOOL translated;
-			DWORD lmdat = MAKELONG(GetDlgItemInt(sttClvmHwnd, IDC_LASTMSGVALUE, &translated, FALSE),
+			uint32_t lmdat = MAKELONG(GetDlgItemInt(sttClvmHwnd, IDC_LASTMSGVALUE, &translated, FALSE),
 				MAKEWORD(SendDlgItemMessage(sttClvmHwnd, IDC_LASTMESSAGEOP, CB_GETCURSEL, 0, 0),
 					SendDlgItemMessage(sttClvmHwnd, IDC_LASTMESSAGEUNIT, CB_GETCURSEL, 0, 0)));
 
@@ -410,9 +410,9 @@ void UpdateFilters()
 	DBVARIANT dbv_pf = { 0 };
 	DBVARIANT dbv_gf = { 0 };
 	char szSetting[128];
-	DWORD statusMask = 0;
-	DWORD dwFlags;
-	DWORD opt;
+	uint32_t statusMask = 0;
+	uint32_t dwFlags;
+	uint32_t opt;
 
 	if (sttClvm_curItem == LB_ERR)
 		return;
@@ -512,8 +512,8 @@ void UpdateFilters()
 
 	{
 		int useLastMsg = dwFlags & CLVM_USELASTMSG;
-		DWORD lmdat;
-		BYTE bTmp;
+		uint32_t lmdat;
+		uint8_t bTmp;
 
 		CheckDlgButton(sttClvmHwnd, IDC_LASTMSG, useLastMsg ? BST_CHECKED : BST_UNCHECKED);
 		Utils::enableDlgControl(sttClvmHwnd, IDC_LASTMESSAGEOP, useLastMsg);
@@ -737,7 +737,7 @@ INT_PTR CALLBACK DlgProcViewModesSetup(HWND hwndDlg, UINT msg, WPARAM wParam, LP
 					if (nm->iColumn == -1)
 						break;
 
-					DWORD hitFlags;
+					uint32_t hitFlags;
 					HANDLE hItem = (HANDLE)SendDlgItemMessage(hwndDlg, IDC_CLIST, CLM_HITTEST, (WPARAM)&hitFlags, MAKELPARAM(nm->pt.x, nm->pt.y));
 					if (hItem == nullptr || !(hitFlags & CLCHT_ONITEMEXTRA))
 						break;
@@ -778,7 +778,7 @@ static int menuCounter = 0;
 
 static int FillMenuCallback(char *szSetting)
 {
-	if ((BYTE)szSetting[0] == 246)
+	if ((uint8_t)szSetting[0] == 246)
 		return 1;
 
 	AppendMenuA(hViewModeMenu, MF_STRING, menuCounter++, szSetting);
@@ -964,7 +964,7 @@ clvm_reset_command:
 			Clist_Broadcast(CLM_AUTOREBUILD, 0, 0);
 			SetDlgItemText(hwnd, IDC_SELECTMODE, TranslateT("No view mode"));
 			g_clistApi.pfnSetHideOffline(cfg::dat.boldHideOffline);
-			cfg::dat.boldHideOffline = (BYTE)-1;
+			cfg::dat.boldHideOffline = (uint8_t)-1;
 			SetButtonStates();
 			cfg::dat.current_viewmode[0] = 0;
 			cfg::dat.old_viewmode[0] = 0;
@@ -1054,7 +1054,7 @@ void ApplyViewMode(const char *name)
 		KillTimer(g_hwndViewModeFrame, TIMERID_VIEWMODEEXPIRE);
 
 		if (cfg::dat.filterFlags & CLVM_AUTOCLEAR) {
-			DWORD timerexpire;
+			uint32_t timerexpire;
 			mir_snprintf(szSetting, "%c%s_OPT", 246, name);
 			timerexpire = LOWORD(db_get_dw(0, CLVM_MODULE, szSetting, 0));
 			strncpy(cfg::dat.old_viewmode, cfg::dat.current_viewmode, 256);
@@ -1064,7 +1064,7 @@ void ApplyViewMode(const char *name)
 		strncpy_s(cfg::dat.current_viewmode, name, _TRUNCATE);
 
 		if (cfg::dat.filterFlags & CLVM_USELASTMSG) {
-			BYTE bSaved = cfg::dat.sortOrder[0];
+			uint8_t bSaved = cfg::dat.sortOrder[0];
 
 			cfg::dat.sortOrder[0] = SORTBY_LASTMSG;
 			for (auto &p : cfg::arCache)
@@ -1080,7 +1080,7 @@ void ApplyViewMode(const char *name)
 			else
 				cfg::dat.bFilterEffective |= CLVM_FILTER_LASTMSG_OLDERTHAN;
 
-			DWORD unit = LOWORD(cfg::dat.lastMsgFilter);
+			uint32_t unit = LOWORD(cfg::dat.lastMsgFilter);
 			switch (HIBYTE(HIWORD(cfg::dat.lastMsgFilter))) {
 			case 0:
 				unit *= 60;
@@ -1099,7 +1099,7 @@ void ApplyViewMode(const char *name)
 	if (HIWORD(cfg::dat.filterFlags) > 0)
 		cfg::dat.bFilterEffective |= CLVM_STICKY_CONTACTS;
 
-	if (cfg::dat.boldHideOffline == (BYTE)-1)
+	if (cfg::dat.boldHideOffline == (uint8_t)-1)
 		cfg::dat.boldHideOffline = Clist::HideOffline;
 
 	g_clistApi.pfnSetHideOffline(false);

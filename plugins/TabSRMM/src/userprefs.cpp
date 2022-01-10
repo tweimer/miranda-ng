@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////////////////
 // Miranda NG: the free IM client for Microsoft* Windows*
 //
-// Copyright (C) 2012-21 Miranda NG team,
+// Copyright (C) 2012-22 Miranda NG team,
 // Copyright (c) 2000-09 Miranda ICQ/IM project,
 // all portions of this codebase are copyrighted to the people
 // listed in contributors.txt.
@@ -58,11 +58,11 @@ public:
 
 	bool OnInitDialog() override
 	{
-		DWORD maxhist = M.GetDword(m_hContact, "maxhist", 0);
+		uint32_t maxhist = M.GetDword(m_hContact, "maxhist", 0);
 		int iLocalFormat = M.GetDword(m_hContact, "sendformat", 0);
-		BYTE bSplit = M.GetByte(m_hContact, "splitoverride", 0);
-		BYTE bInfoPanel = M.GetByte(m_hContact, "infopanel", 0);
-		BYTE bAvatarVisible = M.GetByte(m_hContact, "hideavatar", -1);
+		uint8_t bSplit = M.GetByte(m_hContact, "splitoverride", 0);
+		uint8_t bInfoPanel = M.GetByte(m_hContact, "infopanel", 0);
+		uint8_t bAvatarVisible = M.GetByte(m_hContact, "hideavatar", -1);
 
 		cmbPanel.AddString(TranslateT("Use global setting"));
 		cmbPanel.AddString(TranslateT("Always on"));
@@ -99,7 +99,7 @@ public:
 	bool OnApply() override
 	{
 		CMsgDialog *dat = Srmm_FindDialog(m_hContact);
-		BYTE bOldInfoPanel = M.GetByte(m_hContact, "infopanel", 0);
+		uint8_t bOldInfoPanel = M.GetByte(m_hContact, "infopanel", 0);
 
 		int iIndex = SendDlgItemMessage(m_hwnd, IDC_TEXTFORMATTING, CB_GETCURSEL, 0, 0);
 		if (iIndex != CB_ERR) {
@@ -109,25 +109,25 @@ public:
 				db_set_dw(m_hContact, SRMSGMOD_T, "sendformat", iIndex == 2 ? -1 : 1);
 		}
 
-		db_set_b(m_hContact, SRMSGMOD_T, "splitoverride", (BYTE)(IsDlgButtonChecked(m_hwnd, IDC_PRIVATESPLITTER) ? 1 : 0));
+		db_set_b(m_hContact, SRMSGMOD_T, "splitoverride", (uint8_t)(IsDlgButtonChecked(m_hwnd, IDC_PRIVATESPLITTER) ? 1 : 0));
 
-		db_set_b(m_hContact, TEMPLATES_MODULE, "enabled", (BYTE)(IsDlgButtonChecked(m_hwnd, IDC_TEMPLOVERRIDE)));
-		db_set_b(m_hContact, RTLTEMPLATES_MODULE, "enabled", (BYTE)(IsDlgButtonChecked(m_hwnd, IDC_RTLTEMPLOVERRIDE)));
+		db_set_b(m_hContact, TEMPLATES_MODULE, "enabled", (uint8_t)(IsDlgButtonChecked(m_hwnd, IDC_TEMPLOVERRIDE)));
+		db_set_b(m_hContact, RTLTEMPLATES_MODULE, "enabled", (uint8_t)(IsDlgButtonChecked(m_hwnd, IDC_RTLTEMPLOVERRIDE)));
 
-		BYTE bAvatarVisible = (BYTE)SendDlgItemMessage(m_hwnd, IDC_SHOWAVATAR, CB_GETCURSEL, 0, 0);
+		uint8_t bAvatarVisible = (uint8_t)SendDlgItemMessage(m_hwnd, IDC_SHOWAVATAR, CB_GETCURSEL, 0, 0);
 		if (bAvatarVisible == 0)
 			db_unset(m_hContact, SRMSGMOD_T, "hideavatar");
 		else
-			db_set_b(m_hContact, SRMSGMOD_T, "hideavatar", (BYTE)(bAvatarVisible == 1 ? 1 : 0));
+			db_set_b(m_hContact, SRMSGMOD_T, "hideavatar", (uint8_t)(bAvatarVisible == 1 ? 1 : 0));
 
-		BYTE bInfoPanel = (BYTE)SendDlgItemMessage(m_hwnd, IDC_INFOPANEL, CB_GETCURSEL, 0, 0);
+		uint8_t bInfoPanel = (uint8_t)SendDlgItemMessage(m_hwnd, IDC_INFOPANEL, CB_GETCURSEL, 0, 0);
 		if (bInfoPanel != bOldInfoPanel) {
-			db_set_b(m_hContact, SRMSGMOD_T, "infopanel", (BYTE)(bInfoPanel == 0 ? 0 : (bInfoPanel == 1 ? 1 : -1)));
+			db_set_b(m_hContact, SRMSGMOD_T, "infopanel", (uint8_t)(bInfoPanel == 0 ? 0 : (bInfoPanel == 1 ? 1 : -1)));
 			if (dat)
 				SendMessage(dat->GetHwnd(), DM_SETINFOPANEL, 0, 0);
 		}
 		if (chkAlwaysTrim.GetState())
-			db_set_dw(m_hContact, SRMSGMOD_T, "maxhist", (DWORD)SendDlgItemMessage(m_hwnd, IDC_TRIMSPIN, UDM_GETPOS, 0, 0));
+			db_set_dw(m_hContact, SRMSGMOD_T, "maxhist", (uint32_t)SendDlgItemMessage(m_hwnd, IDC_TRIMSPIN, UDM_GETPOS, 0, 0));
 		else
 			db_set_dw(m_hContact, SRMSGMOD_T, "maxhist", 0);
 
@@ -201,9 +201,9 @@ checkboxes[] = {
 
 int CMsgDialog::LoadLocalFlags()
 {
-	DWORD	dwMask = M.GetDword(m_hContact, "mwmask", 0);
-	DWORD	dwLocal = M.GetDword(m_hContact, "mwflags", 0);
-	DWORD	dwGlobal = M.GetDword("mwflags", MWF_LOG_DEFAULT);
+	uint32_t	dwMask = M.GetDword(m_hContact, "mwmask", 0);
+	uint32_t	dwLocal = M.GetDword(m_hContact, "mwflags", 0);
+	uint32_t	dwGlobal = M.GetDword("mwflags", MWF_LOG_DEFAULT);
 
 	m_dwFlags &= ~MWF_LOG_ALL;
 	if (m_pContainer->m_theme.isPrivate)
@@ -212,7 +212,7 @@ int CMsgDialog::LoadLocalFlags()
 		m_dwFlags |= (dwGlobal & MWF_LOG_ALL);
 
 	for (int i = 0; checkboxes[i].uId; i++) {
-		DWORD	maskval = checkboxes[i].uFlag;
+		uint32_t	maskval = checkboxes[i].uFlag;
 		if (dwMask & maskval)
 			m_dwFlags = (dwLocal & maskval) ? m_dwFlags | maskval : m_dwFlags & ~maskval;
 	}
@@ -243,7 +243,7 @@ public:
 
 	bool OnInitDialog() override
 	{
-		DWORD	dwLocalFlags, dwLocalMask, maskval;
+		uint32_t	dwLocalFlags, dwLocalMask, maskval;
 
 		dwLocalFlags = M.GetDword(m_hContact, "mwflags", 0);
 		dwLocalMask = M.GetDword(m_hContact, "mwmask", 0);
@@ -268,7 +268,7 @@ public:
 
 	bool OnApply() override
 	{
-		DWORD dwMask = 0, dwFlags = 0, maskval;
+		uint32_t dwMask = 0, dwFlags = 0, maskval;
 
 		int i = 0;
 		while (checkboxes[i].uId) {
@@ -284,7 +284,7 @@ public:
 		
 		int state = IsDlgButtonChecked(m_hwnd, IDC_UPREFS_LOGSTATUS);
 		if (state != BST_INDETERMINATE)
-			db_set_b(m_hContact, SRMSGMOD_T, "logstatuschanges", (BYTE)state);
+			db_set_b(m_hContact, SRMSGMOD_T, "logstatuschanges", (uint8_t)state);
 
 		if (dwMask) {
 			db_set_dw(m_hContact, SRMSGMOD_T, "mwmask", dwMask);
@@ -341,7 +341,7 @@ public:
 	{
 		CMsgDialog *dat = Srmm_FindDialog(m_hContact);
 		if (dat) {
-			DWORD dwOldFlags = (dat->m_dwFlags & MWF_LOG_ALL);
+			uint32_t dwOldFlags = (dat->m_dwFlags & MWF_LOG_ALL);
 			dat->SetDialogToType();
 			dat->LoadLocalFlags();
 			if ((dat->m_dwFlags & MWF_LOG_ALL) != dwOldFlags) {

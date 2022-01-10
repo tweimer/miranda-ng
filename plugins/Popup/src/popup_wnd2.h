@@ -45,7 +45,7 @@ public:
 		ActionInfo() : hover(false) {}
 	};
 
-	DWORD		m_signature;
+	uint32_t		m_signature;
 
 private:
 	// style
@@ -86,7 +86,7 @@ private:
 
 	// show & hide
 	bool        m_bFade;
-	BYTE        m_btAlpha0, m_btAlpha1;
+	uint8_t        m_btAlpha0, m_btAlpha1;
 	bool        m_bSlide;
 	POINT       m_ptPosition0, m_ptPosition1;
 	bool        m_bDestroy;
@@ -97,7 +97,7 @@ private:
 
 	// system
 	POPUPOPTIONS *m_options;
-	DWORD       m_lockCount;
+	uint32_t       m_lockCount;
 
 	PopupSkin::RenderInfo	m_renderInfo;
 
@@ -113,7 +113,7 @@ public:
 	void	startThread();
 
 	void	create();
-	void	updateLayered(BYTE opacity);
+	void	updateLayered(uint8_t opacity);
 	SIZE	measure();
 	void	update();
 	void	animate();
@@ -122,8 +122,8 @@ public:
 	void	hide();
 	void	idle();
 
-	DWORD	lock()				{ return ++m_lockCount; }
-	DWORD	unlock()			{ return m_lockCount = m_lockCount ? m_lockCount - 1 : 0; }
+	uint32_t	lock()				{ return ++m_lockCount; }
+	uint32_t	unlock()			{ return m_lockCount = m_lockCount ? m_lockCount - 1 : 0; }
 	bool	isLocked()			{ return m_lockCount != 0; }
 
 	void  setIcon(HICON);

@@ -25,7 +25,7 @@ HWND g_hListenWindow, g_hDlgPass, hOldForegroundWindow;
 HWND_ITEM *g_pMirWnds; // a pretty simple linked list
 HMODULE hDwmApi;
 DWORD g_dwMirandaPID;
-WORD g_wMask, g_wMaskAdv;
+uint16_t g_wMask, g_wMaskAdv;
 bool g_bWindowHidden, g_fPassRequested, g_TrayIcon;
 char g_password[MAXPASSLEN + 1];
 HKL oldLangID, oldLayout;
@@ -33,7 +33,7 @@ int protoCount;
 PROTOACCOUNT **proto;
 unsigned *oldStatus;
 wchar_t **oldStatusMsg;
-BYTE g_bOldSetting;
+uint8_t g_bOldSetting;
 
 CMPlugin g_plugin;
 
@@ -70,7 +70,7 @@ static BOOL IsAeroMode()
 
 INT_PTR CALLBACK DlgStdInProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-	static DWORD dwOldIcon = 0;
+	static uint32_t dwOldIcon = 0;
 	HICON hIcon = nullptr;
 	UINT uid;
 
@@ -173,7 +173,7 @@ BOOL CALLBACK EnumWindowsProc(HWND hWnd, LPARAM)
 		else if (!mir_wstrcmp(szTemp, L"PopupWnd2")) // destroy opened popups
 			PUDeletePopup(hWnd);
 		else {
-			DWORD threadId = GetWindowThreadProcessId(hWnd, 0);
+			uint32_t threadId = GetWindowThreadProcessId(hWnd, 0);
 			if (threadId != GetCurrentThreadId())
 				return false;
 
@@ -304,7 +304,7 @@ LRESULT CALLBACK ListenWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPara
 
 			if (g_wMask & OPT_CHANGESTATUS) // is this even needed?
 			{
-				BYTE bReqMode = g_plugin.getByte("stattype", 2);
+				uint8_t bReqMode = g_plugin.getByte("stattype", 2);
 				unsigned uMode = (STATUS_ARR_TO_ID[bReqMode]);
 				DBVARIANT dbVar;
 				if (g_wMask & OPT_USEDEFMSG || g_plugin.getWString("statmsg", &dbVar)) {
@@ -436,10 +436,10 @@ INT_PTR BossKeyHideMiranda(WPARAM, LPARAM) // for service :)
 	return 0;
 }
 
-static wchar_t* HotkeyVkToName(WORD vkKey)
+static wchar_t* HotkeyVkToName(uint16_t vkKey)
 {
 	static wchar_t buf[32] = { 0 };
-	DWORD code = MapVirtualKey(vkKey, 0) << 16;
+	uint32_t code = MapVirtualKey(vkKey, 0) << 16;
 
 	switch (vkKey) {
 	case 0:
@@ -474,10 +474,10 @@ static wchar_t* HotkeyVkToName(WORD vkKey)
 
 static wchar_t* GetBossKeyText(void)
 {
-	WORD wHotKey = db_get_w(0, "SkinHotKeys", "Hide/Show Miranda", HOTKEYCODE(HOTKEYF_CONTROL, VK_F12));
+	uint16_t wHotKey = db_get_w(0, "SkinHotKeys", "Hide/Show Miranda", HOTKEYCODE(HOTKEYF_CONTROL, VK_F12));
 
-	BYTE key = LOBYTE(wHotKey);
-	BYTE shift = HIBYTE(wHotKey);
+	uint8_t key = LOBYTE(wHotKey);
+	uint8_t shift = HIBYTE(wHotKey);
 
 	static wchar_t buf[128];
 	mir_snwprintf(buf, L"%s%s%s%s%s",

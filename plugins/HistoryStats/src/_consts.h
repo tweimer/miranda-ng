@@ -5,10 +5,10 @@
 
 #if defined(HISTORYSTATS_CONST_DEFINE)
 #define CONST_A(nam, txt) extern const char* nam = txt;
-#define CONST_W(nam, txt) extern const WCHAR* nam = L##txt;
+#define CONST_W(nam, txt) extern const wchar_t* nam = L##txt;
 #else
 #define CONST_A(nam, txt) extern const char* nam;
-#define CONST_W(nam, txt) extern const WCHAR* nam;
+#define CONST_W(nam, txt) extern const wchar_t* nam;
 #endif
 
 /*
@@ -185,8 +185,8 @@ namespace con
 #endif
 
 	// min/max time
-	const DWORD MinDateTime = 0x00000000;
-	const DWORD MaxDateTime = 0xFFFFFFFF;
+	const uint32_t MinDateTime = 0x00000000;
+	const uint32_t MaxDateTime = 0xFFFFFFFF;
 
 	// default colors for html output
 	const COLORREF ColorOut     = RGB(0xE8, 0x64, 0x1B);

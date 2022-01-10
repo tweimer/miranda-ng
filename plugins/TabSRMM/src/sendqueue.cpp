@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////////////////
 // Miranda NG: the free IM client for Microsoft* Windows*
 //
-// Copyright (C) 2012-21 Miranda NG team,
+// Copyright (C) 2012-22 Miranda NG team,
 // Copyright (c) 2000-09 Miranda ICQ/IM project,
 // all portions of this codebase are copyrighted to the people
 // listed in contributors.txt.
@@ -252,7 +252,7 @@ int SendQueue::sendQueued(CMsgDialog *dat, const int iEntry)
 		m_jobs[iEntry].iAcksNeeded = 1;
 		m_jobs[iEntry].chunkSize = (int)iMaxSize;
 
-		DWORD dwOldFlags = m_jobs[iEntry].dwFlags;
+		uint32_t dwOldFlags = m_jobs[iEntry].dwFlags;
 		mir_forkthread(DoSplitSendA, (LPVOID)iEntry);
 		m_jobs[iEntry].dwFlags = dwOldFlags;
 	}
@@ -346,7 +346,7 @@ void SendQueue::logError(CMsgDialog *dat, int iSendJobIndex, const wchar_t *szEr
 	DBEVENTINFO	dbei = {};
 	dbei.eventType = EVENTTYPE_ERRMSG;
 	if (iSendJobIndex >= 0) {
-		dbei.pBlob = (BYTE *)m_jobs[iSendJobIndex].szSendBuffer;
+		dbei.pBlob = (uint8_t *)m_jobs[iSendJobIndex].szSendBuffer;
 		iMsgLen = mir_strlen(m_jobs[iSendJobIndex].szSendBuffer) + 1;
 	}
 	else {
@@ -471,7 +471,7 @@ int SendQueue::ackMessage(CMsgDialog *dat, WPARAM wParam, LPARAM lParam)
 
 	if (job.dwFlags & PREF_RTL)
 		dbei.flags |= DBEF_RTL;
-	dbei.pBlob = (PBYTE)job.szSendBuffer;
+	dbei.pBlob = (uint8_t*)job.szSendBuffer;
 	dbei.szId = (char *)ack->lParam;
 
 	MessageWindowEvent evt = { job.iSendId, job.hContact, &dbei };
@@ -550,7 +550,7 @@ int SendQueue::doSendLater(int iJobIndex, CMsgDialog *dat, MCONTACT hContact, bo
 		dbei.szModule = Proto_GetBaseAccountName(dat->m_hContact);
 		dbei.timestamp = time(0);
 		dbei.cbBlob = (int)mir_strlen(utfText) + 1;
-		dbei.pBlob = (PBYTE)(char*)utfText;
+		dbei.pBlob = (uint8_t*)(char*)utfText;
 		dat->LogEvent(dbei);
 
 		if (dat->m_hDbEventFirst == 0)

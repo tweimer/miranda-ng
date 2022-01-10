@@ -5,7 +5,7 @@ Jabber Protocol Plugin for Miranda NG
 Copyright (c) 2002-04  Santithorn Bunchua
 Copyright (c) 2005-12  George Hazan
 Copyright (c) 2007     Maxim Mluhov
-Copyright (C) 2012-21 Miranda NG team
+Copyright (C) 2012-22 Miranda NG team
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -353,7 +353,7 @@ bool CJabberProto::FtIbbSend(int blocksize, filetransfer *ft)
 				return false;
 			}
 
-			ft->jibb->dwTransferredSize += (DWORD)numRead;
+			ft->jibb->dwTransferredSize += (uint32_t)numRead;
 			ft->std.currentFileProgress += numRead;
 			ft->std.totalProgress += numRead;
 			ProtoBroadcastAck(ft->std.hContact, ACKTYPE_FILE, ACKRESULT_DATA, ft, (LPARAM)&ft->std);
@@ -781,7 +781,7 @@ bool CJabberProto::FtTryInlineFile(filetransfer *ft)
 	CMStringW wszFileName(FORMAT, L"%s\\%S%s", wszTempPath.get(), szHash, ProtoGetAvatarExtension(fileFormat));
 	if (_waccess(wszFileName, 0))
 		if (!CopyFileW(ft->std.szCurrentFile.w, wszFileName, FALSE)) {
-			DWORD dwError = GetLastError();
+			uint32_t dwError = GetLastError();
 			debugLogW(L"File <%s> cannot be copied to <%s>: error %d", ft->std.szCurrentFile.w, wszFileName.c_str(), dwError);
 			return false;
 		}
@@ -851,7 +851,7 @@ bool CJabberProto::FtHandleCidRequest(const TiXmlElement*, CJabberIqInfo *pInfo)
 	if (fileId < 0)
 		goto LBL_Error;
 
-	mir_ptr<BYTE> buf((BYTE *)mir_alloc(data.nFileSizeLow));
+	mir_ptr<uint8_t> buf((uint8_t *)mir_alloc(data.nFileSizeLow));
 	_read(fileId, buf, data.nFileSizeLow);
 	_close(fileId);
 

@@ -27,7 +27,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 extern SESSION_INFO g_TabSession;
 
 HICON g_hChatIcons[20];
-DWORD g_dwDiskLogFlags;
+uint32_t g_dwDiskLogFlags;
 HPLUGIN g_pChatPlugin;
 GlobalLogSettingsBase *g_Settings;
 int g_cbSession, g_cbModuleInfo = sizeof(MODULEINFO), g_iFontMode;
@@ -41,7 +41,7 @@ struct FontOptionsList
 	LPCTSTR  szDescr;
 	COLORREF defColour;
 	LPCTSTR  szDefFace;
-	BYTE     defCharset, defStyle; 
+	uint8_t     defCharset, defStyle; 
 	char     defSize;
 };
 

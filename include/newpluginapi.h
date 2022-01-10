@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org)
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org)
 Copyright (c) 2000-08 Miranda ICQ/IM project,
 all portions of this codebase are copyrighted to the people
 listed in contributors.txt.
@@ -101,12 +101,12 @@ struct PLUGININFOEX
 {
 	int cbSize;
 	char *shortName;
-	DWORD version;
+	uint32_t version;
 	char *description;
 	char *author;
 	char *copyright;
 	char *homepage;
-	BYTE flags;	   // right now the only flag, UNICODE_AWARE, is recognized here
+	uint8_t flags;	   // right now the only flag, UNICODE_AWARE, is recognized here
 	MUUID uuid;    // plugin's unique identifier
 };
 
@@ -253,11 +253,11 @@ public:
 		return db_get_w(hContact, m_szModuleName, name, defaultValue);
 	}
 
-	__forceinline DWORD getDword(const char *name, int defaultValue = 0)
+	__forceinline uint32_t getDword(const char *name, int defaultValue = 0)
 	{
 		return db_get_dw(0, m_szModuleName, name, defaultValue);
 	}
-	__forceinline DWORD getDword(MCONTACT hContact, const char *name, int defaultValue = 0)
+	__forceinline uint32_t getDword(MCONTACT hContact, const char *name, int defaultValue = 0)
 	{
 		return db_get_dw(hContact, m_szModuleName, name, defaultValue);
 	}
@@ -334,29 +334,29 @@ public:
 		return db_get_wsm(hContact, m_szModuleName, name, szValue);
 	}
 
-	__forceinline void setByte(const char *name, BYTE value)
+	__forceinline void setByte(const char *name, uint8_t value)
 	{
 		db_set_b(0, m_szModuleName, name, value);
 	}
-	__forceinline void setByte(MCONTACT hContact, const char *name, BYTE value)
+	__forceinline void setByte(MCONTACT hContact, const char *name, uint8_t value)
 	{
 		db_set_b(hContact, m_szModuleName, name, value);
 	}
 
-	__forceinline void setWord(const char *name, WORD value)
+	__forceinline void setWord(const char *name, uint16_t value)
 	{
 		db_set_w(0, m_szModuleName, name, value);
 	}
-	__forceinline void setWord(MCONTACT hContact, const char *name, WORD value)
+	__forceinline void setWord(MCONTACT hContact, const char *name, uint16_t value)
 	{
 		db_set_w(hContact, m_szModuleName, name, value);
 	}
 
-	__forceinline void setDword(const char *name, DWORD value)
+	__forceinline void setDword(const char *name, uint32_t value)
 	{
 		db_set_dw(0, m_szModuleName, name, value);
 	}
-	__forceinline void setDword(MCONTACT hContact, const char *name, DWORD value)
+	__forceinline void setDword(MCONTACT hContact, const char *name, uint32_t value)
 	{
 		db_set_dw(hContact, m_szModuleName, name, value);
 	}
@@ -396,7 +396,7 @@ extern struct CMPlugin g_plugin;
 /////////////////////////////////////////////////////////////////////////////////////////
 // Basic class for plugins (not protocols) written in C++
 
-typedef BOOL(MIR_SYSCALL* const _pfnCrtInit)(HINSTANCE, DWORD, void*);
+typedef BOOL(MIR_SYSCALL* const _pfnCrtInit)(HINSTANCE, uint32_t, void*);
 
 template<class T> class PLUGIN : public CMPluginBase
 {

@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////////////////
 // Miranda NG: the free IM client for Microsoft* Windows*
 //
-// Copyright (C) 2012-21 Miranda NG team,
+// Copyright (C) 2012-22 Miranda NG team,
 // Copyright (c) 2000-09 Miranda ICQ/IM project,
 // all portions of this codebase are copyrighted to the people
 // listed in contributors.txt.
@@ -114,20 +114,20 @@ public:
 	COLORREF    crIncoming, crOutgoing, crOldIncoming, crOldOutgoing, crStatus;
 	BOOL        bUnicodeBuild;
 	HFONT       hFontCaption;
-	DWORD       m_LangPackCP;
-	BYTE        m_SmileyButtonOverride;
+	uint32_t       m_LangPackCP;
+	uint8_t        m_SmileyButtonOverride;
 	HICON       m_AnimTrayIcons[4];
 	BOOL        m_visualMessageSizeIndicator;
 	BOOL        m_autoSplit;
 	BOOL        m_FlashOnMTN;
-	DWORD       dwThreadID;
+	uint32_t       dwThreadID;
 	MWindowList m_hMessageWindowList, hUserPrefsWindowList;
 	HMENU       m_MenuBar;
 	COLORREF    m_ipBackgroundGradient;
 	COLORREF    m_ipBackgroundGradientHigh;
 	COLORREF    m_tbBackgroundHigh, m_tbBackgroundLow, m_fillColor, m_cRichBorders, m_genericTxtColor;
 	HGENMENU    m_hMenuItem;
-	BYTE        m_useAeroPeek;
+	uint8_t        m_useAeroPeek;
 
 	WINDOWPLACEMENT    m_GlobalContainerWpos;
 	NONCLIENTMETRICS   m_ncm;

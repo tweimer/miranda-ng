@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org)
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org)
 Copyright (c) 2000-02 Richard Hughes, Roland Rabien & Tristan Van de Vreede
 
 This program is free software; you can redistribute it and/or
@@ -56,7 +56,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 struct CLISTFrame
 {
-	DWORD cbSize;
+	uint32_t cbSize;
 	HWND hWnd;
 	HICON hIcon;
 	int align;              // al flags below

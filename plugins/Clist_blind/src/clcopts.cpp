@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org)
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org)
 Copyright (c) 2000-03 Miranda ICQ/IM project,
 all portions of this codebase are copyrighted to the people
 listed in contributors.txt.
@@ -33,7 +33,7 @@ wchar_t* MyDBGetContactSettingTString(MCONTACT hContact, char *module, char *set
 struct
 {
 	int id;
-	DWORD flag;
+	uint32_t flag;
 }
 static checkBoxToStyleEx[] =
 {
@@ -54,7 +54,7 @@ public:
 
 	bool OnInitDialog() override
 	{
-		DWORD exStyle = db_get_dw(0, "CLC", "ExStyle", Clist_GetDefaultExStyle());
+		uint32_t exStyle = db_get_dw(0, "CLC", "ExStyle", Clist_GetDefaultExStyle());
 		for (auto &it : checkBoxToStyleEx)
 			CheckDlgButton(m_hwnd, it.id, (exStyle & it.flag) ? BST_CHECKED : BST_UNCHECKED);
 
@@ -83,16 +83,16 @@ public:
 
 	bool OnApply() override
 	{
-		DWORD exStyle = 0;
+		uint32_t exStyle = 0;
 		for (int i = 0; i < _countof(checkBoxToStyleEx); i++)
 			if (IsDlgButtonChecked(m_hwnd, checkBoxToStyleEx[i].id))
 				exStyle |= checkBoxToStyleEx[i].flag;
 		db_set_dw(0, "CLC", "ExStyle", exStyle);
 
-		db_set_b(0, "CLC", "ShowIdle", (BYTE)(IsDlgButtonChecked(m_hwnd, IDC_IDLE) ? 1 : 0));
-		db_set_b(0, "CLC", "LeftMargin", (BYTE)SendDlgItemMessage(m_hwnd, IDC_LEFTMARGINSPIN, UDM_GETPOS, 0, 0));
-		db_set_w(0, "CLC", "ScrollTime", (WORD)SendDlgItemMessage(m_hwnd, IDC_SMOOTHTIMESPIN, UDM_GETPOS, 0, 0));
-		db_set_b(0, "CLC", "GroupIndent", (BYTE)SendDlgItemMessage(m_hwnd, IDC_GROUPINDENTSPIN, UDM_GETPOS, 0, 0));
+		db_set_b(0, "CLC", "ShowIdle", (uint8_t)(IsDlgButtonChecked(m_hwnd, IDC_IDLE) ? 1 : 0));
+		db_set_b(0, "CLC", "LeftMargin", (uint8_t)SendDlgItemMessage(m_hwnd, IDC_LEFTMARGINSPIN, UDM_GETPOS, 0, 0));
+		db_set_w(0, "CLC", "ScrollTime", (uint16_t)SendDlgItemMessage(m_hwnd, IDC_SMOOTHTIMESPIN, UDM_GETPOS, 0, 0));
+		db_set_b(0, "CLC", "GroupIndent", (uint8_t)SendDlgItemMessage(m_hwnd, IDC_GROUPINDENTSPIN, UDM_GETPOS, 0, 0));
 
 		wchar_t tmp[1024];
 		GetDlgItemText(m_hwnd, IDC_T_CONTACT, tmp, _countof(tmp));

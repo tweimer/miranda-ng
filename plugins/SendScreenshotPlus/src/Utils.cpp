@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org),
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org),
 Copyright (c) 2000-09 Miranda ICQ/IM project,
 
 This file is part of Send Screenshot Plus, a Miranda IM plugin.
@@ -213,7 +213,7 @@ FIBITMAP* CreateDIBFromDC(HDC hDC, const RECT* rect, HWND hCapture/*=NULL*/)
 	HRGN hRgn = CreateRectRgn(0, 0, 0, 0);
 	if (hCapture && GetWindowRgn(hCapture, hRgn) == ERROR) {
 		if ((GetWindowLongPtr(hCapture, GWL_EXSTYLE)&WS_EX_LAYERED)) {
-			BYTE bAlpha = 0;
+			uint8_t bAlpha = 0;
 			COLORREF crKey = 0x00000000;
 			DWORD dwFlags = 0;
 			if (GetLayeredWindowAttributes(hCapture, &crKey, &bAlpha, &dwFlags)) {
@@ -361,7 +361,7 @@ void SaveGIF(HBITMAP hBmp, const wchar_t *szFilename)
 		CLSID clsidEncoder;
 		if (GetEncoderClsid(L"image/gif", clsidEncoder)) {
 			LPWSTR pswFile = mir_wstrdup(szFilename);
-			pBitmap->Save((const WCHAR*)pswFile, &clsidEncoder, nullptr);
+			pBitmap->Save((const wchar_t*)pswFile, &clsidEncoder, nullptr);
 			mir_free(pswFile);
 		}
 		delete pBitmap;
@@ -402,7 +402,7 @@ void SaveTIF(HBITMAP hBmp, const wchar_t *szFilename)
 			EncParams->Parameter[1].Value = &ulColorDepth;
 
 			LPWSTR pswFile = mir_wstrdup(szFilename);
-			stat = pBitmap->Save((const WCHAR*)pswFile, &EncCLSID, EncParams);
+			stat = pBitmap->Save((const wchar_t*)pswFile, &EncCLSID, EncParams);
 			mir_free(pswFile);
 			free(EncParams);
 		}

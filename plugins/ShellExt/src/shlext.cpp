@@ -535,7 +535,7 @@ static void BuildSkinIcons(TEnumData * lParam)
 		if (pct->cbSize != sizeof(TSlotIPC) || pct->fType != REQUEST_NEWICONS)
 			break;
 
-		TSlotProtoIcons * p = (TSlotProtoIcons*)(PBYTE(pct) + sizeof(TSlotIPC));
+		TSlotProtoIcons * p = (TSlotProtoIcons*)((uint8_t*)pct + sizeof(TSlotIPC));
 		Self->ProtoIcons = (TSlotProtoIcons*)realloc(Self->ProtoIcons, (Self->ProtoIconsCount + 1) * sizeof(TSlotProtoIcons));
 		TSlotProtoIcons * d = &Self->ProtoIcons[Self->ProtoIconsCount];
 		memmove(d, p, sizeof(TSlotProtoIcons));
@@ -593,7 +593,7 @@ BOOL __stdcall ProcessRequest(HWND hwnd, LPARAM param)
 
 			// slots will be in the order of icon data, groups  contacts, the first
 			// slot will contain the profile name
-			DWORD replyBits = ipcSendRequest(hMirandaWorkEvent, lParam->hWaitFor, lParam->ipch, 1000);
+			uint32_t replyBits = ipcSendRequest(hMirandaWorkEvent, lParam->hWaitFor, lParam->ipch, 1000);
 
 			// replyBits will be REPLY_FAIL if the wait timed out, or it'll be the request
 			// bits as sent or a series of *_NOTIMPL bits where the request bit were, if there are no
@@ -625,8 +625,8 @@ BOOL __stdcall ProcessRequest(HWND hwnd, LPARAM param)
 
 struct DllVersionInfo
 {
-	DWORD cbSize;
-	DWORD dwMajorVersion, dwMinorVersion, dwBuildNumber, dwPlatformID;
+	uint32_t cbSize;
+	uint32_t dwMajorVersion, dwMinorVersion, dwBuildNumber, dwPlatformID;
 };
 
 typedef HRESULT(__stdcall * pfnDllGetVersion)(DllVersionInfo*);

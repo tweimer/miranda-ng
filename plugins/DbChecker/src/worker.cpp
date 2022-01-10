@@ -28,8 +28,8 @@ static bool ConvertOldEvent(DBEVENTINFO &dbei)
 
 	int msglen = (int)mir_strlen((char *)dbei.pBlob) + 1, msglenW = 0;
 	if (msglen != (int)dbei.cbBlob) {
-		int count = ((dbei.cbBlob - msglen) / sizeof(WCHAR));
-		WCHAR *p = (WCHAR *)&dbei.pBlob[msglen];
+		int count = ((dbei.cbBlob - msglen) / sizeof(wchar_t));
+		wchar_t *p = (wchar_t *)&dbei.pBlob[msglen];
 		for (int i = 0; i < count; i++) {
 			if (p[i] == 0) {
 				msglenW = i;
@@ -40,7 +40,7 @@ static bool ConvertOldEvent(DBEVENTINFO &dbei)
 
 	char *utf8str;
 	if (msglenW > 0 && msglenW <= msglen)
-		utf8str = mir_utf8encodeW((WCHAR *)&dbei.pBlob[msglen]);
+		utf8str = mir_utf8encodeW((wchar_t *)&dbei.pBlob[msglen]);
 	else
 		utf8str = mir_utf8encode((char *)dbei.pBlob);
 
@@ -50,8 +50,8 @@ static bool ConvertOldEvent(DBEVENTINFO &dbei)
 	mir_free(dbei.pBlob);
 
 	dbei.flags |= DBEF_UTF;
-	dbei.cbBlob = (DWORD)mir_strlen(utf8str);
-	dbei.pBlob = (PBYTE)utf8str;
+	dbei.cbBlob = (uint32_t)mir_strlen(utf8str);
+	dbei.pBlob = (uint8_t*)utf8str;
 	return true;
 }
 
@@ -61,7 +61,7 @@ void __cdecl WorkerThread(DbToolOptions *opts)
 
 	AddToStatus(STATUS_MESSAGE, TranslateT("Database worker thread activated"));
 
-	DWORD sp = 0;
+	uint32_t sp = 0;
 
 	if (opts->bMarkRead || opts->bCheckUtf) {
 		int nCount = 0, nUtfCount = 0;

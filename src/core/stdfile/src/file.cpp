@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org),
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org),
 Copyright (c) 2000-12 Miranda IM project,
 all portions of this codebase are copyrighted to the people
 listed in contributors.txt.
@@ -120,11 +120,11 @@ void PushFileEvent(MCONTACT hContact, MEVENT hdbe, LPARAM lParam)
 
 static int FileEventAdded(WPARAM wParam, LPARAM lParam)
 {
-	DWORD dwSignature;
+	uint32_t dwSignature;
 
 	DBEVENTINFO dbei = {};
-	dbei.cbBlob = sizeof(DWORD);
-	dbei.pBlob = (PBYTE)&dwSignature;
+	dbei.cbBlob = sizeof(uint32_t);
+	dbei.pBlob = (uint8_t*)&dwSignature;
 	db_event_get(lParam, &dbei);
 	if (dbei.flags & (DBEF_SENT | DBEF_READ) || dbei.eventType != EVENTTYPE_FILE || dwSignature == 0)
 		return 0;
@@ -141,7 +141,7 @@ int SRFile_GetRegValue(HKEY hKeyBase, const wchar_t *szSubKey, const wchar_t *sz
 	if (RegOpenKeyEx(hKeyBase, szSubKey, 0, KEY_QUERY_VALUE, &hKey) != ERROR_SUCCESS)
 		return 0;
 
-	if (RegQueryValueEx(hKey, szValue, nullptr, nullptr, (PBYTE)szOutput, &cbOut) != ERROR_SUCCESS) {
+	if (RegQueryValueEx(hKey, szValue, nullptr, nullptr, (uint8_t*)szOutput, &cbOut) != ERROR_SUCCESS) {
 		RegCloseKey(hKey);
 		return 0;
 	}
@@ -381,18 +381,18 @@ static INT_PTR Proto_RecvFileT(WPARAM, LPARAM lParam)
 		szDescr = pre->descr.a;
 	}
 
-	dbei.cbBlob = sizeof(DWORD);
+	dbei.cbBlob = sizeof(uint32_t);
 
 	for (int i = 0; i < pre->fileCount; i++)
 		dbei.cbBlob += (int)mir_strlen(pszFiles[i]) + 1;
 
 	dbei.cbBlob += (int)mir_strlen(szDescr) + 1;
 
-	if ((dbei.pBlob = (BYTE*)mir_alloc(dbei.cbBlob)) == nullptr)
+	if ((dbei.pBlob = (uint8_t*)mir_alloc(dbei.cbBlob)) == nullptr)
 		return 0;
 
-	*(DWORD*)dbei.pBlob = 0;
-	BYTE* p = dbei.pBlob + sizeof(DWORD);
+	*(uint32_t*)dbei.pBlob = 0;
+	uint8_t* p = dbei.pBlob + sizeof(uint32_t);
 	for (int i = 0; i < pre->fileCount; i++) {
 		mir_strcpy((char*)p, pszFiles[i]);
 		p += mir_strlen(pszFiles[i]) + 1;

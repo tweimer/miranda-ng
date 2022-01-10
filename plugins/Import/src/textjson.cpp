@@ -2,7 +2,7 @@
 
 Import plugin for Miranda NG
 
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org)
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org)
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -161,7 +161,7 @@ public:
 
 			dbei->flags |= DBEF_UTF;
 			MBinBuffer buf;
-			DWORD tmp = 0;
+			uint32_t tmp = 0;
 			buf.append(&tmp, sizeof(tmp));
 			buf.append(szFile.c_str(), szFile.size());
 			if (!szDescr.empty()) {
@@ -171,7 +171,7 @@ public:
 			buf.append(&tmp, 1);
 
 			dbei->cbBlob = (int)buf.length();
-			dbei->pBlob = (PBYTE)mir_alloc(dbei->cbBlob);
+			dbei->pBlob = (uint8_t*)mir_alloc(dbei->cbBlob);
 			memcpy(dbei->pBlob, buf.data(), buf.length());
 		}
 		else {
@@ -181,11 +181,11 @@ public:
 				switch (dbei->eventType) {
 				case EVENTTYPE_ADDED:
 				case EVENTTYPE_FILE:
-					offset = sizeof(DWORD);
+					offset = sizeof(uint32_t);
 					break;
 
 				case EVENTTYPE_AUTHREQUEST:
-					offset = sizeof(DWORD) * 2;
+					offset = sizeof(uint32_t) * 2;
 					break;
 
 				default:
@@ -193,8 +193,8 @@ public:
 				}
 
 				dbei->flags |= DBEF_UTF;
-				dbei->cbBlob = (DWORD)szBody.size() + offset;
-				dbei->pBlob = (PBYTE)mir_calloc(dbei->cbBlob + 1);
+				dbei->cbBlob = (uint32_t)szBody.size() + offset;
+				dbei->pBlob = (uint8_t*)mir_calloc(dbei->cbBlob + 1);
 				memcpy(dbei->pBlob + offset, szBody.c_str(), szBody.size());
 				dbei->pBlob[dbei->cbBlob] = 0;
 			}

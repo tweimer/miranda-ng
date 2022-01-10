@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2011-21 Mataes
+Copyright (C) 2011-22 Mataes
 
 This is free software; you can redistribute it and/or
 modify it under the terms of the GNU Library General Public
@@ -22,7 +22,7 @@ Boston, MA 02111-1307, USA.
 vector<FILEINFO> Files;
 BOOL DlgDld;
 INT FileCount = 0, CurrentFile = 0, Number = 0;
-BYTE Reminder, UpdateOnStartup, UpdateOnPeriod, OnlyOnceADay, PeriodMeasure;
+uint8_t Reminder, UpdateOnStartup, UpdateOnPeriod, OnlyOnceADay, PeriodMeasure;
 INT Period;
 wchar_t tszDialogMsg[2048] = { 0 };
 FILEINFO* pFileInfo = nullptr;
@@ -130,7 +130,7 @@ BOOL DownloadFile(LPCTSTR tszURL, LPCTSTR tszLocal)
 		if (200 == pReply->resultCode && pReply->dataLength > 0) {
 			HANDLE hFile = CreateFile(tszLocal, GENERIC_READ | GENERIC_WRITE, NULL, nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
 			DWORD dwBytes;
-			WriteFile(hFile, pReply->pData, (DWORD)pReply->dataLength, &dwBytes, nullptr);
+			WriteFile(hFile, pReply->pData, (uint32_t)pReply->dataLength, &dwBytes, nullptr);
 			ret = true;
 			if (hFile)
 				CloseHandle(hFile);
@@ -380,7 +380,7 @@ BOOL AllowUpdateOnStartup()
 	return TRUE;
 }
 
-LONG PeriodToMilliseconds(const INT period, BYTE& periodMeasure)
+LONG PeriodToMilliseconds(const INT period, uint8_t& periodMeasure)
 {
 	LONG result = period * 1000;
 	switch (periodMeasure) {
@@ -413,7 +413,7 @@ void InitTimer()
 		_int64 qwDueTime = -10000i64 * interval;
 
 		LARGE_INTEGER li = { 0 };
-		li.LowPart = (DWORD)(qwDueTime & 0xFFFFFFFF);
+		li.LowPart = (uint32_t)(qwDueTime & 0xFFFFFFFF);
 		li.HighPart = (LONG)(qwDueTime >> 32);
 
 		SetWaitableTimer(Timer, &li, interval, TimerAPCProc, nullptr, 0);

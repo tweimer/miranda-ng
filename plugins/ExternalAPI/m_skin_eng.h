@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org),
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org),
 Copyright (c) 2000-08 Miranda ICQ/IM project,
 all portions of this codebase are copyrighted to the people
 listed in contributors.txt.
@@ -134,17 +134,17 @@ struct GLYPHOBJECT
 /* SKINTEXTDESCRIPTOR opbject descriptor structure */
 struct GLYPHTEXT
 {
-	char  *szGlyphTextID;
-	TCHAR *stText;
-	TCHAR *stValueText;
-	DWORD  dwFlags;
-	DWORD  dwColor;                     // Color (InvAA)(RR)(GG)(BB)
-	DWORD  dwShadow;                    //ToDo: Color2/Shaddow
-	int    iLeft, iTop, iRight, iBottom;
-	BYTE   RelativeFlags;
-	char  *szFontID;
-	HFONT  hFont;
-	char  *szObjectName;
+	char    *szGlyphTextID;
+	wchar_t *stText;
+	wchar_t *stValueText;
+	DWORD    dwFlags;
+	DWORD    dwColor;                     // Color (InvAA)(RR)(GG)(BB)
+	DWORD    dwShadow;                    //ToDo: Color2/Shaddow
+	int      iLeft, iTop, iRight, iBottom;
+	BYTE     RelativeFlags;
+	char    *szFontID;
+	HFONT    hFont;
+	char    *szObjectName;
 };
 
 /* SKINTEXTDESCRIPTOR opbject descriptor structure */
@@ -157,6 +157,7 @@ struct SKINFONT
 /* HELPER FUNCTIONS */
 
 //Paint  ObjectID as parent background for frame hwndIn
+#ifdef _WINDOWS
 int __inline SkinDrawWindowBack(HWND hwndIn, HDC hdc, RECT * rcClip, char * objectID)
 {
 	SKINDRAWREQUEST rq;
@@ -176,6 +177,7 @@ int __inline SkinDrawWindowBack(HWND hwndIn, HDC hdc, RECT * rcClip, char * obje
 	///ske_Service_DrawGlyph((WPARAM)&rq,0);    //$$$
 	return CallService(MS_SKIN_DRAWGLYPH,(WPARAM)&rq,0);
 }
+#endif
 
 //Register object with predefined style
 int __inline CreateGlyphedObjectDefStyle(char * ObjID,BYTE defStyle);
@@ -192,7 +194,8 @@ int __inline CreateGlyphedObject(char * ObjID);
 //    prm.szObjectID=ObjID;
 //    return CallService(MS_SKIN_REGISTERDEFOBJECT,(WPARAM)&prm,0);
 //}
-static BOOL __inline ScreenToClientRect(HWND hWnd, LPRECT lpRect)
+
+static BOOL __inline ScreenToClientRect(HWND hWnd, RECT *lpRect)
 {
 	BOOL ret;
 

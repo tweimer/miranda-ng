@@ -62,17 +62,17 @@ struct CMPlugin : public PLUGIN<CMPlugin>
 #pragma pack(1)
 typedef	struct
 {
-	BYTE Hour, Day, Month;
-	WORD Year;
-	DWORD Incoming, Outgoing;
-	WORD Time;
+	uint8_t Hour, Day, Month;
+	uint16_t Year;
+	uint32_t Incoming, Outgoing;
+	uint16_t Time;
 } HOURLYSTATS;
 #pragma pack(pop)
 
 typedef struct tagTimer
 {
-	DWORD TimeAtStart; // Время в момент запуска таймера - в миллисекундах.
-	DWORD Timer; // Количество секунд со времени запуска таймера.
+	uint32_t TimeAtStart; // Время в момент запуска таймера - в миллисекундах.
+	uint32_t Timer; // Количество секунд со времени запуска таймера.
 } TIMER;
 
 struct PROTOLIST
@@ -82,13 +82,13 @@ struct PROTOLIST
 	TIMER Session; // Таймер текущей сессии (протокол в онлайне).
 	TIMER Total; // Таймер общий.
 
-	DWORD TotalRecvTraffic, // Общий трафик протокола (за выбранный период)
+	uint32_t TotalRecvTraffic, // Общий трафик протокола (за выбранный период)
 		  TotalSentTraffic,
 		  CurrentRecvTraffic, // Текущий трафик протокола (за сессию)
 		  CurrentSentTraffic;
 	union
 	{
-		BYTE Flags;
+		uint8_t Flags;
 		struct
 		{
 			unsigned int Reserv0:1; // Активность потеряла смысл - статистика ведётся по всем аккаунтам.
@@ -123,7 +123,7 @@ struct PROTOLIST
 //---------------------------------------------------------------------------------------------
 typedef union
 {
-	DWORD Flags;
+	uint32_t Flags;
 	struct
 	{
 		unsigned int NotifyBySize:1;			//0
@@ -171,7 +171,7 @@ extern COLORREF KeyColor;
 
 extern HGENMENU hTrafficMainMenuItem;
 
-extern WORD Stat_SelAcc;
+extern uint16_t Stat_SelAcc;
 extern OPTTREE_OPTION *pOptions; // Объявлено в модуле TrafficCounter.c.
 extern PROTOLIST OverallInfo;
 

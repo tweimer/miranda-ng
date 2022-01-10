@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org)
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org)
 Copyright (c) 2000-08 Miranda ICQ/IM project,
 all portions of this codebase are copyrighted to the people
 listed in contributors.txt.
@@ -51,7 +51,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 struct MImportOptions
 {
 	const wchar_t *pwszFileName;
-	DWORD dwFlags; // IOPT_* flags combination
+	uint32_t dwFlags; // IOPT_* flags combination
 };
 
 #define MS_IMPORT_RUN "Import/Run"

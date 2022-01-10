@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org),
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org),
 Copyright (c) 2000-12 Miranda IM project,
 all portions of this codebase are copyrighted to the people
 listed in contributors.txt.
@@ -93,12 +93,14 @@ int isValidProfileName(const wchar_t *name)
 // returns 1 if the profile manager should be shown
 static bool showProfileManager(void)
 {
-	wchar_t Mgr[32];
 	// is control pressed?
+	#ifdef _WINDOWS
 	if (GetAsyncKeyState(VK_CONTROL) & 0x8000)
 		return 1;
+	#endif
 
 	// wanna show it?
+	wchar_t Mgr[32];
 	Profile_GetSetting(L"Database/ShowProfileMgr", Mgr, L"never");
 	return (mir_wstrcmpi(Mgr, L"yes") == 0);
 }

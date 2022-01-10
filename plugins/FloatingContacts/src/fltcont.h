@@ -72,12 +72,12 @@ enum
 //extern BOOL			bMoveTogether;
 //extern BOOL			bFixedWidth;
 //extern int			nThumbWidth;
-//extern BYTE			thumbAlpha;
+//extern uint8_t			thumbAlpha;
 //extern BOOL			bShowTip;
 extern BOOL			bEnableTip;
-//extern WORD			TimeIn;
+//extern uint16_t			TimeIn;
 //extern BOOL			bToTop;
-//extern WORD			ToTopTime;
+//extern uint16_t			ToTopTime;
 //extern BOOL			bHideWhenCListShow;
 
 extern BOOL			bIsCListShow;
@@ -91,15 +91,15 @@ extern COLORREF		tColor[FLT_FONTIDS];
 extern HPEN			hLTEdgesPen;
 extern HPEN			hRBEdgesPen;
 extern HBRUSH		hBkBrush;
-extern DWORD		bkColor;
+extern uint32_t		bkColor;
 extern HBITMAP		hBmpBackground;
-extern WORD			nBackgroundBmpUse;
+extern uint16_t			nBackgroundBmpUse;
 
 
 
 typedef struct _FCOptions
 {
-	BYTE	thumbAlpha;
+	uint8_t	thumbAlpha;
 	BOOL	bHideOffline;
 	BOOL	bHideAll;
 	BOOL	bHideWhenFullscreen;
@@ -107,9 +107,9 @@ typedef struct _FCOptions
 	BOOL	bFixedWidth;
 	int		nThumbWidth;
 	BOOL	bShowTip;
-	WORD	TimeIn;
+	uint16_t	TimeIn;
 	BOOL	bToTop;
-	WORD	ToTopTime;
+	uint16_t	ToTopTime;
 	BOOL	bHideWhenCListShow;
 	BOOL	bUseSingleClick;
 	BOOL	bShowIdle;
@@ -140,7 +140,7 @@ void ApplyOptionsChanges();
 
 void OnStatusChanged();
 
-void SetThumbsOpacity(BYTE btAlpha);
+void SetThumbsOpacity(uint8_t btAlpha);
 
 int OnOptionsInitialize(WPARAM wParam, LPARAM lParam);
 

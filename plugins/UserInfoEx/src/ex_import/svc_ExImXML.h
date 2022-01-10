@@ -29,29 +29,29 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 class CFileXml {
 	friend class CExImContactXML;
 
-	DWORD	_numContactsTodo;
-	DWORD	_numContactsDone;
-	DWORD	_numSettingsTodo;
-	DWORD	_numSettingsDone;
-	DWORD	_numEventsTodo;
-	DWORD _numEventsDone;
-	DWORD _numEventsDuplicated;
+	uint32_t	_numContactsTodo;
+	uint32_t	_numContactsDone;
+	uint32_t	_numSettingsTodo;
+	uint32_t	_numSettingsDone;
+	uint32_t	_numEventsTodo;
+	uint32_t _numEventsDone;
+	uint32_t _numEventsDuplicated;
 
 	MCONTACT _hContactToWorkOn;	// contact to ex/import (NULL=owner|INVALID_HANDLE_VALUE=all|HADNLE=one user)
 
-	WORD _wExport;
+	uint16_t _wExport;
 
 	CProgress _progress;
 
 	int ImportOwner(const TiXmlElement* xmlContact);
 	int ImportContacts(const TiXmlElement* xmlParent);
 	
-	DWORD CountContacts(const TiXmlElement* xmlParent);
+	uint32_t CountContacts(const TiXmlElement* xmlParent);
 
 	/*
-	int ExportOwner(FILE *xmlfile, BYTE bExportEvents);
-	int ExportContact(FILE *xmlfile, MCONTACT hContact, BYTE bExportEvents, LPENUMLIST pModules);
-	int ExportSubContact(TiXmlElement *xContact, MCONTACT hContact, BYTE bExportEvents);
+	int ExportOwner(FILE *xmlfile, uint8_t bExportEvents);
+	int ExportContact(FILE *xmlfile, MCONTACT hContact, uint8_t bExportEvents, LPENUMLIST pModules);
+	int ExportSubContact(TiXmlElement *xContact, MCONTACT hContact, uint8_t bExportEvents);
 	*/
 
 public:

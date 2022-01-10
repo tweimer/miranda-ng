@@ -400,7 +400,7 @@ void ThumbInfo::OnMouseMove(int nX, int nY)
 	}
 
 	if (bEnableTip && fcOpt.bShowTip && !bMouseDown) {
-		WORD tmpTimeIn;
+		uint16_t tmpTimeIn;
 		POINT pt;
 		RECT rc;
 
@@ -447,7 +447,7 @@ void ThumbInfo::ThumbDeselect(BOOL bMouse)
 	SetThumbOpacity(fcOpt.thumbAlpha);
 }
 
-void ThumbInfo::SetThumbOpacity(BYTE bAlpha)
+void ThumbInfo::SetThumbOpacity(uint8_t bAlpha)
 {
 	if (bAlpha != btAlpha) {
 		btAlpha = bAlpha;
@@ -475,7 +475,7 @@ void ThumbInfo::UpdateContent()
 	HFONT hOldFont;
 	SIZE  size;
 	RECT  rc, rcText;
-	DWORD oldColor;
+	uint32_t oldColor;
 	int   oldBkMode, index = 0;// nStatus;
 	UINT	fStyle = ILD_NORMAL;
 
@@ -663,7 +663,7 @@ void ThumbInfo::PopupMessageDialog()
 	Clist_ContactDoubleClicked(hContact);
 }
 
-void ThumbInfo::OnTimer(BYTE idTimer)
+void ThumbInfo::OnTimer(uint8_t idTimer)
 {
 	if (idTimer == TIMERID_SELECT_T) {
 		KillTimer(hwnd, TIMERID_SELECT_T);

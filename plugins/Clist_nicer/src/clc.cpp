@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org),
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org),
 Copyright (c) 2000-03 Miranda ICQ/IM project,
 all portions of this codebase are copyrighted to the people
 listed in contributors.txt.
@@ -65,7 +65,7 @@ int __forceinline __strcmp(const char * src, const char * dst)
 
 static int ClcEventAdded(WPARAM hContact, LPARAM lParam)
 {
-	DWORD new_freq = 0;
+	uint32_t new_freq = 0;
 
 	cfg::dat.t_now = time(0);
 
@@ -73,8 +73,8 @@ static int ClcEventAdded(WPARAM hContact, LPARAM lParam)
 		DBEVENTINFO dbei = {};
 		db_event_get(lParam, &dbei);
 		if (dbei.eventType == EVENTTYPE_MESSAGE && !(dbei.flags & DBEF_SENT)) {
-			DWORD firstTime = g_plugin.getDword(hContact, "mf_firstEvent");
-			DWORD count = g_plugin.getDword(hContact, "mf_count");
+			uint32_t firstTime = g_plugin.getDword(hContact, "mf_firstEvent");
+			uint32_t count = g_plugin.getDword(hContact, "mf_count");
 			count++;
 			new_freq = count ? (dbei.timestamp - firstTime) / count : 0x7fffffff;
 			g_plugin.setDword(hContact, "mf_freq", new_freq);
@@ -95,7 +95,7 @@ static int ClcEventAdded(WPARAM hContact, LPARAM lParam)
 static int ClcMetamodeChanged(WPARAM bMetaEnabled, LPARAM)
 {
 	if (BOOL(bMetaEnabled) != cfg::dat.bMetaEnabled) {
-		cfg::dat.bMetaEnabled = (BYTE)bMetaEnabled;
+		cfg::dat.bMetaEnabled = (uint8_t)bMetaEnabled;
 		Clist_Broadcast(CLM_AUTOREBUILD, 0, 0);
 	}
 	return 0;
@@ -273,8 +273,8 @@ LRESULT CALLBACK ContactListControlWndProc(HWND hwnd, UINT msg, WPARAM wParam, L
 
 	case INTM_GROUPCHANGED:
 		{
-			WORD iExtraImage[EXTRA_ICON_COUNT];
-			BYTE flags = 0;
+			uint16_t iExtraImage[EXTRA_ICON_COUNT];
+			uint8_t flags = 0;
 			if (!Clist_FindItem(hwnd, dat, wParam, &contact))
 				memset(iExtraImage, 0xFF, sizeof(iExtraImage));
 			else {
@@ -307,7 +307,7 @@ LRESULT CALLBACK ContactListControlWndProc(HWND hwnd, UINT msg, WPARAM wParam, L
 		{
 			int recalcScrollBar = 0;
 			MCONTACT hContact = wParam;
-			WORD status = ID_STATUS_OFFLINE;
+			uint16_t status = ID_STATUS_OFFLINE;
 			int  contactRemoved = 0;
 			MCONTACT hSelItem = NULL;
 			ClcContact *selcontact = nullptr;
@@ -330,15 +330,15 @@ LRESULT CALLBACK ContactListControlWndProc(HWND hwnd, UINT msg, WPARAM wParam, L
 					recalcScrollBar = 1;
 					Clist_FindItem(hwnd, dat, hContact, &contact);
 					if (contact) {
-						contact->iImage = (WORD)lParam;
+						contact->iImage = (uint16_t)lParam;
 						Clist_NotifyNewContact(hwnd, hContact);
 					}
 				}
 			}
 			else {
 				// item in list already
-				DWORD style = GetWindowLongPtr(hwnd, GWL_STYLE);
-				if (contact->iImage == (WORD)lParam)
+				uint32_t style = GetWindowLongPtr(hwnd, GWL_STYLE);
+				if (contact->iImage == (uint16_t)lParam)
 					break;
 				if (!shouldShow && !(style & CLS_NOHIDEOFFLINE) && (style & CLS_HIDEOFFLINE || group->hideOffline || cfg::dat.bFilterEffective)) {        // CLVM changed
 					if (dat->selection >= 0 && g_clistApi.pfnGetRowByIndex(dat, dat->selection, &selcontact, nullptr) != -1)
@@ -348,7 +348,7 @@ LRESULT CALLBACK ContactListControlWndProc(HWND hwnd, UINT msg, WPARAM wParam, L
 					recalcScrollBar = 1;
 				}
 				else {
-					contact->iImage = (WORD)lParam;
+					contact->iImage = (uint16_t)lParam;
 					if (!Clist_IsHiddenMode(dat, status))
 						contact->flags |= CONTACTF_ONLINE;
 					else
@@ -440,7 +440,7 @@ LRESULT CALLBACK ContactListControlWndProc(HWND hwnd, UINT msg, WPARAM wParam, L
 			if (cEntry == nullptr)
 				contact->cFlags &= ~ECF_AVATAR;
 			else {
-				DWORD dwFlags;
+				uint32_t dwFlags;
 
 				if (contact->pExtra)
 					dwFlags = contact->pExtra->dwDFlags;
@@ -473,7 +473,7 @@ LRESULT CALLBACK ContactListControlWndProc(HWND hwnd, UINT msg, WPARAM wParam, L
 
 	case INTM_STATUSCHANGED:
 		if (Clist_FindItem(hwnd, dat, wParam, &contact)) {
-			WORD wStatus = db_get_w(wParam, contact->pce->szProto, "Status", ID_STATUS_OFFLINE);
+			uint16_t wStatus = db_get_w(wParam, contact->pce->szProto, "Status", ID_STATUS_OFFLINE);
 			if (cfg::dat.bNoOfflineAvatars && wStatus != ID_STATUS_OFFLINE && contact->wStatus == ID_STATUS_OFFLINE) {
 				contact->wStatus = wStatus;
 				if (cfg::dat.bAvatarServiceAvail && contact->ace == nullptr)
@@ -547,7 +547,7 @@ LRESULT CALLBACK ContactListControlWndProc(HWND hwnd, UINT msg, WPARAM wParam, L
 				if (!dat->bisEmbedded && szProto) {				// may be a subcontact, forward the xstatus
 					MCONTACT hMasterContact = db_mc_tryMeta(hContact);
 					if (hMasterContact != hContact)				// avoid recursive call of settings handler
-						db_set_b(hMasterContact, META_PROTO, "XStatusId", (BYTE)db_get_b(hContact, szProto, "XStatusId", 0));
+						db_set_b(hMasterContact, META_PROTO, "XStatusId", (uint8_t)db_get_b(hContact, szProto, "XStatusId", 0));
 					break;
 				}
 			}
@@ -613,7 +613,7 @@ LRESULT CALLBACK ContactListControlWndProc(HWND hwnd, UINT msg, WPARAM wParam, L
 		KillTimer(hwnd, TIMERID_RENAME);
 		KillTimer(hwnd, TIMERID_INFOTIP);
 
-		DWORD hitFlags;
+		uint32_t hitFlags;
 		dat->selection = HitTest(hwnd, dat, (short)LOWORD(lParam), (short)HIWORD(lParam), &contact, nullptr, &hitFlags);
 		if (hitFlags & CLCHT_ONITEMEXTRA)
 			break;

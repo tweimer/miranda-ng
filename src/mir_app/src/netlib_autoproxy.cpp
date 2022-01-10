@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org),
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org),
 Copyright (c) 2000-12 Miranda IM project,
 all portions of this codebase are copyrighted to the people
 listed in contributors.txt.
@@ -205,8 +205,8 @@ static void __cdecl NetlibIeProxyThread(IeProxyParam *param)
 		char *proxy = proxyBuffer;
 		DWORD dwProxyLen = sizeof(proxyBuffer);
 
-		if (pInternetGetProxyInfo(param->szUrl, (DWORD)mir_strlen(param->szUrl),
-			param->szHost, (DWORD)mir_strlen(param->szHost), &proxy, &dwProxyLen))
+		if (pInternetGetProxyInfo(param->szUrl, (uint32_t)mir_strlen(param->szUrl),
+			param->szHost, (uint32_t)mir_strlen(param->szHost), &proxy, &dwProxyLen))
 			param->szProxy = mir_strdup(lrtrim(proxy));
 
 		Netlib_Logf(nullptr, "Autoproxy got response %s, Param: %s %s", param->szProxy, param->szUrl, param->szHost);
@@ -278,18 +278,18 @@ void NetlibLoadIeProxy(void)
 	char szHostStr[256] = "", szProxyBypassStr[4096] = "";
 
 	tValueLen = sizeof(enabled);
-	int tResult = RegQueryValueExA(hSettings, "ProxyEnable", nullptr, nullptr, (BYTE*)&enabled, &tValueLen);
+	int tResult = RegQueryValueExA(hSettings, "ProxyEnable", nullptr, nullptr, (uint8_t*)&enabled, &tValueLen);
 	bEnabled = enabled && tResult == ERROR_SUCCESS;
 
 	tValueLen = _countof(szHostStr);
-	tResult = RegQueryValueExA(hSettings, "ProxyServer", nullptr, nullptr, (BYTE*)szHostStr, &tValueLen);
+	tResult = RegQueryValueExA(hSettings, "ProxyServer", nullptr, nullptr, (uint8_t*)szHostStr, &tValueLen);
 	bEnabled = bEnabled && tResult == ERROR_SUCCESS;
 
 	tValueLen = _countof(szAutoUrlStr);
-	RegQueryValueExA(hSettings, "AutoConfigUrl", nullptr, nullptr, (BYTE*)szAutoUrlStr, &tValueLen);
+	RegQueryValueExA(hSettings, "AutoConfigUrl", nullptr, nullptr, (uint8_t*)szAutoUrlStr, &tValueLen);
 
 	tValueLen = _countof(szProxyBypassStr);
-	RegQueryValueExA(hSettings, "ProxyOverride", nullptr, nullptr, (BYTE*)szProxyBypassStr, &tValueLen);
+	RegQueryValueExA(hSettings, "ProxyOverride", nullptr, nullptr, (uint8_t*)szProxyBypassStr, &tValueLen);
 
 	RegCloseKey(hSettings);
 

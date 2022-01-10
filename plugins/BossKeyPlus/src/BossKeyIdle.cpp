@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org)
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org)
 Copyright (c) 2000-05 Miranda ICQ/IM project,
 all portions of this codebase are copyrighted to the people
 listed in contributors.txt.
@@ -29,7 +29,7 @@ static bool IsUserIdle()
 	UINT dwPeriod = g_plugin.getByte("time", 10) * 60 * 1000;
 
 	if (g_wMaskAdv & OPT_HIDEIFMIRIDLE) {
-		DWORD dwTick = Miranda_GetIdle();
+		uint32_t dwTick = Miranda_GetIdle();
 		return GetTickCount() - dwTick > dwPeriod;
 	}
 

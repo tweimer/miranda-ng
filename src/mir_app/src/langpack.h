@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org),
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org),
 Copyright (c) 2000-12 Miranda IM project,
 all portions of this codebase are copyrighted to the people
 listed in contributors.txt.
@@ -41,12 +41,12 @@ struct LANGPACK_INFO
 {
 	wchar_t tszLanguage[64];
 	LCID Locale;
-	WORD codepage;
+	uint16_t codepage;
 	CMStringA szAuthors, szLastModifiedUsing;
 	FILETIME ftFileDate;
 	wchar_t tszFileName[MAX_PATH]; /* just the file name itself */
 	wchar_t tszFullPath[MAX_PATH]; /* full path to the langpack */
-	BYTE flags; /* see LPIF_* flags */
+	uint8_t flags; /* see LPIF_* flags */
 };
 
 int LangpackOptionsInit(WPARAM wParam, LPARAM);

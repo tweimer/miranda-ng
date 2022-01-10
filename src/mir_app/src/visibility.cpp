@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org),
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org),
 Copyright (c) 2000-12 Miranda IM project,
 all portions of this codebase are copyrighted to the people
 listed in contributors.txt.
@@ -105,8 +105,8 @@ static void SetAllContactIcons(HWND hwndList)
 		if (hItem == nullptr)
 			continue;
 
-		DWORD flags;
-		WORD status;
+		uint32_t flags;
+		uint16_t status;
 		char *szProto = Proto_GetBaseAccountName(hContact);
 		if (szProto == nullptr) {
 			flags = 0;
@@ -188,7 +188,7 @@ static INT_PTR CALLBACK DlgProcVisibilityOpts(HWND hwndDlg, UINT msg, WPARAM, LP
 					break;
 
 				// Find clicked item
-				DWORD hitFlags;
+				uint32_t hitFlags;
 				HANDLE hItem = (HANDLE)SendDlgItemMessage(hwndDlg, IDC_LIST, CLM_HITTEST, (WPARAM)&hitFlags, MAKELPARAM(nm->pt.x, nm->pt.y));
 				if (hItem == nullptr)
 					break;

@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////////////////
 // Miranda NG: the free IM client for Microsoft* Windows*
 //
-// Copyright (C) 2012-21 Miranda NG team,
+// Copyright (C) 2012-22 Miranda NG team,
 // Copyright (c) 2000-09 Miranda ICQ/IM project,
 // all portions of this codebase are copyrighted to the people
 // listed in contributors.txt.
@@ -314,7 +314,7 @@ LRESULT CMsgDialog::DM_MsgWindowCmdHandler(UINT cmd, WPARAM wParam, LPARAM lPara
 				db_set_dw(m_hContact, SRMSGMOD_T, "sendformat", iNewLocalFormat);
 
 			if (PluginConfig.m_SendFormat != iOldGlobalSendFormat)
-				db_set_b(0, SRMSGMOD_T, "sendformat", (BYTE)PluginConfig.m_SendFormat);
+				db_set_b(0, SRMSGMOD_T, "sendformat", (uint8_t)PluginConfig.m_SendFormat);
 			if (iNewLocalFormat != iLocalFormat || PluginConfig.m_SendFormat != iOldGlobalSendFormat) {
 				m_SendFormat = M.GetDword(m_hContact, "sendformat", PluginConfig.m_SendFormat);
 				if (m_SendFormat == -1)          // per contact override to disable it..
@@ -376,7 +376,7 @@ LRESULT CMsgDialog::DM_MsgWindowCmdHandler(UINT cmd, WPARAM wParam, LPARAM lPara
 				db_unset(m_hContact, SRMSGMOD_T, "no_ack");
 			break;
 		}
-		db_set_b(m_hContact, SRMSGMOD_T, "no_ack", (BYTE)(m_sendMode & SMODE_NOACK ? 1 : 0));
+		db_set_b(m_hContact, SRMSGMOD_T, "no_ack", (uint8_t)(m_sendMode & SMODE_NOACK ? 1 : 0));
 		SetWindowPos(m_message.GetHwnd(), nullptr, 0, 0, 0, 0, SWP_FRAMECHANGED | SWP_NOSIZE | SWP_NOMOVE);
 		if (m_sendMode & SMODE_MULTIPLE || m_sendMode & SMODE_CONTAINER) {
 			SetWindowPos(m_message.GetHwnd(), nullptr, 0, 0, 0, 0, SWP_DRAWFRAME | SWP_FRAMECHANGED | SWP_NOZORDER |
@@ -480,7 +480,7 @@ LRESULT CMsgDialog::DM_MsgWindowCmdHandler(UINT cmd, WPARAM wParam, LPARAM lPara
 				DM_NotifyTyping(PROTOTYPE_SELFTYPING_OFF);
 				m_nTypeMode = PROTOTYPE_SELFTYPING_OFF;
 			}
-			g_plugin.setByte(m_hContact, SRMSGSET_TYPING, (BYTE)!iCurrentTypingMode);
+			g_plugin.setByte(m_hContact, SRMSGSET_TYPING, (uint8_t)!iCurrentTypingMode);
 		}
 		break;
 
@@ -519,7 +519,7 @@ void CMsgDialog::DM_InitRichEdit()
 		cf2.crBackColor = m_pContainer->m_theme.inputbg;
 		wcsncpy_s(cf2.szFaceName, lf.lfFaceName, _TRUNCATE);
 		cf2.dwEffects = 0;
-		cf2.wWeight = (WORD)lf.lfWeight;
+		cf2.wWeight = (uint16_t)lf.lfWeight;
 		cf2.bPitchAndFamily = lf.lfPitchAndFamily;
 		cf2.yHeight = abs(lf.lfHeight) * 15;
 	}
@@ -536,7 +536,7 @@ void CMsgDialog::DM_InitRichEdit()
 		cf2.bCharSet = lf.lfCharSet;
 		wcsncpy_s(cf2.szFaceName, lf.lfFaceName, _TRUNCATE);
 		cf2.dwEffects = ((lf.lfWeight >= FW_BOLD) ? CFE_BOLD : 0) | (lf.lfItalic ? CFE_ITALIC : 0) | (lf.lfUnderline ? CFE_UNDERLINE : 0) | (lf.lfStrikeOut ? CFE_STRIKEOUT : 0);
-		cf2.wWeight = (WORD)lf.lfWeight;
+		cf2.wWeight = (uint16_t)lf.lfWeight;
 		cf2.bPitchAndFamily = lf.lfPitchAndFamily;
 		cf2.yHeight = abs(lf.lfHeight) * 15;
 	}
@@ -608,10 +608,10 @@ void CMsgDialog::DM_SetDBButtonStates()
 			result = (db_get_b(hFinalContact, szModule, szSetting, 0) == buttonItem->bValuePush[0]);
 			break;
 		case DBVT_WORD:
-			result = (db_get_w(hFinalContact, szModule, szSetting, 0) == *((WORD *)&buttonItem->bValuePush));
+			result = (db_get_w(hFinalContact, szModule, szSetting, 0) == *((uint16_t *)&buttonItem->bValuePush));
 			break;
 		case DBVT_DWORD:
-			result = (db_get_dw(hFinalContact, szModule, szSetting, 0) == *((DWORD *)&buttonItem->bValuePush));
+			result = (db_get_dw(hFinalContact, szModule, szSetting, 0) == *((uint32_t *)&buttonItem->bValuePush));
 			break;
 		case DBVT_ASCIIZ:
 			ptrA szValue(db_get_sa(hFinalContact, szModule, szSetting));
@@ -818,7 +818,7 @@ void CMsgDialog::DM_NotifyTyping(int mode)
 		return;
 
 	// check status and capabilities of the protocol
-	DWORD typeCaps = CallProtoService(szProto, PS_GETCAPS, PFLAGNUM_4, 0);
+	uint32_t typeCaps = CallProtoService(szProto, PS_GETCAPS, PFLAGNUM_4, 0);
 	if (!(typeCaps & PF4_SUPPORTTYPING))
 		return;
 
@@ -827,13 +827,13 @@ void CMsgDialog::DM_NotifyTyping(int mode)
 		Chat_DoEventHook(m_si, GC_USER_TYPNOTIFY, 0, 0, m_nTypeMode);
 	}
 	else {
-		DWORD protoStatus = Proto_GetStatus(szProto);
+		uint32_t protoStatus = Proto_GetStatus(szProto);
 		if (protoStatus < ID_STATUS_ONLINE)
 			return;
 
 		// check visibility/invisibility lists to not "accidentially" send MTN to contacts who
 		// should not see them (privacy issue)
-		DWORD protoCaps = CallProtoService(szProto, PS_GETCAPS, PFLAGNUM_1, 0);
+		uint32_t protoCaps = CallProtoService(szProto, PS_GETCAPS, PFLAGNUM_1, 0);
 		if (protoCaps & PF1_VISLIST && db_get_w(hContact, szProto, "ApparentMode", 0) == ID_STATUS_OFFLINE)
 			return;
 

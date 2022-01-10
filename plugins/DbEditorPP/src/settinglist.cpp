@@ -13,7 +13,7 @@ int convertSetting(MCONTACT hContact, const char *module, const char *setting, i
 	}
 
 	int res = 0;
-	DWORD val = 0;
+	uint32_t val = 0;
 	wchar_t tmp[16];
 	ptrW value;
 
@@ -481,7 +481,7 @@ bool CMainDlg::EditLabelWndProc(HWND hwnd, UINT uMsg, WPARAM wParam)
 					break;
 
 				case 1: // value
-					DWORD val;
+					uint32_t val;
 					int i = 0;
 
 					if (dbv.type == DBVT_BLOB) {
@@ -494,7 +494,7 @@ bool CMainDlg::EditLabelWndProc(HWND hwnd, UINT uMsg, WPARAM wParam)
 					case 'B':
 						val = wcstoul(&value[1], nullptr, 0);
 						if (!val || value[1] == '0') {
-							res = !db_set_b(m_hContact, m_module, m_setting, (BYTE)val);
+							res = !db_set_b(m_hContact, m_module, m_setting, (uint8_t)val);
 						}
 						else
 							res = setTextValue(m_hContact, m_module, m_setting, value, dbv.type);
@@ -503,7 +503,7 @@ bool CMainDlg::EditLabelWndProc(HWND hwnd, UINT uMsg, WPARAM wParam)
 					case 'W':
 						val = wcstoul(&value[1], nullptr, 0);
 						if (!val || value[1] == '0')
-							res = !db_set_w(m_hContact, m_module, m_setting, (WORD)val);
+							res = !db_set_w(m_hContact, m_module, m_setting, (uint16_t)val);
 						else
 							res = setTextValue(m_hContact, m_module, m_setting, value, dbv.type);
 						break;

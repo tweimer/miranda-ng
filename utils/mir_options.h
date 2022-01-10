@@ -24,9 +24,9 @@ Boston, MA 02111-1307, USA.
 #include <windows.h>
 
 
-#define CONTROL_CHECKBOX 0			// Stored as BYTE
+#define CONTROL_CHECKBOX 0			// Stored as uint8_t
 #define CONTROL_SPIN 1				// Stored as WORD
-#define CONTROL_COLOR 2				// Stored as DWORD
+#define CONTROL_COLOR 2				// Stored as uint32_t
 #define CONTROL_RADIO 3				// Stored as WORD
 #define CONTROL_COMBO 4				// Stored as WORD
 #define CONTROL_PROTOCOL_LIST 5		// Stored as BYTEs
@@ -34,7 +34,7 @@ Boston, MA 02111-1307, USA.
 #define CONTROL_COMBO_TEXT 7		// Stored as TCHARs, max len 1024
 #define CONTROL_COMBO_ITEMDATA 8	// Stored as TCHARs, max len 1024
 #define CONTROL_FILE 9				// Stored as TCHARs, max len 1024
-#define CONTROL_INT 10				// Stored as DWORD
+#define CONTROL_INT 10				// Stored as uint32_t
 
 
 typedef BOOL(*FPAllowProtocol) (const char *proto);
@@ -55,8 +55,8 @@ typedef struct {
 		FPAllowProtocol allowProtocol;
 		unsigned int checkboxID;
 	};
-	WORD min;
-	WORD max;
+	uint16_t min;
+	uint16_t max;
 } OptPageControl;
 
 INT_PTR CALLBACK SaveOptsDlgProc(OptPageControl *controls, int controlsSize, char *module, HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam);

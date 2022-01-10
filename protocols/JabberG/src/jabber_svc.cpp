@@ -5,7 +5,7 @@ Jabber Protocol Plugin for Miranda NG
 Copyright (c) 2002-04  Santithorn Bunchua
 Copyright (c) 2005-12  George Hazan
 Copyright (c) 2007     Maxim Mluhov
-Copyright (C) 2012-21 Miranda NG team
+Copyright (C) 2012-22 Miranda NG team
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -256,10 +256,10 @@ INT_PTR __cdecl CJabberProto::JabberSetAvatar(WPARAM, LPARAM lParam)
 		_read(fileIn, pResult, dwPngSize);
 		_close(fileIn);
 
-		BYTE digest[MIR_SHA1_HASH_SIZE];
+		uint8_t digest[MIR_SHA1_HASH_SIZE];
 		mir_sha1_ctx sha1ctx;
 		mir_sha1_init(&sha1ctx);
-		mir_sha1_append(&sha1ctx, (BYTE*)pResult, dwPngSize);
+		mir_sha1_append(&sha1ctx, (uint8_t*)pResult, dwPngSize);
 		mir_sha1_finish(&sha1ctx, digest);
 
 		wchar_t tFileName[MAX_PATH];
@@ -288,7 +288,7 @@ INT_PTR __cdecl CJabberProto::JabberSetAvatar(WPARAM, LPARAM lParam)
 
 INT_PTR __cdecl CJabberProto::JabberSetNickname(WPARAM wParam, LPARAM lParam)
 {
-	wchar_t *nickname = (wParam & SMNN_UNICODE) ? mir_wstrdup((WCHAR*)lParam) : mir_a2u((char*)lParam);
+	wchar_t *nickname = (wParam & SMNN_UNICODE) ? mir_wstrdup((wchar_t*)lParam) : mir_a2u((char*)lParam);
 
 	setWString("Nick", nickname);
 	SetServerVcard(FALSE, L"");

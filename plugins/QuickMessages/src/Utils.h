@@ -28,15 +28,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 typedef struct _tagButtonData
 	{
-	DWORD dwPos;
-	DWORD dwOPPos;
-	BYTE  fEntryType;
-	BYTE  fEntryOpType;
-	BYTE  bIsServName;
-	BYTE  bIsOpServName;
-	BYTE  bInQMenu;
-	BYTE  bOpInQMenu;
-	DWORD dwOPFlags;
+	uint32_t dwPos;
+	uint32_t dwOPPos;
+	uint8_t  fEntryType;
+	uint8_t  fEntryOpType;
+	uint8_t  bIsServName;
+	uint8_t  bIsOpServName;
+	uint8_t  bInQMenu;
+	uint8_t  bOpInQMenu;
+	uint32_t dwOPFlags;
 	wchar_t *pszName;
 	wchar_t *pszValue;
 	wchar_t *pszOpValue;
@@ -46,21 +46,21 @@ typedef struct _tagButtonData
 typedef struct _tagListData
 	{
 	SortedList* sl;
-	DWORD dwPos;
-	DWORD dwOPPos;
+	uint32_t dwPos;
+	uint32_t dwOPPos;
 	wchar_t* ptszQValue;
 	wchar_t* ptszOPQValue;
 	wchar_t* ptszButtonName;
-	BYTE  bIsServName;
-	BYTE  bIsOpServName;
-	DWORD dwOPFlags;
+	uint8_t  bIsServName;
+	uint8_t  bIsOpServName;
+	uint32_t dwOPFlags;
 	}ListData;
 
 typedef struct _tagQuickData
 	{
-	DWORD dwPos;
+	uint32_t dwPos;
 	BOOL bIsService;
-	BYTE fEntryType;
+	uint8_t fEntryType;
 	wchar_t* ptszValue;
 	wchar_t* ptszValueName;
 	}QuickData;
@@ -71,11 +71,11 @@ int  sstSortButtons(const void * vmtbi1, const void * vmtbi2);
 int  sstOpSortButtons(const void * vmtbi1, const void * vmtbi2);
 int  sstQuickSortButtons(const void * vmtbi1, const void * vmtbi2);
 void li_ZeroQuickList(SortedList *pList);
-wchar_t* getMenuEntry(int entrynum,int buttonnum,BYTE mode) ;
+wchar_t* getMenuEntry(int entrynum,int buttonnum,uint8_t mode) ;
 int RegisterCustomButton(WPARAM wParam,LPARAM lParam);
 void RemoveMenuEntryNode(SortedList *pList, int index);
 void DestroyButton(int listnum);
 void SaveModuleSettings(int buttonnum,ButtonData* bd);
 void CleanSettings(int buttonnum,int from);
-DWORD BalanceButtons(int buttonsWas,int buttonsNow);
+uint32_t BalanceButtons(int buttonsWas,int buttonsNow);
 wchar_t* ParseString(MCONTACT hContact,wchar_t* ptszQValueIn,wchar_t* ptszText,wchar_t* ptszClip,int QVSize,int TextSize ,int ClipSize);

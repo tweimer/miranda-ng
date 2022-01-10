@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team,
+Copyright (C) 2012-22 Miranda NG team,
 all portions of this codebase are copyrighted to the people
 listed in contributors.txt.
 
@@ -389,7 +389,7 @@ LBL_Seek:
 			memcpy(dbv->pbVal, pCachedValue->pbVal, dbv->cpbVal);
 		}
 		else {
-			dbv->pbVal = (BYTE *)mir_alloc(pCachedValue->cpbVal);
+			dbv->pbVal = (uint8_t *)mir_alloc(pCachedValue->cpbVal);
 			memcpy(dbv->pbVal, pCachedValue->pbVal, pCachedValue->cpbVal);
 		}
 		dbv->cpbVal = pCachedValue->cpbVal;
@@ -406,10 +406,10 @@ LBL_Seek:
 			if (isStatic) {
 				dbv->cchVal--;
 				if (realLen < dbv->cchVal)
-					dbv->cchVal = WORD(realLen);
+					dbv->cchVal = uint16_t(realLen);
 				memcpy(dbv->pszVal, decoded, dbv->cchVal);
 				dbv->pszVal[dbv->cchVal] = 0;
-				dbv->cchVal = WORD(realLen);
+				dbv->cchVal = uint16_t(realLen);
 			}
 			else {
 				dbv->pszVal = (char *)mir_alloc(1 + realLen);
@@ -479,7 +479,7 @@ STDMETHODIMP_(BOOL) MDatabaseCommon::WriteContactSetting(MCONTACT contactID, DBC
 
 	DBCONTACTWRITESETTING dbcwWork = dbcwNotif;
 
-	mir_ptr<BYTE> pEncoded(nullptr);
+	mir_ptr<uint8_t> pEncoded(nullptr);
 	bool bIsEncrypted = false;
 	switch (dbcwWork.value.type) {
 	case DBVT_BYTE: case DBVT_WORD: case DBVT_DWORD:
@@ -491,13 +491,13 @@ STDMETHODIMP_(BOOL) MDatabaseCommon::WriteContactSetting(MCONTACT contactID, DBC
 		if (dbcwWork.value.pszVal == nullptr)
 			return 1;
 
-		dbcwWork.value.cchVal = (WORD)strlen(dbcwWork.value.pszVal);
+		dbcwWork.value.cchVal = (uint16_t)strlen(dbcwWork.value.pszVal);
 		if (bIsEncrypted && m_crypto) {
 			size_t len;
-			BYTE *pResult = m_crypto->encodeString(dbcwWork.value.pszVal, &len);
+			uint8_t *pResult = m_crypto->encodeString(dbcwWork.value.pszVal, &len);
 			if (pResult != nullptr) {
 				pEncoded = dbcwWork.value.pbVal = pResult;
-				dbcwWork.value.cpbVal = (WORD)len;
+				dbcwWork.value.cpbVal = (uint16_t)len;
 				dbcwWork.value.type = DBVT_ENCRYPTED;
 			}
 		}

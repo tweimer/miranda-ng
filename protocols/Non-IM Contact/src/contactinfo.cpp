@@ -242,11 +242,11 @@ INT_PTR CALLBACK DlgProcOtherStuff(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lP
 
 				for (int i = ID_STATUS_ONLINE; i <= ID_STATUS_MAX; i++)
 					if (IsDlgButtonChecked(hwnd, i))
-						g_plugin.setWord(hContact, "Icon", (WORD)i);
+						g_plugin.setWord(hContact, "Icon", (uint16_t)i);
 
 				/* set correct status */
 				if (status == ID_STATUS_ONLINE || status == ID_STATUS_AWAY || (status == g_plugin.getWord(hContact, "Icon", ID_STATUS_ONLINE)))
-					g_plugin.setWord(hContact, "Status", (WORD)g_plugin.getWord(hContact, "Icon", ID_STATUS_ONLINE));
+					g_plugin.setWord(hContact, "Status", (uint16_t)g_plugin.getWord(hContact, "Icon", ID_STATUS_ONLINE));
 				else
 					g_plugin.setWord(hContact, "Status", ID_STATUS_OFFLINE);
 
@@ -254,15 +254,15 @@ INT_PTR CALLBACK DlgProcOtherStuff(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lP
 					if (GetWindowTextLength(GetDlgItem(hwnd, IDC_TIMER))) {
 						wchar_t text[512];
 						GetDlgItemText(hwnd, IDC_TIMER, text, _countof(text));
-						g_plugin.setWord(hContact, "Timer", (WORD)_wtoi(text));
+						g_plugin.setWord(hContact, "Timer", (uint16_t)_wtoi(text));
 					}
 					else g_plugin.setWord(hContact, "Timer", 15);
 				}
 				else g_plugin.setWord(hContact, "Timer", 0);
 
 				// always visible
-				g_plugin.setByte(hContact, "AlwaysVisible", (BYTE)IsDlgButtonChecked(hwnd, IDC_ALWAYS_VISIBLE));
-				g_plugin.setByte(hContact, "VisibleUnlessOffline", (BYTE)IsDlgButtonChecked(hwnd, IDC_VISIBLE_UNLESS_OFFLINE));
+				g_plugin.setByte(hContact, "AlwaysVisible", (uint8_t)IsDlgButtonChecked(hwnd, IDC_ALWAYS_VISIBLE));
+				g_plugin.setByte(hContact, "VisibleUnlessOffline", (uint8_t)IsDlgButtonChecked(hwnd, IDC_VISIBLE_UNLESS_OFFLINE));
 			}
 			return TRUE;
 		}
@@ -643,11 +643,11 @@ INT_PTR ImportContacts(WPARAM, LPARAM)
 				// copy the ToolTip
 				g_plugin.setString(hContact, "ToolTip", tooltip);
 				// timer
-				g_plugin.setByte(hContact, "UseTimer", (BYTE)usetimer);
-				g_plugin.setByte(hContact, "Minutes", (BYTE)minutes);
-				g_plugin.setWord(hContact, "Timer", (WORD)timer);
+				g_plugin.setByte(hContact, "UseTimer", (uint8_t)usetimer);
+				g_plugin.setByte(hContact, "Minutes", (uint8_t)minutes);
+				g_plugin.setWord(hContact, "Timer", (uint16_t)timer);
 				//icon
-				g_plugin.setWord(hContact, "Icon", (WORD)icon);
+				g_plugin.setWord(hContact, "Icon", (uint16_t)icon);
 				replaceAllStrings(hContact);
 			}
 			free(msg);

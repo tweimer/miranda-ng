@@ -92,7 +92,7 @@ bool CMsgDialog::IsTypingNotificationSupported()
 	if (!m_hContact || !m_szProto)
 		return false;
 
-	DWORD typeCaps = CallProtoService(m_szProto, PS_GETCAPS, PFLAGNUM_4, 0);
+	uint32_t typeCaps = CallProtoService(m_szProto, PS_GETCAPS, PFLAGNUM_4, 0);
 	if (!(typeCaps & PF4_SUPPORTTYPING))
 		return false;
 	return true;
@@ -103,11 +103,11 @@ bool CMsgDialog::IsTypingNotificationEnabled()
 	if (!g_plugin.getByte(m_hContact, SRMSGSET_TYPING, g_plugin.bTypingNew))
 		return FALSE;
 
-	DWORD protoStatus = Proto_GetStatus(m_szProto);
+	uint32_t protoStatus = Proto_GetStatus(m_szProto);
 	if (protoStatus < ID_STATUS_ONLINE)
 		return FALSE;
 
-	DWORD protoCaps = CallProtoService(m_szProto, PS_GETCAPS, PFLAGNUM_1, 0);
+	uint32_t protoCaps = CallProtoService(m_szProto, PS_GETCAPS, PFLAGNUM_1, 0);
 	if (protoCaps & PF1_VISLIST && db_get_w(m_hContact, m_szProto, "ApparentMode", 0) == ID_STATUS_OFFLINE)
 		return FALSE;
 
@@ -300,8 +300,8 @@ void CMsgDialog::StopMessageSending()
 void CMsgDialog::SwitchTyping()
 {
 	if (IsTypingNotificationSupported()) {
-		BYTE typingNotify = (g_plugin.getByte(m_hContact, SRMSGSET_TYPING, g_plugin.bTypingNew));
-		g_plugin.setByte(m_hContact, SRMSGSET_TYPING, (BYTE)!typingNotify);
+		uint8_t typingNotify = (g_plugin.getByte(m_hContact, SRMSGSET_TYPING, g_plugin.bTypingNew));
+		g_plugin.setByte(m_hContact, SRMSGSET_TYPING, (uint8_t)!typingNotify);
 		Srmm_SetIconFlags(m_hContact, SRMM_MODULE, 1, typingNotify ? MBF_DISABLED : 0);
 	}
 }

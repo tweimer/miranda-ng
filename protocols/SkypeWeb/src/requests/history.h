@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2015-21 Miranda NG team (https://miranda-ng.org)
+Copyright (c) 2015-22 Miranda NG team (https://miranda-ng.org)
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -35,7 +35,7 @@ struct SyncHistoryFirstRequest : public AsyncHttpRequest
 
 struct GetHistoryRequest : public AsyncHttpRequest
 {
-	GetHistoryRequest(const char *username, int pageSize, LONGLONG timestamp, bool bOperative) :
+	GetHistoryRequest(const char *username, int pageSize, uint32_t timestamp, bool bOperative) :
 		AsyncHttpRequest(REQUEST_GET, HOST_DEFAULT, 0, &CSkypeProto::OnGetServerHistory)
 	{
 		m_szUrl.AppendFormat("/users/ME/conversations/%s/messages", mir_urlEncode(username).c_str());

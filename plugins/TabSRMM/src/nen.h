@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////////////////
 // Miranda NG: the free IM client for Microsoft* Windows*
 //
-// Copyright (C) 2012-21 Miranda NG team,
+// Copyright (C) 2012-22 Miranda NG team,
 // Copyright (c) 2000-09 Miranda ICQ/IM project,
 // all portions of this codebase are copyrighted to the people
 // listed in contributors.txt.
@@ -39,7 +39,7 @@
 
 #define MODULE "tabSRMM_NEN"
 
-int tabSRMM_ShowPopup(MCONTACT hContact, MEVENT hDbEvent, WORD eventType, int windowOpen, TContainerData *pContainer, HWND hwndChild, const char *szProto);
+int tabSRMM_ShowPopup(MCONTACT hContact, MEVENT hDbEvent, uint16_t eventType, int windowOpen, TContainerData *pContainer, HWND hwndChild, const char *szProto);
 
 #define DEFAULT_COLBACK RGB(255,255,128)
 #define DEFAULT_COLTEXT RGB(0,0,0)
@@ -117,9 +117,9 @@ struct NEN_OPTIONS
 	BOOL   iNoAutoPopup;
 	BOOL   bWindowCheck;
 	int    iLimitPreview;
-	WORD   wMaxRecent;
-	WORD   wMaxFavorites;
-	DWORD  dwRemoveMask;
+	uint16_t   wMaxRecent;
+	uint16_t   wMaxFavorites;
+	uint32_t  dwRemoveMask;
 
 	COLORREF colBackMsg;
 	COLORREF colTextMsg;
@@ -133,7 +133,7 @@ struct EVENT_DATAT
 {
 	MEVENT hEvent;
 	wchar_t  tszText[MAX_SECONDLINE + 2];
-	DWORD  timestamp;
+	uint32_t  timestamp;
 };
 
 struct PLUGIN_DATAT

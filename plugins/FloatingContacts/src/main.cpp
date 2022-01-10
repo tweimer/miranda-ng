@@ -34,10 +34,8 @@ static void CreateThumbsFont(void);
 static void CreateBackgroundBrush(void);
 static int  GetContactStatus(MCONTACT hContact);
 static void GetScreenRect(void);
-extern void SetThumbsOpacity(BYTE btAlpha);
+extern void SetThumbsOpacity(uint8_t btAlpha);
 static int  ClcStatusToPf2(int status);
-
-static VOID CALLBACK ToTopTimerProc(HWND hwnd, UINT uMsg, UINT_PTR idEvent, DWORD dwTime);
 
 HFONT      hFont[FLT_FONTIDS];
 COLORREF   tColor[FLT_FONTIDS];
@@ -47,16 +45,16 @@ MCONTACT   hNewContact;
 HPEN       hLTEdgesPen;
 HPEN       hRBEdgesPen;
 HBRUSH     hBkBrush;
-DWORD      bkColor;
+uint32_t   bkColor;
 HBITMAP    hBmpBackground;
-WORD       nBackgroundBmpUse = CLB_STRETCH;
+uint16_t   nBackgroundBmpUse = CLB_STRETCH;
 
 HWND       hwndMiranda;
 BOOL       bVersionOK;
 BOOL       bDockHorz = TRUE;
 HMENU      hContactMenu;
 RECT       rcScreen;
-DWORD      dwOfflineModes;
+uint32_t   dwOfflineModes;
 BOOL       bEnableTip;
 UINT_PTR   ToTopTimerID;
 BOOL       bIsCListShow;
@@ -278,13 +276,13 @@ static int OnPrebuildContactMenu(WPARAM wParam, LPARAM)
 
 static void LoadDBSettings()
 {
-	fcOpt.thumbAlpha = (BYTE)((double)g_plugin.getByte("Opacity", 100) * 2.55);
+	fcOpt.thumbAlpha = (uint8_t)((double)g_plugin.getByte("Opacity", 100) * 2.55);
 	fcOpt.bHideOffline = (BOOL)g_plugin.getByte("HideOffline", 0);
 	fcOpt.bHideAll = (BOOL)g_plugin.getByte("HideAll", 0);
 	fcOpt.bHideWhenFullscreen = (BOOL)g_plugin.getByte("HideWhenFullscreen", 0);
 	fcOpt.bMoveTogether = (BOOL)g_plugin.getByte("MoveTogether", 0);
 	fcOpt.bFixedWidth = (BOOL)g_plugin.getByte("FixedWidth", 0);
-	fcOpt.nThumbWidth = (DWORD)g_plugin.getDword("Width", 0);
+	fcOpt.nThumbWidth = (uint32_t)g_plugin.getDword("Width", 0);
 	dwOfflineModes = Clist::OfflineModes;
 	fcOpt.bShowTip = (BOOL)g_plugin.getByte("ShowTip", 1);
 	fcOpt.TimeIn = g_plugin.getWord("TimeIn", 0);
@@ -423,7 +421,7 @@ static LRESULT __stdcall CommWndProc(HWND	hwnd, UINT uMsg, WPARAM wParam, LPARAM
 	return DefWindowProc(hwnd, uMsg, wParam, lParam);
 }
 
-extern void SetThumbsOpacity(BYTE btAlpha)
+extern void SetThumbsOpacity(uint8_t btAlpha)
 {
 	for (auto &it : thumbList)
 		it->SetThumbOpacity(btAlpha);
@@ -445,6 +443,12 @@ void OnStatusChanged()
 		idStatus = GetContactStatus(it->hContact);
 		it->RefreshContactStatus(idStatus);
 	}
+}
+
+static VOID CALLBACK ToTopTimerProc(HWND, UINT, UINT_PTR, DWORD)
+{
+	for (auto &it : thumbList)
+		SetWindowPos(it->hwnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE | SWP_NOACTIVATE);
 }
 
 void ApplyOptionsChanges()
@@ -564,7 +568,7 @@ static void CreateBackgroundBrush()
 		if (tszBitmapName != NULL)
 			hBmpBackground = Bitmap_Load(tszBitmapName);
 	}
-	nBackgroundBmpUse = (WORD)g_plugin.getWord("BkBitmapOpt", FLT_DEFAULT_BKGNDBITMAPOPT);
+	nBackgroundBmpUse = (uint16_t)g_plugin.getWord("BkBitmapOpt", FLT_DEFAULT_BKGNDBITMAPOPT);
 
 	// Create brush
 	hBkBrush = CreateSolidBrush(bkColor);
@@ -672,7 +676,7 @@ static IconItemT g_iconList[] =
 static INT_PTR OnMainMenu_HideAll(WPARAM, LPARAM)
 {
 	fcOpt.bHideAll = !fcOpt.bHideAll;
-	g_plugin.setByte("HideAll", (BYTE)fcOpt.bHideAll);
+	g_plugin.setByte("HideAll", (uint8_t)fcOpt.bHideAll);
 
 	OnStatusChanged();
 
@@ -696,7 +700,7 @@ static INT_PTR OnContactMenu_Remove(WPARAM hContact, LPARAM)
 static INT_PTR OnHotKey_HideWhenCListShow(WPARAM, LPARAM)
 {
 	fcOpt.bHideWhenCListShow = !fcOpt.bHideWhenCListShow;
-	g_plugin.setByte("HideWhenCListShow", (BYTE)fcOpt.bHideWhenCListShow);
+	g_plugin.setByte("HideWhenCListShow", (uint8_t)fcOpt.bHideWhenCListShow);
 	OnStatusChanged();
 	return 0;
 }
@@ -746,7 +750,7 @@ static void LoadContact(MCONTACT hContact)
 	if (hContact == NULL)
 		return;
 
-	DWORD	dwPos = g_plugin.getDword(hContact, "ThumbsPos", (DWORD)-1);
+	uint32_t	dwPos = g_plugin.getDword(hContact, "ThumbsPos", (uint32_t)-1);
 	if (dwPos != -1) {
 		wchar_t	*ptName = Clist_GetContactDisplayName(hContact);
 		if (ptName != nullptr) {
@@ -786,12 +790,6 @@ BOOL HideOnFullScreen()
 	return bFullscreen && fcOpt.bHideWhenFullscreen;
 }
 
-static VOID CALLBACK ToTopTimerProc(HWND, UINT, UINT_PTR, DWORD)
-{
-	for (auto &it : thumbList)
-		SetWindowPos(it->hwnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE | SWP_NOACTIVATE);
-}
-
 void ShowThumbsOnHideCList()
 {
 	if (!fcOpt.bHideWhenCListShow || fcOpt.bHideAll || HideOnFullScreen())
@@ -825,9 +823,9 @@ static LRESULT __stdcall newMirandaWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, 
 			HideThumbsOnShowCList();
 		}
 		else if (!(wp->flags & SWP_NOMOVE)) {
-			BYTE method = db_get_b(0, "ModernData", "HideBehind", 0);
+			uint8_t method = db_get_b(0, "ModernData", "HideBehind", 0);
 			if (method) {
-				WORD wBehindEdgeBorderSize = db_get_w(0, "ModernData", "HideBehindBorderSize", 0);
+				uint16_t wBehindEdgeBorderSize = db_get_w(0, "ModernData", "HideBehindBorderSize", 0);
 				RECT rc = { wp->x, wp->y, wp->x + wp->cx, wp->y + wp->cy };
 				RECT rcScr = { wBehindEdgeBorderSize*(2 - method), 0, GetSystemMetrics(SM_CXSCREEN) - wBehindEdgeBorderSize * (method - 1), GetSystemMetrics(SM_CYSCREEN) };
 				RECT rcOverlap;

@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org)
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org)
 Copyright (c) 2000-08 Miranda ICQ/IM project,
 all portions of this codebase are copyrighted to the people
 listed in contributors.txt.
@@ -63,10 +63,13 @@ struct OPTIONSDIALOGPAGE
 {
 	int position; // a position number, lower numbers are topmost
 	MAllStrings szTitle, szGroup, szTab; // [TRANSLATED-BY-CORE]
-	DLGPROC pfnDlgProc;
-	char *pszTemplate;
 	HPLUGIN pPlugin;
-	DWORD flags;
+	uint32_t flags;
+
+	#ifdef _WINDOWS
+		DLGPROC pfnDlgProc;
+		char *pszTemplate;
+	#endif
 
 	union {
 		LPARAM dwInitParam; // a value to pass to lParam of WM_INITDIALOG message

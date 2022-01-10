@@ -41,7 +41,7 @@ void CMsgDialog::SetupInfobar()
 	cf2.bCharSet = lf.lfCharSet;
 	wcsncpy(cf2.szFaceName, lf.lfFaceName, LF_FACESIZE);
 	cf2.dwEffects = ((lf.lfWeight >= FW_BOLD) ? CFE_BOLD : 0) | (lf.lfItalic ? CFE_ITALIC : 0);
-	cf2.wWeight = (WORD)lf.lfWeight;
+	cf2.wWeight = (uint16_t)lf.lfWeight;
 	cf2.bPitchAndFamily = lf.lfPitchAndFamily;
 	cf2.yHeight = abs(lf.lfHeight) * 1440 / g_dat.logPixelSY;
 	SendDlgItemMessage(m_hwndInfo, IDC_INFOBAR_NAME, EM_SETCHARFORMAT, SCF_DEFAULT, (LPARAM)&cf2);
@@ -55,7 +55,7 @@ void CMsgDialog::SetupInfobar()
 	cf2.bCharSet = lf.lfCharSet;
 	wcsncpy(cf2.szFaceName, lf.lfFaceName, LF_FACESIZE);
 	cf2.dwEffects = ((lf.lfWeight >= FW_BOLD) ? CFE_BOLD : 0) | (lf.lfItalic ? CFE_ITALIC : 0);
-	cf2.wWeight = (WORD)lf.lfWeight;
+	cf2.wWeight = (uint16_t)lf.lfWeight;
 	cf2.bPitchAndFamily = lf.lfPitchAndFamily;
 	cf2.yHeight = abs(lf.lfHeight) * 1440 / g_dat.logPixelSY;
 	SendDlgItemMessage(m_hwndInfo, IDC_INFOBAR_STATUS, EM_SETCHARFORMAT, SCF_DEFAULT, (LPARAM)&cf2);
@@ -72,7 +72,7 @@ void CMsgDialog::RefreshInfobar()
 	ptrW szXStatusMsg(db_get_wsa(m_hContact, m_szProto, "XStatusMsg"));
 
 	HICON hIcon = nullptr;
-	BYTE bXStatus = db_get_b(m_hContact, m_szProto, "XStatusId", 0);
+	uint8_t bXStatus = db_get_b(m_hContact, m_szProto, "XStatusId", 0);
 	if (bXStatus > 0)
 		hIcon = (HICON)CallProtoService(m_szProto, PS_GETCUSTOMSTATUSICON, bXStatus, 0);
 

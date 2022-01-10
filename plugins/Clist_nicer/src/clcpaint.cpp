@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org),
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org),
 Copyright (c) 2000-03 Miranda ICQ/IM project,
 all portions of this codebase are copyrighted to the people
 listed in contributors.txt.
@@ -31,7 +31,7 @@ extern ImageItem *g_glyphItem;
 
 extern int hClcProtoCount;
 
-static BYTE divide3[765] = { 255 };
+static uint8_t divide3[765] = { 255 };
 extern char *im_clients[];
 extern HICON im_clienthIcons[];
 extern HICON overlayicons[];
@@ -42,8 +42,8 @@ extern LONG g_cxsmIcon, g_cysmIcon;
 
 int g_hottrack, g_center, g_ignoreselforgroups, g_selectiveIcon, g_hottrack_done;
 HWND g_focusWnd;
-BYTE selBlend;
-BYTE saved_alpha;
+uint8_t selBlend;
+uint8_t saved_alpha;
 int my_status;
 
 BOOL g_inCLCpaint = FALSE;
@@ -182,19 +182,19 @@ HDC hdcAV;
 
 LONG g_maxAV_X = 200, g_maxAV_Y = 200;
 
-static int __fastcall DrawAvatar(HDC hdcMem, RECT *rc, ClcContact *contact, int y, struct ClcData *dat, WORD cstatus, int rowHeight, DWORD dwFlags)
+static int __fastcall DrawAvatar(HDC hdcMem, RECT *rc, ClcContact *contact, int y, struct ClcData *dat, uint16_t cstatus, int rowHeight, uint32_t dwFlags)
 {
 	float dScale = 0.;
 	float newHeight, newWidth;
 	HDC hdcAvatar = hdcAV;
 	//HBITMAP hbmMem;
-	DWORD topoffset = 0, leftoffset = 0;
+	uint32_t topoffset = 0, leftoffset = 0;
 	LONG bmWidth, bmHeight;
 	float dAspect;
 	HBITMAP hbm, hbmOldAV;
 	HRGN rgn = nullptr;
 	int avatar_size = cfg::dat.avatarSize;
-	DWORD av_saved_left;
+	uint32_t av_saved_left;
 	StatusItems_t *item = contact->wStatus == ID_STATUS_OFFLINE ? arStatusItems[ID_EXTBKAVATARFRAMEOFFLINE - ID_STATUS_OFFLINE] : arStatusItems[ID_EXTBKAVATARFRAME - ID_STATUS_OFFLINE];
 	int  skinMarginX, skinMarginY;
 	BOOL fOverlay = (cfg::dat.dwFlags & CLUI_FRAME_OVERLAYICONS);
@@ -342,26 +342,26 @@ static BOOL pi_selectiveIcon;
 static BOOL av_left, av_right, av_rightwithnick;
 static BOOL mirror_rtl, mirror_always, mirror_rtltext;
 
-BYTE savedCORNER = -1;
+uint8_t savedCORNER = -1;
 int  g_padding_y = 0;
 
-void __inline PaintItem(HDC hdcMem, ClcGroup *group, ClcContact *contact, int indent, int y, struct ClcData *dat, int index, HWND hwnd, DWORD style, RECT *clRect, BOOL *bFirstNGdrawn, int groupCountsFontTopShift, int rowHeight)
+void __inline PaintItem(HDC hdcMem, ClcGroup *group, ClcContact *contact, int indent, int y, struct ClcData *dat, int index, HWND hwnd, uint32_t style, RECT *clRect, BOOL *bFirstNGdrawn, int groupCountsFontTopShift, int rowHeight)
 {
 	SIZE textSize = { 0 }, countsSize = { 0 }, spaceSize = { 0 };
 	int fontHeight;
 	BOOL twoRows = FALSE;
-	DWORD leftOffset = 0, rightOffset = 0;
+	uint32_t leftOffset = 0, rightOffset = 0;
 	int iconXSpace = dat->iconXSpace;
 	//BOOL xStatusValid = 0;
 	HFONT hPreviousFont = nullptr;
 	COLORREF oldGroupColor = -1;
-	DWORD qLeft = 0;
+	uint32_t qLeft = 0;
 	int leftX = dat->leftMargin + indent * dat->groupIndent;
 	int bg_indent_r = 0;
 	int bg_indent_l = 0;
 	int rightIcons = 0;
-	DWORD dt_nickflags = 0, dt_2ndrowflags = 0;
-	DWORD dwFlags = cfg::dat.dwFlags;
+	uint32_t dt_nickflags = 0, dt_2ndrowflags = 0;
+	uint32_t dwFlags = cfg::dat.dwFlags;
 	BOOL check_selected, fLocalTime;
 
 	rowHeight -= cfg::dat.bRowSpacing;
@@ -374,8 +374,8 @@ void __inline PaintItem(HDC hdcMem, ClcGroup *group, ClcContact *contact, int in
 	int scanIndex = group->scanIndex;
 	BOOL av_local_wanted = (g_list_avatars > 0);
 
-	BYTE type = contact->type;
-	BYTE flags = contact->flags;
+	uint8_t type = contact->type;
+	uint8_t flags = contact->flags;
 	int  selected = index == dat->selection && (dat->bShowSelAlways || dat->exStyle & CLS_EX_SHOWSELALWAYS || g_focusWnd == hwnd) && type != CLCIT_DIVIDER;
 	avatar_done = FALSE;
 
@@ -461,7 +461,7 @@ set_bg_l:
 
 	RECT rc;
 	rc.left = 0;
-	WORD cstatus = contact->wStatus;
+	uint16_t cstatus = contact->wStatus;
 
 	/***** BACKGROUND DRAWING *****/
 	// contacts
@@ -491,7 +491,7 @@ set_bg_l:
 			*sfirstitem_NG, *ssingleitem_NG, *sevencontact_pos, *soddcontact_pos, *pp_item;
 
 		if (cstatus >= ID_STATUS_OFFLINE && cstatus <= ID_STATUS_MAX) {
-			BYTE perstatus_ignored;
+			uint8_t perstatus_ignored;
 
 			if ((flags & CONTACTF_IDLE) && !arStatusItems[ID_EXTBKIDLE - ID_STATUS_OFFLINE]->IGNORED)
 				sitem = arStatusItems[ID_EXTBKIDLE - ID_STATUS_OFFLINE];
@@ -829,13 +829,13 @@ bgskipped:
 		rc2.bottom = rc2.top + rowHeight;
 
 		if (av_left) {
-			leftOffset += DrawAvatar(hdcMem, &rc2, contact, y, dat, (WORD)(iImage ? cstatus : 0), rowHeight, cEntry->dwDFlags);
+			leftOffset += DrawAvatar(hdcMem, &rc2, contact, y, dat, (uint16_t)(iImage ? cstatus : 0), rowHeight, cEntry->dwDFlags);
 			rcContent.left += leftOffset;
 			leftX += leftOffset;
 		}
 		else {
 			rc2.left = (rcContent.right - cfg::dat.avatarSize) + 1;
-			rightOffset += DrawAvatar(hdcMem, &rc2, contact, y, dat, (WORD)(iImage ? cstatus : 0), rowHeight, cEntry->dwDFlags);
+			rightOffset += DrawAvatar(hdcMem, &rc2, contact, y, dat, (uint16_t)(iImage ? cstatus : 0), rowHeight, cEntry->dwDFlags);
 			rcContent.right -= (rightOffset);
 		}
 	}
@@ -1014,10 +1014,10 @@ bgskipped:
 					RECT rcAvatar = rcContent;
 
 					rcAvatar.left = rcContent.right - (cfg::dat.avatarSize - 1);
-					DrawAvatar(hdcMem, &rcAvatar, contact, y, dat, (WORD)(iImage ? cstatus : 0), rowHeight, cEntry->dwDFlags);
+					DrawAvatar(hdcMem, &rcAvatar, contact, y, dat, (uint16_t)(iImage ? cstatus : 0), rowHeight, cEntry->dwDFlags);
 					rcContent.right -= (cfg::dat.avatarSize + 2);
 				}
-				else rcContent.left += DrawAvatar(hdcMem, &rcContent, contact, y, dat, (WORD)(iImage ? cstatus : 0), rowHeight, cEntry->dwDFlags);
+				else rcContent.left += DrawAvatar(hdcMem, &rcContent, contact, y, dat, (uint16_t)(iImage ? cstatus : 0), rowHeight, cEntry->dwDFlags);
 			}
 			else if (dwFlags & CLUI_FRAME_ALWAYSALIGNNICK && !avatar_done && av_local_wanted)
 				rcContent.left += (dwFlags & (CLUI_FRAME_AVATARSLEFT | CLUI_FRAME_AVATARSRIGHT | CLUI_FRAME_AVATARSRIGHTWITHNICK) ? 0 : cfg::dat.avatarSize + 2);
@@ -1028,8 +1028,8 @@ bgskipped:
 			DrawText(hdcMem, szText, -1, &rcContent, DT_EDITCONTROL | DT_NOPREFIX | DT_NOCLIP | DT_WORD_ELLIPSIS | DT_SINGLELINE | dt_nickflags);
 		else {
 			int statusFontHeight;
-			DWORD dtFlags = DT_WORD_ELLIPSIS | DT_NOPREFIX | DT_NOCLIP | DT_SINGLELINE;
-			DWORD saved_right = rcContent.right;
+			uint32_t dtFlags = DT_WORD_ELLIPSIS | DT_NOPREFIX | DT_NOCLIP | DT_SINGLELINE;
+			uint32_t saved_right = rcContent.right;
 			BOOL verticalfit = FALSE;
 
 			rcContent.top = y + cfg::dat.avatarPadding / 2;
@@ -1106,7 +1106,7 @@ bgskipped:
 			rcContent.bottom = y + rowHeight;
 
 			if (cstatus >= ID_STATUS_OFFLINE && cstatus <= ID_STATUS_MAX) {
-				BYTE smsgValid = cEntry->bStatusMsgValid;
+				uint8_t smsgValid = cEntry->bStatusMsgValid;
 
 				if ((dwFlags & CLUI_FRAME_SHOWSTATUSMSG && smsgValid > STATUSMSG_XSTATUSID) || smsgValid == STATUSMSG_XSTATUSNAME)
 					szText = cEntry->statusMsg;
@@ -1134,7 +1134,7 @@ bgskipped:
 						ULONG textCounter = 0;
 						size_t ulLen = mir_wstrlen(szText);
 						LONG old_bottom = rcContent.bottom;
-						DWORD i_dtFlags = DT_WORDBREAK | DT_NOPREFIX | dt_2ndrowflags;
+						uint32_t i_dtFlags = DT_WORDBREAK | DT_NOPREFIX | dt_2ndrowflags;
 						dtp.cbSize = sizeof(dtp);
 						rcContent.right = clRect->right - dat->rightMargin - rightOffset;
 						do {
@@ -1197,7 +1197,7 @@ void SkinDrawBg(HWND hwnd, HDC hdc)
 void PaintClc(HWND hwnd, struct ClcData *dat, HDC hdc, RECT *rcPaint)
 {
 	RECT clRect;
-	DWORD style = GetWindowLongPtr(hwnd, GWL_STYLE);
+	uint32_t style = GetWindowLongPtr(hwnd, GWL_STYLE);
 	int grey = 0;
 	BOOL bFirstNGdrawn = FALSE;
 	int line_num = -1;
@@ -1458,7 +1458,7 @@ bgdone:
 		bmih.biPlanes = 1;
 		bmih.biWidth = clRect.right;
 		
-		PBYTE bits = (PBYTE)mir_alloc(4 * bmih.biWidth * -bmih.biHeight);
+		uint8_t *bits = (uint8_t*)mir_alloc(4 * bmih.biWidth * -bmih.biHeight);
 		GetDIBits(hdc, hBmpOsb, 0, clRect.bottom, bits, (BITMAPINFO *)&bmih, DIB_RGB_COLORS);
 
 		COLORREF greyColour = GetSysColor(COLOR_3DFACE);

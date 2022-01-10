@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org)
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org)
 all portions of this codebase are copyrighted to the people
 listed in contributors.txt.
 
@@ -94,18 +94,18 @@ struct DBSettingKey
 
 struct DBSettingValue
 {
-	BYTE type;
+	uint8_t type;
 	union
 	{
-		BYTE bVal;
-		WORD wVal;
-		DWORD dwVal;
+		uint8_t bVal;
+		uint16_t wVal;
+		uint32_t dwVal;
 		char szVal[];
 
 		struct
 		{
 			size_t nLength;
-			BYTE bVal[];
+			uint8_t bVal[];
 		} blob;
 	};
 };

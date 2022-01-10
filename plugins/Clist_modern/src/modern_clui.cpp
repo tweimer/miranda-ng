@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org),
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org),
 Copyright (c) 2000-08 Miranda ICQ/IM project,
 all portions of this codebase are copyrighted to the people
 listed in contributors.txt.
@@ -70,11 +70,11 @@ RECT    g_rcEdgeSizingRect = { 0 };
 
 /* Module global variables */
 
-static BYTE bAlphaEnd;
+static uint8_t bAlphaEnd;
 static int bOldHideOffline;
 static int bOldUseGroups;
 
-static WORD wBehindEdgeShowDelay,
+static uint16_t wBehindEdgeShowDelay,
 wBehindEdgeHideDelay,
 wBehindEdgeBorderSize;
 
@@ -161,7 +161,7 @@ int CLUI::OnEvent_FontReload(WPARAM wParam, LPARAM lParam)
 {
 	Clist_Broadcast(INTM_RELOADOPTIONS, wParam, lParam);
 
-	g_CluiData.dwKeyColor = db_get_dw(0, "ModernSettings", "KeyColor", (DWORD)SETTING_KEYCOLOR_DEFAULT);
+	g_CluiData.dwKeyColor = db_get_dw(0, "ModernSettings", "KeyColor", (uint32_t)SETTING_KEYCOLOR_DEFAULT);
 
 	cliInvalidateRect(g_clistApi.hwndContactList, nullptr, 0);
 	return 0;
@@ -363,13 +363,13 @@ HRESULT CLUI::FillAlphaChannel(HDC hDC, RECT *prcParent)
 		return S_FALSE;
 	}
 
-	DWORD dwRgnSize = GetRegionData(hRgn, 0, nullptr);
+	uint32_t dwRgnSize = GetRegionData(hRgn, 0, nullptr);
 	RGNDATA *rgnData = (RGNDATA *)malloc(dwRgnSize);
 	GetRegionData(hRgn, dwRgnSize, rgnData);
 
 	RECT *pRect = (RECT *)rgnData->Buffer;
 
-	for (DWORD i = 0; i < rgnData->rdh.nCount; i++)
+	for (uint32_t i = 0; i < rgnData->rdh.nCount; i++)
 		ske_SetRectOpaque(hDC, &pRect[i]);
 
 	free(rgnData);
@@ -502,8 +502,8 @@ int CLUI_ShowWindowMod(HWND hWnd, int nCmd)
 
 static BOOL CLUI_WaitThreadsCompletion()
 {
-	static BYTE bEntersCount = 0;
-	static const BYTE bcMAX_AWAITING_RETRY = 10; // repeat awaiting only 10 times
+	static uint8_t bEntersCount = 0;
+	static const uint8_t bcMAX_AWAITING_RETRY = 10; // repeat awaiting only 10 times
 	TRACE("CLUI_WaitThreadsCompletion Enter");
 	if (bEntersCount < bcMAX_AWAITING_RETRY && (g_CluiData.mutexPaintLock || g_hAwayMsgThread || g_hGetTextAsyncThread || g_hSmoothAnimationThread) && !Miranda_IsTerminated()) {
 		TRACE("Waiting threads");
@@ -1366,7 +1366,7 @@ static int CLUI_SmoothAlphaThreadTransition()
 	return 1;
 }
 
-int CLUI_SmoothAlphaTransition(HWND hwnd, BYTE GoalAlpha, BOOL wParam)
+int CLUI_SmoothAlphaTransition(HWND hwnd, uint8_t GoalAlpha, BOOL wParam)
 {
 	if (!g_CluiData.fLayered && (!g_CluiData.fSmoothAnimation && !g_bTransparentFlag)) {
 		if (GoalAlpha > 0 && wParam != 2) {
@@ -1644,11 +1644,11 @@ LRESULT CLUI::OnSizingMoving(UINT msg, WPARAM wParam, LPARAM lParam)
 			Sync(CLUIFrames_OnMoving, m_hWnd, &rc);
 			if (!IsIconic(m_hWnd)) {
 				if (!Clist_IsDocked()) { // if g_CluiData.fDocked, dont remember pos (except for width)
-					g_plugin.setDword("Height", (DWORD)(rc.bottom - rc.top));
-					g_plugin.setDword("x", (DWORD)rc.left);
-					g_plugin.setDword("y", (DWORD)rc.top);
+					g_plugin.setDword("Height", (uint32_t)(rc.bottom - rc.top));
+					g_plugin.setDword("x", (uint32_t)rc.left);
+					g_plugin.setDword("y", (uint32_t)rc.top);
 				}
-				g_plugin.setDword("Width", (DWORD)(rc.right - rc.left));
+				g_plugin.setDword("Width", (uint32_t)(rc.right - rc.left));
 			}
 		}
 		return TRUE;
@@ -1681,12 +1681,12 @@ LRESULT CLUI::OnSizingMoving(UINT msg, WPARAM wParam, LPARAM lParam)
 
 			// if g_CluiData.fDocked, dont remember pos (except for width)
 			if (!Clist_IsDocked()) {
-				g_plugin.setDword("Height", (DWORD)(rc.bottom - rc.top));
-				g_plugin.setDword("x", (DWORD)rc.left);
-				g_plugin.setDword("y", (DWORD)rc.top);
+				g_plugin.setDword("Height", (uint32_t)(rc.bottom - rc.top));
+				g_plugin.setDword("x", (uint32_t)rc.left);
+				g_plugin.setDword("y", (uint32_t)rc.top);
 			}
 			else SetWindowRgn(m_hWnd, nullptr, 0);
-			g_plugin.setDword("Width", (DWORD)(rc.right - rc.left));
+			g_plugin.setDword("Width", (uint32_t)(rc.right - rc.left));
 
 			if (!g_CluiData.fLayered) {
 				HRGN hRgn1;
@@ -1958,9 +1958,9 @@ LRESULT CLUI::OnAutoAlphaTimer(UINT, WPARAM, LPARAM)
 		// change
 		bTransparentFocus = inwnd;
 		if (bTransparentFocus)
-			CLUI_SmoothAlphaTransition(m_hWnd, (BYTE)g_plugin.getByte("Alpha", SETTING_ALPHA_DEFAULT), 1);
+			CLUI_SmoothAlphaTransition(m_hWnd, (uint8_t)g_plugin.getByte("Alpha", SETTING_ALPHA_DEFAULT), 1);
 		else
-			CLUI_SmoothAlphaTransition(m_hWnd, (BYTE)(g_bTransparentFlag ? g_plugin.getByte("AutoAlpha", SETTING_AUTOALPHA_DEFAULT) : 255), 1);
+			CLUI_SmoothAlphaTransition(m_hWnd, (uint8_t)(g_bTransparentFlag ? g_plugin.getByte("AutoAlpha", SETTING_AUTOALPHA_DEFAULT) : 255), 1);
 	}
 	if (!bTransparentFocus)
 		KillTimer(m_hWnd, TM_AUTOALPHA);
@@ -2079,7 +2079,7 @@ LRESULT CLUI::OnActivate(UINT msg, WPARAM wParam, LPARAM lParam)
 	}
 	RedrawWindow(m_hWnd, nullptr, nullptr, RDW_INVALIDATE | RDW_ALLCHILDREN);
 	if (g_bTransparentFlag) {
-		BYTE alpha;
+		uint8_t alpha;
 		if (wParam != WA_INACTIVE || CLUI_CheckOwnedByClui((HWND)lParam) || ((HWND)lParam == m_hWnd) || GetParent((HWND)lParam) == m_hWnd)
 			alpha = g_plugin.getByte("Alpha", SETTING_ALPHA_DEFAULT);
 		else
@@ -2167,7 +2167,7 @@ LRESULT CLUI::OnShowWindow(UINT, WPARAM wParam, LPARAM lParam)
 	if (lParam) return 0;
 	if (mutex_bShowHideCalledFromAnimation) return 1;
 
-	BYTE gAlpha = (!wParam) ? 0 : (g_plugin.getByte("Transparent", SETTING_TRANSPARENT_DEFAULT) ? g_plugin.getByte("Alpha", SETTING_ALPHA_DEFAULT) : 255);
+	uint8_t gAlpha = (!wParam) ? 0 : (g_plugin.getByte("Transparent", SETTING_TRANSPARENT_DEFAULT) ? g_plugin.getByte("Alpha", SETTING_ALPHA_DEFAULT) : 255);
 	if (wParam) {
 		g_CluiData.bCurrentAlpha = 0;
 		Sync(CLUIFrames_OnShowHide, 1);
@@ -2306,7 +2306,7 @@ LRESULT CLUI::OnListSizeChangeNotify(NMCLISTCONTROL *pnmc)
 
 LRESULT CLUI::OnClickNotify(NMCLISTCONTROL *pnmc)
 {
-	DWORD hitFlags;
+	uint32_t hitFlags;
 	HANDLE hItem = (HANDLE)SendMessage(g_clistApi.hwndContactTree, CLM_HITTEST, (WPARAM)&hitFlags, MAKELPARAM(pnmc->pt.x, pnmc->pt.y));
 	if (hItem && !(hitFlags & CLCHT_NOWHERE))
 		return DefCluiWndProc(WM_NOTIFY, 0, (LPARAM)pnmc);
@@ -2519,7 +2519,7 @@ LRESULT CLUI::OnDestroy(UINT, WPARAM, LPARAM)
 	UnLoadCLUIFramesModule();
 	//ExtFrames_Uninit();
 	TRACE("CLUI.c: WM_DESTROY - UnLoadCLUIFramesModule DONE\n");
-	g_plugin.setByte("State", (BYTE)state);
+	g_plugin.setByte("State", (uint8_t)state);
 	ske_UnloadSkin(&g_SkinObjectList);
 
 	delete m_pCLUI;

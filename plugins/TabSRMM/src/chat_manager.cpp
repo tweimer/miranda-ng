@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////////////////
 // Miranda NG: the free IM client for Microsoft* Windows*
 //
-// Copyright (C) 2012-21 Miranda NG team,
+// Copyright (C) 2012-22 Miranda NG team,
 // Copyright (c) 2000-09 Miranda ICQ/IM project,
 // all portions of this codebase are copyrighted to the people
 // listed in contributors.txt.
@@ -46,8 +46,8 @@ static int sttCompareNicknames(const wchar_t *s1, const wchar_t *s2)
 
 int UM_CompareItem(const USERINFO *u1, const USERINFO *u2)
 {
-	WORD dw1 = u1->Status;
-	WORD dw2 = u2->Status;
+	uint16_t dw1 = u1->Status;
+	uint16_t dw2 = u2->Status;
 
 	for (int i = 0; i < 8; i++) {
 		if ((dw1 & 1) && !(dw2 & 1))

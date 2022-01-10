@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org),
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org),
 Copyright (c) 2000-12 Miranda IM project,
 all portions of this codebase are copyrighted to the people
 listed in contributors.txt.
@@ -124,7 +124,7 @@ void CLangpackDlg::LoadLangpacks()
 		pack.Locale = MAKELCID(MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), SORT_DEFAULT);
 		mir_wstrcpy(pack.tszLanguage, L"English");
 		pack.szAuthors = "Miranda NG team";
-		DWORD v = Miranda_GetVersion();
+		uint32_t v = Miranda_GetVersion();
 		pack.szLastModifiedUsing.Format("%d.%d.%d", ((v >> 24) & 0xFF), ((v >> 16) & 0xFF), ((v >> 8) & 0xFF));
 
 		if (GetModuleFileName(nullptr, pack.tszFullPath, _countof(pack.tszFullPath))) {

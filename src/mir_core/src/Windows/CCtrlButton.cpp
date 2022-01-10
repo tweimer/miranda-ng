@@ -2,7 +2,7 @@
 
 Object UI extensions
 Copyright (c) 2008  Victor Pavlychko, George Hazan
-Copyright (C) 2012-21 Miranda NG team
+Copyright (C) 2012-22 Miranda NG team
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -29,7 +29,7 @@ CCtrlButton::CCtrlButton(CDlgBase* wnd, int idCtrl)
 	: CCtrlBase(wnd, idCtrl)
 {}
 
-BOOL CCtrlButton::OnCommand(HWND, WORD, WORD idCode)
+BOOL CCtrlButton::OnCommand(HWND, uint16_t, uint16_t idCode)
 {
 	if (idCode == BN_CLICKED)
 		OnClick(this);

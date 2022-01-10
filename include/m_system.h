@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org)
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org)
 Copyright (c) 2000-08 Miranda ICQ/IM project,
 all portions of this codebase are copyrighted to the people
 listed in contributors.txt.
@@ -39,9 +39,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 	#define MIRANDA_VER    0x0A00
 #endif
 
-#ifndef _MSC_VER
-	#define __forceinline inline __attribute__ ((always_inline))
-#else
+#ifdef _MSC_VER
 	#pragma warning(disable:4244 4245)
 #endif
 
@@ -74,10 +72,10 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 // return nonzero to stop the exit cycle
 #define ME_SYSTEM_OKTOEXIT "Miranda/System/OkToExitEvent"
 
-// gets the version number of Miranda encoded as a DWORD
+// gets the version number of Miranda encoded as a uint32_t
 // returns the version number, encoded as one version per byte, therefore
 // version 1.2.3.10 is 0x0102030a
-EXTERN_C MIR_APP_DLL(DWORD) Miranda_GetVersion(void);
+EXTERN_C MIR_APP_DLL(uint32_t) Miranda_GetVersion(void);
 
 // gets the version number of Miranda encoded as four WORDs   v0.92.2+
 // returns the version number, encoded as one version per word, therefore
@@ -126,7 +124,7 @@ EXTERN_C MIR_APP_DLL(void) Miranda_Close(void);
 EXTERN_C MIR_APP_DLL(void) Miranda_SetIdleCallback(void(MIR_CDECL *pfnCallback)(void));
 
 // returns the last window tick where a monitored event was seen, currently WM_CHAR/WM_MOUSEMOVE
-EXTERN_C MIR_APP_DLL(DWORD) Miranda_GetIdle(void);
+EXTERN_C MIR_APP_DLL(uint32_t) Miranda_GetIdle(void);
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -451,7 +449,7 @@ class T2Utf : public ptrA
 {
 public:
 	__forceinline T2Utf(const wchar_t *str) : ptrA(mir_utf8encodeW(str)) {}
-	__forceinline operator BYTE *() const { return (BYTE *)data; }
+	__forceinline operator uint8_t*() const { return (uint8_t*)data; }
 #ifdef _XSTRING_
 	std::string str() const { return std::string(data); }
 #endif

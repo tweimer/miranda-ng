@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org),
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org),
 Copyright (c) 2000-12 Miranda IM project,
 all portions of this codebase are copyrighted to the people
 listed in contributors.txt.
@@ -31,7 +31,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 struct TTooltips
 {
-	DWORD ThreadId;
+	uint32_t ThreadId;
 	HWND  hwnd;
 };
 
@@ -464,7 +464,7 @@ static LRESULT CALLBACK MButtonWndProc(HWND hwnd, UINT msg,  WPARAM wParam, LPAR
 			ti.uFlags = TTF_IDISHWND|TTF_SUBCLASS;
 			ti.uId = (UINT_PTR)bct->hwnd;
 			if (lParam & BATF_UNICODE)
-				ti.lpszText = mir_wstrdup(TranslateW((WCHAR*)wParam));
+				ti.lpszText = mir_wstrdup(TranslateW((wchar_t*)wParam));
 			else
 				ti.lpszText = Langpack_PcharToTchar((char*)wParam);
 			SendMessage(bct->hwndToolTips, TTM_ADDTOOL, 0, (LPARAM)&ti);

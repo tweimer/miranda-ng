@@ -10,7 +10,7 @@ int WS_Send(SOCKET s, const char *data, int datalen)
 	return TRUE;
 }
 
-unsigned long WS_ResolveName(char *name, WORD *port, int defaultPort)
+unsigned long WS_ResolveName(char *name, uint16_t *port, int defaultPort)
 {
 	char *nameCopy = _strdup(name);
 	if (port != nullptr)
@@ -28,7 +28,7 @@ unsigned long WS_ResolveName(char *name, WORD *port, int defaultPort)
 		free(nameCopy);
 		return *(u_long*)lk->h_addr_list[0];
 	}
-	DWORD ret = inet_addr(nameCopy);
+	uint32_t ret = inet_addr(nameCopy);
 	free(nameCopy);
 	return ret;
 }
@@ -39,7 +39,7 @@ void Send(char *user, char *host, const char *Msg, char *server)
 	if (!server)
 		server = host;
 
-	WORD port;
+	uint16_t port;
 	SOCKADDR_IN sockaddr;
 	if ((sockaddr.sin_addr.S_un.S_addr = WS_ResolveName(server, &port, 25)) == SOCKET_ERROR)
 		return;

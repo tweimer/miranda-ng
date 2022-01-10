@@ -3,7 +3,7 @@
 Minecraft Dynmap plugin for Miranda Instant Messenger
 _____________________________________________
 
-Copyright © 2015-17 Robert Pösel, 2017-21 Miranda NG team
+Copyright © 2015-17 Robert Pösel, 2017-22 Miranda NG team
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -356,7 +356,7 @@ void MinecraftDynmapProto::SignOnWorker(void*)
 		m_iStatus = m_iDesiredStatus;
 		ProtoBroadcastAck(0, ACKTYPE_STATUS, ACKRESULT_SUCCESS, (HANDLE)old_status, m_iStatus);
 
-		setDword("LogonTS", (DWORD)time(0));
+		setDword("LogonTS", (uint32_t)time(0));
 		ClearChat();
 		OnJoinChat(0, false);
 

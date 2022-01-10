@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org)
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org)
 all portions of this codebase are copyrighted to the people
 listed in contributors.txt.
 
@@ -188,12 +188,12 @@ bool CDbxMDBX::EditEvent(MCONTACT contactID, MEVENT hDbEvent, const DBEVENTINFO 
 	dbe.flags = dbei->flags;
 	dbe.wEventType = dbei->eventType;
 	dbe.cbBlob = dbei->cbBlob;
-	BYTE *pBlob = dbei->pBlob;
+	uint8_t *pBlob = dbei->pBlob;
 
-	mir_ptr<BYTE> pCryptBlob;
+	mir_ptr<uint8_t> pCryptBlob;
 	if (m_bEncrypted) {
 		size_t len;
-		BYTE *pResult = m_crypto->encodeBuffer(pBlob, dbe.cbBlob, &len);
+		uint8_t *pResult = m_crypto->encodeBuffer(pBlob, dbe.cbBlob, &len);
 		if (pResult != nullptr) {
 			pCryptBlob = pBlob = pResult;
 			dbe.cbBlob = (uint16_t)len;
@@ -207,7 +207,7 @@ bool CDbxMDBX::EditEvent(MCONTACT contactID, MEVENT hDbEvent, const DBEVENTINFO 
 		dbe.flags |= DBEF_HAS_ID;
 	}
 
-	BYTE *recBuf = (BYTE*)_alloca(sizeof(dbe) + dbe.cbBlob + cbSrvId + 2), *p = recBuf;
+	uint8_t *recBuf = (uint8_t*)_alloca(sizeof(dbe) + dbe.cbBlob + cbSrvId + 2), *p = recBuf;
 	memcpy(p, &dbe, sizeof(dbe)); p += sizeof(dbe);
 	memcpy(p, pBlob, dbe.cbBlob); p += dbe.cbBlob;
 	if (*p != 0)
@@ -310,20 +310,20 @@ BOOL CDbxMDBX::GetEvent(MEVENT hDbEvent, DBEVENTINFO *dbei)
 	dbei->flags = dbe->flags;
 	dbei->eventType = dbe->wEventType;
 
-	DWORD cbBlob = dbe->cbBlob;
+	uint32_t cbBlob = dbe->cbBlob;
 	size_t bytesToCopy = cbBlob;
 	if (dbei->cbBlob == -1)
-		dbei->pBlob = (PBYTE)mir_calloc(cbBlob + 2);
+		dbei->pBlob = (uint8_t*)mir_calloc(cbBlob + 2);
 	else if (dbei->cbBlob < cbBlob)
 		bytesToCopy = dbei->cbBlob;
 
-	dbei->cbBlob = (DWORD)cbBlob;
+	dbei->cbBlob = (uint32_t)cbBlob;
 	if (bytesToCopy && dbei->pBlob) {
-		BYTE *pSrc = (BYTE*)dbe + sizeof(DBEvent);
+		uint8_t *pSrc = (uint8_t*)dbe + sizeof(DBEvent);
 		if (dbe->flags & DBEF_ENCRYPTED) {
 			dbei->flags &= ~DBEF_ENCRYPTED;
 			size_t len;
-			BYTE* pBlob = (BYTE*)m_crypto->decodeBuffer(pSrc, dbe->cbBlob, &len);
+			uint8_t* pBlob = (uint8_t*)m_crypto->decodeBuffer(pSrc, dbe->cbBlob, &len);
 			if (pBlob == nullptr)
 				return 1;
 

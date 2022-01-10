@@ -119,7 +119,7 @@ void StripBBCodesInPlace(wchar_t *ptszText)
 	}
 }
 
-DWORD LastMessageTimestamp(MCONTACT hContact, bool received)
+uint32_t LastMessageTimestamp(MCONTACT hContact, bool received)
 {
 	for (MEVENT hDbEvent = db_event_last(hContact); hDbEvent; hDbEvent = db_event_prev(hContact, hDbEvent)) {
 		DBEVENTINFO dbei = {};
@@ -131,7 +131,7 @@ DWORD LastMessageTimestamp(MCONTACT hContact, bool received)
 	return 0;
 }
 
-void FormatTimestamp(DWORD ts, char *szFormat, wchar_t *buff, int bufflen)
+void FormatTimestamp(uint32_t ts, char *szFormat, wchar_t *buff, int bufflen)
 {
 	wchar_t swzForm[16];
 	a2t(szFormat, swzForm, 16);
@@ -168,7 +168,7 @@ wchar_t* GetLastMessageText(MCONTACT hContact, bool received)
 		DBEVENTINFO dbei = {};
 		db_event_get(hDbEvent, &dbei);
 		if (dbei.eventType == EVENTTYPE_MESSAGE && !(dbei.flags & DBEF_SENT) == received) {
-			dbei.pBlob = (BYTE *)alloca(dbei.cbBlob);
+			dbei.pBlob = (uint8_t *)alloca(dbei.cbBlob);
 			db_event_get(hDbEvent, &dbei);
 			if (dbei.cbBlob == 0 || dbei.pBlob == nullptr)
 				return nullptr;
@@ -189,7 +189,7 @@ bool CanRetrieveStatusMsg(MCONTACT hContact, char *szProto)
 {
 	if (opt.bGetNewStatusMsg) {
 		int iFlags = CallProtoService(szProto, PS_GETCAPS, PFLAGNUM_3, 0);
-		WORD wStatus = db_get_w(hContact, szProto, "Status", ID_STATUS_OFFLINE);
+		uint16_t wStatus = db_get_w(hContact, szProto, "Status", ID_STATUS_OFFLINE);
 		if ((CallProtoService(szProto, PS_GETCAPS, PFLAGNUM_1, 0) & PF1_MODEMSGSEND) && (iFlags & Proto_Status2Flag(wStatus))) {
 			iFlags = CallProtoService(szProto, PS_GETCAPS, PFLAGNUM_1, 0) & (PF1_VISLIST | PF1_INVISLIST);
 			if (opt.bDisableIfInvisible && iFlags) {
@@ -216,7 +216,7 @@ wchar_t* GetStatusMessageText(MCONTACT hContact)
 		if (!mir_strcmp(szProto, META_PROTO))
 			hContact = db_mc_getMostOnline(hContact);
 		else {
-			WORD wStatus = Proto_GetStatus(szProto);
+			uint16_t wStatus = Proto_GetStatus(szProto);
 			if (wStatus == ID_STATUS_OFFLINE)
 				return nullptr;
 
@@ -324,22 +324,22 @@ bool GetSysSubstText(MCONTACT hContact, wchar_t *swzRawSpec, wchar_t *buff, int 
 		return GetSysSubstText(hSubContact, L"account", buff, bufflen);
 	}
 	else if ((recv = !mir_wstrcmp(swzRawSpec, L"last_msg_time")) || !mir_wstrcmp(swzRawSpec, L"last_msg_out_time")) {
-		DWORD ts = LastMessageTimestamp(hContact, recv);
+		uint32_t ts = LastMessageTimestamp(hContact, recv);
 		if (ts == 0) return false;
 		FormatTimestamp(ts, "t", buff, bufflen);
 		return true;
 	}
 	else if ((recv = !mir_wstrcmp(swzRawSpec, L"last_msg_date")) || !mir_wstrcmp(swzRawSpec, L"last_msg_out_date")) {
-		DWORD ts = LastMessageTimestamp(hContact, recv);
+		uint32_t ts = LastMessageTimestamp(hContact, recv);
 		if (ts == 0) return false;
 		FormatTimestamp(ts, "d", buff, bufflen);
 		return true;
 	}
 	else if ((recv = !mir_wstrcmp(swzRawSpec, L"last_msg_reltime")) || !mir_wstrcmp(swzRawSpec, L"last_msg_out_reltime")) {
-		DWORD ts = LastMessageTimestamp(hContact, recv);
+		uint32_t ts = LastMessageTimestamp(hContact, recv);
 		if (ts == 0) return false;
-		DWORD t = (DWORD)time(0);
-		DWORD diff = (t - ts);
+		uint32_t t = (uint32_t)time(0);
+		uint32_t diff = (t - ts);
 		int d = (diff / 60 / 60 / 24);
 		int h = (diff - d * 60 * 60 * 24) / 60 / 60;
 		int m = (diff - d * 60 * 60 * 24 - h * 60 * 60) / 60;
@@ -349,10 +349,10 @@ bool GetSysSubstText(MCONTACT hContact, wchar_t *swzRawSpec, wchar_t *buff, int 
 		return true;
 	}
 	else if (!mir_wstrcmp(swzRawSpec, L"msg_count_all") || !mir_wstrcmp(swzRawSpec, L"msg_count_out") || !mir_wstrcmp(swzRawSpec, L"msg_count_in")) {
-		DWORD dwCountOut, dwCountIn;
-		DWORD dwMetaCountOut = 0, dwMetaCountIn = 0;
-		DWORD dwLastTs, dwNewTs, dwRecountTs;
-		DWORD dwTime, dwDiff;
+		uint32_t dwCountOut, dwCountIn;
+		uint32_t dwMetaCountOut = 0, dwMetaCountIn = 0;
+		uint32_t dwLastTs, dwNewTs, dwRecountTs;
+		uint32_t dwTime, dwDiff;
 		int iNumber = 1;
 		MCONTACT hTmpContact = hContact;
 
@@ -366,7 +366,7 @@ bool GetSysSubstText(MCONTACT hContact, wchar_t *swzRawSpec, wchar_t *buff, int 
 			if (i > 0)
 				hTmpContact = db_mc_getSub(hContact, i);
 			dwRecountTs = g_plugin.getDword(hTmpContact, "LastCountTS");
-			dwTime = (DWORD)time(0);
+			dwTime = (uint32_t)time(0);
 			dwDiff = (dwTime - dwRecountTs);
 			if (dwDiff > (60 * 60 * 24 * 3)) {
 				g_plugin.setDword(hTmpContact, "LastCountTS", dwTime);
@@ -422,7 +422,7 @@ bool GetSubstText(MCONTACT hContact, const DISPLAYSUBST &ds, wchar_t *buff, int 
 {
 	TranslateFunc *transFunc = nullptr;
 	for (int i = 0; i < iTransFuncsCount; i++)
-		if (translations[i].id == (DWORD)ds.iTranslateFuncId) {
+		if (translations[i].id == (uint32_t)ds.iTranslateFuncId) {
 			transFunc = translations[i].transFunc;
 			break;
 		}
@@ -684,7 +684,7 @@ void TruncateString(wchar_t *ptszText)
 	}
 }
 
-wchar_t* GetProtoStatusMessage(char *szProto, WORD wStatus)
+wchar_t* GetProtoStatusMessage(char *szProto, uint16_t wStatus)
 {
 	if (!szProto || wStatus == ID_STATUS_OFFLINE)
 		return nullptr;

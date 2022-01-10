@@ -36,7 +36,7 @@ int __cdecl cpp_size_keyx(void)
 	return(Tiger::DIGESTSIZE + 2);
 }
 
-void __cdecl cpp_get_keyx(HANDLE context, BYTE *key)
+void __cdecl cpp_get_keyx(HANDLE context, uint8_t *key)
 {
 	pCNTX ptr;
 	pSIMDATA p;
@@ -46,7 +46,7 @@ void __cdecl cpp_get_keyx(HANDLE context, BYTE *key)
 	memcpy(key + Tiger::DIGESTSIZE, &ptr->features, 2);
 }
 
-void __cdecl cpp_set_keyx(HANDLE context, BYTE *key)
+void __cdecl cpp_set_keyx(HANDLE context, uint8_t *key)
 {
 	pCNTX ptr;
 	pSIMDATA p;
@@ -56,12 +56,12 @@ void __cdecl cpp_set_keyx(HANDLE context, BYTE *key)
 	SAFE_FREE(p->KeyA);
 	mir_free(p->KeyB); p->KeyB = nullptr;
 	SAFE_FREE(p->KeyX);
-	p->KeyX = (PBYTE)malloc(Tiger::DIGESTSIZE + 2);
+	p->KeyX = (uint8_t*)malloc(Tiger::DIGESTSIZE + 2);
 	memcpy(p->KeyX, key, Tiger::DIGESTSIZE);
 	memcpy(&ptr->features, key + Tiger::DIGESTSIZE, 2);
 }
 
-void __cdecl cpp_get_keyp(HANDLE context, BYTE *key)
+void __cdecl cpp_get_keyp(HANDLE context, uint8_t *key)
 {
 	pCNTX ptr;
 	pSIMDATA p;
@@ -75,14 +75,14 @@ int __cdecl cpp_size_keyp(void)
 	return(Tiger::DIGESTSIZE);
 }
 
-void __cdecl cpp_set_keyp(HANDLE context, BYTE *key)
+void __cdecl cpp_set_keyp(HANDLE context, uint8_t *key)
 {
 	pCNTX ptr;
 	pSIMDATA p;
 	if (!cpp_get_simdata(context, &ptr, &p))
 		return;
 	SAFE_FREE(p->KeyP);
-	p->KeyP = (PBYTE)malloc(Tiger::DIGESTSIZE);
+	p->KeyP = (uint8_t*)malloc(Tiger::DIGESTSIZE);
 	memcpy(p->KeyP, key, Tiger::DIGESTSIZE);
 }
 

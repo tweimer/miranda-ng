@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2013-21 Miranda NG team (https://miranda-ng.org)
+Copyright (c) 2013-22 Miranda NG team (https://miranda-ng.org)
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -229,7 +229,7 @@ CVKOptions::CVKOptions(PROTO_INTERFACE* proto) :
 	int iStikersAsSmyles = db_get_b(0, proto->m_szModuleName, "StikersAsSmyles", -1);
 	if (iStikersAsSmyles != -1) {
 		bStikersAsSmileys = iStikersAsSmyles == 1;
-		db_set_b(0, proto->m_szModuleName, "StikersAsSmileys", (BYTE)iStikersAsSmyles);
+		db_set_b(0, proto->m_szModuleName, "StikersAsSmileys", (uint8_t)iStikersAsSmyles);
 		db_unset(0, proto->m_szModuleName, "StikersAsSmyles");
 	}
 	// Note

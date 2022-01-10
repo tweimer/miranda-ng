@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2015-21 Miranda NG team (https://miranda-ng.org)
+Copyright (c) 2015-22 Miranda NG team (https://miranda-ng.org)
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -30,7 +30,7 @@ struct GetAvatarRequest : public AsyncHttpRequest
 
 struct SetAvatarRequest : public AsyncHttpRequest
 {
-	SetAvatarRequest(const PBYTE data, size_t dataSize, const char *szMime, CSkypeProto *ppro) :
+	SetAvatarRequest(const uint8_t *data, size_t dataSize, const char *szMime, CSkypeProto *ppro) :
 		AsyncHttpRequest(REQUEST_PUT, HOST_API, 0, &CSkypeProto::OnSentAvatar)
 	{
 		m_szUrl.AppendFormat("/users/%s/profile/avatar", ppro->m_szSkypename.MakeLower().c_str());

@@ -32,7 +32,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  * @return	This static method returns the pointer of the created object.
  **/
 
-CBaseCtrl* CEditCtrl::CreateObj(HWND hDlg, WORD idCtrl, LPCSTR pszSetting, BYTE dbType)
+CBaseCtrl* CEditCtrl::CreateObj(HWND hDlg, uint16_t idCtrl, LPCSTR pszSetting, uint8_t dbType)
 {
 	CEditCtrl *ctrl = new CEditCtrl(hDlg, idCtrl, USERINFO, pszSetting);
 	if (ctrl)
@@ -53,7 +53,7 @@ CBaseCtrl* CEditCtrl::CreateObj(HWND hDlg, WORD idCtrl, LPCSTR pszSetting, BYTE 
  * @return	This static method returns the pointer of the created object.
  **/
 
-CBaseCtrl* CEditCtrl::CreateObj(HWND hDlg, WORD idCtrl, LPCSTR pszModule, LPCSTR pszSetting, BYTE dbType)
+CBaseCtrl* CEditCtrl::CreateObj(HWND hDlg, uint16_t idCtrl, LPCSTR pszModule, LPCSTR pszSetting, uint8_t dbType)
 {
 	CEditCtrl *ctrl = new CEditCtrl(hDlg, idCtrl, pszModule, pszSetting);
 	if (ctrl)
@@ -66,7 +66,7 @@ CBaseCtrl* CEditCtrl::CreateObj(HWND hDlg, WORD idCtrl, LPCSTR pszModule, LPCSTR
  *
  *
  **/
-CEditCtrl::CEditCtrl(HWND hDlg, WORD idCtrl, LPCSTR pszModule, LPCSTR pszSetting)
+CEditCtrl::CEditCtrl(HWND hDlg, uint16_t idCtrl, LPCSTR pszModule, LPCSTR pszSetting)
 	: CBaseCtrl(hDlg, idCtrl, pszModule, pszSetting)
 {
 	SendDlgItemMessage(hDlg, idCtrl, EM_LIMITTEXT, 0x7fFFffFF, 0L);
@@ -168,7 +168,7 @@ void CEditCtrl::OnApply(MCONTACT hContact, LPCSTR pszProto)
 		const char* pszModule = hContact ? _pszModule : pszProto;
 
 		if (_Flags.B.hasCustom || !hContact) {
-			DWORD cch = GetWindowTextLength(_hwnd);
+			uint32_t cch = GetWindowTextLength(_hwnd);
 
 			if (cch > 0) {
 				LPTSTR val = (LPTSTR)mir_alloc((cch + 1) * sizeof(wchar_t));
@@ -179,15 +179,15 @@ void CEditCtrl::OnApply(MCONTACT hContact, LPCSTR pszProto)
 					dbv.type = _dbType;
 					switch (_dbType) {
 					case DBVT_BYTE:
-						dbv.bVal = (BYTE)wcstol(val, nullptr, 10);
+						dbv.bVal = (uint8_t)wcstol(val, nullptr, 10);
 						break;
 
 					case DBVT_WORD:
-						dbv.wVal = (WORD)wcstol(val, nullptr, 10);
+						dbv.wVal = (uint16_t)wcstol(val, nullptr, 10);
 						break;
 
 					case DBVT_DWORD:
-						dbv.dVal = (DWORD)wcstol(val, nullptr, 10);
+						dbv.dVal = (uint32_t)wcstol(val, nullptr, 10);
 						break;
 
 					case DBVT_WCHAR:
@@ -232,16 +232,16 @@ void CEditCtrl::OnApply(MCONTACT hContact, LPCSTR pszProto)
  *
  * @return	nothing
  **/
-void CEditCtrl::OnChangedByUser(WORD wChangedMsg)
+void CEditCtrl::OnChangedByUser(uint16_t wChangedMsg)
 {
 	if ((wChangedMsg == EN_UPDATE) || (wChangedMsg == EN_CHANGE)) {
-		DWORD cch = GetWindowTextLength(_hwnd);
+		uint32_t cch = GetWindowTextLength(_hwnd);
 
 		_Flags.B.hasChanged = mir_wstrlen(_pszValue) != cch;
 		_Flags.B.hasCustom = (cch > 0);
 
 		if (!_Flags.B.hasChanged && _Flags.B.hasCustom) {
-			BYTE need_free = 0;
+			uint8_t need_free = 0;
 			LPTSTR szText;
 
 			__try {
@@ -275,7 +275,7 @@ void CEditCtrl::OpenUrl()
 {
 	int lenUrl = 1 + Edit_GetTextLength(_hwnd);
 	LPTSTR szUrl;
-	BYTE need_free = 0;
+	uint8_t need_free = 0;
 
 	__try {
 		szUrl = (LPTSTR)alloca((8 + lenUrl) * sizeof(wchar_t));
@@ -306,7 +306,7 @@ LRESULT CEditCtrl::LinkNotificationHandler(ENLINK* lnk)
 
 	case WM_LBUTTONUP:
 		TEXTRANGE tr;
-		BYTE need_free = 0;
+		uint8_t need_free = 0;
 
 		// do not call function if user selected some chars of the url string
 		SendMessage(_hwnd, EM_EXGETSEL, NULL, (LPARAM)&tr.chrg);

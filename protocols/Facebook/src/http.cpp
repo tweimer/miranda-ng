@@ -1,7 +1,7 @@
 /*
 
 Facebook plugin for Miranda NG
-Copyright © 2019-21 Miranda NG team
+Copyright © 2019-22 Miranda NG team
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -41,8 +41,8 @@ void AsyncHttpRequest::CalcSig()
 	buf.Append(FB_API_SECRET);
 
 	char szHash[33];
-	BYTE digest[16];
-	mir_md5_hash((BYTE*)buf.c_str(), buf.GetLength(), digest);
+	uint8_t digest[16];
+	mir_md5_hash((uint8_t*)buf.c_str(), buf.GetLength(), digest);
 	bin2hex(digest, sizeof(digest), szHash);
 	this << CHAR_PARAM("sig", szHash);
 

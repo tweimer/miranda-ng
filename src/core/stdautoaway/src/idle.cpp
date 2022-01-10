@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org),
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org),
 Copyright (c) 2000-12 Miranda IM project,
 all portions of this codebase are copyrighted to the people
 listed in contributors.txt.
@@ -31,7 +31,7 @@ int IdleOptInit(WPARAM wParam, LPARAM);
 static int IdleObject_IsUserIdle()
 {
 	if (g_plugin.bIdleMethod) {
-		DWORD dwTick = Miranda_GetIdle();
+		uint32_t dwTick = Miranda_GetIdle();
 		return GetTickCount() - dwTick > (g_plugin.iIdleTime1st * 60 * 1000);
 	}
 

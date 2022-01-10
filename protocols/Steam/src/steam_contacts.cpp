@@ -6,12 +6,12 @@ void CSteamProto::SetAllContactStatuses(int status)
 		SetContactStatus(hContact, status);
 }
 
-void CSteamProto::SetContactStatus(MCONTACT hContact, WORD status)
+void CSteamProto::SetContactStatus(MCONTACT hContact, uint16_t status)
 {
 	if (!hContact)
 		return;
 
-	WORD oldStatus = getWord(hContact, "Status", ID_STATUS_OFFLINE);
+	uint16_t oldStatus = getWord(hContact, "Status", ID_STATUS_OFFLINE);
 	if (oldStatus == status)
 		return;
 
@@ -45,10 +45,10 @@ void CSteamProto::SetContactStatus(MCONTACT hContact, WORD status)
 
 MCONTACT CSteamProto::GetContactFromAuthEvent(MEVENT hEvent)
 {
-	DWORD body[3];
+	uint32_t body[3];
 	DBEVENTINFO dbei = {};
-	dbei.cbBlob = sizeof(DWORD) * 2;
-	dbei.pBlob = (PBYTE)& body;
+	dbei.cbBlob = sizeof(uint32_t) * 2;
+	dbei.pBlob = (uint8_t*)& body;
 
 	if (db_event_get(hEvent, &dbei))
 		return INVALID_CONTACT_ID;
@@ -152,10 +152,10 @@ void CSteamProto::UpdateContactDetails(MCONTACT hContact, const JSONNode &data)
 	// status
 	// note: this here is often wrong info, probably depending on publicity of steam profile
 	// but sometimes polling does not get status at all
-	WORD oldStatus = getWord(hContact, "Status", ID_STATUS_OFFLINE);
+	uint16_t oldStatus = getWord(hContact, "Status", ID_STATUS_OFFLINE);
 	// so, set status only if contact is offline
 	if (oldStatus == ID_STATUS_OFFLINE) {
-		WORD status = SteamToMirandaStatus((PersonaState)data["personastate"].as_int());
+		uint16_t status = SteamToMirandaStatus((PersonaState)data["personastate"].as_int());
 		SetContactStatus(hContact, status);
 	}
 
@@ -165,7 +165,7 @@ void CSteamProto::UpdateContactDetails(MCONTACT hContact, const JSONNode &data)
 
 	if (stateflags == PersonaStateFlag::None) {
 		// nothing special, either standard client or in different status (only online, I want to play, I want to trade statuses support this flags)
-		WORD status = getWord(hContact, "Status", ID_STATUS_OFFLINE);
+		uint16_t status = getWord(hContact, "Status", ID_STATUS_OFFLINE);
 		if (status == ID_STATUS_ONLINE || status == ID_STATUS_FREECHAT)
 			setWString(hContact, "MirVer", L"Steam");
 	}
@@ -198,7 +198,7 @@ void CSteamProto::UpdateContactDetails(MCONTACT hContact, const JSONNode &data)
 	json_string appId = data["gameid"].as_string();
 	CMStringW gameInfo = data["gameextrainfo"].as_mstring();
 	if (!appId.empty() || !gameInfo.IsEmpty()) {
-		DWORD gameId = atol(appId.c_str());
+		uint32_t gameId = atol(appId.c_str());
 		json_string serverIP = data["gameserverip"].as_string();
 		json_string serverID = data["gameserversteamid"].as_string();
 
@@ -371,7 +371,7 @@ void CSteamProto::OnGotAppInfo(const JSONNode &root, void *arg)
 	MCONTACT hContact = (UINT_PTR)arg;
 
 	for (auto &app : root["apps"]) {
-		DWORD gameId = app["appid"].as_int();
+		uint32_t gameId = app["appid"].as_int();
 		CMStringW message = app["name"].as_mstring();
 
 		setDword(hContact, "XStatusId", gameId);

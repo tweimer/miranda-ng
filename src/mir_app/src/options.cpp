@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org),
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org),
 Copyright (c) 2000-12 Miranda IM project,
 Copyright (c) 2007 Artem Shpynov
 all portions of this codebase are copyrighted to the people
@@ -40,7 +40,7 @@ HANDLE hOptionsInitEvent;
 static class COptionsDlg *pOptionsDlg = nullptr;
 
 // Thread for search keywords in dialogs
-static BYTE bSearchState = 0; // 0 - not executed; 1 - in progress; 2 - completed;
+static uint8_t bSearchState = 0; // 0 - not executed; 1 - in progress; 2 - completed;
 static bool bLoadingPrivateOptions = false;
 static int FilterLoadProgress = 100;
 
@@ -87,12 +87,6 @@ static wchar_t* GetPluginName(HINSTANCE hInstance, wchar_t *buffer, int size)
 	return buffer;
 }
 
-static BOOL IsAeroMode()
-{
-	BOOL result;
-	return dwmIsCompositionEnabled && (dwmIsCompositionEnabled(&result) == S_OK) && result;
-}
-
 static LRESULT CALLBACK AeroPaintSubclassProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 static void AeroPaintControl(HWND hwnd, HDC hdc, UINT msg, LPARAM lpFlags)
@@ -110,7 +104,7 @@ static void AeroPaintControl(HWND hwnd, HDC hdc, UINT msg, LPARAM lpFlags)
 	bmi.bmiHeader.biBitCount = 32;
 	bmi.bmiHeader.biCompression = BI_RGB;
 
-	BYTE *pBits;
+	uint8_t *pBits;
 	HBITMAP hBmp = CreateDIBSection(tempDC, &bmi, DIB_RGB_COLORS, (void **)&pBits, nullptr, 0);
 	if (hBmp && pBits) {
 		HBITMAP hOldBmp = (HBITMAP)SelectObject(tempDC, hBmp);
@@ -240,7 +234,7 @@ struct OptionsPageData : public MZeroedObject
 	bool bChanged, bInsideTab;
 	int height;
 	int width;
-	DWORD flags;
+	uint32_t flags;
 
 	__forceinline HWND getHwnd() const { return (pDialog == nullptr) ? nullptr : pDialog->GetHwnd(); }
 	__forceinline HINSTANCE getInst() const { return pDialog->GetInst(); }
@@ -276,7 +270,7 @@ struct OptionsPageData : public MZeroedObject
 			}
 		}
 
-		DWORD key = GetPluginPageHash(); // get the plugin page hash
+		uint32_t key = GetPluginPageHash(); // get the plugin page hash
 
 		wchar_t pluginName[MAX_PATH];
 		GetPluginName(getInst(), pluginName, _countof(pluginName));
@@ -425,7 +419,7 @@ class COptionsDlg : public CDlgBase
 
 			char buf[130];
 			GetTreeSettingName(tvi.lParam, buf, _countof(buf));
-			db_set_b(0, "Options", buf, (BYTE)((tvi.state & TVIS_EXPANDED) ? 1 : 0));
+			db_set_b(0, "Options", buf, (uint8_t)((tvi.state & TVIS_EXPANDED) ? 1 : 0));
 		}
 	}
 

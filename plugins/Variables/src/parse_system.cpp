@@ -300,7 +300,7 @@ static wchar_t* parseEnvironmentVariable(ARGUMENTSINFO *ai)
 	if (ai->argc != 2)
 		return nullptr;
 
-	DWORD len = ExpandEnvironmentStrings(ai->argv.w[1], nullptr, 0);
+	uint32_t len = ExpandEnvironmentStrings(ai->argv.w[1], nullptr, 0);
 	if (len <= 0)
 		return nullptr;
 
@@ -415,7 +415,7 @@ static wchar_t* parseListDir(ARGUMENTSINFO *ai)
 }
 
 #ifndef WINE
-static BOOL CALLBACK MyProcessEnumerator(DWORD, WORD, char *szProcess, LPARAM lParam)
+static BOOL CALLBACK MyProcessEnumerator(uint32_t, uint16_t, char *szProcess, LPARAM lParam)
 {
 	char **szProc = (char **)lParam;
 	if ((*szProc != nullptr) && (!_stricmp(*szProc, szProcess)))
@@ -484,7 +484,7 @@ static wchar_t* parseRegistryValue(ARGUMENTSINFO *ai)
 		return nullptr;
 
 	memset(res, 0, (len * sizeof(wchar_t)));
-	int err = RegQueryValueEx(hKey, ai->argv.w[2], nullptr, &type, (BYTE*)res, &len);
+	int err = RegQueryValueEx(hKey, ai->argv.w[2], nullptr, &type, (uint8_t*)res, &len);
 	if ((err != ERROR_SUCCESS) || (type != REG_SZ)) {
 		RegCloseKey(hKey);
 		mir_free(res);
@@ -586,7 +586,7 @@ static wchar_t* parseTextFile(ARGUMENTSINFO *ai)
 	if (hFile == INVALID_HANDLE_VALUE)
 		return nullptr;
 
-	DWORD fileSz = GetFileSize(hFile, nullptr);
+	uint32_t fileSz = GetFileSize(hFile, nullptr);
 	if (fileSz == INVALID_FILE_SIZE) {
 		CloseHandle(hFile);
 		return nullptr;
@@ -598,7 +598,7 @@ static wchar_t* parseTextFile(ARGUMENTSINFO *ai)
 	DWORD readSz, totalReadSz;
 	unsigned long linePos;
 	wchar_t tUC, *res;
-	BYTE *pBuf, *pCur;
+	uint8_t *pBuf, *pCur;
 	ReadFile(hFile, &tUC, sizeof(wchar_t), &readSz, nullptr);
 	if (tUC != (wchar_t)0xFEFF) {
 		tUC = 0;
@@ -612,7 +612,7 @@ static wchar_t* parseTextFile(ARGUMENTSINFO *ai)
 	if (*ai->argv.w[2] == '0') {
 		// complete file
 		bufSz = fileSz + csz;
-		pBuf = (PBYTE)mir_calloc(bufSz);
+		pBuf = (uint8_t*)mir_calloc(bufSz);
 		if (pBuf == nullptr) {
 			CloseHandle(hFile);
 			return nullptr;
@@ -636,7 +636,7 @@ static wchar_t* parseTextFile(ARGUMENTSINFO *ai)
 		return res;
 	}
 	bufSz = TXTFILEBUFSZ*csz;
-	pBuf = (PBYTE)mir_calloc(bufSz);
+	pBuf = (uint8_t*)mir_calloc(bufSz);
 	if (pBuf == nullptr) {
 		CloseHandle(hFile);
 		return nullptr;
@@ -750,7 +750,7 @@ static wchar_t* parseTextFile(ARGUMENTSINFO *ai)
 				return res;
 			}
 		}
-		if (((DWORD)(linePos + (pCur - pBuf)) == fileSz)) { // eof
+		if (((uint32_t)(linePos + (pCur - pBuf)) == fileSz)) { // eof
 			CloseHandle(hFile);
 
 			if (tUC) {
@@ -770,7 +770,7 @@ static wchar_t* parseTextFile(ARGUMENTSINFO *ai)
 				pCur -= csz;
 			}
 			icur = pCur - pBuf;
-			pBuf = (PBYTE)mir_realloc(pBuf, bufSz);
+			pBuf = (uint8_t*)mir_realloc(pBuf, bufSz);
 			pCur = pBuf + icur;
 			memset((pCur + 1), 0, (TXTFILEBUFSZ * csz));
 		}

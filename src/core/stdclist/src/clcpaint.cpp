@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org),
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org),
 Copyright (c) 2000-12 Miranda IM project,
 all portions of this codebase are copyrighted to the people
 listed in contributors.txt.
@@ -25,7 +25,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "stdafx.h"
 
 extern HIMAGELIST himlCListClc;
-static BYTE divide3[765] = { 255 };
+static uint8_t divide3[765] = { 255 };
 
 static void ChangeToFont(HDC hdc, struct ClcData *dat, int id, int *fontHeight)
 {
@@ -91,7 +91,7 @@ static void __inline SetHotTrackColour(HDC hdc, struct ClcData *dat)
 
 void PaintClc(HWND hwnd, struct ClcData *dat, HDC hdc, RECT * rcPaint)
 {
-	DWORD style = GetWindowLongPtr(hwnd, GWL_STYLE);
+	uint32_t style = GetWindowLongPtr(hwnd, GWL_STYLE);
 	int status = Clist_GetGeneralizedStatus();
 	// yes I know about GetSysColorBrush()
 	COLORREF tmpbkcolour = style & CLS_CONTACTLIST ? (dat->bUseWindowsColours ? GetSysColor(COLOR_3DFACE) : dat->bkColour) : dat->bkColour;
@@ -472,7 +472,7 @@ void PaintClc(HWND hwnd, struct ClcData *dat, HDC hdc, RECT * rcPaint)
 		bmih.biHeight = -clRect.bottom;
 		bmih.biPlanes = 1;
 		bmih.biWidth = clRect.right;
-		PBYTE bits = (PBYTE)malloc(4 * bmih.biWidth * -bmih.biHeight);
+		uint8_t *bits = (uint8_t*)malloc(4 * bmih.biWidth * -bmih.biHeight);
 		GetDIBits(hdc, hBmpOsb, 0, clRect.bottom, bits, (BITMAPINFO *)& bmih, DIB_RGB_COLORS);
 
 		COLORREF greyColour = GetSysColor(COLOR_3DFACE);

@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org),
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org),
 Copyright (c) 2000-12 Miranda IM project,
 Copyright (c) 2007 Artem Shpynov
 all portions of this codebase are copyrighted to the people
@@ -278,7 +278,7 @@ static LRESULT CALLBACK MDescButtonWndProc(HWND hwndDlg, UINT  msg, WPARAM wPara
 		if (dat->lpzTitle)
 			mir_free(dat->lpzTitle);
 		if (wParam & MDBCF_UNICODE)
-			dat->lpzTitle = mir_wstrdup((WCHAR *)lParam);
+			dat->lpzTitle = mir_wstrdup((wchar_t *)lParam);
 		else
 			dat->lpzTitle = mir_a2u((char *)lParam);
 		RedrawWindow(hwndDlg, nullptr, nullptr, RDW_INVALIDATE);
@@ -288,7 +288,7 @@ static LRESULT CALLBACK MDescButtonWndProc(HWND hwndDlg, UINT  msg, WPARAM wPara
 		if (dat->lpzDescription)
 			mir_free(dat->lpzDescription);
 		if (wParam & MDBCF_UNICODE)
-			dat->lpzDescription = mir_wstrdup((WCHAR *)lParam);
+			dat->lpzDescription = mir_wstrdup((wchar_t *)lParam);
 		else
 			dat->lpzDescription = mir_a2u((char *)lParam);
 		RedrawWindow(hwndDlg, nullptr, nullptr, RDW_INVALIDATE);

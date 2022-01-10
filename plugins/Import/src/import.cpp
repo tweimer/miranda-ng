@@ -2,7 +2,7 @@
 
 Import plugin for Miranda NG
 
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org)
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org)
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -109,7 +109,7 @@ MCONTACT CImportBatch::HContactFromChatID(const char *pszProtoName, const wchar_
 	return INVALID_CONTACT_ID;
 }
 
-MCONTACT CImportBatch::HContactFromNumericID(const char *pszProtoName, const char *pszSetting, DWORD dwID)
+MCONTACT CImportBatch::HContactFromNumericID(const char *pszProtoName, const char *pszSetting, uint32_t dwID)
 {
 	for (MCONTACT hContact = dstDb->FindFirstContact(pszProtoName); hContact; hContact = dstDb->FindNextContact(hContact, pszProtoName))
 		if (db_get_dw(hContact, pszProtoName, pszSetting, 0) == dwID)
@@ -879,8 +879,8 @@ void CImportBatch::ImportHistory(MCONTACT hContact, PROTOACCOUNT **protocol, int
 	else hDst = NULL;
 
 	bool bSkipAll = false;
-	DWORD cbAlloc = 4096;
-	BYTE *eventBuf = (PBYTE)mir_alloc(cbAlloc);
+	uint32_t cbAlloc = 4096;
+	uint8_t *eventBuf = (uint8_t*)mir_alloc(cbAlloc);
 
 	// Get the start of the event chain
 	int i = 0;
@@ -893,7 +893,7 @@ void CImportBatch::ImportHistory(MCONTACT hContact, PROTOACCOUNT **protocol, int
 		dbei.cbBlob = srcDb->GetBlobSize(hEvent);
 		if (dbei.cbBlob > cbAlloc) {
 			cbAlloc = dbei.cbBlob + 4096 - dbei.cbBlob % 4096;
-			eventBuf = (PBYTE)mir_realloc(eventBuf, cbAlloc);
+			eventBuf = (uint8_t*)mir_realloc(eventBuf, cbAlloc);
 		}
 		dbei.pBlob = eventBuf;
 
@@ -918,7 +918,7 @@ void CImportBatch::ImportHistory(MCONTACT hContact, PROTOACCOUNT **protocol, int
 			if (!bSkipThis) {
 				bool bIsSent = (dbei.flags & DBEF_SENT) != 0;
 
-				if (dbei.timestamp < (DWORD)m_dwSinceDate)
+				if (dbei.timestamp < (uint32_t)m_dwSinceDate)
 					bSkipThis = true;
 
 				if (!bSkipThis) {
@@ -1033,7 +1033,7 @@ void CImportBatch::DoImport()
 	dstDb->SetCacheSafetyMode(FALSE);
 
 	// Start benchmark timer
-	DWORD dwTimer = time(0);
+	uint32_t dwTimer = time(0);
 
 	OBJLIST<char> arSkippedAccs(1, CompareModules);
 	arSkippedAccs.insert(newStr("CListGroups"));

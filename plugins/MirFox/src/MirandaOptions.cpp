@@ -101,13 +101,13 @@ INT_PTR CALLBACK DlgProcOpts_Tab1(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM 
 
 		if (((LPNMHDR)lParam)->idFrom == 0 && ((LPNMHDR)lParam)->code == PSN_APPLY){
 			//SaveOptions from tab1 mirfoxData to miranda database
-			mirfoxMiranda.getMirfoxData().leftClickSendMode = (MFENUM_SEND_MESSAGE_MODE)( 1 + (WORD)SendDlgItemMessage(hwndDlg, IDC1_COMBO1, CB_GETCURSEL, 0, 0));
+			mirfoxMiranda.getMirfoxData().leftClickSendMode = (MFENUM_SEND_MESSAGE_MODE)( 1 + (uint16_t)SendDlgItemMessage(hwndDlg, IDC1_COMBO1, CB_GETCURSEL, 0, 0));
 			g_plugin.setByte("leftClickSendMode", (int)mirfoxMiranda.getMirfoxData().leftClickSendMode);
 
-			mirfoxMiranda.getMirfoxData().rightClickSendMode = (MFENUM_SEND_MESSAGE_MODE)( 1 + (WORD)SendDlgItemMessage(hwndDlg, IDC1_COMBO2, CB_GETCURSEL, 0, 0));
+			mirfoxMiranda.getMirfoxData().rightClickSendMode = (MFENUM_SEND_MESSAGE_MODE)( 1 + (uint16_t)SendDlgItemMessage(hwndDlg, IDC1_COMBO2, CB_GETCURSEL, 0, 0));
 			g_plugin.setByte("rightClickSendMode", (int)mirfoxMiranda.getMirfoxData().rightClickSendMode);
 
-			mirfoxMiranda.getMirfoxData().middleClickSendMode = (MFENUM_SEND_MESSAGE_MODE)( 1 + (WORD)SendDlgItemMessage(hwndDlg, IDC1_COMBO3, CB_GETCURSEL, 0, 0));
+			mirfoxMiranda.getMirfoxData().middleClickSendMode = (MFENUM_SEND_MESSAGE_MODE)( 1 + (uint16_t)SendDlgItemMessage(hwndDlg, IDC1_COMBO3, CB_GETCURSEL, 0, 0));
 			g_plugin.setByte("middleClickSendMode", (int)mirfoxMiranda.getMirfoxData().middleClickSendMode);
 
 			if (IsDlgButtonChecked(hwndDlg, IDC1_CHECK1) == BST_CHECKED){
@@ -133,7 +133,7 @@ INT_PTR CALLBACK DlgProcOpts_Tab1(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM 
 			}
 
 			int opt2Len = SendDlgItemMessage(hwndDlg, IDC1_EDIT1, WM_GETTEXTLENGTH, 0, 0);
-			wchar_t * opt2Buffer = new WCHAR[opt2Len+1];
+			wchar_t * opt2Buffer = new wchar_t[opt2Len+1];
 			UINT opt2NumCharCopy = GetDlgItemText(hwndDlg, IDC1_EDIT1, opt2Buffer, opt2Len+1);
 			mirfoxMiranda.getMirfoxData().getClientsProfilesFilterStringPtr()->assign(opt2Buffer);
 			delete[] opt2Buffer;
@@ -405,7 +405,7 @@ INT_PTR CALLBACK DlgProcOpts_Tab2(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM 
 				}
 
 				// Find clicked item
-				DWORD hitFlags;
+				uint32_t hitFlags;
 				HANDLE hItem = (HANDLE)SendDlgItemMessage(hwndDlg, IDC2_CONTACTS_LIST, CLM_HITTEST, (WPARAM)&hitFlags, MAKELPARAM(nm->pt.x, nm->pt.y));
 
 				// Nothing was clicked
@@ -622,7 +622,7 @@ INT_PTR CALLBACK DlgProcOpts_Tab3(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM 
 				ListView_GetItem(hList, &lvItem);
 
 				char * accountId ((char *)lvItem.lParam);
-				BYTE accountStateB = (BYTE)ListView_GetCheckState(hList, lvItem.iItem);
+				uint8_t accountStateB = (uint8_t)ListView_GetCheckState(hList, lvItem.iItem);
 
 				MFENUM_MIRANDAACCOUNT_STATE accountState;
 				if (accountStateB == 0){

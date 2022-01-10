@@ -1,7 +1,7 @@
 /*
 former MetaContacts Plugin for Miranda IM.
 
-Copyright © 2014-21  Miranda NG team
+Copyright © 2014-22 Miranda NG team
 Copyright © 2004-07 Scott Ellis
 Copyright © 2004 Universite Louis PASTEUR, STRASBOURG.
 
@@ -128,7 +128,7 @@ BOOL Meta_Assign(MCONTACT hSub, MCONTACT hMeta, bool set_as_default)
 	db_set_ws(hMeta, META_PROTO, buffer, Clist_GetContactDisplayName(hSub));
 
 	// Get the status
-	WORD status = db_get_w(hSub, szProto, "Status", ID_STATUS_OFFLINE);
+	uint16_t status = db_get_w(hSub, szProto, "Status", ID_STATUS_OFFLINE);
 
 	// write the status
 	mir_snprintf(buffer, "Status%d", ccDest->nSubs);
@@ -232,7 +232,7 @@ MCONTACT Meta_GetMostOnlineSupporting(DBCachedContact *cc, int pflagnum, unsigne
 	MCONTACT most_online_contact = Meta_GetContactHandle(cc, cc->nDefault);
 	char *szProto = Proto_GetBaseAccountName(most_online_contact);
 	if (szProto && Proto_GetStatus(szProto) >= ID_STATUS_ONLINE) {
-		DWORD caps = CallProtoService(szProto, PS_GETCAPS, pflagnum, 0);
+		uint32_t caps = CallProtoService(szProto, PS_GETCAPS, pflagnum, 0);
 		if (capability == -1 || (caps & capability) == capability) {
 			most_online_status = db_get_w(most_online_contact, szProto, "Status", ID_STATUS_OFFLINE);
 
@@ -256,7 +256,7 @@ MCONTACT Meta_GetMostOnlineSupporting(DBCachedContact *cc, int pflagnum, unsigne
 		if (szProto == nullptr || Proto_GetStatus(szProto) < ID_STATUS_ONLINE) // szProto offline or connecting
 			continue;
 
-		DWORD caps = CallProtoService(szProto, PS_GETCAPS, pflagnum, 0);
+		uint32_t caps = CallProtoService(szProto, PS_GETCAPS, pflagnum, 0);
 		if (capability == -1 || (caps & capability) == capability) {
 			int status = db_get_w(hContact, szProto, "Status", ID_STATUS_OFFLINE);
 			if (status == ID_STATUS_ONLINE) {
@@ -345,7 +345,7 @@ int Meta_HideLinkedContacts(void)
 		// prepare to update metacontact record of subcontat status
 		char *szProto = Proto_GetBaseAccountName(hContact);
 
-		WORD status = (!szProto) ? ID_STATUS_OFFLINE : db_get_w(hContact, szProto, "Status", ID_STATUS_OFFLINE);
+		uint16_t status = (!szProto) ? ID_STATUS_OFFLINE : db_get_w(hContact, szProto, "Status", ID_STATUS_OFFLINE);
 		db_set_w(ccMeta->contactID, META_PROTO, buffer, status);
 
 		// update metacontact's record of nick for this contact
@@ -518,7 +518,7 @@ void Meta_GetSubNick(MCONTACT hMeta, int i, CMStringW &tszDest)
 
 void Meta_FixStatus(DBCachedContact *ccMeta)
 {
-	WORD status = ID_STATUS_OFFLINE;
+	uint16_t status = ID_STATUS_OFFLINE;
 
 	MCONTACT most_online = db_mc_getMostOnline(ccMeta->contactID);
 	if (most_online) {

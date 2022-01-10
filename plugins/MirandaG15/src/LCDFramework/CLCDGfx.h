@@ -18,7 +18,7 @@ public:
 	CLCDGfx(void);
 	virtual ~CLCDGfx(void);
 
-	bool Initialize(int nWidth, int nHeight, int nBPP, PBYTE pBitmapBits);
+	bool Initialize(int nWidth, int nHeight, int nBPP, uint8_t *pBitmapBits);
 	bool IsInitialized();
 	bool Shutdown(void);
 
@@ -26,7 +26,7 @@ public:
 	void ClearScreen(void);
 	COLORREF GetPixel(int nX, int nY);
 	void SetPixel(int nX, int nY, COLORREF color);
-	void SetPixel(int nX, int nY, BYTE r, BYTE g, BYTE b);
+	void SetPixel(int nX, int nY, uint8_t r, uint8_t g, uint8_t b);
 	void DrawLine(int nX1, int nY1, int nX2, int nY2);
 	void DrawFilledRect(int nX, int nY, int nWidth, int nHeight);
 	void DrawRect(int iX, int iY, int iWidth, int iHeight);
@@ -49,7 +49,7 @@ public:
 
 protected:
 	void Cache();
-	int findNearestMatch(PBYTE targetArray, int iSourceIndex);
+	int findNearestMatch(uint8_t *targetArray, int iSourceIndex);
 
 	void EndTransition();
 
@@ -63,11 +63,11 @@ protected:
 	HDC m_hDC;
 	HBITMAP m_hBitmap;
 	HBITMAP m_hPrevBitmap;
-	PBYTE m_pBitmapBits, m_pLcdBitmapBits, m_pSavedBitmapBits;
+	uint8_t *m_pBitmapBits, *m_pLcdBitmapBits, *m_pSavedBitmapBits;
 
 	bool m_bInitialized;
 
-	DWORD m_dwTransitionStart;
+	uint32_t m_dwTransitionStart;
 	bool m_bTransition;
 
 	ETransitionType m_eTransition;
@@ -75,7 +75,7 @@ protected:
 	vector<SLCDPixel*> m_LStaticPixels;
 
 	double m_dWave;
-	DWORD m_dwLastDraw;
+	uint32_t m_dwLastDraw;
 };
 
 #endif

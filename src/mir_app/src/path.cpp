@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org),
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org),
 Copyright (c) 2000-12 Miranda IM project,
 all portions of this codebase are copyrighted to the people
 listed in contributors.txt.
@@ -366,7 +366,7 @@ MIR_APP_DLL(char*) Utils_ReplaceVars(const char *szData, MCONTACT hContact, REPL
 
 MIR_APP_DLL(wchar_t*) Utils_ReplaceVarsW(const wchar_t *wszData, MCONTACT hContact, REPLACEVARSARRAY *vars)
 {
-	return ReplaceVariables<WCHAR>(wszData, hContact, vars);
+	return ReplaceVariables<wchar_t>(wszData, hContact, vars);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

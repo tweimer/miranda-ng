@@ -47,7 +47,7 @@ struct POPUPACTION
 	// (e.g. "Popup Plus/Dismiss Popup") and don't translate
 	// This is translates by popup. So no unicode.
 	char lpzTitle[MAX_ACTIONTITLE];
-	DWORD flags;	// set of PAF_* flags
+	uint32_t flags;	// set of PAF_* flags
 	WPARAM wParam;	// wParam for UM_POPUPACTION message
 	LPARAM lParam;	// lParam for UM_POPUPACTION message
 };
@@ -70,7 +70,7 @@ struct POPUPDATA2
 {
 	// general
 	int cbSize;
-	DWORD flags;
+	uint32_t flags;
 
 	// miranda bindings
 	MCONTACT lchContact;
@@ -88,11 +88,13 @@ struct POPUPDATA2
 
 	// time and timeout
 	int iSeconds;
-	DWORD dwTimestamp;
+	uint32_t dwTimestamp;
 
-	// plugin bindings
-	WNDPROC PluginWindowProc;
-	void *PluginData;
+	#ifdef _WINDOWS
+		// plugin bindings
+		WNDPROC PluginWindowProc;
+		void *PluginData;
+	#endif
 
 	// popup actions
 	int actionCount;
@@ -125,8 +127,10 @@ struct POPUPDATA
 	char lpzText[MAX_SECONDLINE];
 	COLORREF colorBack;
 	COLORREF colorText;
-	WNDPROC PluginWindowProc;
-	void *PluginData;
+	#ifdef _WINDOWS
+		WNDPROC PluginWindowProc;
+		void *PluginData;
+	#endif
 	int iSeconds;       // Custom delay time in seconds. -1 means "forever", 0 means "default time".
 };
 
@@ -142,8 +146,10 @@ struct POPUPDATAW
 	wchar_t lpwzText[MAX_SECONDLINE];
 	COLORREF colorBack;
 	COLORREF colorText;
-	WNDPROC PluginWindowProc;
-	void *PluginData;
+	#ifdef _WINDOWS
+		WNDPROC PluginWindowProc;
+		void *PluginData;
+	#endif
 	int iSeconds;      // Custom delay time in seconds. -1 means "forever", 0 means "default time".
 	HANDLE hNotification;
 	int actionCount;
@@ -218,12 +224,14 @@ struct POPUPACTIONID
 	LPARAM lParam;
 };
 
+#ifdef _WINDOWS
 #define UM_POPUPMODIFYACTIONICON  (WM_USER + 0x0205)
 __forceinline int PUModifyActionIcon(HWND hWndPopup, WPARAM wParam, LPARAM lParam, HICON hIcon)
 {
 	POPUPACTIONID actionId = { wParam, lParam };
 	return (int)SendMessage(hWndPopup, UM_POPUPMODIFYACTIONICON, (WPARAM)&actionId, (LPARAM)hIcon);
 }
+#endif
 
 // UM_POPUPSHOW
 // Show popup at position
@@ -249,7 +257,7 @@ EXTERN_C MIR_APP_DLL(int) PURegisterActions(POPUPACTION *actions, int count);
 typedef struct
 {
 	char lpzTitle[64];
-	DWORD dwFlags;
+	uint32_t dwFlags;
 	union
 	{
 		struct
@@ -263,8 +271,8 @@ typedef struct
 		};
 		struct
 		{
-			DWORD dwCookie;
-			void(*pfnCallback)(HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam, DWORD cookie);
+			uint32_t dwCookie;
+			void(*pfnCallback)(HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam, uint32_t cookie);
 		};
 	};
 } POPUPNOTIFYACTION, *LPPOPUPNOTIFYACTION;
@@ -274,7 +282,7 @@ typedef struct
 typedef struct
 {
 	int cbSize;
-	DWORD dwFlags;			// set of PNF_* flags
+	uint32_t dwFlags;			// set of PNF_* flags
 	char lpzGroup[MAXMODULELABELLENGTH];
 	char lpzName[MAXMODULELABELLENGTH];
 	HANDLE lchIcoLib;			// gotten from icolib
@@ -286,7 +294,9 @@ typedef struct
 	char *lpzLAction;
 	char *lpzRAction;
 	char *pszReserved1;		// reserved for future use
-	DLGPROC pfnReserved2;	// reserved for future use
+	#ifdef _WINDOWS
+		DLGPROC pfnReserved2;	// reserved for future use
+	#endif
 } POPUPNOTIFICATION, *LPPOPUPNOTIFICATION;
 
 EXTERN_C MIR_APP_DLL(HANDLE) PURegisterNotification(LPPOPUPNOTIFICATION notification);
@@ -320,6 +330,8 @@ Modify Popup Action Icon
 wParam = 0
 lParam = (LPARAM)(HANDLE)hEventUnhooked
 */
+
+#ifdef _WINDOWS
 #define UM_POPUPUNHOOKCOMPLETE           (WM_USER + 0x0206)
 
 __forceinline int PUUnhookEventAsync(HWND hwndPopup, HANDLE hEvent)
@@ -332,6 +344,7 @@ __forceinline int PUUnhookEventAsync(HWND hwndPopup, HANDLE hEvent)
 	PostMessage(hwndPopup, UM_POPUPUNHOOKCOMPLETE, 0, (LPARAM)hEvent);
 	return 0;
 }
+#endif
 
 #ifdef __cplusplus
 /* Popup/RegisterVfx
@@ -378,8 +391,8 @@ Returns: 0 if the popup was shown, -1 in case of failure.
 #define SM_NOTIFY	0x02	//Exclamation mark icon.
 #define SM_ERROR	0x03	//Cross icon.
 
-EXTERN_C MIR_APP_DLL(int) PUShowMessage(const char *lpzText, DWORD kind);
-EXTERN_C MIR_APP_DLL(int) PUShowMessageW(const wchar_t *lpwzText, DWORD kind);
+EXTERN_C MIR_APP_DLL(int) PUShowMessage(const char *lpzText, uint32_t kind);
+EXTERN_C MIR_APP_DLL(int) PUShowMessageW(const wchar_t *lpwzText, uint32_t kind);
 
 /////////////////////////////////////////////////////////////////////////////////////////
 // Popup/Filter
@@ -404,7 +417,9 @@ struct POPUPCLASS
 	char *pszName;
 	MAllStrings pszDescription;
 	HICON hIcon;
-	WNDPROC PluginWindowProc;
+	#ifdef _WINDOWS
+		WNDPROC PluginWindowProc;
+	#endif
 	LPARAM lParam; //APF_RETURN_HWND, APF_CUSTOM_POPUP  ... as above
 };
 

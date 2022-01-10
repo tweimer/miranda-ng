@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org)
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org)
 Copyright (c) 2000-08 Miranda ICQ/IM project,
 all portions of this codebase are copyrighted to the people
 listed in contributors.txt.
@@ -29,6 +29,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 	#include <sal.h>
 #endif
 
+#include <stdarg.h>
 #include <stdint.h>
 #include <stdlib.h>
 
@@ -149,7 +150,7 @@ MIR_APP_DLL(INT_PTR)  CallProtoService(const char *szModule, const char *szServi
 ///////////////////////////////////////////////////////////////////////////////
 // exceptions
 
-typedef DWORD (MIR_CDECL *pfnExceptionFilter)(DWORD code, EXCEPTION_POINTERS *info);
+typedef uint32_t (MIR_CDECL *pfnExceptionFilter)(uint32_t code, EXCEPTION_POINTERS *info);
 
 MIR_CORE_DLL(pfnExceptionFilter) GetExceptionFilter(void);
 MIR_CORE_DLL(pfnExceptionFilter) SetExceptionFilter(pfnExceptionFilter pMirandaExceptFilter);
@@ -258,9 +259,9 @@ typedef struct mir_md5_state_s {
 } mir_md5_state_t;
 
 MIR_CORE_DLL(void) mir_md5_init(mir_md5_state_t *pms);
-MIR_CORE_DLL(void) mir_md5_append(mir_md5_state_t *pms, const BYTE *data, size_t nbytes);
-MIR_CORE_DLL(void) mir_md5_finish(mir_md5_state_t *pms, BYTE digest[16]);
-MIR_CORE_DLL(void) mir_md5_hash(const BYTE *data, size_t len, BYTE digest[16]);
+MIR_CORE_DLL(void) mir_md5_append(mir_md5_state_t *pms, const uint8_t *data, size_t nbytes);
+MIR_CORE_DLL(void) mir_md5_finish(mir_md5_state_t *pms, uint8_t digest[16]);
+MIR_CORE_DLL(void) mir_md5_hash(const uint8_t *data, size_t len, uint8_t digest[16]);
 
 ///////////////////////////////////////////////////////////////////////////////
 // memory functions
@@ -359,9 +360,9 @@ struct mir_sha1_ctx
 };
 
 MIR_CORE_DLL(void) mir_sha1_init(mir_sha1_ctx *ctx);
-MIR_CORE_DLL(void) mir_sha1_append(mir_sha1_ctx *ctx, const BYTE *dataIn, size_t len);
-MIR_CORE_DLL(void) mir_sha1_finish(mir_sha1_ctx *ctx, BYTE hashout[MIR_SHA1_HASH_SIZE]);
-MIR_CORE_DLL(void) mir_sha1_hash(BYTE *dataIn, size_t len, BYTE hashout[MIR_SHA1_HASH_SIZE]);
+MIR_CORE_DLL(void) mir_sha1_append(mir_sha1_ctx *ctx, const uint8_t *dataIn, size_t len);
+MIR_CORE_DLL(void) mir_sha1_finish(mir_sha1_ctx *ctx, uint8_t hashout[MIR_SHA1_HASH_SIZE]);
+MIR_CORE_DLL(void) mir_sha1_hash(uint8_t *dataIn, size_t len, uint8_t hashout[MIR_SHA1_HASH_SIZE]);
 
 ///////////////////////////////////////////////////////////////////////////////
 // sha256 functions
@@ -372,14 +373,14 @@ struct SHA256_CONTEXT
 {
 	uint32_t  h0, h1, h2, h3, h4, h5, h6, h7;
 	uint32_t  nblocks;
-	BYTE buf[MIR_SHA_BLOCKSIZE];
+	uint8_t buf[MIR_SHA_BLOCKSIZE];
 	int  count;
 };
 
 MIR_CORE_DLL(void) mir_sha256_init(SHA256_CONTEXT *ctx);
 MIR_CORE_DLL(void) mir_sha256_write(SHA256_CONTEXT *ctx, const void *dataIn, size_t len);
-MIR_CORE_DLL(void) mir_sha256_final(SHA256_CONTEXT *ctx, BYTE hashout[MIR_SHA256_HASH_SIZE]);
-MIR_CORE_DLL(void) mir_sha256_hash(const void *dataIn, size_t len, BYTE hashout[MIR_SHA256_HASH_SIZE]);
+MIR_CORE_DLL(void) mir_sha256_final(SHA256_CONTEXT *ctx, uint8_t hashout[MIR_SHA256_HASH_SIZE]);
+MIR_CORE_DLL(void) mir_sha256_hash(const void *dataIn, size_t len, uint8_t hashout[MIR_SHA256_HASH_SIZE]);
 
 ///////////////////////////////////////////////////////////////////////////////
 // strings

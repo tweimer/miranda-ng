@@ -5,7 +5,7 @@ Jabber Protocol Plugin for Miranda NG
 Copyright (c) 2002-04  Santithorn Bunchua
 Copyright (c) 2005-12  George Hazan
 Copyright (c) 2007     Maxim Mluhov
-Copyright (C) 2012-21 Miranda NG team
+Copyright (C) 2012-22 Miranda NG team
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -43,11 +43,11 @@ enum
 
 #define REFRESH_TIMEOUT		500
 #define REFRESH_TIMER		1607
-static DWORD sttLastRefresh = 0;
+static uint32_t sttLastRefresh = 0;
 
 #define AUTODISCO_TIMEOUT	500
 #define AUTODISCO_TIMER		1608
-static DWORD sttLastAutoDisco = 0;
+static uint32_t sttLastAutoDisco = 0;
 
 enum { SD_OVERLAY_NONE, SD_OVERLAY_FAIL, SD_OVERLAY_PROGRESS, SD_OVERLAY_REGISTERED };
 
@@ -509,7 +509,7 @@ struct
 	char *feature;
 	wchar_t *title;
 	int action;
-	DWORD flags;
+	uint32_t flags;
 }
 static items[] =
 {

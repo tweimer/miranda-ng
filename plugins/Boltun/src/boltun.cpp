@@ -128,7 +128,7 @@ static bool LoadMind(const wchar_t* filename, int &line)
 		delete mind;
 		return false;
 	}
-	DWORD size = SizeofResource(g_plugin.getInst(), hRes);
+	uint32_t size = SizeofResource(g_plugin.getInst(), hRes);
 	if (!size) {
 		delete mind;
 		return false;
@@ -305,7 +305,7 @@ void UpdateUnderstandAlwaysCheckbox(HWND hwndDlg)
 
 static INT_PTR CALLBACK EngineDlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-	WORD param;
+	uint16_t param;
 	BOOL bTranslated = FALSE;
 	static bool loading = true;
 	static int changeCount = 0;
@@ -455,8 +455,8 @@ static int ContactClick(WPARAM hContact, LPARAM, BOOL clickNotToChat)
 		}
 	}
 
-	g_plugin.setByte(hContact, DB_CONTACT_BOLTUN_AUTO_CHAT, (BYTE)boltunautochat);
-	g_plugin.setByte(hContact, DB_CONTACT_BOLTUN_NOT_TO_CHAT, (BYTE)boltunnottochat);
+	g_plugin.setByte(hContact, DB_CONTACT_BOLTUN_AUTO_CHAT, (uint8_t)boltunautochat);
+	g_plugin.setByte(hContact, DB_CONTACT_BOLTUN_NOT_TO_CHAT, (uint8_t)boltunnottochat);
 
 	return 0;
 }

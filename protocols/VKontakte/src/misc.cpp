@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2013-21 Miranda NG team (https://miranda-ng.org)
+Copyright (c) 2013-22 Miranda NG team (https://miranda-ng.org)
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -78,9 +78,9 @@ char* ExpUrlEncode(const char *szUrl, bool strict)
 	if (szUrl == nullptr)
 		return nullptr;
 
-	const BYTE *s;
+	const uint8_t *s;
 	int outputLen;
-	for (outputLen = 0, s = (const BYTE*)szUrl; *s; s++)
+	for (outputLen = 0, s = (const uint8_t*)szUrl; *s; s++)
 		if ((*s & 0x80 && !strict) || // UTF-8 multibyte
 			('0' <= *s && *s <= '9') || //0-9
 			('A' <= *s && *s <= 'Z') || //ABC...XYZ
@@ -95,7 +95,7 @@ char* ExpUrlEncode(const char *szUrl, bool strict)
 		return nullptr;
 
 	char *d = szOutput;
-	for (s = (const BYTE*)szUrl; *s; s++)
+	for (s = (const uint8_t*)szUrl; *s; s++)
 		if ((*s & 0x80 && !strict) || // UTF-8 multibyte
 			('0' <= *s && *s <= '9') || //0-9
 			('A' <= *s && *s <= 'Z') || //ABC...XYZ
@@ -120,7 +120,7 @@ char* ExpUrlEncode(const char *szUrl, bool strict)
 void CVkProto::ClearAccessToken()
 {
 	debugLogA("CVkProto::ClearAccessToken");
-	setDword("LastAccessTokenTime", (DWORD)time(0));
+	setDword("LastAccessTokenTime", (uint32_t)time(0));
 	m_szAccessToken = nullptr;
 	delSetting("AccessToken");
 	ShutdownSession();
@@ -573,7 +573,7 @@ bool CVkProto::AddAuthContactLater(MCONTACT hContact)
 		|| getBool(hContact, "friend"))
 		return false;
 
-	setDword(hContact, "ReqAuthTime", (DWORD)time(0));
+	setDword(hContact, "ReqAuthTime", (uint32_t)time(0));
 	return true;
 }
 
@@ -605,7 +605,7 @@ void CVkProto::DBAddAuthRequest(const MCONTACT hContact, bool added)
 
 	DBEVENTINFO dbei = {};
 	dbei.szModule = m_szModuleName;
-	dbei.timestamp = (DWORD)time(0);
+	dbei.timestamp = (uint32_t)time(0);
 	dbei.flags = DBEF_UTF;
 	dbei.eventType = added ? EVENTTYPE_ADDED : EVENTTYPE_AUTHREQUEST;
 	dbei.cbBlob = blob.size();
@@ -620,10 +620,10 @@ MCONTACT CVkProto::MContactFromDbEvent(MEVENT hDbEvent)
 	if (!hDbEvent || !IsOnline())
 		return INVALID_CONTACT_ID;
 
-	DWORD body[2];
+	uint32_t body[2];
 	DBEVENTINFO dbei = {};
-	dbei.cbBlob = sizeof(DWORD) * 2;
-	dbei.pBlob = (PBYTE)&body;
+	dbei.cbBlob = sizeof(uint32_t) * 2;
+	dbei.pBlob = (uint8_t*)&body;
 
 	if (db_event_get(hDbEvent, &dbei))
 		return INVALID_CONTACT_ID;
@@ -1577,8 +1577,8 @@ void CVkProto::SetInvisible(MCONTACT hContact)
 		debugLogA("CVkProto::SetInvisible %d set ID_STATUS_INVISIBLE", getDword(hContact, "ID", VK_INVALID_USER));
 	}
 	time_t now = time(0);
-	db_set_dw(hContact, "BuddyExpectator", "LastSeen", (DWORD)now);
-	setDword(hContact, "InvisibleTS", (DWORD)now);
+	db_set_dw(hContact, "BuddyExpectator", "LastSeen", (uint32_t)now);
+	setDword(hContact, "InvisibleTS", (uint32_t)now);
 }
 
 CMStringW CVkProto::RemoveBBC(CMStringW& wszSrc)
@@ -1677,8 +1677,8 @@ void CVkProto::ShowCaptchaInBrowser(HBITMAP hBitmap)
 	FIMEMORY *hMem = FreeImage_OpenMemory(nullptr, 0);
 	FreeImage_SaveToMemory(FIF_PNG, dib, hMem, 0);
 
-	BYTE *buf = nullptr;
-	DWORD bufLen;
+	uint8_t *buf = nullptr;
+	uint32_t bufLen;
 	FreeImage_AcquireMemory(hMem, &buf, &bufLen);
 	ptrA base64(mir_base64_encode(buf, bufLen));
 	FreeImage_CloseMemory(hMem);
@@ -1721,8 +1721,8 @@ void CVkProto::AddVkDeactivateEvent(MCONTACT hContact, CMStringW&  wszType)
 	dbei.timestamp = time(0);
 	dbei.eventType = VK_USER_DEACTIVATE_ACTION;
 	ptrA pszDescription(mir_utf8encode(vkDeactivateEvent[iDEIdx].szDescription));
-	dbei.cbBlob = (DWORD)mir_strlen(pszDescription) + 1;
-	dbei.pBlob = (PBYTE)mir_strdup(pszDescription);
+	dbei.cbBlob = (uint32_t)mir_strlen(pszDescription) + 1;
+	dbei.pBlob = (uint8_t*)mir_strdup(pszDescription);
 	dbei.flags = DBEF_UTF | (
 		(
 			m_vkOptions.bShowVkDeactivateEvents

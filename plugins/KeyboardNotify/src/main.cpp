@@ -28,7 +28,7 @@
 
 CMPlugin g_plugin;
 
-DWORD IDThread = 0;
+uint32_t IDThread = 0;
 HANDLE hThread = nullptr;
 HANDLE hFlashEvent;
 HANDLE hExitEvent;
@@ -40,39 +40,39 @@ UINT hReminderTimer = 0;
 
 HHOOK hMouseHook = nullptr;
 HHOOK hKeyBoardHook = nullptr;
-BYTE  bEmulateKeypresses = 0;
-DWORD dwLastInput = 0;
+uint8_t  bEmulateKeypresses = 0;
+uint32_t dwLastInput = 0;
 POINT lastGlobalMousePos = { 0, 0 };
 
-BYTE bFlashOnMsg;
-BYTE bFlashOnFile;
-BYTE bFlashOnGC;
-BYTE bFlashOnOther;
-BYTE bFullScreenMode;
-BYTE bScreenSaverRunning;
-BYTE bWorkstationLocked;
-BYTE bProcessesAreRunning;
-BYTE bWorkstationActive;
-BYTE bFlashIfMsgOpen;
-BYTE bFlashIfMsgWinNotTop;
-BYTE bFlashIfMsgOlder;
-WORD wSecondsOlder;
-BYTE bFlashUntil;
-WORD wBlinksNumber;
-BYTE bMirandaOrWindows;
-WORD wStatusMap;
-WORD wReminderCheck;
-BYTE bFlashLed[3];
-BYTE bFlashEffect;
-BYTE bSequenceOrder;
-WORD wCustomTheme;
-WORD wStartDelay;
-BYTE bFlashSpeed;
-BYTE bOverride;
-BYTE bTrillianLedsMsg;
-BYTE bTrillianLedsURL;
-BYTE bTrillianLedsFile;
-BYTE bTrillianLedsOther;
+uint8_t bFlashOnMsg;
+uint8_t bFlashOnFile;
+uint8_t bFlashOnGC;
+uint8_t bFlashOnOther;
+uint8_t bFullScreenMode;
+uint8_t bScreenSaverRunning;
+uint8_t bWorkstationLocked;
+uint8_t bProcessesAreRunning;
+uint8_t bWorkstationActive;
+uint8_t bFlashIfMsgOpen;
+uint8_t bFlashIfMsgWinNotTop;
+uint8_t bFlashIfMsgOlder;
+uint16_t wSecondsOlder;
+uint8_t bFlashUntil;
+uint16_t wBlinksNumber;
+uint8_t bMirandaOrWindows;
+uint16_t wStatusMap;
+uint16_t wReminderCheck;
+uint8_t bFlashLed[3];
+uint8_t bFlashEffect;
+uint8_t bSequenceOrder;
+uint16_t wCustomTheme;
+uint16_t wStartDelay;
+uint8_t bFlashSpeed;
+uint8_t bOverride;
+uint8_t bTrillianLedsMsg;
+uint8_t bTrillianLedsURL;
+uint8_t bTrillianLedsFile;
+uint8_t bTrillianLedsOther;
 
 PROTOCOL_LIST ProtoList = { 0, nullptr };
 PROCESS_LIST ProcessList = { 0, nullptr };
@@ -82,7 +82,7 @@ unsigned int nExternCount = 0;
 BOOL bFlashingEnabled = TRUE;
 BOOL bReminderDisabled = FALSE;
 
-BYTE bMetaProtoEnabled = 0;
+uint8_t bMetaProtoEnabled = 0;
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
@@ -208,7 +208,7 @@ DBEVENTINFO readEventInfo(MEVENT hDbEvent, MCONTACT hContact)
 	return einfo;
 }
 
-BOOL checkIgnore(MCONTACT hContact, WORD eventType)
+BOOL checkIgnore(MCONTACT hContact, uint16_t eventType)
 {
 	return !IsIgnored(hContact, eventType);
 }
@@ -225,7 +225,7 @@ BOOL checkProtocol(const char *szProto)
 	return FALSE;
 }
 
-BOOL metaCheckProtocol(const char *szProto, MCONTACT hContact, WORD eventType)
+BOOL metaCheckProtocol(const char *szProto, MCONTACT hContact, uint16_t eventType)
 {
 	MCONTACT hSubContact = NULL;
 
@@ -262,14 +262,14 @@ BOOL checkUnopenEvents()
 static void __cdecl FlashThreadFunction(void*)
 {
 	BOOL bEvent = FALSE;
-	DWORD dwEventStarted = 0, dwFlashStarted = 0;
-	BYTE data, unchangedLeds;
+	uint32_t dwEventStarted = 0, dwFlashStarted = 0;
+	uint8_t data, unchangedLeds;
 	
 	Thread_SetName("KeyboardNotify: FlashThreadFunction");
 	MThreadLock threadLock(hThread);
 
 	while (true) {
-		unchangedLeds = (BYTE)(LedState(VK_PAUSE) * !bFlashLed[2] + ((LedState(VK_NUMLOCK) * !bFlashLed[0]) << 1) + ((LedState(VK_CAPITAL) * !bFlashLed[1]) << 2));
+		unchangedLeds = (uint8_t)(LedState(VK_PAUSE) * !bFlashLed[2] + ((LedState(VK_NUMLOCK) * !bFlashLed[0]) << 1) + ((LedState(VK_CAPITAL) * !bFlashLed[1]) << 2));
 		GetAsyncKeyState(VK_PAUSE); // empty Pause/Break's keystroke buffer
 
 		// Start flashing
@@ -295,7 +295,7 @@ static void __cdecl FlashThreadFunction(void*)
 				break;
 
 			data = getBlinkingLeds();
-			ToggleKeyboardLights((BYTE)(data | unchangedLeds));
+			ToggleKeyboardLights((uint8_t)(data | unchangedLeds));
 
 			// Wait for exit event
 			if (WaitForSingleObject(hExitEvent, nWaitDelay) == WAIT_OBJECT_0) {
@@ -327,7 +327,7 @@ static void __cdecl FlashThreadFunction(void*)
 	}
 }
 
-BOOL checkMsgTimestamp(MCONTACT hContact, MEVENT hEventCurrent, DWORD timestampCurrent)
+BOOL checkMsgTimestamp(MCONTACT hContact, MEVENT hEventCurrent, uint32_t timestampCurrent)
 {
 	if (!bFlashIfMsgOlder)
 		return TRUE;
@@ -346,7 +346,7 @@ BOOL checkMsgTimestamp(MCONTACT hContact, MEVENT hEventCurrent, DWORD timestampC
 }
 
 
-BOOL contactCheckProtocol(const char *szProto, MCONTACT hContact, WORD eventType)
+BOOL contactCheckProtocol(const char *szProto, MCONTACT hContact, uint16_t eventType)
 {
 	if (bMetaProtoEnabled && hContact) {
 		MCONTACT hMetaContact = (MCONTACT)db_get_dw(hContact, META_PROTO, "Handle", 0);
@@ -509,7 +509,7 @@ static void __cdecl ForceEventsWereOpenedThread(void *eventMaxSeconds)
 	CallService(MS_KBDNOTIFY_EVENTSOPENED, 1, 0);
 }
 
-void StartBlinkAction(char *flashSequence, WORD eventMaxSeconds)
+void StartBlinkAction(char *flashSequence, uint16_t eventMaxSeconds)
 {
 	if (eventMaxSeconds)
 		mir_forkthread(ForceEventsWereOpenedThread, (void *)eventMaxSeconds);

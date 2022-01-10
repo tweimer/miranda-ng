@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org),
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org),
 Copyright (c) 2000-12 Miranda IM project,
 all portions of this codebase are copyrighted to the people
 listed in contributors.txt.
@@ -76,11 +76,11 @@ struct CMPlugin : public PLUGIN<CMPlugin>
 	int Load() override;
 	int Unload() override;
 
-	CMOption<BYTE> bIdleCheck, bIdleMethod, bIdleOnSaver, bIdleOnFullScr, bIdleOnLock;
-	CMOption<BYTE> bIdlePrivate, bIdleSoundsOff, bIdleOnTerminal, bIdleStatusLock;
-	CMOption<BYTE> bAAEnable;
-	CMOption<WORD> bAAStatus;
-	CMOption<DWORD> iIdleTime1st;
+	CMOption<uint8_t> bIdleCheck, bIdleMethod, bIdleOnSaver, bIdleOnFullScr, bIdleOnLock;
+	CMOption<uint8_t> bIdlePrivate, bIdleSoundsOff, bIdleOnTerminal, bIdleStatusLock;
+	CMOption<uint8_t> bAAEnable;
+	CMOption<uint16_t> bAAStatus;
+	CMOption<uint32_t> iIdleTime1st;
 };
 
 void IdleObject_Destroy();

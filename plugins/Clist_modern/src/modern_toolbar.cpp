@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org),
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org),
 Copyright (c) 2000-08 Miranda ICQ/IM project,
 Copyright 2007 Artem Shpynov
 
@@ -103,7 +103,7 @@ struct
 {
 	HBITMAP  mtb_hBmpBackground;
 	COLORREF mtb_bkColour;
-	WORD     mtb_backgroundBmpUse;
+	uint16_t     mtb_backgroundBmpUse;
 	BOOL     mtb_useWinColors;
 }
 static tbdat = { nullptr, CLCDEFAULT_BKCOLOUR, CLCDEFAULT_BKBMPUSE, CLCDEFAULT_USEWINDOWSCOLOURS };
@@ -266,7 +266,7 @@ static LRESULT CALLBACK toolbarWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARA
 	return mir_callNextSubclass(hwnd, toolbarWndProc, msg, wParam, lParam);
 }
 
-static int ToolBar_LayeredPaintProc(HWND hWnd, HDC hDC, RECT *, HRGN, DWORD, void *)
+static int ToolBar_LayeredPaintProc(HWND hWnd, HDC hDC, RECT *, HRGN, uint32_t, void *)
 {
 	return SendMessage(hWnd, MTBM_LAYEREDPAINT, (WPARAM)hDC, 0);
 }
@@ -327,7 +327,7 @@ static int Toolbar_ModulesLoaded(WPARAM, LPARAM)
 
 	TopToolbar_SetCustomProc(CustomizeButton, 0);
 
-	BYTE bOldSetting = 0;
+	uint8_t bOldSetting = 0;
 	if (!db_get_b(0, "Compatibility", "TTB_Upgrade", 0)) {
 		if (bOldSetting = db_get_b(0, "CLUI", "ShowButtonBar", 1)) {
 			CopySettings("BUTTWIDTH", "option_Bar0_BtnWidth", 20);

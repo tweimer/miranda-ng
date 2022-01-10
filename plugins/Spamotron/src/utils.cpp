@@ -299,7 +299,7 @@ err_out:
 	return ret;
 }
 
-BOOL isOneDay(DWORD timestamp1, DWORD timestamp2)
+BOOL isOneDay(uint32_t timestamp1, uint32_t timestamp2)
 {
 	time_t t1, t2;
 	int at1[3], at2[3];
@@ -423,7 +423,7 @@ err_out:
 	return dst;
 } 
 
-int _notify(MCONTACT hContact, BYTE type, wchar_t *message, wchar_t *origmessage)
+int _notify(MCONTACT hContact, uint8_t type, wchar_t *message, wchar_t *origmessage)
 {
 	char *tmp, *tmporig;
 	wchar_t msg[MAX_BUFFER_LENGTH];
@@ -465,7 +465,7 @@ int LogToSystemHistory(char *message, char *origmessage)
 	DBEVENTINFO dbei = {};
 	dbei.timestamp = time(&tm);
 	dbei.szModule = MODULENAME;
-	dbei.pBlob = (PBYTE)msg;
+	dbei.pBlob = (uint8_t*)msg;
 	if (origmessage)
 		dbei.cbBlob = (1 + mir_snprintf(msg, "%s: %s%s %s: %s", MODULENAME, message, DOT(message), Translate("Their message was"), origmessage));
 	else 
@@ -480,7 +480,7 @@ void MarkUnread(MCONTACT hContact)
 {
 	// We're not actually marking anything. We just pushing saved events to the database from a temporary location
 	DBVARIANT _dbv = {0};
-	PBYTE pos;
+	uint8_t *pos;
 	
 	if (hContact == NULL)
 		return;
@@ -489,16 +489,16 @@ void MarkUnread(MCONTACT hContact)
 		pos = _dbv.pbVal;
 		while (pos - _dbv.pbVal < _dbv.cpbVal) {
 			DBEVENTINFO dbei = {};
-			memcpy(&dbei.eventType, pos, sizeof(WORD)); pos += sizeof(WORD);
-			memcpy(&dbei.flags, pos, sizeof(DWORD)); pos += sizeof(DWORD);
-			memcpy(&dbei.timestamp, pos, sizeof(DWORD)); pos += sizeof(DWORD);
+			memcpy(&dbei.eventType, pos, sizeof(uint16_t)); pos += sizeof(uint16_t);
+			memcpy(&dbei.flags, pos, sizeof(uint32_t)); pos += sizeof(uint32_t);
+			memcpy(&dbei.timestamp, pos, sizeof(uint32_t)); pos += sizeof(uint32_t);
 
 			dbei.szModule = (char*)malloc(mir_strlen((const char*)pos)+1);
 			mir_strcpy((char*)dbei.szModule, (const char*)pos);
 			pos += mir_strlen((const char*)pos)+1;
 
-			memcpy(&dbei.cbBlob, pos, sizeof(DWORD)); pos += sizeof(DWORD);
-			dbei.pBlob = (PBYTE)malloc(dbei.cbBlob);
+			memcpy(&dbei.cbBlob, pos, sizeof(uint32_t)); pos += sizeof(uint32_t);
+			dbei.pBlob = (uint8_t*)malloc(dbei.cbBlob);
 			memcpy(dbei.pBlob, pos, dbei.cbBlob);
 			pos += dbei.cbBlob;
 			db_event_add(hContact,&dbei);

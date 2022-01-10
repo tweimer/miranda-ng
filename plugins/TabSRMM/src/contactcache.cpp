@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////////////////
 // Miranda NG: the free IM client for Microsoft* Windows*
 //
-// Copyright (C) 2012-21 Miranda NG team,
+// Copyright (C) 2012-22 Miranda NG team,
 // Copyright (c) 2000-09 Miranda ICQ/IM project,
 // all portions of this codebase are copyrighted to the people
 // listed in contributors.txt.
@@ -131,7 +131,7 @@ void CContactCache::updateMeta()
 		MCONTACT hOldSub = m_hSub;
 		m_hSub = db_mc_getSrmmSub(cc->contactID);
 		m_szMetaProto = Proto_GetBaseAccountName(m_hSub);
-		m_iMetaStatus = (WORD)db_get_w(m_hSub, m_szMetaProto, "Status", ID_STATUS_OFFLINE);
+		m_iMetaStatus = (uint16_t)db_get_w(m_hSub, m_szMetaProto, "Status", ID_STATUS_OFFLINE);
 		PROTOACCOUNT *pa = Proto_GetAccount(m_szMetaProto);
 		if (pa)
 			m_szAccount = pa->tszAccountName;

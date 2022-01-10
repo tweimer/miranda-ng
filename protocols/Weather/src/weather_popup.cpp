@@ -42,11 +42,11 @@ int WeatherError(WPARAM wParam, LPARAM lParam)
 
 	wchar_t* tszMsg = (wchar_t*)wParam;
 
-	if ((DWORD)lParam == SM_WARNING)
+	if ((uint32_t)lParam == SM_WARNING)
 		PUShowMessageW(tszMsg, SM_WARNING);
-	else if ((DWORD)lParam == SM_NOTIFY)
+	else if ((uint32_t)lParam == SM_NOTIFY)
 		PUShowMessageW(tszMsg, SM_NOTIFY);
-	else if ((DWORD)lParam == SM_WEATHERALERT) {
+	else if ((uint32_t)lParam == SM_WEATHERALERT) {
 		POPUPDATAW ppd;
 		wchar_t str1[512], str2[512];
 
@@ -81,7 +81,7 @@ int WeatherError(WPARAM wParam, LPARAM lParam)
 //  (threaded)
 // lpzText = error text
 // kind = display type (see m_popup.h)
-int WPShowMessage(const wchar_t* lpzText, WORD kind)
+int WPShowMessage(const wchar_t* lpzText, uint16_t kind)
 {
 	NotifyEventHooks(hHookWeatherError, (WPARAM)lpzText, (LPARAM)kind);
 	return 0;
@@ -94,7 +94,7 @@ int WPShowMessage(const wchar_t* lpzText, WORD kind)
 // use for displaying contact menu
 static LRESULT CALLBACK PopupDlgProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-	DWORD ID = 0;
+	uint32_t ID = 0;
 	MCONTACT hContact;
 	hContact = PUGetContact(hWnd);
 
@@ -234,12 +234,12 @@ void ReadPopupOpt(HWND hdlg)
 	opt.pDelay = num;
 
 	// other options
-	opt.UseWinColors = (BYTE)IsDlgButtonChecked(hdlg, IDC_USEWINCOLORS);
-	opt.UsePopup = (BYTE)IsDlgButtonChecked(hdlg, IDC_E);
-	opt.UpdatePopup = (BYTE)IsDlgButtonChecked(hdlg, IDC_POP1);
-	opt.AlertPopup = (BYTE)IsDlgButtonChecked(hdlg, IDC_POP2);
-	opt.PopupOnChange = (BYTE)IsDlgButtonChecked(hdlg, IDC_CH);
-	opt.ShowWarnings = (BYTE)IsDlgButtonChecked(hdlg, IDC_W);
+	opt.UseWinColors = (uint8_t)IsDlgButtonChecked(hdlg, IDC_USEWINCOLORS);
+	opt.UsePopup = (uint8_t)IsDlgButtonChecked(hdlg, IDC_E);
+	opt.UpdatePopup = (uint8_t)IsDlgButtonChecked(hdlg, IDC_POP1);
+	opt.AlertPopup = (uint8_t)IsDlgButtonChecked(hdlg, IDC_POP2);
+	opt.PopupOnChange = (uint8_t)IsDlgButtonChecked(hdlg, IDC_CH);
+	opt.ShowWarnings = (uint8_t)IsDlgButtonChecked(hdlg, IDC_W);
 }
 
 // copied and modified from NewStatusNotify

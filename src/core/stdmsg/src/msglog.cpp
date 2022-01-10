@@ -1,6 +1,6 @@
 /*
 
-Copyright 2000-12 Miranda IM, 2012-21 Miranda NG team,
+Copyright 2000-12 Miranda IM, 2012-22 Miranda NG team,
 all portions of this codebase are copyrighted to the people
 listed in contributors.txt.
 
@@ -306,7 +306,7 @@ static bool CreateRTFFromDbEvent(LogStreamData *dat)
 
 	case EVENTTYPE_FILE:
 		{
-			char *filename = (char*)dbei.pBlob + sizeof(DWORD);
+			char *filename = (char*)dbei.pBlob + sizeof(uint32_t);
 			char *descr = filename + mir_strlen(filename) + 1;
 			
 			SetToStyle(MSGFONTID_NOTICE, buf);
@@ -409,7 +409,7 @@ void LoadMsgLogIcons(void)
 	HDC hdc = GetDC(nullptr);
 	HBITMAP hBmp = CreateCompatibleBitmap(hdc, bih.biWidth, bih.biHeight);
 	HDC hdcMem = CreateCompatibleDC(hdc);
-	PBYTE pBmpBits = (PBYTE)mir_alloc(widthBytes * bih.biHeight);
+	uint8_t *pBmpBits = (uint8_t*)mir_alloc(widthBytes * bih.biHeight);
 
 	for (int i = 0; i < _countof(pLogIconBmpBits); i++) {
 		HICON hIcon = IcoLib_GetIconByHandle(iconList[i].hIcolib);

@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org),
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org),
 Copyright (c) 2000-12 Miranda IM project,
 all portions of this codebase are copyrighted to the people
 listed in contributors.txt.
@@ -25,11 +25,11 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 #include "stdafx.h"
 #include "plugins.h"
 
-DWORD dwVersion = 0;
+uint32_t dwVersion = 0;
 
-static void ProcessResourcesDirectory(PIMAGE_RESOURCE_DIRECTORY pIRD, PBYTE pBase, DWORD dwType);
+static void ProcessResourcesDirectory(PIMAGE_RESOURCE_DIRECTORY pIRD, uint8_t *pBase, uint32_t dwType);
 
-static void ProcessResourceEntry(PIMAGE_RESOURCE_DIRECTORY_ENTRY pIRDE, PBYTE pBase, DWORD dwType)
+static void ProcessResourceEntry(PIMAGE_RESOURCE_DIRECTORY_ENTRY pIRDE, uint8_t *pBase, uint32_t dwType)
 {
 	if (pIRDE->DataIsDirectory)
 		ProcessResourcesDirectory(PIMAGE_RESOURCE_DIRECTORY(pBase + pIRDE->OffsetToDirectory), pBase, dwType == 0 ? pIRDE->Name : dwType);
@@ -39,7 +39,7 @@ static void ProcessResourceEntry(PIMAGE_RESOURCE_DIRECTORY_ENTRY pIRDE, PBYTE pB
 	}
 }
 
-static void ProcessResourcesDirectory(PIMAGE_RESOURCE_DIRECTORY pIRD, PBYTE pBase, DWORD dwType)
+static void ProcessResourcesDirectory(PIMAGE_RESOURCE_DIRECTORY pIRD, uint8_t *pBase, uint32_t dwType)
 {
 	UINT i;
 
@@ -51,7 +51,7 @@ static void ProcessResourcesDirectory(PIMAGE_RESOURCE_DIRECTORY pIRD, PBYTE pBas
 		ProcessResourceEntry(pIRDE, pBase, dwType);
 }
 
-__forceinline bool Contains(PIMAGE_SECTION_HEADER pISH, DWORD address, DWORD size = 0)
+__forceinline bool Contains(PIMAGE_SECTION_HEADER pISH, uint32_t address, uint32_t size = 0)
 {
 	return (address >= pISH->VirtualAddress && address + size <= pISH->VirtualAddress + pISH->SizeOfRawData);
 }
@@ -66,7 +66,7 @@ MUUID* GetPluginInterfaces(const wchar_t *ptszFileName, bool &bIsPlugin)
 		return nullptr;
 
 	MUUID *pResult = nullptr;
-	BYTE *ptr = nullptr;
+	uint8_t *ptr = nullptr;
 	HANDLE hMap = CreateFileMapping(hFile, nullptr, PAGE_READONLY, 0, 0, nullptr);
 
 	__try {
@@ -81,7 +81,7 @@ MUUID* GetPluginInterfaces(const wchar_t *ptszFileName, bool &bIsPlugin)
 			if (filesize < sizeof(IMAGE_DOS_HEADER) + sizeof(IMAGE_NT_HEADERS))
 				__leave;
 
-			ptr = (BYTE*)MapViewOfFile(hMap, FILE_MAP_READ, 0, 0, 0);
+			ptr = (uint8_t*)MapViewOfFile(hMap, FILE_MAP_READ, 0, 0, 0);
 			if (ptr == nullptr)
 				__leave;
 
@@ -92,12 +92,12 @@ MUUID* GetPluginInterfaces(const wchar_t *ptszFileName, bool &bIsPlugin)
 			else
 				__leave;
 
-			if ((PBYTE)pINTH + sizeof(IMAGE_NT_HEADERS) >= ptr + filesize)
+			if ((uint8_t*)pINTH + sizeof(IMAGE_NT_HEADERS) >= ptr + filesize)
 				__leave;
 			if (pINTH->Signature != IMAGE_NT_SIGNATURE)
 				__leave;
 
-			DWORD nSections = pINTH->FileHeader.NumberOfSections;
+			uint32_t nSections = pINTH->FileHeader.NumberOfSections;
 			if (!nSections)
 				__leave;
 
@@ -107,44 +107,44 @@ MUUID* GetPluginInterfaces(const wchar_t *ptszFileName, bool &bIsPlugin)
 			if (pINTH->FileHeader.Machine == IMAGE_FILE_MACHINE_I386 &&
 				pINTH->FileHeader.SizeOfOptionalHeader >= sizeof(IMAGE_OPTIONAL_HEADER32) &&
 				pINTH->OptionalHeader.Magic == IMAGE_NT_OPTIONAL_HDR32_MAGIC) {
-				pIDD = (PIMAGE_DATA_DIRECTORY)((PBYTE)pINTH + offsetof(IMAGE_NT_HEADERS32, OptionalHeader.DataDirectory));
-				base = *(DWORD*)((PBYTE)pINTH + offsetof(IMAGE_NT_HEADERS32, OptionalHeader.ImageBase));
+				pIDD = (PIMAGE_DATA_DIRECTORY)((uint8_t*)pINTH + offsetof(IMAGE_NT_HEADERS32, OptionalHeader.DataDirectory));
+				base = *(uint32_t*)((uint8_t*)pINTH + offsetof(IMAGE_NT_HEADERS32, OptionalHeader.ImageBase));
 			}
 			else if (pINTH->FileHeader.Machine == IMAGE_FILE_MACHINE_AMD64 &&
 				pINTH->FileHeader.SizeOfOptionalHeader >= sizeof(IMAGE_OPTIONAL_HEADER64) &&
 				pINTH->OptionalHeader.Magic == IMAGE_NT_OPTIONAL_HDR64_MAGIC) {
-				pIDD = (PIMAGE_DATA_DIRECTORY)((PBYTE)pINTH + offsetof(IMAGE_NT_HEADERS64, OptionalHeader.DataDirectory));
-				base = *(ULONGLONG*)((PBYTE)pINTH + offsetof(IMAGE_NT_HEADERS64, OptionalHeader.ImageBase));
+				pIDD = (PIMAGE_DATA_DIRECTORY)((uint8_t*)pINTH + offsetof(IMAGE_NT_HEADERS64, OptionalHeader.DataDirectory));
+				base = *(ULONGLONG*)((uint8_t*)pINTH + offsetof(IMAGE_NT_HEADERS64, OptionalHeader.ImageBase));
 			}
 			else __leave;
 
 			// Resource directory
-			DWORD resAddr = pIDD[IMAGE_DIRECTORY_ENTRY_RESOURCE].VirtualAddress;
-			DWORD resSize = pIDD[IMAGE_DIRECTORY_ENTRY_RESOURCE].Size;
+			uint32_t resAddr = pIDD[IMAGE_DIRECTORY_ENTRY_RESOURCE].VirtualAddress;
+			uint32_t resSize = pIDD[IMAGE_DIRECTORY_ENTRY_RESOURCE].Size;
 			if (resSize < sizeof(IMAGE_EXPORT_DIRECTORY)) __leave;
 
 			// Export information entry
-			DWORD expAddr = pIDD[IMAGE_DIRECTORY_ENTRY_EXPORT].VirtualAddress;
-			DWORD expSize = pIDD[IMAGE_DIRECTORY_ENTRY_EXPORT].Size;
+			uint32_t expAddr = pIDD[IMAGE_DIRECTORY_ENTRY_EXPORT].VirtualAddress;
+			uint32_t expSize = pIDD[IMAGE_DIRECTORY_ENTRY_EXPORT].Size;
 			if (expSize == 0)
 				nChecks++;
 			else if (expSize < sizeof(IMAGE_EXPORT_DIRECTORY))
 				__leave;
 
-			BYTE* pImage = ptr + pIDH->e_lfanew + pINTH->FileHeader.SizeOfOptionalHeader + sizeof(IMAGE_NT_HEADERS) - sizeof(IMAGE_OPTIONAL_HEADER);
+			uint8_t* pImage = ptr + pIDH->e_lfanew + pINTH->FileHeader.SizeOfOptionalHeader + sizeof(IMAGE_NT_HEADERS) - sizeof(IMAGE_OPTIONAL_HEADER);
 
-			for (DWORD idx = 0; idx < nSections; idx++) {
+			for (uint32_t idx = 0; idx < nSections; idx++) {
 				PIMAGE_SECTION_HEADER pISH = (PIMAGE_SECTION_HEADER)(pImage + idx * sizeof(IMAGE_SECTION_HEADER));
-				if (((PBYTE)pISH + sizeof(IMAGE_SECTION_HEADER) > pImage + filesize) || (pISH->PointerToRawData + pISH->SizeOfRawData > filesize))
+				if (((uint8_t*)pISH + sizeof(IMAGE_SECTION_HEADER) > pImage + filesize) || (pISH->PointerToRawData + pISH->SizeOfRawData > filesize))
 					__leave;
 
 				// process export table
 				if (expSize >= sizeof(IMAGE_EXPORT_DIRECTORY) && Contains(pISH, expAddr, expSize)) {
-					BYTE *pSecStart = ptr + pISH->PointerToRawData - pISH->VirtualAddress;
+					uint8_t *pSecStart = ptr + pISH->PointerToRawData - pISH->VirtualAddress;
 					IMAGE_EXPORT_DIRECTORY *pED = (PIMAGE_EXPORT_DIRECTORY)&pSecStart[expAddr];
-					DWORD *ptrRVA = (DWORD*)&pSecStart[pED->AddressOfNames];
-					WORD  *ptrOrdRVA = (WORD*)&pSecStart[pED->AddressOfNameOrdinals];
-					DWORD *ptrFuncList = (DWORD*)&pSecStart[pED->AddressOfFunctions];
+					uint32_t *ptrRVA = (uint32_t*)&pSecStart[pED->AddressOfNames];
+					uint16_t  *ptrOrdRVA = (uint16_t*)&pSecStart[pED->AddressOfNameOrdinals];
+					uint32_t *ptrFuncList = (uint32_t*)&pSecStart[pED->AddressOfFunctions];
 
 					MUUID *pIds = nullptr;
 					bool bHasMuuids = false;
@@ -174,15 +174,15 @@ MUUID* GetPluginInterfaces(const wchar_t *ptszFileName, bool &bIsPlugin)
 				if (resSize > 0 && Contains(pISH, resAddr, resSize)) {
 					dwVersion = 0;
 
-					BYTE *pSecStart = ptr + pISH->PointerToRawData - pISH->VirtualAddress;
+					uint8_t *pSecStart = ptr + pISH->PointerToRawData - pISH->VirtualAddress;
 					IMAGE_RESOURCE_DIRECTORY *pIRD = (IMAGE_RESOURCE_DIRECTORY*)&pSecStart[resAddr];
 					ProcessResourcesDirectory(pIRD, &pSecStart[resAddr], 0);
 
 					// patch version
 					if (dwVersion) {
-						BYTE *pVersionRes = &pSecStart[dwVersion];
-						size_t cbLen = *(WORD*)pVersionRes;
-						mir_ptr<BYTE> pData((BYTE*)mir_alloc(cbLen));
+						uint8_t *pVersionRes = &pSecStart[dwVersion];
+						size_t cbLen = *(uint16_t*)pVersionRes;
+						mir_ptr<uint8_t> pData((uint8_t*)mir_alloc(cbLen));
 						memcpy(pData, pVersionRes, cbLen);
 
 						UINT blockSize;

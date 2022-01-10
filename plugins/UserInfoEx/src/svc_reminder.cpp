@@ -34,22 +34,22 @@ struct CEvent
 	enum EType { NONE, BIRTHDAY, ANNIVERSARY };
 
 	EType	_eType;
-	WORD	_wDaysLeft;
+	uint16_t	_wDaysLeft;
 
 	CEvent();
-	CEvent(EType eType, WORD wDaysLeft);
+	CEvent(EType eType, uint16_t wDaysLeft);
 
-	BYTE operator << (const CEvent& e);
+	uint8_t operator << (const CEvent& e);
 };
 
 typedef struct _REMINDEROPTIONS
 {
-	WORD	wDaysEarlier;
-	BYTE	bPopups;
-	BYTE	bCListExtraIcon;
-	BYTE	bFlashCList;
-	BYTE	bCheckVisibleOnly;
-	BYTE	RemindState;
+	uint16_t	wDaysEarlier;
+	uint8_t	bPopups;
+	uint8_t	bCListExtraIcon;
+	uint8_t	bFlashCList;
+	uint8_t	bCheckVisibleOnly;
+	uint8_t	RemindState;
 	CEvent	evt;
 }
 REMINDEROPTIONS, *LPREMINDEROPTIONS;
@@ -69,7 +69,7 @@ HANDLE ghCListBirthdayIcons[11];
 
 static REMINDEROPTIONS	gRemindOpts;
 
-static void UpdateTimer(BYTE bStartup);
+static void UpdateTimer(uint8_t bStartup);
 
 /***********************************************************************************************************
  * struct CEvent
@@ -98,7 +98,7 @@ CEvent::CEvent()
 * @return	nothing
 **/
 
-CEvent::CEvent(EType eType, WORD wDaysLeft)
+CEvent::CEvent(EType eType, uint16_t wDaysLeft)
 {
 	_wDaysLeft = wDaysLeft;
 	_eType = eType;
@@ -114,7 +114,7 @@ CEvent::CEvent(EType eType, WORD wDaysLeft)
 * @retval	FALSE			- The values are not assigned.
 **/
 
-BYTE CEvent::operator << (const CEvent& evt)
+uint8_t CEvent::operator << (const CEvent& evt)
 {
 	if (_wDaysLeft > evt._wDaysLeft) {
 		_wDaysLeft = evt._wDaysLeft;
@@ -337,7 +337,7 @@ static void NotifyFlashCListIcon(MCONTACT hContact, const CEvent &evt)
 * @retval	1 otherwise
 **/
 
-static BYTE NotifyWithSound(const CEvent &evt)
+static uint8_t NotifyWithSound(const CEvent &evt)
 {
 	if (evt._wDaysLeft <= min(g_plugin.getByte(SET_REMIND_SOUNDOFFSET, DEFVAL_REMIND_SOUNDOFFSET), gRemindOpts.wDaysEarlier)) {
 		switch (evt._eType) {
@@ -357,7 +357,7 @@ static BYTE NotifyWithSound(const CEvent &evt)
  * "check for anniversary" functions
  ***********************************************************************************************************/
 
-static BYTE CheckAnniversaries(MCONTACT hContact, MTime &Now, CEvent &evt, BYTE bNotify)
+static uint8_t CheckAnniversaries(MCONTACT hContact, MTime &Now, CEvent &evt, uint8_t bNotify)
 {
 	int numAnniversaries = 0;
 	int Diff = 0;
@@ -369,8 +369,8 @@ static BYTE CheckAnniversaries(MCONTACT hContact, MTime &Now, CEvent &evt, BYTE 
 			mta.DBGetReminderOpts(hContact);
 
 			if (mta.RemindOption() != BST_UNCHECKED) {
-				WORD wDaysEarlier = (mta.RemindOption() == BST_CHECKED) ? mta.RemindOffset() : -1;
-				if (wDaysEarlier == (WORD)-1)
+				uint16_t wDaysEarlier = (mta.RemindOption() == BST_CHECKED) ? mta.RemindOffset() : -1;
+				if (wDaysEarlier == (uint16_t)-1)
 					wDaysEarlier = gRemindOpts.wDaysEarlier;
 
 				Diff = mta.CompareDays(Now);
@@ -440,7 +440,7 @@ static BYTE CheckAnniversaries(MCONTACT hContact, MTime &Now, CEvent &evt, BYTE 
 * @retval	FALSE			- contact has no birthday or it is not within the desired period of time.
 **/
 
-static bool CheckBirthday(MCONTACT hContact, MTime &Now, CEvent &evt, BYTE bNotify, PWORD LastAnwer)
+static bool CheckBirthday(MCONTACT hContact, MTime &Now, CEvent &evt, uint8_t bNotify, PWORD LastAnwer)
 {
 	if (gRemindOpts.RemindState == REMIND_BIRTH || gRemindOpts.RemindState == REMIND_ALL) {
 		MAnnivDate mtb;
@@ -454,8 +454,8 @@ static bool CheckBirthday(MCONTACT hContact, MTime &Now, CEvent &evt, BYTE bNoti
 				mtb.BackupBirthday(hContact, nullptr, 0, LastAnwer);
 
 			if (mtb.RemindOption() != BST_UNCHECKED) {
-				WORD wDaysEarlier = (mtb.RemindOption() == BST_CHECKED) ? mtb.RemindOffset() : -1;
-				if (wDaysEarlier == (WORD)-1)
+				uint16_t wDaysEarlier = (mtb.RemindOption() == BST_CHECKED) ? mtb.RemindOffset() : -1;
+				if (wDaysEarlier == (uint16_t)-1)
 					wDaysEarlier = gRemindOpts.wDaysEarlier;
 
 				Diff = mtb.CompareDays(Now);
@@ -467,7 +467,7 @@ static bool CheckBirthday(MCONTACT hContact, MTime &Now, CEvent &evt, BYTE bNoti
 
 					if (bNotify) {
 						wchar_t szMsg[MAXDATASIZE];
-						WORD cchMsg = 0;
+						uint16_t cchMsg = 0;
 
 						switch (Diff) {
 						case 0:
@@ -520,7 +520,7 @@ static bool CheckBirthday(MCONTACT hContact, MTime &Now, CEvent &evt, BYTE bNoti
 * @return	nothing
 **/
 
-static void CheckContact(MCONTACT hContact, MTime &Now, CEvent &evt, BYTE bNotify, PWORD LastAnwer = nullptr)
+static void CheckContact(MCONTACT hContact, MTime &Now, CEvent &evt, uint8_t bNotify, PWORD LastAnwer = nullptr)
 {
 	// ignore meta subcontacts here as their birthday information are collected explicitly
 	if (hContact && (!gRemindOpts.bCheckVisibleOnly || !Contact_IsHidden(hContact)) && !db_mc_isSub(hContact)) {
@@ -553,7 +553,7 @@ void SvcReminderCheckAll(const ENotify notify)
 
 	// walk through all the contacts stored in the DB
 	CEvent evt;
-	WORD a1 = 0;
+	uint16_t a1 = 0;
 	for (auto &hContact : Contacts())
 		CheckContact(hContact, now, evt, notify != NOTIFY_CLIST, &a1);
 
@@ -646,7 +646,7 @@ static int OnContactSettingChanged(MCONTACT hContact, DBCONTACTWRITESETTING* pdb
 		MTime now;
 		now.GetLocalTime();
 		if (!mir_strcmp(pdbcws->szModule, SvcReminderGetMyBirthdayModule())) {
-			WORD LastAnswer = IDNONE;
+			uint16_t LastAnswer = IDNONE;
 			CheckContact(hContact, now, evt, FALSE, &LastAnswer);
 		}
 		else CheckContact(hContact, now, evt, FALSE, nullptr);
@@ -692,7 +692,7 @@ static INT_PTR BackupBirthdayService(WPARAM hContact, LPARAM lParam)
 			mdb.BackupBirthday(hContact, nullptr, TRUE);
 	}
 	else {
-		WORD a1 = 0;
+		uint16_t a1 = 0;
 
 		// walk through all the contacts stored in the DB
 		for (auto &cc : Contacts())
@@ -775,7 +775,7 @@ static void CALLBACK TimerProc_Check(HWND, UINT, UINT_PTR, DWORD)
 * @return	nothing
 **/
 
-static void UpdateTimer(BYTE bStartup)
+static void UpdateTimer(uint8_t bStartup)
 {
 	LONG	wNotifyInterval =	60 * 60 * (LONG)g_plugin.getWord(SET_REMIND_NOTIFYINTERVAL, DEFVAL_REMIND_NOTIFYINTERVAL);
 	MTime	now, last;
@@ -804,7 +804,7 @@ static void UpdateTimer(BYTE bStartup)
  * module loading & unloading
  ***********************************************************************************************************/
 
-void SvcReminderEnable(BYTE bEnable)
+void SvcReminderEnable(uint8_t bEnable)
 {
 	if (bEnable) { // Reminder is on
 		// init hooks

@@ -26,7 +26,7 @@
 #pragma warning(disable : 4189)
 
 ////////////////////////////////////////////////////////////
-// Swap bits in DWORD
+// Swap bits in uint32_t
 uint32_t swap32(uint32_t x)
 {
 	return (uint32_t)
@@ -436,11 +436,11 @@ retry:
 				&& errno == EACCES
 				&& (m_gaduOptions.autoRecconect || (hostnum < hostcount - 1)))
 			{
-				DWORD dwInterval = getDword(GG_KEY_RECONNINTERVAL, GG_KEYDEF_RECONNINTERVAL);
+				uint32_t dwInterval = getDword(GG_KEY_RECONNINTERVAL, GG_KEYDEF_RECONNINTERVAL);
 				BOOL bRetry = TRUE;
 
 				hConnStopEvent = CreateEvent(nullptr, TRUE, FALSE, nullptr);
-				DWORD dwResult = WaitForSingleObjectEx(hConnStopEvent, dwInterval, TRUE);
+				uint32_t dwResult = WaitForSingleObjectEx(hConnStopEvent, dwInterval, TRUE);
 				if ((dwResult == WAIT_OBJECT_0 && m_iDesiredStatus == ID_STATUS_OFFLINE)
 					|| (dwResult == WAIT_IO_COMPLETION && Miranda_IsTerminated()))
 					bRetry = FALSE;
@@ -547,7 +547,7 @@ retry:
 			// Received ackowledge
 		case GG_EVENT_ACK:
 			if (e->event.ack.seq && e->event.ack.recipient) {
-				ProtoBroadcastAck(getcontact((DWORD)e->event.ack.recipient, 0, 0, nullptr),
+				ProtoBroadcastAck(getcontact((uint32_t)e->event.ack.recipient, 0, 0, nullptr),
 					ACKTYPE_MESSAGE, ACKRESULT_SUCCESS, (HANDLE)e->event.ack.seq, 0);
 			}
 			break;
@@ -703,8 +703,8 @@ retry:
 							int br = atoi(__birthyear);
 							if (br > 0)
 							{
-								setWord(hContact, GG_KEY_PD_AGE, (WORD)(lt->tm_year + 1900 - br));
-								setWord(hContact, GG_KEY_PD_BIRTHYEAR, (WORD)br);
+								setWord(hContact, GG_KEY_PD_AGE, (uint16_t)(lt->tm_year + 1900 - br));
+								setWord(hContact, GG_KEY_PD_BIRTHYEAR, (uint16_t)br);
 							}
 						}
 						else if (res->seq == GG_SEQ_CHINFO) {
@@ -716,11 +716,11 @@ retry:
 						if (__gender) {
 							if (res->seq == GG_SEQ_CHINFO)
 								setByte(hContact, GG_KEY_PD_GANDER,
-								(BYTE)(!mir_strcmp(__gender, GG_PUBDIR50_GENDER_SET_MALE) ? 'M' :
+								(uint8_t)(!mir_strcmp(__gender, GG_PUBDIR50_GENDER_SET_MALE) ? 'M' :
 									(!mir_strcmp(__gender, GG_PUBDIR50_GENDER_SET_FEMALE) ? 'F' : '?')));
 							else
 								setByte(hContact, GG_KEY_PD_GANDER,
-								(BYTE)(!mir_strcmp(__gender, GG_PUBDIR50_GENDER_MALE) ? 'M' :
+								(uint8_t)(!mir_strcmp(__gender, GG_PUBDIR50_GENDER_MALE) ? 'M' :
 									(!mir_strcmp(__gender, GG_PUBDIR50_GENDER_FEMALE) ? 'F' : '?')));
 						}
 						else if (res->seq == GG_SEQ_CHINFO) {
@@ -758,7 +758,7 @@ retry:
 		case GG_EVENT_STATUS60:
 		{
 			MCONTACT hContact = getcontact(e->event.status60.uin, 0, 0, nullptr);
-			int oldstatus = getWord(hContact, GG_KEY_STATUS, (WORD)ID_STATUS_OFFLINE);
+			int oldstatus = getWord(hContact, GG_KEY_STATUS, (uint16_t)ID_STATUS_OFFLINE);
 			uin_t uin = (uin_t)getDword(GG_KEY_UIN, 0);
 
 			wchar_t *descrT = mir_utf8decodeW(e->event.status60.descr);
@@ -775,7 +775,7 @@ retry:
 
 			mir_free(descrT);
 
-			if (oldstatus == ID_STATUS_OFFLINE && getWord(hContact, GG_KEY_STATUS, (WORD)ID_STATUS_OFFLINE) != ID_STATUS_OFFLINE)
+			if (oldstatus == ID_STATUS_OFFLINE && getWord(hContact, GG_KEY_STATUS, (uint16_t)ID_STATUS_OFFLINE) != ID_STATUS_OFFLINE)
 				requestAvatarInfo(hContact, 0);
 		}
 		break;
@@ -904,11 +904,11 @@ retry:
 			{
 				DBEVENTINFO dbei = {};
 				dbei.szModule = m_szModuleName;
-				dbei.timestamp = (DWORD)e->event.multilogon_msg.time;
+				dbei.timestamp = (uint32_t)e->event.multilogon_msg.time;
 				dbei.flags = DBEF_SENT | DBEF_UTF;
 				dbei.eventType = EVENTTYPE_MESSAGE;
-				dbei.cbBlob = (DWORD)mir_strlen(e->event.multilogon_msg.message) + 1;
-				dbei.pBlob = (PBYTE)e->event.multilogon_msg.message;
+				dbei.cbBlob = (uint32_t)mir_strlen(e->event.multilogon_msg.message) + 1;
+				dbei.pBlob = (uint8_t*)e->event.multilogon_msg.message;
 				db_event_add(getcontact(e->event.multilogon_msg.sender, 1, 0, nullptr), &dbei);
 			}
 			break;
@@ -1367,7 +1367,7 @@ void GaduProto::notifyuser(MCONTACT hContact, int refresh)
 	{
 		// Check if user should be invisible
 		// Or be blocked ?
-		if ((getWord(hContact, GG_KEY_APPARENT, (WORD)ID_STATUS_ONLINE) == ID_STATUS_OFFLINE) || !Contact_OnList(hContact))
+		if ((getWord(hContact, GG_KEY_APPARENT, (uint16_t)ID_STATUS_ONLINE) == ID_STATUS_OFFLINE) || !Contact_OnList(hContact))
 		{
 			gg_EnterCriticalSection(&sess_mutex, "notifyuser", 77, "sess_mutex", 1);
 			if (refresh) {
@@ -1422,7 +1422,7 @@ void GaduProto::notifyall()
 	int cc = 0;
 	for (auto &hContact : AccContacts()) {
 		if (uins[cc] = getDword(hContact, GG_KEY_UIN, 0)) {
-			if ((getWord(hContact, GG_KEY_APPARENT, (WORD)ID_STATUS_ONLINE) == ID_STATUS_OFFLINE) || !Contact_OnList(hContact))
+			if ((getWord(hContact, GG_KEY_APPARENT, (uint16_t)ID_STATUS_ONLINE) == ID_STATUS_OFFLINE) || !Contact_OnList(hContact))
 				types[cc] = GG_USER_OFFLINE;
 			else if (getByte(hContact, GG_KEY_BLOCK, 0))
 				types[cc] = GG_USER_BLOCKED;
@@ -1474,7 +1474,7 @@ MCONTACT GaduProto::getcontact(uin_t uin, int create, int inlist, wchar_t *szNic
 	if (!inlist)
 		Contact_RemoveFromList(hContact);
 
-	setDword(hContact, GG_KEY_UIN, (DWORD)uin);
+	setDword(hContact, GG_KEY_UIN, (uint32_t)uin);
 	setWord(hContact, GG_KEY_STATUS, ID_STATUS_OFFLINE);
 
 	// If nick specified use it
@@ -1612,7 +1612,7 @@ void GaduProto::changecontactstatus(uin_t uin, int status, const wchar_t *idescr
 		return;
 
 	// Write contact status
-	setWord(hContact, GG_KEY_STATUS, (WORD)status_gg2m(status));
+	setWord(hContact, GG_KEY_STATUS, (uint16_t)status_gg2m(status));
 
 	// Check if there's description and if it's not empty
 	if (idescr && *idescr) {
@@ -1626,12 +1626,12 @@ void GaduProto::changecontactstatus(uin_t uin, int status, const wchar_t *idescr
 
 	// Store contact ip and port
 	if (remote_ip)
-		setDword(hContact, GG_KEY_CLIENTIP, (DWORD)swap32(remote_ip));
+		setDword(hContact, GG_KEY_CLIENTIP, (uint32_t)swap32(remote_ip));
 	if (remote_port)
-		setWord(hContact, GG_KEY_CLIENTPORT, (WORD)remote_port);
+		setWord(hContact, GG_KEY_CLIENTPORT, (uint16_t)remote_port);
 	if (version) {
 		char sversion[48];
-		setDword(hContact, GG_KEY_CLIENTVERSION, (DWORD)version);
+		setDword(hContact, GG_KEY_CLIENTVERSION, (uint32_t)version);
 		mir_snprintf(sversion, "%sGadu-Gadu %s", (version & 0x00ffffff) > 0x2b ? "Nowe " : "", gg_version2string(version));
 		setString(hContact, "MirVer", sversion);
 	}

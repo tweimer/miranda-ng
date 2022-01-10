@@ -4,7 +4,7 @@ Jabber Protocol Plugin for Miranda NG
 
 Copyright (c) 2002-04  Santithorn Bunchua
 Copyright (c) 2005-12  George Hazan
-Copyright (C) 2012-21 Miranda NG team
+Copyright (C) 2012-22 Miranda NG team
 
 Idea & portions of code by Artem Shpynov
 
@@ -340,7 +340,7 @@ INT_PTR __cdecl CJabberProto::OnGetAdvancedStatusIcon(WPARAM hContact, LPARAM)
 		if (iID < 0)
 			return -1;
 
-		WORD Status = getWord(hContact, "Status", ID_STATUS_OFFLINE);
+		uint16_t Status = getWord(hContact, "Status", ID_STATUS_OFFLINE);
 		if (Status < ID_STATUS_OFFLINE)
 			Status = ID_STATUS_OFFLINE;
 		else if (Status > ID_STATUS_INVISIBLE)

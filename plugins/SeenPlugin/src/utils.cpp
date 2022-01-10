@@ -75,16 +75,16 @@ bool isJabber(const char *protoname)
 	return false;
 }
 
-DWORD isSeen(MCONTACT hcontact, SYSTEMTIME *st)
+uint32_t isSeen(MCONTACT hcontact, SYSTEMTIME *st)
 {
 	FILETIME ft;
 	ULONGLONG ll;
-	DWORD res = g_plugin.getDword(hcontact, "seenTS", 0);
+	uint32_t res = g_plugin.getDword(hcontact, "seenTS", 0);
 	if (res) {
 		if (st) {
 			ll = UInt32x32To64(TimeZone_ToLocal(res), 10000000) + NUM100NANOSEC;
-			ft.dwLowDateTime = (DWORD)ll;
-			ft.dwHighDateTime = (DWORD)(ll >> 32);
+			ft.dwLowDateTime = (uint32_t)ll;
+			ft.dwHighDateTime = (uint32_t)(ll >> 32);
 			FileTimeToSystemTime(&ft, st);
 		}
 		return res;
@@ -104,7 +104,7 @@ DWORD isSeen(MCONTACT hcontact, SYSTEMTIME *st)
 					ll -= NUM100NANOSEC;
 					ll /= 10000000;
 					//perform LOCALTOTIMESTAMP
-					res = (DWORD)ll - TimeZone_ToLocal(0);
+					res = (uint32_t)ll - TimeZone_ToLocal(0);
 					//nevel look for Year/Month/Day/Hour/Minute/Second again
 					g_plugin.setDword(hcontact, "seenTS", res);
 				}
@@ -324,13 +324,13 @@ LBL_noData:
 	return res;
 }
 
-void DBWriteTimeTS(DWORD t, MCONTACT hcontact)
+void DBWriteTimeTS(uint32_t t, MCONTACT hcontact)
 {
 	ULONGLONG ll = UInt32x32To64(TimeZone_ToLocal(t), 10000000) + NUM100NANOSEC;
 
 	FILETIME ft;
-	ft.dwLowDateTime = (DWORD)ll;
-	ft.dwHighDateTime = (DWORD)(ll >> 32);
+	ft.dwLowDateTime = (uint32_t)ll;
+	ft.dwHighDateTime = (uint32_t)(ll >> 32);
 
 	SYSTEMTIME st;
 	FileTimeToSystemTime(&ft, &st);
@@ -344,24 +344,24 @@ void DBWriteTimeTS(DWORD t, MCONTACT hcontact)
 	g_plugin.setWord(hcontact, "WeekDay", st.wDayOfWeek);
 }
 
-void GetColorsFromDWord(LPCOLORREF First, LPCOLORREF Second, DWORD colDword)
+void GetColorsFromDWord(LPCOLORREF First, LPCOLORREF Second, uint32_t colDword)
 {
-	WORD temp;
+	uint16_t temp;
 	COLORREF res = 0;
-	temp = (WORD)(colDword >> 16);
+	temp = (uint16_t)(colDword >> 16);
 	res |= ((temp & 0x1F) << 3);
 	res |= ((temp & 0x3E0) << 6);
 	res |= ((temp & 0x7C00) << 9);
 	if (First) *First = res;
 	res = 0;
-	temp = (WORD)colDword;
+	temp = (uint16_t)colDword;
 	res |= ((temp & 0x1F) << 3);
 	res |= ((temp & 0x3E0) << 6);
 	res |= ((temp & 0x7C00) << 9);
 	if (Second) *Second = res;
 }
 
-DWORD StatusColors15bits[] = {
+uint32_t StatusColors15bits[] = {
 	0x63180000, // 0x00C0C0C0, 0x00000000, Offline - LightGray
 	0x7B350000, // 0x00F0C8A8, 0x00000000, Online  - LightBlue
 	0x33fe0000, // 0x0070E0E0, 0x00000000, Away - LightOrange
@@ -372,9 +372,9 @@ DWORD StatusColors15bits[] = {
 	0x76AF0000, // 0x00E8A878, 0x00000000, Invisible
 };
 
-DWORD GetDWordFromColors(COLORREF First, COLORREF Second)
+uint32_t GetDWordFromColors(COLORREF First, COLORREF Second)
 {
-	DWORD res = 0;
+	uint32_t res = 0;
 	res |= (First & 0xF8) >> 3;
 	res |= (First & 0xF800) >> 6;
 	res |= (First & 0xF80000) >> 9;
@@ -412,7 +412,7 @@ void ShowPopup(MCONTACT hcontact, const char * lpzProto, int newStatus)
 
 	char szSetting[10];
 	mir_snprintf(szSetting, "Col_%d", newStatus - ID_STATUS_OFFLINE);
-	DWORD sett = g_plugin.getDword(szSetting, StatusColors15bits[newStatus - ID_STATUS_OFFLINE]);
+	uint32_t sett = g_plugin.getDword(szSetting, StatusColors15bits[newStatus - ID_STATUS_OFFLINE]);
 
 	POPUPDATAW ppd;
 	GetColorsFromDWord(&ppd.colorBack, &ppd.colorText, sett);
@@ -426,7 +426,7 @@ void ShowPopup(MCONTACT hcontact, const char * lpzProto, int newStatus)
 	PUAddPopupW(&ppd);
 }
 
-void myPlaySound(MCONTACT hcontact, WORD newStatus, WORD oldStatus)
+void myPlaySound(MCONTACT hcontact, uint16_t newStatus, uint16_t oldStatus)
 {
 	if (Ignore_IsIgnored(hcontact, IGNOREEVENT_USERONLINE))
 		return;
@@ -446,7 +446,7 @@ static void waitThread(logthread_info* infoParam)
 {
 	Thread_SetName("SeenPlugin: waitThread");
 
-	WORD prevStatus = g_plugin.getWord(infoParam->hContact, "StatusTriger", ID_STATUS_OFFLINE);
+	uint16_t prevStatus = g_plugin.getWord(infoParam->hContact, "StatusTriger", ID_STATUS_OFFLINE);
 
 	// I hope in 1.5 second all the needed info will be set
 	if (WaitForSingleObject(g_hShutdownEvent, 1500) == WAIT_TIMEOUT) {
@@ -455,9 +455,9 @@ static void waitThread(logthread_info* infoParam)
 				infoParam->currStatus &= 0x7FFF;
 
 		if (infoParam->currStatus != prevStatus) {
-			g_plugin.setWord(infoParam->hContact, "OldStatus", (WORD)(prevStatus | 0x8000));
+			g_plugin.setWord(infoParam->hContact, "OldStatus", (uint16_t)(prevStatus | 0x8000));
 			if (includeIdle)
-				g_plugin.setByte(infoParam->hContact, "OldIdle", (BYTE)((prevStatus & 0x8000) == 0));
+				g_plugin.setByte(infoParam->hContact, "OldIdle", (uint8_t)((prevStatus & 0x8000) == 0));
 
 			g_plugin.setWord(infoParam->hContact, "StatusTriger", infoParam->currStatus);
 		}
@@ -493,7 +493,7 @@ int UpdateValues(WPARAM hContact, LPARAM lparam)
 	
 	if (!strcmp(cws->szModule, MODULENAME)) {
 		// here we will come when Settings/SeenModule/StatusTriger is changed
-		WORD prevStatus = g_plugin.getWord(hContact, "OldStatus", ID_STATUS_OFFLINE);
+		uint16_t prevStatus = g_plugin.getWord(hContact, "OldStatus", ID_STATUS_OFFLINE);
 		if (includeIdle) {
 			if (g_plugin.getByte(hContact, "OldIdle", 0))
 				prevStatus &= 0x7FFF;
@@ -511,7 +511,7 @@ int UpdateValues(WPARAM hContact, LPARAM lparam)
 				char str[MAXMODULELABELLENGTH + 9];
 
 				mir_snprintf(str, "OffTime-%s", szProto);
-				DWORD t = g_plugin.getDword(str, 0);
+				uint32_t t = g_plugin.getDword(str, 0);
 				if (!t)
 					t = time(0);
 				DBWriteTimeTS(t, hContact);
@@ -583,12 +583,12 @@ static void cleanThread(logthread_info* infoParam)
 	// I hope in 10 secons all logged-in contacts will be listed
 	if (WaitForSingleObject(g_hShutdownEvent, 10000) == WAIT_TIMEOUT) {
 		for (auto &hContact : Contacts(szProto)) {
-			WORD oldStatus = g_plugin.getWord(hContact, "StatusTriger", ID_STATUS_OFFLINE) | 0x8000;
+			uint16_t oldStatus = g_plugin.getWord(hContact, "StatusTriger", ID_STATUS_OFFLINE) | 0x8000;
 			if (oldStatus > ID_STATUS_OFFLINE) {
 				if (db_get_w(hContact, szProto, "Status", ID_STATUS_OFFLINE) == ID_STATUS_OFFLINE) {
-					g_plugin.setWord(hContact, "OldStatus", (WORD)(oldStatus | 0x8000));
+					g_plugin.setWord(hContact, "OldStatus", (uint16_t)(oldStatus | 0x8000));
 					if (includeIdle)
-						g_plugin.setByte(hContact, "OldIdle", (BYTE)((oldStatus & 0x8000) ? 0 : 1));
+						g_plugin.setByte(hContact, "OldIdle", (uint8_t)((oldStatus & 0x8000) ? 0 : 1));
 					g_plugin.setWord(hContact, "StatusTriger", ID_STATUS_OFFLINE);
 				}
 			}
@@ -612,7 +612,7 @@ int ModeChange(WPARAM, LPARAM lparam)
 
 	DBWriteTimeTS(time(0), NULL);
 
-	WORD isetting = (WORD)ack->lParam;
+	uint16_t isetting = (uint16_t)ack->lParam;
 	if (isetting < ID_STATUS_OFFLINE)
 		isetting = ID_STATUS_OFFLINE;
 	if ((isetting > ID_STATUS_OFFLINE) && ((UINT_PTR)ack->hProcess <= ID_STATUS_OFFLINE)) {

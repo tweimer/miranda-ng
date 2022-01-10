@@ -5,7 +5,7 @@ Jabber Protocol Plugin for Miranda NG
 Copyright (c) 2002-04  Santithorn Bunchua
 Copyright (c) 2005-12  George Hazan
 Copyright (c) 2007     Maxim Mluhov
-Copyright (C) 2012-21 Miranda NG team
+Copyright (C) 2012-22 Miranda NG team
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -69,7 +69,7 @@ enum
 	INFOLINE_LASTACTIVE,
 };
 
-__forceinline DWORD sttInfoLineId(DWORD res, DWORD type, DWORD line = 0)
+__forceinline uint32_t sttInfoLineId(uint32_t res, uint32_t type, uint32_t line = 0)
 {
 	return
 		(type << 24) & 0x7f000000 |
@@ -274,7 +274,7 @@ static void sttFillResourceInfo(CJabberProto *ppro, HWND hwndTree, HTREEITEM hti
 	}
 }
 
-static void sttFillAdvStatusInfo(CJabberProto *ppro, HWND hwndTree, HTREEITEM htiRoot, DWORD dwInfoLine, MCONTACT hContact, wchar_t *szTitle, char *pszSlot)
+static void sttFillAdvStatusInfo(CJabberProto *ppro, HWND hwndTree, HTREEITEM htiRoot, uint32_t dwInfoLine, MCONTACT hContact, wchar_t *szTitle, char *pszSlot)
 {
 	char *szAdvStatusIcon = ppro->ReadAdvStatusA(hContact, pszSlot, ADVSTATUS_VAL_ICON);
 	wchar_t *szAdvStatusTitle = ppro->ReadAdvStatusT(hContact, pszSlot, ADVSTATUS_VAL_TITLE);

@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org),
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org),
 Copyright (c) 2000-03 Miranda ICQ/IM project,
 all portions of this codebase are copyrighted to the people
 listed in contributors.txt.
@@ -70,7 +70,7 @@ LRESULT ProcessExternalMessages(HWND hwnd, struct ClcData *dat, UINT msg, WPARAM
 			if (contact->type != CLCIT_CONTACT)
 				return 0;
 			contact->flags ^= CONTACTF_PRIORITY;
-			g_plugin.setByte(contact->hContact, "Priority", (BYTE)(contact->flags & CONTACTF_PRIORITY ? 1 : 0));
+			g_plugin.setByte(contact->hContact, "Priority", (uint8_t)(contact->flags & CONTACTF_PRIORITY ? 1 : 0));
 			Clist_Broadcast(CLM_AUTOREBUILD, 0, 0);
 		}
 		return 0;

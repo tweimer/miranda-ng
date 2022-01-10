@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org)
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org)
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -331,8 +331,8 @@ LRESULT CALLBACK EditProc(HWND hdlg, UINT msg, WPARAM wparam, LPARAM lparam)
 				break;
 
 			wchar_t sztext[120] = L"";
-			DWORD start;
-			DWORD end;
+			uint32_t start;
+			uint32_t end;
 
 			int ret = SendMessage(hdlg, EM_GETSEL, (WPARAM)&start, (LPARAM)&end);
 
@@ -664,7 +664,7 @@ static INT_PTR CALLBACK MainDlgProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARA
 					Clist_MenuProcessCommand(LOWORD(ret), MPCF_CONTACTMENU, hContact);
 				}
 
-				g_plugin.setDword("LastSentTo", (DWORD)hContact);
+				g_plugin.setDword("LastSentTo", (uint32_t)hContact);
 			}
 			break;
 

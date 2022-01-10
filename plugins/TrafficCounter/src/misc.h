@@ -3,7 +3,7 @@
 typedef struct
 {
 	wchar_t Alignment;	// Выравнивание. L - к левой границе, R - к правой.
-	WORD Interval;		// Расстояние, на которое граница строки отстоит от левого края фрейма.
+	uint16_t Interval;		// Расстояние, на которое граница строки отстоит от левого края фрейма.
 	wchar_t *String;		// Собственно строка.
 } RowItemInfo;
 
@@ -12,14 +12,14 @@ typedef struct
 InputString - строка для разбора;
 RowItemsList - список найденных элементов.
 Возвращаемое значение - количество элементов в списках. */
-WORD GetRowItems(wchar_t *InputString, RowItemInfo **RowItemsList);
+uint16_t GetRowItems(wchar_t *InputString, RowItemInfo **RowItemsList);
 
 /* Функция возвращает количество дней в указанном месяце указанного года. */
-BYTE DaysInMonth(BYTE Month, WORD Year);
+uint8_t DaysInMonth(uint8_t Month, uint16_t Year);
 
 // Функция определяет день недели по дате
 // 7 - ВС, 1 - ПН и т. д.
-BYTE DayOfWeek(BYTE Day, BYTE Month, WORD Year);
+uint8_t DayOfWeek(uint8_t Day, uint8_t Month, uint16_t Year);
 
 /* Аргументы:
 	Value - количество байт;
@@ -27,8 +27,8 @@ BYTE DayOfWeek(BYTE Day, BYTE Month, WORD Year);
 	Buffer - адрес строки для записи результата;
 	Size - размер буфера.
 Возвращаемое значение: требуемый размер буфера. */
-size_t GetFormattedTraffic(DWORD Value, BYTE Unit, wchar_t *Buffer, size_t Size);
+size_t GetFormattedTraffic(uint32_t Value, uint8_t Unit, wchar_t *Buffer, size_t Size);
 
-size_t GetDurationFormatM(DWORD Duration, wchar_t *Format, wchar_t *Buffer, size_t Size);
+size_t GetDurationFormatM(uint32_t Duration, wchar_t *Format, wchar_t *Buffer, size_t Size);
 
 signed short int TimeCompare(SYSTEMTIME st1, SYSTEMTIME st2);

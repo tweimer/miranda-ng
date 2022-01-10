@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org),
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org),
 Copyright (c) 2000-12 Miranda IM project,
 all portions of this codebase are copyrighted to the people
 listed in contributors.txt.
@@ -319,7 +319,7 @@ int NetlibLog_Worker(NetlibUser *nlu, const char *pszMsg, int flags)
 	if (!bIsActive)
 		return 0;
 
-	DWORD dwOriginalLastError = GetLastError();
+	uint32_t dwOriginalLastError = GetLastError();
 
 	if ((nlu != nullptr && GetNetlibHandleType(nlu) != NLH_USER) || pszMsg == nullptr) {
 		SetLastError(ERROR_INVALID_PARAMETER);
@@ -406,7 +406,7 @@ void PROTO_INTERFACE::debugLogA(const char *szFormat, ...)
 
 void PROTO_INTERFACE::debugLogW(const wchar_t *wszFormat, ...)
 {
-	WCHAR buf[4096];
+	wchar_t buf[4096];
 	va_list args;
 	va_start(args, wszFormat);
 	int res = _vsnwprintf(buf, _countof(buf), wszFormat, args);

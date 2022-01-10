@@ -39,9 +39,9 @@ struct BinaryFileHeader
 
 struct BinaryFileMessageHeader
 {
-	DWORD timestamp;
-	WORD eventType;
-	WORD flags;
+	uint32_t timestamp;
+	uint16_t eventType;
+	uint16_t flags;
 };
 
 #pragma pack(pop)

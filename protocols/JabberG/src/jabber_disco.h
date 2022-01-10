@@ -5,7 +5,7 @@ Jabber Protocol Plugin for Miranda NG
 Copyright (c) 2002-04  Santithorn Bunchua
 Copyright (c) 2005-12  George Hazan
 Copyright (c) 2005-07  Maxim Mluhov
-Copyright (C) 2012-21 Miranda NG team
+Copyright (C) 2012-22 Miranda NG team
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -26,7 +26,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #ifndef _JABBER_DISCO_H_
 #define _JABBER_DISCO_H_
 
-#define	CHR_BULLET	((WCHAR)0x2022)
+#define	CHR_BULLET	((wchar_t)0x2022)
 //	#define	STR_BULLET	L" \u2022 "
 
 #define JABBER_DISCO_RESULT_NOT_REQUESTED			0
@@ -125,8 +125,8 @@ protected:
 	CJabberSDFeature *m_pFeatures;
 	CJabberSDNode *m_pNext;
 	CJabberSDNode *m_pChild;
-	DWORD m_dwInfoRequestTime;
-	DWORD m_dwItemsRequestTime;
+	uint32_t m_dwInfoRequestTime;
+	uint32_t m_dwItemsRequestTime;
 	int m_nInfoRequestId;
 	int m_nItemsRequestId;
 	HTREELISTITEM m_hTreeItem;

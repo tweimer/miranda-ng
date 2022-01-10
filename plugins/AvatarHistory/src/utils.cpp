@@ -38,14 +38,14 @@ bool ContactEnabled(MCONTACT hContact, char *setting, int def)
 	if (!ProtocolEnabled(proto))
 		return false;
 
-	BYTE globpref = g_plugin.getByte(setting, def);
-	BYTE userpref = g_plugin.getByte(hContact, setting, BST_INDETERMINATE);
+	uint8_t globpref = g_plugin.getByte(setting, def);
+	uint8_t userpref = g_plugin.getByte(hContact, setting, BST_INDETERMINATE);
 
 	return (globpref && userpref == BST_INDETERMINATE) || userpref == BST_CHECKED;
 }
 
 // Returns true if the unicode buffer only contains 7-bit characters.
-BOOL IsUnicodeAscii(const WCHAR * pBuffer, int nSize)
+BOOL IsUnicodeAscii(const wchar_t * pBuffer, int nSize)
 {
 	for (int nIndex = 0; nIndex < nSize; nIndex++)
 		if (pBuffer[nIndex] > 0x7F)

@@ -2,7 +2,7 @@
 
 Import plugin for Miranda NG
 
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org)
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org)
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -151,7 +151,7 @@ class CDbxPattern : public MDatabaseReadonly, public MZeroedObject
 	const uint8_t *m_pFile = 0;
 	int m_iFileVersion = 0, m_iMsgHeaderSize = 0;
 
-	std::vector<DWORD> m_events;
+	std::vector<uint32_t> m_events;
 	std::vector<CMStringW> m_files;
 
 	bool CheckContact(MCONTACT hContact)
@@ -354,7 +354,7 @@ public:
 		auto *pPattern = g_pBatch->m_pPattern;
 
 		// create a mask for loading multiple data files for a folder
-		DWORD dwAttr = GetFileAttributesW(profile);
+		uint32_t dwAttr = GetFileAttributesW(profile);
 		if (dwAttr & FILE_ATTRIBUTE_DIRECTORY) {
 			wszBaseFolder = profile;
 			m_folder.AppendFormat(L"%s\\*.%s", profile, pPattern->wszExt.c_str());
@@ -532,7 +532,7 @@ public:
 			T2Utf value(dbcwWork.value.pwszVal);
 			dbcwWork.value.pszVal = NEWSTR_ALLOCA(value);
 			dbcwWork.value.type = DBVT_UTF8;
-			dbcwWork.value.cchVal = (WORD)strlen(dbcwWork.value.pszVal);
+			dbcwWork.value.cchVal = (uint16_t)strlen(dbcwWork.value.pszVal);
 		}
 
 		char* cachedSettingName = m_cache->GetCachedSetting(dbcwWork.szModule, dbcwWork.szSetting, mir_strlen(dbcwWork.szModule), mir_strlen(dbcwWork.szSetting));
@@ -567,7 +567,7 @@ public:
 		dbei->timestamp = RLInteger(&pMsg[0x12]);
 		dbei->timestamp -= TimeZone_ToLocal(dbei->timestamp) - dbei->timestamp; // deduct time zone offset from timestamp
 		dbei->cbBlob = RLWord(&pMsg[m_iMsgHeaderSize - 2]);
-		dbei->pBlob = (PBYTE)mir_alloc(dbei->cbBlob + 1);
+		dbei->pBlob = (uint8_t*)mir_alloc(dbei->cbBlob + 1);
 		memcpy(dbei->pBlob, pMsg + m_iMsgHeaderSize, dbei->cbBlob);
 		if (m_iFileVersion != 1)
 			for (int i = 0; i < dbei->cbBlob; i++) {

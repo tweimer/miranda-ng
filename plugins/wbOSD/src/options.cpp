@@ -13,7 +13,7 @@ COLORREF pencustcolors[16];
 
 const static osdmsg defstr = { L"", 0, RGB(0, 0, 0), nullptr, 0 };
 
-void FillCheckBoxTree(HWND hwndTree, DWORD style)
+void FillCheckBoxTree(HWND hwndTree, uint32_t style)
 {
 	logmsg("FillCheckBoxTree");
 
@@ -21,7 +21,7 @@ void FillCheckBoxTree(HWND hwndTree, DWORD style)
 	tvis.hParent = nullptr;
 	tvis.hInsertAfter = TVI_LAST;
 	tvis.item.mask = TVIF_PARAM | TVIF_TEXT | TVIF_STATE;
-	for (WORD status = ID_STATUS_OFFLINE; status <= ID_STATUS_MAX; status++) {
+	for (uint16_t status = ID_STATUS_OFFLINE; status <= ID_STATUS_MAX; status++) {
 		tvis.item.lParam = status - ID_STATUS_OFFLINE;
 		tvis.item.pszText = Clist_GetStatusModeDescription(status, 0);
 		tvis.item.stateMask = TVIS_STATEIMAGEMASK;
@@ -30,9 +30,9 @@ void FillCheckBoxTree(HWND hwndTree, DWORD style)
 	}
 }
 
-DWORD MakeCheckBoxTreeFlags(HWND hwndTree)
+uint32_t MakeCheckBoxTreeFlags(HWND hwndTree)
 {
-	DWORD flags = 0;
+	uint32_t flags = 0;
 
 	logmsg("MakeCheckBoxTreeFlags");
 

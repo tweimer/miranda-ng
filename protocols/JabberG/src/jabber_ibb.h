@@ -5,7 +5,7 @@ Jabber Protocol Plugin for Miranda NG
 Copyright (c) 2002-04  Santithorn Bunchua
 Copyright (c) 2005-12  George Hazan
 Copyright (c) 2007     Maxim Mluhov
-Copyright (C) 2012-21 Miranda NG team
+Copyright (C) 2012-22 Miranda NG team
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -38,7 +38,7 @@ struct JABBER_IBB_TRANSFER
 	HANDLE hEvent;
 	bool bStreamInitialized;
 	bool bStreamClosed;
-	WORD wPacketId;
+	uint16_t wPacketId;
 	bool (CJabberProto::*pfnSend)(int blocksize, filetransfer *ft);
 	int  (CJabberProto::*pfnRecv)(HNETLIBCONN hConn, filetransfer *ft, char* buffer, int datalen);
 	void (CJabberProto::*pfnFinal)(bool success, filetransfer *ft);

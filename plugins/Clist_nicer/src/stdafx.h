@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org),
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org),
 Copyright (c) 2000-03 Miranda ICQ/IM project,
 all portions of this codebase are copyrighted to the people
 listed in contributors.txt.
@@ -89,11 +89,11 @@ extern HIMAGELIST hCListImages;
 
 extern CLIST_INTERFACE coreCli;
 
-typedef  int  (__cdecl *pfnDrawAvatar)(HDC hdcOrig, HDC hdcMem, RECT *rc, ClcContact *contact, int y, struct ClcData *dat, int selected, WORD cstatus, int rowHeight);
+typedef  int  (__cdecl *pfnDrawAvatar)(HDC hdcOrig, HDC hdcMem, RECT *rc, ClcContact *contact, int y, struct ClcData *dat, int selected, uint16_t cstatus, int rowHeight);
 
 BOOL __forceinline GetItemByStatus(int status, StatusItems_t *retitem);
 
-void DrawAlpha(HDC hdcwnd, PRECT rc, DWORD basecolor, int alpha, DWORD basecolor2, BOOL transparent, BYTE FLG_GRADIENT, BYTE FLG_CORNER, DWORD BORDERSTYLE, ImageItem *item);
+void DrawAlpha(HDC hdcwnd, PRECT rc, uint32_t basecolor, int alpha, uint32_t basecolor2, BOOL transparent, uint8_t FLG_GRADIENT, uint8_t FLG_CORNER, uint32_t BORDERSTYLE, ImageItem *item);
 
 void CustomizeButton(HWND hWnd, bool bIsSkinned, bool bIsThemed, bool bIsFlat = false, bool bIsTTButton = false);
 

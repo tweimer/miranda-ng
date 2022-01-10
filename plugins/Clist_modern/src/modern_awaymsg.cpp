@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org),
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org),
 Copyright (c) 2000-08 Miranda ICQ/IM project,
 all portions of this codebase are copyrighted to the people
 listed in contributors.txt.
@@ -40,7 +40,7 @@ static mir_cs amCS;
 static LIST<void> amItems(10, PtrKeySortT);
 
 static HANDLE  hamProcessEvent = nullptr;
-static DWORD   amRequestTick = 0;
+static uint32_t   amRequestTick = 0;
 
 /*
 *  Add contact handle to requests queue
@@ -81,7 +81,7 @@ static void amThreadProc(void *)
 	while (!MirandaExiting()) {
 		MCONTACT hContact = amGetCurrentChain();
 		while (hContact) {
-			DWORD time = GetTickCount();
+			uint32_t time = GetTickCount();
 			if ((time - amRequestTick) < AMASKPERIOD) {
 				SleepEx(AMASKPERIOD - (time - amRequestTick) + 10, TRUE);
 				if (MirandaExiting())
@@ -104,7 +104,7 @@ static void amThreadProc(void *)
 			amRequestTick = time;
 			hContact = amGetCurrentChain();
 			if (hContact) {
-				DWORD i = 0;
+				uint32_t i = 0;
 				do {
 					i++;
 					SleepEx(50, TRUE);

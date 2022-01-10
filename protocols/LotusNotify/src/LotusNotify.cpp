@@ -42,8 +42,8 @@ wchar_t settingFilterSubject[MAX_SETTING_STR] = TEXT(""), settingFilterSender[MA
 
 COLORREF settingBgColor, settingFgColor;
 int settingInterval = 0, settingInterval1 = 0;
-DWORD settingNewestID = 0;
-BYTE settingSetColours = 0, settingShowError = 1, settingIniAnswer = -1, settingIniCheck = 0,
+uint32_t settingNewestID = 0;
+uint8_t settingSetColours = 0, settingShowError = 1, settingIniAnswer = -1, settingIniCheck = 0,
 	settingOnceOnly = 0, settingNonClickedOnly = 0, settingNewest = 0, settingEvenNonClicked = 0, settingKeepConnection = 1;
 BOOL settingStatus[STATUS_COUNT];
 BOOL bMirandaCall=FALSE;
@@ -93,8 +93,8 @@ extern "C" __declspec(dllexport) const MUUID MirandaInterfaces[] = { MIID_PROTOC
 STATUS LNPUBLIC __stdcall EMCallBack (EMRECORD * pData)
 {
 	VARARG_PTR pArgs;
-	DWORD maxPwdLen;
-	DWORD * retLength;
+	uint32_t maxPwdLen;
+	uint32_t * retLength;
 	char * retPassword;
 	char * fileName;
 	char * ownerName;
@@ -103,14 +103,14 @@ STATUS LNPUBLIC __stdcall EMCallBack (EMRECORD * pData)
 	if (pData->Status != NOERROR) return (ERR_EM_CONTINUE);
 
 	pArgs= pData->Ap;
-	maxPwdLen = VARARG_GET (pArgs, DWORD);
-	retLength = VARARG_GET (pArgs, DWORD *);
+	maxPwdLen = VARARG_GET (pArgs, uint32_t);
+	retLength = VARARG_GET (pArgs, uint32_t *);
 	retPassword = VARARG_GET (pArgs, char *);
 	fileName = VARARG_GET (pArgs, char *);
 	ownerName = VARARG_GET (pArgs, char *);
 	strncpy(retPassword, settingPassword, mir_strlen(settingPassword)); //set our password
 	retPassword[mir_strlen(settingPassword)]='\0';
-	*retLength = (DWORD)mir_strlen(retPassword);//and his length
+	*retLength = (uint32_t)mir_strlen(retPassword);//and his length
 	return ERR_BSAFE_EXTERNAL_PASSWORD;
 }
 
@@ -144,7 +144,7 @@ void ExtClear()
 
 
 //check if msg was clicked and exists on msgs list
-struct HISTORIA* getEl(DWORD id)
+struct HISTORIA* getEl(uint32_t id)
 {
 	for(struct HISTORIA *cur = first; cur != nullptr; cur = cur->next)
 	{
@@ -156,7 +156,7 @@ struct HISTORIA* getEl(DWORD id)
 
 
 //creates new entry on list of msgs
-void addNewId(DWORD id)
+void addNewId(uint32_t id)
 {
 	struct HISTORIA* nowy = (struct HISTORIA*)mir_alloc(sizeof(struct HISTORIA)) ;
 	assert(nowy);
@@ -169,7 +169,7 @@ void addNewId(DWORD id)
 
 
 //add popup handle. This queue is used to close popups with same msg
-void addPopup(DWORD id,HWND hWnd)
+void addPopup(uint32_t id,HWND hWnd)
 {
 	struct POPUPSQUEUE* nowy = (struct POPUPSQUEUE*)mir_alloc(sizeof(struct POPUPSQUEUE)) ;
 	struct HISTORIA *elem = getEl(id);
@@ -444,7 +444,7 @@ BOOL checkNotesIniFile(BOOL bInfo)
 
 
 //popup plugin to show popup function
-void showMsg(wchar_t* sender,wchar_t* text, DWORD id, char *strUID)
+void showMsg(wchar_t* sender,wchar_t* text, uint32_t id, char *strUID)
 {
 	POPUPATT * mpd = (POPUPATT*)malloc(sizeof(POPUPATT));
 	mpd->id = id;
@@ -466,13 +466,13 @@ void showMsg(wchar_t* sender,wchar_t* text, DWORD id, char *strUID)
 
 
 //what to do with error msg
-void ErMsgW(WCHAR* msg)
+void ErMsgW(wchar_t* msg)
 {
 	wchar_t* msgT = mir_wstrdup(msg);
 	ErMsgT(msgT);
 	mir_free(msgT);
 }
-///TODO wchar_t->WCHAR and test
+///TODO wchar_t->wchar_t and test
 void ErMsgT(wchar_t* msg)
 {
 	log_p(L"Error: %S", msg);
@@ -492,11 +492,11 @@ void ErMsgByLotusCode(STATUS erno)
 {
 	char far error_text_LMBCS[200];
 	char far error_text_UNICODEatCHAR[400];
-	WCHAR far error_text_UNICODE[200];
-    WORD text_len;
+	wchar_t far error_text_UNICODE[200];
+    uint16_t text_len;
 
     text_len = OSLoadString1(NULLHANDLE, erno, error_text_LMBCS, sizeof(error_text_LMBCS)-1);
-	OSTranslate1(OS_TRANSLATE_LMBCS_TO_UNICODE, error_text_LMBCS, (WORD)mir_strlen(error_text_LMBCS), error_text_UNICODEatCHAR, sizeof(error_text_UNICODEatCHAR)-1);
+	OSTranslate1(OS_TRANSLATE_LMBCS_TO_UNICODE, error_text_LMBCS, (uint16_t)mir_strlen(error_text_LMBCS), error_text_UNICODEatCHAR, sizeof(error_text_UNICODEatCHAR)-1);
 	memcpy(error_text_UNICODE, error_text_UNICODEatCHAR, sizeof(error_text_UNICODE));
 
 	ErMsgW(error_text_UNICODE);
@@ -544,16 +544,16 @@ void checkthread(void*)
 	char        UserName[MAXUSERNAME + 1];
 	HANDLE      hTable;
 
-	DWORD		noteID = 0L;
+	uint32_t		noteID = 0L;
 	BOOL		fFirst = TRUE;
 
 	NOTEHANDLE	note_handle;
-	WORD        field_len;
+	uint16_t        field_len;
 	char        field_date[MAXALPHATIMEDATE + 1];
 
 	char        field_lotus_LMBCS[MAX_FIELD];
 	char        field_lotus_UNICODEatCHAR[MAX_FIELD * sizeof(wchar_t)];
-	WCHAR field_from_UNICODE[MAX_FIELD], field_subject_UNICODE[MAX_FIELD], field_to_UNICODE[MAX_FIELD],field_copy_UNICODE[MAX_FIELD];
+	wchar_t field_from_UNICODE[MAX_FIELD], field_subject_UNICODE[MAX_FIELD], field_to_UNICODE[MAX_FIELD],field_copy_UNICODE[MAX_FIELD];
 
 	mir_cslock lck(checkthreadCS);
 	log(L"checkthread: inside new check thread");
@@ -601,7 +601,7 @@ void checkthread(void*)
 #endif
 
 	/* Get the unread list */
-	if (error = NSFDbGetUnreadNoteTable1(db_handle, UserName, (WORD)mir_strlen(UserName), TRUE, &hTable)) {
+	if (error = NSFDbGetUnreadNoteTable1(db_handle, UserName, (uint16_t)mir_strlen(UserName), TRUE, &hTable)) {
 		goto errorblock0;
 	}
 #ifdef _DEBUG
@@ -621,13 +621,13 @@ void checkthread(void*)
 
 	while (IDScan1(hTable, fFirst, &noteID)) {
 
-		WORD Att;
+		uint16_t Att;
 		BLOCKID bhAttachment;
-		DWORD cSize = 0;
-		DWORD attSize = 0;
+		uint32_t cSize = 0;
+		uint32_t attSize = 0;
 		OID          retNoteOID;
 		TIMEDATE     retModified;     /* modified timedate      */
-		WORD         retNoteClass;    /* note class             */
+		uint16_t         retNoteClass;    /* note class             */
 		TIMEDATE     sendDate;
 		char strLink[4 * 16];
 
@@ -704,7 +704,7 @@ void checkthread(void*)
 
 		log_p(L"checkthread: got noteInfo, built link: %S", strLink);
 
-		field_len = NSFItemGetText1(note_handle, MAIL_FROM_ITEM, field_lotus_LMBCS, (WORD)sizeof(field_lotus_LMBCS));
+		field_len = NSFItemGetText1(note_handle, MAIL_FROM_ITEM, field_lotus_LMBCS, (uint16_t)sizeof(field_lotus_LMBCS));
 		OSTranslate1(OS_TRANSLATE_LMBCS_TO_UNICODE, field_lotus_LMBCS, field_len, field_lotus_UNICODEatCHAR, sizeof(field_lotus_UNICODEatCHAR));
 		memcpy(field_from_UNICODE, field_lotus_UNICODEatCHAR, field_len * sizeof(wchar_t));
 		field_from_UNICODE[field_len] = '\0';
@@ -713,23 +713,23 @@ void checkthread(void*)
 		error = ConvertTIMEDATEToText1(nullptr, nullptr, &sendDate, field_date, MAXALPHATIMEDATE, &field_len);
 		field_date[field_len] = '\0';
 
-		field_len = NSFItemGetText1(note_handle, MAIL_SUBJECT_ITEM, field_lotus_LMBCS, (WORD)sizeof(field_lotus_LMBCS));
+		field_len = NSFItemGetText1(note_handle, MAIL_SUBJECT_ITEM, field_lotus_LMBCS, (uint16_t)sizeof(field_lotus_LMBCS));
 		OSTranslate1(OS_TRANSLATE_LMBCS_TO_UNICODE, field_lotus_LMBCS, field_len, field_lotus_UNICODEatCHAR, sizeof(field_lotus_UNICODEatCHAR));
 		memcpy(field_subject_UNICODE, field_lotus_UNICODEatCHAR, field_len * sizeof(wchar_t));
 		field_subject_UNICODE[field_len] = '\0';
 
-		field_len = NSFItemGetText1(note_handle, MAIL_SENDTO_ITEM, field_lotus_LMBCS, (WORD)sizeof(field_lotus_LMBCS));
+		field_len = NSFItemGetText1(note_handle, MAIL_SENDTO_ITEM, field_lotus_LMBCS, (uint16_t)sizeof(field_lotus_LMBCS));
 		OSTranslate1(OS_TRANSLATE_LMBCS_TO_UNICODE, field_lotus_LMBCS, field_len, field_lotus_UNICODEatCHAR, sizeof(field_lotus_UNICODEatCHAR));
 		memcpy(field_to_UNICODE, field_lotus_UNICODEatCHAR, field_len * sizeof(wchar_t));
 		field_to_UNICODE[field_len] = '\0';
 
-		field_len = NSFItemGetText1(note_handle, MAIL_COPYTO_ITEM, field_lotus_LMBCS, (WORD)sizeof(field_lotus_LMBCS));
+		field_len = NSFItemGetText1(note_handle, MAIL_COPYTO_ITEM, field_lotus_LMBCS, (uint16_t)sizeof(field_lotus_LMBCS));
 		OSTranslate1(OS_TRANSLATE_LMBCS_TO_UNICODE, field_lotus_LMBCS, field_len, field_lotus_UNICODEatCHAR, sizeof(field_lotus_UNICODEatCHAR));
 		memcpy(field_copy_UNICODE, field_lotus_UNICODEatCHAR, field_len * sizeof(wchar_t));
 		field_copy_UNICODE[field_len] = '\0';
 
 
-		WCHAR msgFrom[512], msgSubject[512];
+		wchar_t msgFrom[512], msgSubject[512];
 		memset(msgFrom, 0, sizeof(msgFrom));
 		memset(msgSubject, 0, sizeof(msgSubject));
 
@@ -764,7 +764,7 @@ void checkthread(void*)
 
 
 		if (attSize) {
-			WCHAR field_attachments_UNICODE[MAX_FIELD];
+			wchar_t field_attachments_UNICODE[MAX_FIELD];
 			mir_snwprintf(field_attachments_UNICODE, TranslateT("Attachments: %d bytes"), attSize);
 			mir_snwprintf(msgSubject, L"%S\n%s\n%s", field_date, field_subject_UNICODE, field_attachments_UNICODE);
 		}
@@ -887,10 +887,10 @@ void decodeServer(char *tmp)
 void fillServersList(HWND hwndDlg)
 {
 	HANDLE    hServerList = NULLHANDLE;
-	BYTE far *pServerList;            /* Pointer to start of Server List */
-	WORD      wServerCount;           /* Number of servers in list. */
-	WORD far *pwServerLength;         /* Index to array of servername lens */
-	BYTE far *pServerName;
+	uint8_t far *pServerList;            /* Pointer to start of Server List */
+	uint16_t      wServerCount;           /* Number of servers in list. */
+	uint16_t far *pwServerLength;         /* Index to array of servername lens */
+	uint8_t far *pServerName;
 	STATUS    error = NOERROR;        /* Error return from API routines. */
 	char      ServerString[MAXPATH];  /* String to hold server names.   */
 	LPSTR     szServerString = ServerString;
@@ -902,12 +902,12 @@ void fillServersList(HWND hwndDlg)
 	error = NSGetServerList1(nullptr, &hServerList);
 	if (error == NOERROR) {
 
-		pServerList = (BYTE far *) OSLockObject1(hServerList);
-		wServerCount = (WORD)*pServerList;
+		pServerList = (uint8_t far *) OSLockObject1(hServerList);
+		wServerCount = (uint16_t)*pServerList;
 
-		pwServerLength = (WORD *)(pServerList + sizeof(WORD));
+		pwServerLength = (uint16_t *)(pServerList + sizeof(uint16_t));
 
-		pServerName = (BYTE far *) pServerList + sizeof(wServerCount) + ((wServerCount)* sizeof(WORD));
+		pServerName = (uint8_t far *) pServerList + sizeof(wServerCount) + ((wServerCount)* sizeof(uint16_t));
 
 		for (USHORT i = 0; i < wServerCount; pServerName += pwServerLength[i], i++) {
 			memmove(szServerString, pServerName, pwServerLength[i]);
@@ -993,11 +993,11 @@ static void LoadSettings()
 	settingNonClickedOnly = g_plugin.getByte("LNNonClickedOnly", 1);
 	settingShowError = g_plugin.getByte("LNShowError", 1);
 	settingSetColours = g_plugin.getByte("LNSetColours", 0);
-	settingBgColor = (COLORREF)g_plugin.getDword("LNBgColor", (DWORD)0xFFFFFF);
-	settingFgColor = (COLORREF)g_plugin.getDword("LNFgColor", (DWORD)0x000000);
+	settingBgColor = (COLORREF)g_plugin.getDword("LNBgColor", (uint32_t)0xFFFFFF);
+	settingFgColor = (COLORREF)g_plugin.getDword("LNFgColor", (uint32_t)0x000000);
 	settingNewest = g_plugin.getByte("LNNewest", 0);
 	settingEvenNonClicked = g_plugin.getByte("LNEvenNonClicked", 0);
-	settingNewestID = (DWORD)g_plugin.getDword("LNNewestID", 0);
+	settingNewestID = (uint32_t)g_plugin.getDword("LNNewestID", 0);
 	settingIniAnswer = g_plugin.getByte("LNIniAnswer", 0);
 	settingIniCheck = g_plugin.getByte("LNIniCheck", 0);
 
@@ -1026,8 +1026,8 @@ static void SaveSettings(HWND hwndDlg)
 	g_plugin.setByte("LNNonClickedOnly", settingNonClickedOnly);
 	g_plugin.setByte("LNShowError", settingShowError);
 	g_plugin.setByte("LNSetColours", settingSetColours);
-	g_plugin.setDword("LNBgColor", (DWORD)settingBgColor);
-	g_plugin.setDword("LNFgColor", (DWORD)settingFgColor);
+	g_plugin.setDword("LNBgColor", (uint32_t)settingBgColor);
+	g_plugin.setDword("LNFgColor", (uint32_t)settingFgColor);
 	g_plugin.setByte("LNNewest", settingNewest);
 	g_plugin.setByte("LNEvenNonClicked", settingEvenNonClicked);
 	g_plugin.setByte("LNIniCheck", settingIniCheck);
@@ -1103,7 +1103,7 @@ static INT_PTR CALLBACK DlgProcLotusNotifyConnectionOpts(HWND hwndDlg, UINT msg,
 			GetDlgItemTextA(hwndDlg, IDC_DATABASE, settingDatabase, _countof(settingDatabase));
 			break;
 		case IDC_BUTTON_CHECK:
-			settingIniCheck = (BYTE)IsDlgButtonChecked(hwndDlg, IDC_BUTTON_CHECK);
+			settingIniCheck = (uint8_t)IsDlgButtonChecked(hwndDlg, IDC_BUTTON_CHECK);
 			checkNotesIniFile(TRUE);
 			break;
 		case IDC_DATABASE:
@@ -1141,7 +1141,7 @@ static INT_PTR CALLBACK DlgProcLotusNotifyConnectionOpts(HWND hwndDlg, UINT msg,
 			settingInterval = GetDlgItemInt(hwndDlg, IDC_INTERVAL, nullptr, FALSE);
 			break;
 		case IDC_KEEP_CONNEXION_ON_ERROR:
-			settingKeepConnection = (BYTE)IsDlgButtonChecked(hwndDlg, IDC_KEEP_CONNEXION_ON_ERROR);
+			settingKeepConnection = (uint8_t)IsDlgButtonChecked(hwndDlg, IDC_KEEP_CONNEXION_ON_ERROR);
 			break;
 		}
 		break;
@@ -1223,21 +1223,21 @@ static INT_PTR CALLBACK DlgProcLotusNotifyPopupOpts(HWND hwndDlg, UINT msg, WPAR
 			settingInterval1 = GetDlgItemInt(hwndDlg, IDC_INTERVAL1, nullptr, TRUE);
 			break;
 		case IDC_ONCEONLY:
-			settingOnceOnly = (BYTE)IsDlgButtonChecked(hwndDlg, IDC_ONCEONLY);
+			settingOnceOnly = (uint8_t)IsDlgButtonChecked(hwndDlg, IDC_ONCEONLY);
 			EnableWindow(GetDlgItem(hwndDlg, IDC_NONCLICKEDONLY), settingOnceOnly);
 			break;
 		case IDC_NONCLICKEDONLY:
-			settingNonClickedOnly = (BYTE)IsDlgButtonChecked(hwndDlg, IDC_NONCLICKEDONLY);
+			settingNonClickedOnly = (uint8_t)IsDlgButtonChecked(hwndDlg, IDC_NONCLICKEDONLY);
 			break;
 		case IDC_SHOWERROR:
-			settingShowError = (BYTE)IsDlgButtonChecked(hwndDlg, IDC_SHOWERROR);
+			settingShowError = (uint8_t)IsDlgButtonChecked(hwndDlg, IDC_SHOWERROR);
 			break;
 		case IDC_NEWEST:
-			settingNewest = (BYTE)IsDlgButtonChecked(hwndDlg, IDC_NEWEST);
+			settingNewest = (uint8_t)IsDlgButtonChecked(hwndDlg, IDC_NEWEST);
 			EnableWindow(GetDlgItem(hwndDlg, IDC_REMEMBEREVENNONCLICKED), settingNewest);
 			break;
 		case IDC_REMEMBEREVENNONCLICKED:
-			settingEvenNonClicked = (BYTE)IsDlgButtonChecked(hwndDlg, IDC_REMEMBEREVENNONCLICKED);
+			settingEvenNonClicked = (uint8_t)IsDlgButtonChecked(hwndDlg, IDC_REMEMBEREVENNONCLICKED);
 			break;
 		case IDC_COMMAND:
 			GetDlgItemTextA(hwndDlg, IDC_COMMAND, settingCommand, _countof(settingCommand));

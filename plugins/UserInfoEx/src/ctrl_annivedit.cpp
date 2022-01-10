@@ -21,7 +21,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 #include "stdafx.h"
 
-CBaseCtrl* CAnnivEditCtrl::CreateObj(HWND hDlg, WORD idCtrl, LPCSTR pszSetting)
+CBaseCtrl* CAnnivEditCtrl::CreateObj(HWND hDlg, uint16_t idCtrl, LPCSTR pszSetting)
 {
 	CAnnivEditCtrl *ctrl = nullptr;
 
@@ -32,7 +32,7 @@ CBaseCtrl* CAnnivEditCtrl::CreateObj(HWND hDlg, WORD idCtrl, LPCSTR pszSetting)
 	return (ctrl);
 }
 
-CAnnivEditCtrl::CAnnivEditCtrl(HWND hDlg, WORD idCtrl, LPCSTR pszSetting)
+CAnnivEditCtrl::CAnnivEditCtrl(HWND hDlg, uint16_t idCtrl, LPCSTR pszSetting)
 	: CBaseCtrl(hDlg, idCtrl, pszSetting)
 {
 	_hwndDlg = hDlg;
@@ -67,7 +67,7 @@ CAnnivEditCtrl::CAnnivEditCtrl(HWND hDlg, WORD idCtrl, LPCSTR pszSetting)
 
 CAnnivEditCtrl::~CAnnivEditCtrl()
 {
-	WORD i;
+	uint16_t i;
 
 	if (_pDates != nullptr) 
 	{
@@ -93,7 +93,7 @@ void CAnnivEditCtrl::Release()
  * param:	wIndex	- index to desired item
  * return:	TRUE if item is valid, FALSE otherwise
  **/
-BYTE CAnnivEditCtrl::ItemValid(WORD wIndex) const
+uint8_t CAnnivEditCtrl::ItemValid(uint16_t wIndex) const
 {
 	return (_pDates != nullptr && wIndex < _numDates && _pDates[wIndex] != nullptr);
 }
@@ -105,7 +105,7 @@ BYTE CAnnivEditCtrl::ItemValid(WORD wIndex) const
  * param:	none
  * return:	TRUE if item is valid, FALSE otherwise
  **/
-BYTE CAnnivEditCtrl::CurrentItemValid() const
+uint8_t CAnnivEditCtrl::CurrentItemValid() const
 {
 	return ItemValid(_curDate);
 }
@@ -117,7 +117,7 @@ BYTE CAnnivEditCtrl::CurrentItemValid() const
  * param:	none
  * return:	TRUE if item is valid, FALSE otherwise
  **/
-void CAnnivEditCtrl::EnableReminderCtrl(BYTE bEnabled)
+void CAnnivEditCtrl::EnableReminderCtrl(uint8_t bEnabled)
 {
 	bEnabled &= _ReminderEnabled != REMIND_OFF;
 	EnableWindow(GetDlgItem(_hwndDlg, RADIO_REMIND1), bEnabled);
@@ -144,7 +144,7 @@ void CAnnivEditCtrl::EnableCurrentItem()
 	
 		PSGetContact(_hwndDlg, hContact);
 
-		const BYTE bEnabled
+		const uint8_t bEnabled
 			= !hContact ||
 				(pCurrent->Flags() & CTRLF_HASCUSTOM) || 
 				!(pCurrent->Flags() & (CTRLF_HASPROTO|CTRLF_HASMETA)) ||
@@ -164,9 +164,9 @@ void CAnnivEditCtrl::EnableCurrentItem()
  * return:	if an date with the wId was found - iterator to item,
  *			NULL otherwise
  **/
-MAnnivDate* CAnnivEditCtrl::FindDateById(const WORD wId)
+MAnnivDate* CAnnivEditCtrl::FindDateById(const uint16_t wId)
 {
-	WORD i;
+	uint16_t i;
 
 	if (_pDates != nullptr) {
 		for (i = 0; i < _numDates; i++) {
@@ -189,7 +189,7 @@ INT_PTR CAnnivEditCtrl::AddDate(MAnnivDate &mda)
 {
 	// if a date with wID exists, replace it
 	if (MAnnivDate *pmda = FindDateById(mda.Id())) {
-		BYTE bChanged = pmda->IsChanged(),
+		uint8_t bChanged = pmda->IsChanged(),
 			bRemindChanged = pmda->IsReminderChanged();
 
 		if (!bChanged) {
@@ -225,7 +225,7 @@ INT_PTR CAnnivEditCtrl::AddDate(MAnnivDate &mda)
  *			wIndex		- index of the item to delete
  * return:	0 on success 1 otherwise
  **/
-INT_PTR CAnnivEditCtrl::DeleteDate(WORD wIndex)
+INT_PTR CAnnivEditCtrl::DeleteDate(uint16_t wIndex)
 {
 	if (!ItemValid(wIndex)) return 1;
 	
@@ -246,7 +246,7 @@ INT_PTR CAnnivEditCtrl::DeleteDate(WORD wIndex)
 		}
 
 		_pDates[wIndex]->RemindOption(BST_INDETERMINATE);
-		_pDates[wIndex]->RemindOffset((WORD)-1);
+		_pDates[wIndex]->RemindOffset((uint16_t)-1);
 
 		_pDates[wIndex]->RemoveFlags(MAnnivDate::MADF_HASCUSTOM);
 		_pDates[wIndex]->SetFlags(MAnnivDate::MADF_CHANGED|MAnnivDate::MADF_REMINDER_CHANGED);
@@ -292,8 +292,8 @@ INT_PTR CAnnivEditCtrl::DBGetAnniversaries(MCONTACT hContact)
 {
 	MAnnivDate mda;
 
-	WORD i;
-	BYTE bChanged = FALSE;
+	uint16_t i;
+	uint8_t bChanged = FALSE;
 
 	for (i = 0; i < ANID_LAST && !mda.DBGetAnniversaryDate(hContact, i); i++) {
 		mda.DBGetReminderOpts(hContact);
@@ -348,7 +348,7 @@ INT_PTR CAnnivEditCtrl::DBWriteAnniversaries(MCONTACT hContact)
 {
 	const LPCSTR szPrefix[] = { "Reminder", "Offset", "Desc", "Day", "Month", "Year", "Stamp", "Date" };
 	CHAR szSet0[MAXSETTING];
-	WORD i, ret, ofs, wIndex = 0;
+	uint16_t i, ret, ofs, wIndex = 0;
 
 	for (i = 0; i < _numDates; i++) {
 		if (
@@ -381,9 +381,9 @@ INT_PTR CAnnivEditCtrl::DBWriteAnniversaries(MCONTACT hContact)
  *			wIndex		- index of the item to delete
  * return:	0 on success 1 otherwise
  **/
-INT_PTR CAnnivEditCtrl::SetCurSel(WORD wIndex)
+INT_PTR CAnnivEditCtrl::SetCurSel(uint16_t wIndex)
 {
-	BYTE bEnabled = ItemValid(wIndex);
+	uint8_t bEnabled = ItemValid(wIndex);
 
 	EnableWindow(_hwndDate, bEnabled);
 	EnableWindow(_hBtnEdit, bEnabled);
@@ -431,7 +431,7 @@ void CAnnivEditCtrl::OnMenuPopup()
 	POINT pt = { 0, 0 };
 	RECT rc;
 	HMENU hMenu;
-	WORD i;
+	uint16_t i;
 
 	if (hMenu = CreatePopupMenu()) {
 		SetFocus(_hBtnMenu);
@@ -545,7 +545,7 @@ void CAnnivEditCtrl::OnReminderChecked()
 		}
 		else if (IsDlgButtonChecked(_hwndDlg, RADIO_REMIND2))
 		{
-			if (pCurrent->RemindOffset() == (WORD)-1)
+			if (pCurrent->RemindOffset() == (uint16_t)-1)
 			{
 				_itow(g_plugin.getByte(SET_REMIND_OFFSET, DEFVAL_REMIND_OFFSET), buf, 10);
 			}

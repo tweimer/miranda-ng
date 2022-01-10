@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2015-21 Miranda NG team (https://miranda-ng.org)
+Copyright (c) 2015-22 Miranda NG team (https://miranda-ng.org)
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -17,14 +17,14 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include "stdafx.h"
 
-WORD CSkypeProto::GetContactStatus(MCONTACT hContact)
+uint16_t CSkypeProto::GetContactStatus(MCONTACT hContact)
 {
 	return getWord(hContact, "Status", ID_STATUS_OFFLINE);
 }
 
-void CSkypeProto::SetContactStatus(MCONTACT hContact, WORD status)
+void CSkypeProto::SetContactStatus(MCONTACT hContact, uint16_t status)
 {
-	WORD oldStatus = GetContactStatus(hContact);
+	uint16_t oldStatus = GetContactStatus(hContact);
 	if (oldStatus != status) {
 		setWord(hContact, "Status", status);
 		if (status == ID_STATUS_OFFLINE)
@@ -41,10 +41,10 @@ void CSkypeProto::SetChatStatus(MCONTACT hContact, int iStatus)
 
 MCONTACT CSkypeProto::GetContactFromAuthEvent(MEVENT hEvent)
 {
-	DWORD body[3];
+	uint32_t body[3];
 	DBEVENTINFO dbei = {};
-	dbei.cbBlob = sizeof(DWORD) * 2;
-	dbei.pBlob = (PBYTE)&body;
+	dbei.cbBlob = sizeof(uint32_t) * 2;
+	dbei.pBlob = (uint8_t*)&body;
 
 	if (db_event_get(hEvent, &dbei))
 		return INVALID_CONTACT_ID;

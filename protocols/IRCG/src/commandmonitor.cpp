@@ -145,14 +145,14 @@ VOID CALLBACK OnlineNotifTimerProc(HWND, UINT, UINT_PTR idEvent, DWORD)
 			if (ppro->isChatRoom(hContact))
 				continue;
 
-			BYTE bDCC = ppro->getByte(hContact, "DCC", 0);
+			uint8_t bDCC = ppro->getByte(hContact, "DCC", 0);
 			bool bHidden = Contact_IsHidden(hContact);
 			if (bDCC || bHidden)
 				continue;
 			if (ppro->getWString(hContact, "Default", &dbv))
 				continue;
 
-			BYTE bAdvanced = ppro->getByte(hContact, "AdvancedMode", 0);
+			uint8_t bAdvanced = ppro->getByte(hContact, "AdvancedMode", 0);
 			if (!bAdvanced) {
 				db_free(&dbv);
 				if (!ppro->getWString(hContact, "Nick", &dbv)) {
@@ -226,10 +226,10 @@ int CIrcProto::AddOutgoingMessageToDB(MCONTACT hContact, const wchar_t *msg)
 	DBEVENTINFO dbei = {};
 	dbei.szModule = m_szModuleName;
 	dbei.eventType = EVENTTYPE_MESSAGE;
-	dbei.timestamp = (DWORD)time(0);
+	dbei.timestamp = (uint32_t)time(0);
 	dbei.flags = DBEF_SENT | DBEF_UTF;
-	dbei.pBlob = (PBYTE)mir_utf8encodeW(S);
-	dbei.cbBlob = (DWORD)mir_strlen((char*)dbei.pBlob) + 1;
+	dbei.pBlob = (uint8_t*)mir_utf8encodeW(S);
+	dbei.cbBlob = (uint32_t)mir_strlen((char*)dbei.pBlob) + 1;
 	db_event_add(hContact, &dbei);
 	mir_free(dbei.pBlob);
 	return 1;
@@ -689,7 +689,7 @@ bool CIrcProto::OnIrc_PRIVMSG(const CIrcMessage *pmsg)
 			MCONTACT hContact = CList_AddContact(&user, false, true);
 
 			PROTORECVEVENT pre = { 0 };
-			pre.timestamp = (DWORD)time(0);
+			pre.timestamp = (uint32_t)time(0);
 			pre.szMessage = mir_utf8encodeW(mess);
 			setWString(hContact, "User", pmsg->prefix.sUser);
 			setWString(hContact, "Host", pmsg->prefix.sHost);
@@ -840,7 +840,7 @@ bool CIrcProto::IsCTCP(const CIrcMessage *pmsg)
 
 			// components of a dcc message
 			CMStringW sFile = L"";
-			DWORD dwAdr = 0;
+			uint32_t dwAdr = 0;
 			int iPort = 0;
 			unsigned __int64 dwSize = 0;
 			CMStringW sToken = L"";
@@ -1142,7 +1142,7 @@ bool CIrcProto::IsCTCP(const CIrcMessage *pmsg)
 
 						PROTORECVFILE pre = { 0 };
 						pre.dwFlags = PRFF_UNICODE;
-						pre.timestamp = (DWORD)time(0);
+						pre.timestamp = (uint32_t)time(0);
 						pre.fileCount = 1;
 						pre.files.w = &tszTemp;
 						pre.lParam = (LPARAM)di;
@@ -1248,7 +1248,7 @@ bool CIrcProto::OnIrc_ENDNAMES(const CIrcMessage *pmsg)
 				sChanName++;
 
 			// Add a new chat window
-			BYTE btOwnMode = 0;
+			uint8_t btOwnMode = 0;
 
 			SESSION_INFO *si = Chat_NewSession(GCW_CHATROOM, m_szModuleName, sChanName, sChanName);
 			if (si) {

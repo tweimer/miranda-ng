@@ -1,6 +1,6 @@
 /*
 
-Copyright © 2009-11 Michal Zelinka, 2011-17 Robert Pösel, 2017-21 Miranda NG team
+Copyright © 2009-11 Michal Zelinka, 2011-17 Robert Pösel, 2017-22 Miranda NG team
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -72,7 +72,7 @@ time_t utils::time::from_string(const std::string &data)
 	return (time_t)timestamp;
 }
 
-std::string utils::conversion::to_string(void* data, WORD type)
+std::string utils::conversion::to_string(void* data, uint16_t type)
 {
 	std::stringstream out;
 

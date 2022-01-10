@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////////////////
 // Miranda NG: the free IM client for Microsoft* Windows*
 //
-// Copyright (C) 2012-21 Miranda NG team,
+// Copyright (C) 2012-22 Miranda NG team,
 // Copyright (c) 2000-09 Miranda ICQ/IM project,
 // all portions of this codebase are copyrighted to the people
 // listed in contributors.txt.
@@ -82,8 +82,8 @@ bool CTaskbarInteract::haveLargeIcons()
 	m_fHaveLargeicons = false;
 
 	if (m_pTaskbarInterface && m_isEnabled) {
-		DWORD val = 0;
-		DWORD valGrouping = 2;
+		uint32_t val = 0;
+		uint32_t valGrouping = 2;
 		/*
 		 * check whether the taskbar is set to show large icons. This is necessary, because the method SetOverlayIcon()
 		 * always returns S_OK, but the icon is simply ignored when using small taskbar icons.

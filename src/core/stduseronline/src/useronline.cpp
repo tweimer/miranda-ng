@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org),
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org),
 Copyright (c) 2000-12 Miranda IM project,
 all portions of this codebase are copyrighted to the people
 listed in contributors.txt.
@@ -34,7 +34,7 @@ static int UserOnlineSettingChanged(WPARAM hContact, LPARAM lParam)
 
 	int newStatus = cws->value.wVal;
 	int oldStatus = g_plugin.getWord(hContact, "OldStatus", ID_STATUS_OFFLINE);
-	g_plugin.setWord(hContact, "OldStatus", (WORD)newStatus);
+	g_plugin.setWord(hContact, "OldStatus", (uint16_t)newStatus);
 	if (Ignore_IsIgnored(hContact, IGNOREEVENT_USERONLINE)) return 0;
 	if (Contact_IsHidden(hContact)) return 0;
 	if (newStatus == ID_STATUS_OFFLINE && oldStatus != ID_STATUS_OFFLINE) {
@@ -47,7 +47,7 @@ static int UserOnlineSettingChanged(WPARAM hContact, LPARAM lParam)
 	}
 
 	if ((newStatus == ID_STATUS_ONLINE || newStatus == ID_STATUS_FREECHAT) && oldStatus != ID_STATUS_ONLINE && oldStatus != ID_STATUS_FREECHAT) {
-		DWORD ticked = g_plugin.getDword(cws->szModule, GetTickCount());
+		uint32_t ticked = g_plugin.getDword(cws->szModule, GetTickCount());
 		// only play the sound (or show event) if this event happens at least 10 secs after the proto went from offline
 		if (GetTickCount() - ticked > (1000 * 10)) {
 			wchar_t tooltip[256];

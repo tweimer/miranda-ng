@@ -5,7 +5,7 @@ Jabber Protocol Plugin for Miranda NG
 Copyright (c) 2002-04  Santithorn Bunchua
 Copyright (c) 2005-12  George Hazan
 Copyright (c) 2007     Maxim Mluhov
-Copyright (C) 2012-21 Miranda NG team
+Copyright (C) 2012-22 Miranda NG team
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -51,7 +51,7 @@ struct JabberPasswordDlgParam
 	CJabberProto *pro;
 
 	BOOL    saveOnlinePassword;
-	WORD    dlgResult;
+	uint16_t    dlgResult;
 	wchar_t onlinePassword[128];
 	HANDLE  hEventPasswdDlg;
 	char   *pszJid;
@@ -188,7 +188,7 @@ void ThreadData::xmpp_client_query(void)
 				dnsList.insert(&rec->Data.Srv);
 
 		for (auto &it : dnsList) {
-			WORD dnsPort = (conn.port == 0 || conn.port == 5222) ? it->wPort : conn.port;
+			uint16_t dnsPort = (conn.port == 0 || conn.port == 5222) ? it->wPort : conn.port;
 			char* dnsHost = it->pNameTarget;
 
 			proto->debugLogA("%s%s resolved to %s:%d", "_xmpp-client._tcp.", conn.server, dnsHost, dnsPort);
@@ -971,7 +971,7 @@ void CJabberProto::OnProcessPubsubEvent(const TiXmlElement *node)
 }
 
 // returns 0, if error or no events
-DWORD JabberGetLastContactMessageTime(MCONTACT hContact)
+uint32_t JabberGetLastContactMessageTime(MCONTACT hContact)
 {
 	// TODO: time cache can improve performance
 	MEVENT hDbEvent = db_event_last(hContact);
@@ -1225,7 +1225,7 @@ void CJabberProto::OnProcessMessage(const TiXmlElement *node, ThreadData *info)
 
 	// chatstates gone event
 	if (hContact && XmlGetChildByTag(node, "gone", "xmlns", JABBER_FEAT_CHATSTATES) && m_bLogChatstates) {
-		BYTE bEventType = JABBER_DB_EVENT_CHATSTATES_GONE; // gone event
+		uint8_t bEventType = JABBER_DB_EVENT_CHATSTATES_GONE; // gone event
 		DBEVENTINFO dbei = {};
 		dbei.pBlob = &bEventType;
 		dbei.cbBlob = 1;
@@ -1404,7 +1404,7 @@ void CJabberProto::OnProcessMessage(const TiXmlElement *node, ThreadData *info)
 	if (bWasSent)
 		recv.flags |= PREF_SENT;
 
-	recv.timestamp = (DWORD)msgTime;
+	recv.timestamp = (uint32_t)msgTime;
 	recv.szMessage = szMessage.GetBuffer();
 	recv.szMsgId = szMsgId;
 
@@ -1439,8 +1439,8 @@ void CJabberProto::OnProcessPresenceCapabilites(const TiXmlElement *node, pResou
 
 	const char *szHash = XmlGetAttr(n, "hash");
 	if (szHash == nullptr) { // old version
-		BYTE hashOut[MIR_SHA1_HASH_SIZE];
-		mir_sha1_hash((BYTE*)szVer, mir_strlen(szVer), hashOut);
+		uint8_t hashOut[MIR_SHA1_HASH_SIZE];
+		mir_sha1_hash((uint8_t*)szVer, mir_strlen(szVer), hashOut);
 
 		char szHashOut[MIR_SHA1_HASH_SIZE*2 + 1];
 		r->m_pCaps = g_clientCapsManager.GetPartialCaps(szNode, bin2hex(hashOut, _countof(hashOut), szHashOut));
@@ -1514,7 +1514,7 @@ void CJabberProto::UpdateJidDbSettings(const char *jid)
 
 	if (strchr(jid, '@') != nullptr || m_bShowTransport == TRUE)
 		if (getWord(hContact, "Status", ID_STATUS_OFFLINE) != status)
-			setWord(hContact, "Status", (WORD)status);
+			setWord(hContact, "Status", (uint16_t)status);
 
 	// remove x-status icon
 	if (status == ID_STATUS_OFFLINE) {
@@ -2050,7 +2050,7 @@ int ThreadData::send_no_strm_mgmt(TiXmlElement *node)
 	// strip forbidden control characters from outgoing XML stream
 	char *q = buf.GetBuffer();
 	for (char *p = buf.GetBuffer(); *p; ++p) {
-		int c = *(BYTE*)p;
+		int c = *(uint8_t*)p;
 		if (c < 32 && c != '\t' && c != '\n' && c != '\r')
 			continue;
 

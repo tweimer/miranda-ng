@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////////////////
 // Miranda NG: the free IM client for Microsoft* Windows*
 //
-// Copyright (C) 2012-21 Miranda NG team,
+// Copyright (C) 2012-22 Miranda NG team,
 // Copyright (c) 2000-09 Miranda ICQ/IM project,
 // all portions of this codebase are copyrighted to the people
 // listed in contributors.txt.
@@ -56,7 +56,7 @@ protected:
 	LONG    m_width, m_height;
 	HDC     m_hdc;
 	RECT    m_rc, m_rcTop, m_rcBottom, m_rcIcon;
-	DWORD   m_dtFlags;
+	uint32_t   m_dtFlags;
 	SIZE    m_sz;
 	LONG    m_cx, m_cy;
 	HFONT   m_hOldFont;

@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org)
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org)
 all portions of this codebase are copyrighted to the people
 listed in contributors.txt.
 
@@ -91,7 +91,7 @@ LBL_Fail:
 /////////////////////////////////////////////////////////////////////////////////////////
 
 size_t iDefHeaderOffset = 0;
-BYTE bDefHeader[] = { 0, 0, 0, 0, 0, 0, 0, 0 };
+uint8_t bDefHeader[] = { 0, 0, 0, 0, 0, 0, 0, 0 };
 
 int CDbxMDBX::Check(void)
 {
@@ -100,7 +100,7 @@ int CDbxMDBX::Check(void)
 		return EGROKPRF_CANTREAD;
 
 	fseek(pFile, (LONG)iDefHeaderOffset, SEEK_SET);
-	BYTE buf[_countof(bDefHeader)];
+	uint8_t buf[_countof(bDefHeader)];
 	size_t cbRead = fread(buf, 1, _countof(buf), pFile);
 	fclose(pFile);
 	if (cbRead != _countof(buf))

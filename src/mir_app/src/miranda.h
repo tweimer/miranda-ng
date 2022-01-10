@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org),
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org),
 Copyright (c) 2000-12 Miranda IM project,
 all portions of this codebase are copyrighted to the people
 listed in contributors.txt.
@@ -26,30 +26,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #define MS_OPTIONS_OPEN "Options/OptionsCommand"
 
-typedef HRESULT (STDAPICALLTYPE *pfnDrawThemeTextEx)(HTHEME, HDC, int, int, LPCWSTR, int, DWORD, LPRECT, const struct _DTTOPTS *);
-typedef HRESULT (STDAPICALLTYPE *pfnSetWindowThemeAttribute)(HWND, enum WINDOWTHEMEATTRIBUTETYPE, PVOID, DWORD);
-typedef HRESULT (STDAPICALLTYPE *pfnBufferedPaintInit)(void);
-typedef HRESULT (STDAPICALLTYPE *pfnBufferedPaintUninit)(void);
-typedef HANDLE  (STDAPICALLTYPE *pfnBeginBufferedPaint)(HDC, RECT *, BP_BUFFERFORMAT, BP_PAINTPARAMS *, HDC *);
-typedef HRESULT (STDAPICALLTYPE *pfnEndBufferedPaint)(HANDLE, BOOL);
-typedef HRESULT (STDAPICALLTYPE *pfnGetBufferedPaintBits)(HANDLE, RGBQUAD **, int *);
-
-extern pfnDrawThemeTextEx drawThemeTextEx;
-extern pfnSetWindowThemeAttribute setWindowThemeAttribute;
-extern pfnBufferedPaintInit bufferedPaintInit;
-extern pfnBufferedPaintUninit bufferedPaintUninit;
-extern pfnBeginBufferedPaint beginBufferedPaint;
-extern pfnEndBufferedPaint endBufferedPaint;
-extern pfnGetBufferedPaintBits getBufferedPaintBits;
-
-extern ITaskbarList3 * pTaskbarInterface;
-
-typedef HRESULT (STDAPICALLTYPE *pfnDwmExtendFrameIntoClientArea)(HWND hwnd, const MARGINS *margins);
-typedef HRESULT (STDAPICALLTYPE *pfnDwmIsCompositionEnabled)(BOOL *);
-
-extern pfnDwmExtendFrameIntoClientArea dwmExtendFrameIntoClientArea;
-extern pfnDwmIsCompositionEnabled dwmIsCompositionEnabled;
-
 /**** database.cpp *********************************************************************/
 
 extern MIR_CORE_EXPORT MDatabaseCommon *g_pCurrDb;
@@ -65,7 +41,7 @@ void UnloadIdleModule(void);
 
 /**** miranda.cpp **********************************************************************/
 
-extern DWORD hMainThreadId;
+extern uint32_t hMainThreadId;
 extern HANDLE hOkToExitEvent, hModulesLoadedEvent;
 extern HANDLE hAccListChanged;
 extern wchar_t mirandabootini[MAX_PATH];
@@ -196,11 +172,16 @@ INT_PTR stubChainRecv(WPARAM, LPARAM);
 
 /**** utils.cpp ************************************************************************/
 
+BOOL IsAeroMode();
+
+#ifdef _WINDOWS
 bool ProcessFileDrop(HDROP hDrop, MCONTACT hContact);
+#endif
+
 void RegisterModule(CMPluginBase*);
 
-void HotkeyToName(wchar_t *buf, int size, BYTE shift, BYTE key);
-WORD GetHotkeyValue(INT_PTR idHotkey);
+void HotkeyToName(wchar_t *buf, int size, uint8_t shift, uint8_t key);
+uint16_t GetHotkeyValue(INT_PTR idHotkey);
 
 HBITMAP ConvertIconToBitmap(HIMAGELIST hIml, int iconId);
 MBaseProto* Proto_GetProto(const char *szProtoName);

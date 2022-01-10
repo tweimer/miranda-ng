@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team,
+Copyright (C) 2012-22 Miranda NG team,
 all portions of this codebase are copyrighted to the people
 listed in contributors.txt.
 
@@ -23,7 +23,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "stdafx.h"
 
-bool getRandomBytes(BYTE *buf, size_t bufLen)
+bool getRandomBytes(uint8_t *buf, size_t bufLen)
 {
 	// try to use Intel hardware randomizer first
 	HCRYPTPROV hProvider = NULL;
@@ -31,7 +31,7 @@ bool getRandomBytes(BYTE *buf, size_t bufLen)
 		 ::CryptAcquireContext(&hProvider, nullptr, MS_STRONG_PROV, PROV_RSA_FULL, CRYPT_VERIFYCONTEXT) ||
 		 ::CryptAcquireContext(&hProvider, nullptr, nullptr, PROV_RSA_FULL, CRYPT_VERIFYCONTEXT))
 	{
-		::CryptGenRandom(hProvider, DWORD(bufLen), buf);
+		::CryptGenRandom(hProvider, uint32_t(bufLen), buf);
 		::CryptReleaseContext(hProvider, 0);
 	}
 	// no luck? try to use Windows NT RTL
@@ -41,12 +41,12 @@ bool getRandomBytes(BYTE *buf, size_t bufLen)
 		if (fnGetRandom == nullptr)
 			return false;
 
-		fnGetRandom(buf, DWORD(bufLen));
+		fnGetRandom(buf, uint32_t(bufLen));
 	}
 	return true;
 }
 
-void slow_hash(const void *buf, size_t bufLen, BYTE* tmpHash)
+void slow_hash(const void *buf, size_t bufLen, uint8_t* tmpHash)
 {
 	mir_sha256_hash(buf, bufLen, tmpHash);
 

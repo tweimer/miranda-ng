@@ -101,13 +101,13 @@ struct CMPlugin : public PLUGIN<CMPlugin>
 typedef struct{
 	int count;
 	WPARAM wpcontact[1024];
-	BYTE times[1024];
+	uint8_t times[1024];
 } MISSEDCONTACTS;
 
 int IsWatchedProtocol(const char* szProto);
 CMStringW ParseString(const wchar_t *pwszFormat, MCONTACT);
-void GetColorsFromDWord(LPCOLORREF First, LPCOLORREF Second, DWORD colDword);
-DWORD GetDWordFromColors(COLORREF First, COLORREF Second);
+void GetColorsFromDWord(LPCOLORREF First, LPCOLORREF Second, uint32_t colDword);
+uint32_t GetDWordFromColors(COLORREF First, COLORREF Second);
 int OptionsInit(WPARAM,LPARAM);
 int UserinfoInit(WPARAM,LPARAM);
 void InitMenuitem(void);
@@ -115,7 +115,7 @@ int UpdateValues(WPARAM, LPARAM);
 int ModeChange(WPARAM,LPARAM);
 int ModeChange_mo(WPARAM,LPARAM);
 int CheckIfOnline(void);
-void ShowHistory(MCONTACT hContact, BYTE isAlert);
+void ShowHistory(MCONTACT hContact, uint8_t isAlert);
 
 void InitFileOutput(void);
 void UninitFileOutput(void);
@@ -126,15 +126,15 @@ struct logthread_info
 {
 	MCONTACT hContact;
 	char   sProtoName[MAXMODULELABELLENGTH];
-	WORD   currStatus;
+	uint16_t   currStatus;
 };
 
-extern DWORD StatusColors15bits[];
+extern uint32_t StatusColors15bits[];
 extern BOOL includeIdle;
 extern HANDLE ehmissed, ehuserinfo, ehmissed_proto;
 extern MWindowList g_pUserInfo;
 extern HGENMENU hmenuitem;
-extern DWORD dwmirver;
+extern uint32_t dwmirver;
 
 extern bool g_bFileActive;
 

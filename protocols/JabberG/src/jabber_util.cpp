@@ -4,7 +4,7 @@ Jabber Protocol Plugin for Miranda NG
 
 Copyright (c) 2002-04  Santithorn Bunchua
 Copyright (c) 2005-12  George Hazan
-Copyright (C) 2012-21 Miranda NG team
+Copyright (C) 2012-22 Miranda NG team
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -166,10 +166,10 @@ char* JabberPrepareJid(const char *jid)
 
 char* JabberSha1(const char *str, JabberShaStrBuf buf)
 {
-	BYTE digest[MIR_SHA1_HASH_SIZE];
+	uint8_t digest[MIR_SHA1_HASH_SIZE];
 	mir_sha1_ctx sha;
 	mir_sha1_init(&sha);
-	mir_sha1_append(&sha, (BYTE*)str, (int)mir_strlen(str));
+	mir_sha1_append(&sha, (uint8_t*)str, (int)mir_strlen(str));
 	mir_sha1_finish(&sha, digest);
 
 	bin2hex(digest, sizeof(digest), buf);
@@ -338,7 +338,7 @@ void CJabberProto::SendVisibleInvisiblePresence(bool invisible)
 		if (hContact == 0)
 			continue;
 
-		WORD apparentMode = getWord(hContact, "ApparentMode", 0);
+		uint16_t apparentMode = getWord(hContact, "ApparentMode", 0);
 		if (invisible && apparentMode == ID_STATUS_OFFLINE)
 			m_ThreadInfo->send(XmlNode("presence") << XATTR("to", item->jid) << XATTR("type", "invisible"));
 		else if (!invisible && apparentMode == ID_STATUS_ONLINE)
@@ -799,8 +799,8 @@ const wchar_t *JabberStrIStr(const wchar_t *str, const wchar_t *substr)
 	wchar_t *str_up = NEWWSTR_ALLOCA(str);
 	wchar_t *substr_up = NEWWSTR_ALLOCA(substr);
 
-	CharUpperBuff(str_up, (DWORD)mir_wstrlen(str_up));
-	CharUpperBuff(substr_up, (DWORD)mir_wstrlen(substr_up));
+	CharUpperBuff(str_up, (uint32_t)mir_wstrlen(str_up));
+	CharUpperBuff(substr_up, (uint32_t)mir_wstrlen(substr_up));
 
 	wchar_t *p = wcsstr(str_up, substr_up);
 	return p ? (str + (p - str_up)) : nullptr;
@@ -947,10 +947,10 @@ void __cdecl CJabberProto::LoadHttpAvatars(void* param)
 					setByte(ai.hContact, "AvatarType", pictureType);
 
 					char buffer[2 * MIR_SHA1_HASH_SIZE + 1];
-					BYTE digest[MIR_SHA1_HASH_SIZE];
+					uint8_t digest[MIR_SHA1_HASH_SIZE];
 					mir_sha1_ctx sha;
 					mir_sha1_init(&sha);
-					mir_sha1_append(&sha, (BYTE*)res->pData, res->dataLength);
+					mir_sha1_append(&sha, (uint8_t*)res->pData, res->dataLength);
 					mir_sha1_finish(&sha, digest);
 					bin2hex(digest, sizeof(digest), buffer);
 

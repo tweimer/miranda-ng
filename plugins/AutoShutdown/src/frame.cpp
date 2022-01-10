@@ -33,7 +33,7 @@ static HANDLE hHookModulesLoaded;
 #define FRAMEELEMENT_BKGRND  2
 #define FRAMEELEMENT_TEXT    3
 
-static COLORREF GetDefaultColor(BYTE id)
+static COLORREF GetDefaultColor(uint8_t id)
 {
 	switch (id) {
 	case FRAMEELEMENT_BAR:
@@ -83,8 +83,8 @@ struct CountdownFrameWndData
 	HBRUSH hbrBackground;
 	COLORREF clrBackground, clrText;
 	HFONT hFont;
-	WORD fTimeFlags;
-	BYTE flags;
+	uint16_t fTimeFlags;
+	uint8_t flags;
 };
 
 /* Flags */
@@ -116,7 +116,7 @@ static LRESULT CALLBACK FrameWndProc(HWND hwndFrame, UINT msg, WPARAM wParam, LP
 		dat = (struct CountdownFrameWndData*)mir_calloc(sizeof(*dat));
 		SetWindowLongPtr(hwndFrame, GWLP_USERDATA, (LONG_PTR)dat);
 		if (dat == nullptr) return FALSE; /* creation failed */
-		dat->fTimeFlags = *(WORD*)((CREATESTRUCT*)lParam)->lpCreateParams;
+		dat->fTimeFlags = *(uint16_t*)((CREATESTRUCT*)lParam)->lpCreateParams;
 		dat->flags = FWPDF_COUNTDOWNINVALID;
 		break;
 
@@ -478,7 +478,7 @@ static LRESULT CALLBACK FrameWndProc(HWND hwndFrame, UINT msg, WPARAM wParam, LP
 
 /************************* Show Frame *********************************/
 
-void ShowCountdownFrame(WORD fTimeFlags)
+void ShowCountdownFrame(uint16_t fTimeFlags)
 {
 	hwndCountdownFrame = CreateWindowEx(WS_EX_CONTROLPARENT | WS_EX_NOPARENTNOTIFY | WS_EX_TRANSPARENT,
 		COUNTDOWNFRAME_CLASS,

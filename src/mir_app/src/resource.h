@@ -407,7 +407,6 @@
 #define IDC_RECYCLE                     1340
 #define IDC_NEWNAME                     1341
 #define IDC_MOVE                        1342
-#define IDC_LEAVE                       1343
 #define IDC_CATEGORYLIST                1366
 #define IDC_LOADICONS                   1369
 #define IDC_STICONSGROUP                1371
@@ -693,7 +692,7 @@
 #define IDI_POPUP                       40088
 #define IDI_NOPOPUP                     40089
 
-#define LEGAL_COPYRIGHT "Copyright © 2000-11 Miranda IM, 2012-21 Miranda NG team. This software is released under the terms of the GNU General Public License.\0"
+#define LEGAL_COPYRIGHT "Copyright © 2000-11 Miranda IM, 2012-22 Miranda NG team. This software is released under the terms of the GNU General Public License.\0"
 
 // Next default values for new objects
 // 

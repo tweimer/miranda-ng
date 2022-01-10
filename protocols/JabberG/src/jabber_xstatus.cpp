@@ -5,7 +5,7 @@ Jabber Protocol Plugin for Miranda NG
 Copyright (c) 2002-04  Santithorn Bunchua
 Copyright (c) 2005-12  George Hazan
 Copyright (c) 2007     Maxim Mluhov
-Copyright (C) 2012-21 Miranda NG team
+Copyright (C) 2012-22 Miranda NG team
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -1305,7 +1305,7 @@ INT_PTR __cdecl CJabberProto::OnGetXStatusEx(WPARAM hContact, LPARAM lParam)
 	// fill status name member
 	if (pData->flags & CSSF_MASK_NAME) {
 		if (pData->flags & CSSF_DEFAULT_NAME) {
-			DWORD dwXStatus = (pData->wParam == nullptr) ? pepMood->m_mode : *pData->wParam;
+			uint32_t dwXStatus = (pData->wParam == nullptr) ? pepMood->m_mode : *pData->wParam;
 			if (dwXStatus >= _countof(g_arrMoods))
 				return 1;
 
@@ -1316,7 +1316,7 @@ INT_PTR __cdecl CJabberProto::OnGetXStatusEx(WPARAM hContact, LPARAM lParam)
 				if (dwStatusTitleSize > STATUS_TITLE_MAX)
 					dwStatusTitleSize = STATUS_TITLE_MAX;
 
-				WideCharToMultiByte(CP_ACP, 0, g_arrMoods[dwXStatus].szName, (DWORD)dwStatusTitleSize, pData->pszName, MAX_PATH, nullptr, nullptr);
+				WideCharToMultiByte(CP_ACP, 0, g_arrMoods[dwXStatus].szName, (uint32_t)dwStatusTitleSize, pData->pszName, MAX_PATH, nullptr, nullptr);
 				pData->pszName[dwStatusTitleSize] = 0;
 			}
 		}

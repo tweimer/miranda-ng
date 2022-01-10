@@ -106,7 +106,7 @@ int ParseValueParam(wchar_t *param, void *&result)
 		case 'w':
 			{
 				size_t len = mir_wstrlen(param);
-				result = (WCHAR *)malloc(len * sizeof(WCHAR));
+				result = (wchar_t *)malloc(len * sizeof(wchar_t));
 				wcsncpy_s((wchar_t*)result, len, param + 1, _TRUNCATE);
 				return VALUE_WIDE;
 			}
@@ -705,10 +705,10 @@ void HandleMessageCommand(PCommand command, TArgument *argv, int argc, PReply re
 							DBEVENTINFO dbei = {};
 							dbei.eventType = EVENTTYPE_MESSAGE;
 							dbei.flags = DBEF_SENT | DBEF_UTF;
-							dbei.pBlob = (PBYTE)szMessage.get();
-							dbei.cbBlob = (DWORD)mir_strlen(szMessage) + 1;
+							dbei.pBlob = (uint8_t*)szMessage.get();
+							dbei.cbBlob = (uint32_t)mir_strlen(szMessage) + 1;
 							dbei.szModule = ack->szModule;
-							dbei.timestamp = (DWORD)time(0);
+							dbei.timestamp = (uint32_t)time(0);
 							db_event_add(ack->hContact, &dbei);
 						}
 						else szReply.AppendFormat(TranslateT("Message to '%s' was marked as sent but the account seems to be offline"), contact);
@@ -813,17 +813,17 @@ void HandleDatabaseCommand(PCommand command, TArgument *argv, int argc, PReply r
 					break;
 
 				case VALUE_WORD:
-					db_set_w(0, module, key, (*(WORD *)value));
+					db_set_w(0, module, key, (*(uint16_t *)value));
 					wrote = Translate("word");
 					break;
 
 				case VALUE_DWORD:
-					db_set_dw(0, module, key, (*(DWORD *)value));
+					db_set_dw(0, module, key, (*(uint32_t *)value));
 					wrote = Translate("dword");
 					break;
 
 				case VALUE_WIDE:
-					db_set_ws(0, module, key, (WCHAR *)value);
+					db_set_ws(0, module, key, (wchar_t *)value);
 					wrote = Translate("wide string");
 					break;
 
@@ -1117,7 +1117,7 @@ int ContactMatchSearch(MCONTACT hContact, wchar_t *contact, wchar_t *id, char *a
 				char protocol[128];
 
 				AccountName2Protocol(_A2T(account), protocol, _countof(protocol));
-				WORD contactStatus = db_get_w(hContact, protocol, "Status", ID_STATUS_OFFLINE);
+				uint16_t contactStatus = db_get_w(hContact, protocol, "Status", ID_STATUS_OFFLINE);
 
 				if (searchStatus != contactStatus) {
 					matches = 0;
@@ -1346,7 +1346,7 @@ void HandleHistoryCommand(PCommand command, TArgument *argv, int argc, PReply re
 
 								DBEVENTINFO dbEvent = {};
 								char message[4096];
-								dbEvent.pBlob = (PBYTE)message;
+								dbEvent.pBlob = (uint8_t*)message;
 
 								DB::ECPTR pCursor(DB::Events(hContact));
 								while (MEVENT hEvent = pCursor.FetchNext()) {

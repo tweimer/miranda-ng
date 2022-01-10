@@ -1,7 +1,7 @@
 /*
 former MetaContacts Plugin for Miranda IM.
 
-Copyright © 2014-21  Miranda NG team
+Copyright © 2014-22 Miranda NG team
 Copyright © 2004-07 Scott Ellis
 Copyright © 2004 Universite Louis PASTEUR, STRASBOURG.
 
@@ -29,10 +29,10 @@ MetaOptions g_metaOptions;
 int Meta_WriteOptions()
 {
 	db_set_b(0, META_PROTO, "LockHandle", g_metaOptions.bLockHandle);
-	db_set_w(0, META_PROTO, "MenuContactLabel", (WORD)g_metaOptions.menu_contact_label);
-	db_set_w(0, META_PROTO, "MenuContactFunction", (WORD)g_metaOptions.menu_function);
-	db_set_w(0, META_PROTO, "CListContactName", (WORD)g_metaOptions.clist_contact_name);
-	db_set_dw(0, META_PROTO, "SetStatusFromOfflineDelay", (DWORD)(g_metaOptions.set_status_from_offline_delay));
+	db_set_w(0, META_PROTO, "MenuContactLabel", (uint16_t)g_metaOptions.menu_contact_label);
+	db_set_w(0, META_PROTO, "MenuContactFunction", (uint16_t)g_metaOptions.menu_function);
+	db_set_w(0, META_PROTO, "CListContactName", (uint16_t)g_metaOptions.clist_contact_name);
+	db_set_dw(0, META_PROTO, "SetStatusFromOfflineDelay", (uint32_t)(g_metaOptions.set_status_from_offline_delay));
 	return 0;
 }
 

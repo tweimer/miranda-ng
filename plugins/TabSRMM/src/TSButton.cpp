@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////////////////
 // Miranda NG: the free IM client for Microsoft* Windows*
 //
-// Copyright (C) 2012-21 Miranda NG team,
+// Copyright (C) 2012-22 Miranda NG team,
 // Copyright (c) 2000-09 Miranda ICQ/IM project,
 // all portions of this codebase are copyrighted to the people
 // listed in contributors.txt.
@@ -439,7 +439,7 @@ static LRESULT CALLBACK TSButtonWndProc(HWND hwndDlg, UINT msg, WPARAM wParam, L
 				bct->stateId = PBS_PRESSED;
 			else if (LOWORD(lParam) > rc.right - 12) {
 				if (GetDlgCtrlID(hwndDlg) == IDOK || bct->stateId != PBS_DISABLED) {
-					WORD w = LOWORD((INT_PTR)bct->arrow);
+					uint16_t w = LOWORD((INT_PTR)bct->arrow);
 					SendMessage(GetParent(hwndDlg), WM_COMMAND, MAKELONG(w, BN_CLICKED), (LPARAM)hwndDlg);
 				}
 			}

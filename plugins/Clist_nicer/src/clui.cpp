@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org),
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org),
 Copyright (c) 2000-03 Miranda ICQ/IM project,
 all portions of this codebase are copyrighted to the people
 listed in contributors.txt.
@@ -56,7 +56,7 @@ extern COLORREF g_CLUISkinnedBkColorRGB;
 extern FRAMEWND *wndFrameCLC;
 extern HPEN g_hPenCLUIFrames;
 
-static BYTE old_cliststate, show_on_first_autosize = FALSE;
+static uint8_t old_cliststate, show_on_first_autosize = FALSE;
 
 RECT cluiPos;
 
@@ -112,9 +112,9 @@ static void Tweak_It(COLORREF clr)
 static void LayoutButtons(HWND hwnd, RECT *rc)
 {
 	RECT rect;
-	BYTE left_offset = cfg::dat.bCLeft - (cfg::dat.dwFlags & CLUI_FRAME_CLISTSUNKEN ? 3 : 0);
-	BYTE right_offset = cfg::dat.bCRight - (cfg::dat.dwFlags & CLUI_FRAME_CLISTSUNKEN ? 3 : 0);
-	BYTE delta = left_offset + right_offset;
+	uint8_t left_offset = cfg::dat.bCLeft - (cfg::dat.dwFlags & CLUI_FRAME_CLISTSUNKEN ? 3 : 0);
+	uint8_t right_offset = cfg::dat.bCRight - (cfg::dat.dwFlags & CLUI_FRAME_CLISTSUNKEN ? 3 : 0);
+	uint8_t delta = left_offset + right_offset;
 	ButtonItem *btnItems = g_ButtonItems;
 
 	if (rc == nullptr)
@@ -203,7 +203,7 @@ static int CreateCLC()
 		CallService(MS_CLIST_FRAMES_SETFRAMEOPTIONS, MAKEWPARAM(FO_TBTIPNAME | FO_UNICODETEXT, hFrameContactTree), (LPARAM)TranslateT("My contacts"));
 
 		// ugly, but working hack. Prevent that annoying little scroll bar from appearing in the "My Contacts" title bar
-		DWORD flags = (DWORD)CallService(MS_CLIST_FRAMES_GETFRAMEOPTIONS, MAKEWPARAM(FO_FLAGS, hFrameContactTree), 0);
+		uint32_t flags = (uint32_t)CallService(MS_CLIST_FRAMES_GETFRAMEOPTIONS, MAKEWPARAM(FO_FLAGS, hFrameContactTree), 0);
 		flags |= F_VISIBLE;
 		CallService(MS_CLIST_FRAMES_SETFRAMEOPTIONS, MAKEWPARAM(FO_FLAGS, hFrameContactTree), flags);
 	}
@@ -301,7 +301,7 @@ void CLN_LoadAllIcons(BOOL mode)
 void ConfigureEventArea()
 {
 	int iCount = GetMenuItemCount(cfg::dat.hMenuNotify);
-	DWORD dwFlags = cfg::dat.dwFlags;
+	uint32_t dwFlags = cfg::dat.dwFlags;
 	int oldstate = cfg::dat.notifyActive;
 	int dwVisible = CallService(MS_CLIST_FRAMES_GETFRAMEOPTIONS, MAKEWPARAM(FO_FLAGS, hNotifyFrame), 0) & F_VISIBLE;
 
@@ -338,7 +338,7 @@ void IcoLibReloadIcons()
 void ConfigureCLUIGeometry(int mode)
 {
 	RECT rcStatus;
-	DWORD clmargins = db_get_dw(0, "CLUI", "clmargins", 0);
+	uint32_t clmargins = db_get_dw(0, "CLUI", "clmargins", 0);
 
 	cfg::dat.bCLeft = LOBYTE(LOWORD(clmargins));
 	cfg::dat.bCRight = HIBYTE(LOWORD(clmargins));
@@ -413,18 +413,18 @@ void SetDBButtonStates(MCONTACT hPassedContact)
 		else {
 			switch (buttonItem->type) {
 			case DBVT_BYTE: {
-					BYTE val = db_get_b(hFinalContact, szModule, szSetting, 0);
+					uint8_t val = db_get_b(hFinalContact, szModule, szSetting, 0);
 					result = (val == buttonItem->bValuePush[0]);
 					break;
 				}
 			case DBVT_WORD: {
-					WORD val = db_get_w(hFinalContact, szModule, szSetting, 0);
-					result = (val == *((WORD *)&buttonItem->bValuePush));
+					uint16_t val = db_get_w(hFinalContact, szModule, szSetting, 0);
+					result = (val == *((uint16_t *)&buttonItem->bValuePush));
 					break;
 				}
 			case DBVT_DWORD:
-				DWORD val = db_get_dw(hFinalContact, szModule, szSetting, 0);
-				result = (val == *((DWORD *)&buttonItem->bValuePush));
+				uint32_t val = db_get_dw(hFinalContact, szModule, szSetting, 0);
+				result = (val == *((uint32_t *)&buttonItem->bValuePush));
 				break;
 			}
 		}
@@ -551,7 +551,7 @@ void ReloadThemedOptions()
 	cfg::dat.bWallpaperMode = db_get_b(0, "CLUI", "UseBkSkin", 1);
 	cfg::dat.bClipBorder = db_get_b(0, "CLUI", "clipborder", 0);
 	cfg::dat.cornerRadius = db_get_b(0, "CLCExt", "CornerRad", 6);
-	cfg::dat.gapBetweenFrames = (BYTE)db_get_dw(0, "CLUIFrames", "GapBetweenFrames", 1);
+	cfg::dat.gapBetweenFrames = (uint8_t)db_get_dw(0, "CLUIFrames", "GapBetweenFrames", 1);
 	cfg::dat.bUseDCMirroring = db_get_b(0, "CLC", "MirrorDC", 0);
 	cfg::dat.bGroupAlign = db_get_b(0, "CLC", "GroupAlign", 0);
 	if (cfg::dat.hBrushColorKey)
@@ -687,7 +687,7 @@ int CustomDrawScrollBars(NMCSBCUSTOMDRAW *nmcsbcd)
 				DrawAlpha(hdcScroll, &nmcsbcd->rect, item->COLOR, alpha, item->COLOR2, item->COLOR2_TRANSPARENT,
 					item->GRADIENT, item->CORNER, item->BORDERSTYLE, item->imageItem);
 			}
-			DWORD dfcFlags = DFCS_FLAT | (nmcsbcd->uState == CDIS_DISABLED ? DFCS_INACTIVE :
+			uint32_t dfcFlags = DFCS_FLAT | (nmcsbcd->uState == CDIS_DISABLED ? DFCS_INACTIVE :
 				(nmcsbcd->uState == CDIS_HOT ? DFCS_HOT : (nmcsbcd->uState == CDIS_SELECTED ? DFCS_PUSHED : 0)));
 
 			if (nmcsbcd->uItem == HTSCROLL_UP)
@@ -824,7 +824,7 @@ LRESULT CALLBACK ContactListWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM l
 			SendMessage(hwnd, WM_SETREDRAW, FALSE, FALSE);
 			{
 				LONG style;
-				BYTE windowStyle = db_get_b(0, "CLUI", "WindowStyle", SETTING_WINDOWSTYLE_TOOLWINDOW);
+				uint8_t windowStyle = db_get_b(0, "CLUI", "WindowStyle", SETTING_WINDOWSTYLE_TOOLWINDOW);
 				ShowWindow(g_clistApi.hwndContactList, SW_HIDE);
 				style = GetWindowLongPtr(g_clistApi.hwndContactList, GWL_EXSTYLE);
 				if (windowStyle != SETTING_WINDOWSTYLE_DEFAULT) {
@@ -1101,7 +1101,7 @@ skipbg:
 			GetWindowRect(hwnd, &rc);
 
 			if (!Docking_IsDocked(0, 0)) {
-				cluiPos.bottom = (DWORD)(rc.bottom - rc.top);
+				cluiPos.bottom = (uint32_t)(rc.bottom - rc.top);
 				cluiPos.left = rc.left;
 				cluiPos.top = rc.top;
 			}
@@ -1111,11 +1111,11 @@ skipbg:
 
 				// if docked, dont remember pos (except for width)
 				if (!Clist_IsDocked()) {
-					g_plugin.setDword("Height", (DWORD)(rc.bottom - rc.top));
-					g_plugin.setDword("x", (DWORD)rc.left);
-					g_plugin.setDword("y", (DWORD)rc.top);
+					g_plugin.setDword("Height", (uint32_t)(rc.bottom - rc.top));
+					g_plugin.setDword("x", (uint32_t)rc.left);
+					g_plugin.setDword("y", (uint32_t)rc.top);
 				}
-				g_plugin.setDword("Width", (DWORD)(rc.right - rc.left));
+				g_plugin.setDword("Width", (uint32_t)(rc.right - rc.left));
 			}
 		}
 		return TRUE;
@@ -1125,7 +1125,7 @@ skipbg:
 		return 0;
 
 	case CLUIINTM_REMOVEFROMTASKBAR: {
-			BYTE windowStyle = db_get_b(0, "CLUI", "WindowStyle", SETTING_WINDOWSTYLE_DEFAULT);
+			uint8_t windowStyle = db_get_b(0, "CLUI", "WindowStyle", SETTING_WINDOWSTYLE_DEFAULT);
 			if (windowStyle == SETTING_WINDOWSTYLE_DEFAULT && g_plugin.getByte("AlwaysHideOnTB", 0))
 				RemoveFromTaskBar(hwnd);
 			return 0;
@@ -1237,7 +1237,7 @@ skipbg:
 	case WM_SHOWWINDOW:
 		{
 			static int noRecurse = 0;
-			DWORD thisTick, startTick;
+			uint32_t thisTick, startTick;
 			int sourceAlpha, destAlpha;
 
 			if (cfg::dat.forceResize && wParam != SW_HIDE) {
@@ -1259,7 +1259,7 @@ skipbg:
 			if (wParam) {
 				sourceAlpha = 0;
 				destAlpha = cfg::dat.isTransparent ? cfg::dat.alpha : 255;
-				SetLayeredWindowAttributes(hwnd, cfg::dat.bFullTransparent ? (COLORREF)cfg::dat.colorkey : RGB(0, 0, 0), (BYTE)sourceAlpha, LWA_ALPHA | (cfg::dat.bFullTransparent ? LWA_COLORKEY : 0));
+				SetLayeredWindowAttributes(hwnd, cfg::dat.bFullTransparent ? (COLORREF)cfg::dat.colorkey : RGB(0, 0, 0), (uint8_t)sourceAlpha, LWA_ALPHA | (cfg::dat.bFullTransparent ? LWA_COLORKEY : 0));
 				noRecurse = 1;
 				ShowWindow(hwnd, SW_SHOW);
 				RedrawWindow(hwnd, nullptr, nullptr, RDW_INVALIDATE | RDW_UPDATENOW | RDW_ALLCHILDREN);
@@ -1272,17 +1272,17 @@ skipbg:
 			for (startTick = GetTickCount();;) {
 				thisTick = GetTickCount();
 				if (thisTick >= startTick + 200) {
-					SetLayeredWindowAttributes(hwnd, cfg::dat.bFullTransparent ? cfg::dat.colorkey : RGB(0, 0, 0), (BYTE)destAlpha, LWA_ALPHA | (cfg::dat.bFullTransparent ? LWA_COLORKEY : 0));
+					SetLayeredWindowAttributes(hwnd, cfg::dat.bFullTransparent ? cfg::dat.colorkey : RGB(0, 0, 0), (uint8_t)destAlpha, LWA_ALPHA | (cfg::dat.bFullTransparent ? LWA_COLORKEY : 0));
 					g_fading_active = 0;
 					return DefWindowProc(hwnd, msg, wParam, lParam);
 				}
-				SetLayeredWindowAttributes(hwnd, cfg::dat.bFullTransparent ? cfg::dat.colorkey : RGB(0, 0, 0), (BYTE)(sourceAlpha + (destAlpha - sourceAlpha) * (int)(thisTick - startTick) / 200), LWA_ALPHA | (cfg::dat.bFullTransparent ? LWA_COLORKEY : 0));
+				SetLayeredWindowAttributes(hwnd, cfg::dat.bFullTransparent ? cfg::dat.colorkey : RGB(0, 0, 0), (uint8_t)(sourceAlpha + (destAlpha - sourceAlpha) * (int)(thisTick - startTick) / 200), LWA_ALPHA | (cfg::dat.bFullTransparent ? LWA_COLORKEY : 0));
 			}
 		}
 
 	case WM_SYSCOMMAND:
 		{
-			BYTE bWindowStyle = db_get_b(0, "CLUI", "WindowStyle", SETTING_WINDOWSTYLE_DEFAULT);
+			uint8_t bWindowStyle = db_get_b(0, "CLUI", "WindowStyle", SETTING_WINDOWSTYLE_DEFAULT);
 			if (SETTING_WINDOWSTYLE_DEFAULT == bWindowStyle) {
 				if (wParam == SC_RESTORE) {
 					CallWindowProc(DefWindowProc, hwnd, msg, wParam, lParam);
@@ -1314,7 +1314,7 @@ skipbg:
 
 	case WM_COMMAND:
 		{
-			DWORD dwOldFlags = cfg::dat.dwFlags;
+			uint32_t dwOldFlags = cfg::dat.dwFlags;
 			if (HIWORD(wParam) == BN_CLICKED && lParam != 0) {
 				if (LOWORD(wParam) == IDC_TBFIRSTUID - 1)
 					break;
@@ -1333,7 +1333,7 @@ skipbg:
 							hContact = contact->hContact;
 					}
 					while (item) {
-						if (item->uId == (DWORD)LOWORD(wParam)) {
+						if (item->uId == (uint32_t)LOWORD(wParam)) {
 							int contactOK = ServiceParamsOK(item, &wwParam, &llParam, hContact);
 
 							if (item->dwFlags & BUTTON_ISSERVICE) {
@@ -1352,7 +1352,7 @@ skipbg:
 								}
 							}
 							else if (item->dwFlags & BUTTON_ISDBACTION) {
-								BYTE *pValue;
+								uint8_t *pValue;
 								char *szModule = item->szModule;
 								char *szSetting = item->szSetting;
 								MCONTACT finalhContact = 0;
@@ -1387,10 +1387,10 @@ skipbg:
 											db_set_b(finalhContact, szModule, szSetting, pValue[0]);
 											break;
 										case DBVT_WORD:
-											db_set_w(finalhContact, szModule, szSetting, *((WORD *)&pValue[0]));
+											db_set_w(finalhContact, szModule, szSetting, *((uint16_t *)&pValue[0]));
 											break;
 										case DBVT_DWORD:
-											db_set_dw(finalhContact, szModule, szSetting, *((DWORD *)&pValue[0]));
+											db_set_dw(finalhContact, szModule, szSetting, *((uint32_t *)&pValue[0]));
 											break;
 										case DBVT_ASCIIZ:
 											db_set_s(finalhContact, szModule, szSetting, (char *)pValue);
@@ -1433,8 +1433,8 @@ skipbg:
 				case IDC_TBSOUND:
 				case IDC_STBSOUND:
 					cfg::dat.soundsOff = !cfg::dat.soundsOff;
-					db_set_b(0, "CLUI", "NoSounds", (BYTE)cfg::dat.soundsOff);
-					db_set_b(0, "Skin", "UseSound", (BYTE)(cfg::dat.soundsOff ? 0 : 1));
+					db_set_b(0, "CLUI", "NoSounds", (uint8_t)cfg::dat.soundsOff);
+					db_set_b(0, "Skin", "UseSound", (uint8_t)(cfg::dat.soundsOff ? 0 : 1));
 					return 0;
 
 				case IDC_TBSELECTVIEWMODE:
@@ -1553,7 +1553,7 @@ buttons_done:
 			case NM_CLICK:
 				{
 					NMCLISTCONTROL *nm = (NMCLISTCONTROL *)lParam;
-					DWORD hitFlags;
+					uint32_t hitFlags;
 					SendMessage(g_clistApi.hwndContactTree, CLM_HITTEST, (WPARAM)&hitFlags, MAKELPARAM(nm->pt.x, nm->pt.y));
 					if ((hitFlags & (CLCHT_NOWHERE | CLCHT_INLEFTMARGIN | CLCHT_BELOWITEMS)) == 0)
 						break;
@@ -1634,7 +1634,7 @@ buttons_done:
 
 				int nParts = SendMessage(g_clistApi.hwndStatus, SB_GETPARTS, 0, 0);
 				SIZE textSize;
-				BYTE showOpts = db_get_b(0, "CLUI", "SBarShow", 1);
+				uint8_t showOpts = db_get_b(0, "CLUI", "SBarShow", 1);
 
 				SetBkMode(dis->hDC, TRANSPARENT);
 				int x = dis->rcItem.left;

@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org),
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org),
 Copyright (c) 2000-12 Miranda IM project,
 all portions of this codebase are copyrighted to the people
 listed in contributors.txt.
@@ -27,7 +27,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 struct NetlibTempSettings
 {
-	DWORD flags;
+	uint32_t flags;
 	char *szSettingsModule;
 	NETLIBUSERSETTINGS settings;
 };
@@ -68,7 +68,7 @@ static const UINT specifyPortsControls[] = {
 	IDC_STATIC52};
 
 static const wchar_t* szProxyTypes[] = {LPGENW("<mixed>"), L"SOCKS4", L"SOCKS5", L"HTTP", L"HTTPS", L"Internet Explorer"};
-static const WORD oftenProxyPorts[] = {1080, 1080, 1080, 8080, 8080, 8080};
+static const uint16_t oftenProxyPorts[] = {1080, 1080, 1080, 8080, 8080, 8080};
 
 #define M_REFRESHALL      (WM_USER+100)
 #define M_REFRESHENABLING (WM_USER+101)
@@ -108,7 +108,7 @@ static void CombineSettingsStrings(char **dest, char **source)
 	if (*dest != nullptr && (*source == nullptr || mir_strcmpi(*dest, *source))) { mir_free(*dest); *dest = nullptr; }
 }
 
-static void CombineSettingsStructs(NETLIBUSERSETTINGS *dest, DWORD *destFlags, NETLIBUSERSETTINGS *source, DWORD sourceFlags)
+static void CombineSettingsStructs(NETLIBUSERSETTINGS *dest, uint32_t *destFlags, NETLIBUSERSETTINGS *source, uint32_t sourceFlags)
 {
 	if (sourceFlags & NUF_OUTGOING) {
 		if (*destFlags & NUF_OUTGOING) {
@@ -167,9 +167,9 @@ static void ChangeSettingIntByCheckbox(HWND hwndDlg, UINT ctrlId, int iUser, int
 	if (iUser == -1) {
 		for (auto &p : tempSettings)
 			if (!(p->flags & NUF_NOOPTIONS))
-				*(int*)(((PBYTE)&p->settings) + memberOffset) = newValue;
+				*(int*)(((uint8_t*)&p->settings) + memberOffset) = newValue;
 	}
-	else *(int*)(((PBYTE)&tempSettings[iUser]->settings) + memberOffset) = newValue;
+	else *(int*)(((uint8_t*)&tempSettings[iUser]->settings) + memberOffset) = newValue;
 	SendMessage(hwndDlg, M_REFRESHENABLING, 0, 0);
 }
 
@@ -181,7 +181,7 @@ static void ChangeSettingStringByEdit(HWND hwndDlg, UINT ctrlId, int iUser, int 
 	if (iUser == -1) {
 		for (auto &p : tempSettings) {
 			if (!(p->flags & NUF_NOOPTIONS)) {
-				char **ppszNew = (char**)(((PBYTE)&p->settings) + memberOffset);
+				char **ppszNew = (char**)(((uint8_t*)&p->settings) + memberOffset);
 				mir_free(*ppszNew);
 				*ppszNew = mir_strdup(szNewValue);
 			}
@@ -189,30 +189,30 @@ static void ChangeSettingStringByEdit(HWND hwndDlg, UINT ctrlId, int iUser, int 
 		mir_free(szNewValue);
 	}
 	else {
-		char **ppszNew = (char**)(((PBYTE)&tempSettings[iUser]->settings) + memberOffset);
+		char **ppszNew = (char**)(((uint8_t*)&tempSettings[iUser]->settings) + memberOffset);
 		mir_free(*ppszNew);
 		*ppszNew = szNewValue;
 	}
 }
 
-static void WriteSettingsStructToDb(const char *szSettingsModule, NETLIBUSERSETTINGS *settings, DWORD flags)
+static void WriteSettingsStructToDb(const char *szSettingsModule, NETLIBUSERSETTINGS *settings, uint32_t flags)
 {
 	if (flags & NUF_OUTGOING) {
-		db_set_b(0, szSettingsModule, "NLValidateSSL", (BYTE)settings->validateSSL);
-		db_set_b(0, szSettingsModule, "NLUseProxy", (BYTE)settings->useProxy);
-		db_set_b(0, szSettingsModule, "NLProxyType", (BYTE)settings->proxyType);
+		db_set_b(0, szSettingsModule, "NLValidateSSL", (uint8_t)settings->validateSSL);
+		db_set_b(0, szSettingsModule, "NLUseProxy", (uint8_t)settings->useProxy);
+		db_set_b(0, szSettingsModule, "NLProxyType", (uint8_t)settings->proxyType);
 		db_set_s(0, szSettingsModule, "NLProxyServer", settings->szProxyServer ? settings->szProxyServer : "");
-		db_set_w(0, szSettingsModule, "NLProxyPort", (WORD)settings->wProxyPort);
-		db_set_b(0, szSettingsModule, "NLUseProxyAuth", (BYTE)settings->useProxyAuth);
+		db_set_w(0, szSettingsModule, "NLProxyPort", (uint16_t)settings->wProxyPort);
+		db_set_b(0, szSettingsModule, "NLUseProxyAuth", (uint8_t)settings->useProxyAuth);
 		db_set_s(0, szSettingsModule, "NLProxyAuthUser", settings->szProxyAuthUser ? settings->szProxyAuthUser : "");
 		db_set_s(0, szSettingsModule, "NLProxyAuthPassword", settings->szProxyAuthPassword ? settings->szProxyAuthPassword : "");
-		db_set_b(0, szSettingsModule, "NLDnsThroughProxy", (BYTE)settings->dnsThroughProxy);
-		db_set_b(0, szSettingsModule, "NLSpecifyOutgoingPorts", (BYTE)settings->specifyOutgoingPorts);
+		db_set_b(0, szSettingsModule, "NLDnsThroughProxy", (uint8_t)settings->dnsThroughProxy);
+		db_set_b(0, szSettingsModule, "NLSpecifyOutgoingPorts", (uint8_t)settings->specifyOutgoingPorts);
 		db_set_s(0, szSettingsModule, "NLOutgoingPorts", settings->szOutgoingPorts ? settings->szOutgoingPorts : "");
 	}
 	if (flags & NUF_INCOMING) {
-		db_set_b(0, szSettingsModule, "NLEnableUPnP", (BYTE)settings->enableUPnP);
-		db_set_b(0, szSettingsModule, "NLSpecifyIncomingPorts", (BYTE)settings->specifyIncomingPorts);
+		db_set_b(0, szSettingsModule, "NLEnableUPnP", (uint8_t)settings->enableUPnP);
+		db_set_b(0, szSettingsModule, "NLSpecifyIncomingPorts", (uint8_t)settings->specifyIncomingPorts);
 		db_set_s(0, szSettingsModule, "NLIncomingPorts", settings->szIncomingPorts ? settings->szIncomingPorts : "");
 	}
 }
@@ -234,7 +234,7 @@ void NetlibSaveUserSettingsStruct(const char *szSettingsModule, const NETLIBUSER
 	NETLIBUSERSETTINGS combinedSettings = { 0 };
 	combinedSettings.cbSize = sizeof(combinedSettings);
 
-	DWORD flags = 0;
+	uint32_t flags = 0;
 	for (auto &p : netlibUser) {
 		if (p->user.flags & NUF_NOOPTIONS)
 			continue;
@@ -285,7 +285,7 @@ static INT_PTR CALLBACK DlgProcNetlibOpts(HWND hwndDlg, UINT msg, WPARAM wParam,
 		iUser = SendDlgItemMessage(hwndDlg, IDC_NETLIBUSERS, CB_GETITEMDATA, SendDlgItemMessage(hwndDlg, IDC_NETLIBUSERS, CB_GETCURSEL, 0, 0), 0);
 		{
 			NETLIBUSERSETTINGS settings = { 0 };
-			DWORD flags = 0;
+			uint32_t flags = 0;
 
 			if (iUser == -1) {
 				settings.cbSize = sizeof(settings);

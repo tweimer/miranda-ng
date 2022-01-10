@@ -1,7 +1,7 @@
 // -----------------------------------------------------------------------------
 // ICQ plugin for Miranda NG
 // -----------------------------------------------------------------------------
-// Copyright © 2018-21 Miranda NG team
+// Copyright © 2018-22 Miranda NG team
 // 
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -320,7 +320,7 @@ public:
 	bool OnInitDialog() override
 	{
 		if (cmbStatus1.GetHwnd()) {
-			for (DWORD iStatus = ID_STATUS_OFFLINE; iStatus <= ID_STATUS_MAX; iStatus++) {
+			for (uint32_t iStatus = ID_STATUS_OFFLINE; iStatus <= ID_STATUS_MAX; iStatus++) {
 				int idx = cmbStatus1.AddString(Clist_GetStatusModeDescription(iStatus, 0));
 				cmbStatus1.SetItemData(idx, iStatus);
 				if (iStatus == m_proto->m_iStatus1)

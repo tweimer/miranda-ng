@@ -294,7 +294,7 @@ void CALLBACK TimerProc(HWND, UINT, UINT_PTR, DWORD)
 	}
 }
 
-DWORD context_point;
+uint32_t context_point;
 bool context_point_valid = false;
 LRESULT CALLBACK FrameWindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
@@ -409,7 +409,7 @@ LRESULT CALLBACK FrameWindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPar
 			ScreenToClient(list_hwnd, &pt);
 
 			PINGADDRESS itemData;
-			DWORD item = SendMessage(list_hwnd, LB_ITEMFROMPOINT, 0, MAKELPARAM(pt.x, pt.y));
+			uint32_t item = SendMessage(list_hwnd, LB_ITEMFROMPOINT, 0, MAKELPARAM(pt.x, pt.y));
 			bool found = false;
 			if (HIWORD(item) == 0) {
 				int count = LOWORD(item);
@@ -467,7 +467,7 @@ LRESULT CALLBACK FrameWindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPar
 				SetWindowLongPtr(hwnd, GWL_EXSTYLE, GetWindowLongPtr(hwnd, GWL_EXSTYLE) | WS_EX_LAYERED);
 				#endif
 				#ifdef LWA_ALPHA
-				SetLayeredWindowAttributes(hwnd, RGB(0, 0, 0), (BYTE)db_get_b(0, "CList", "Alpha", SETTING_ALPHA_DEFAULT), LWA_ALPHA);
+				SetLayeredWindowAttributes(hwnd, RGB(0, 0, 0), (uint8_t)db_get_b(0, "CList", "Alpha", SETTING_ALPHA_DEFAULT), LWA_ALPHA);
 				#endif
 			}
 		}
@@ -490,7 +490,7 @@ LRESULT CALLBACK FrameWindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPar
 			if (db_get_b(0, "CList", "Transparent", SETTING_TRANSPARENT_DEFAULT)) {
 				KillTimer(hwnd, TM_AUTOALPHA);
 				#ifdef LWA_ALPHA
-				SetLayeredWindowAttributes(hwnd, RGB(0, 0, 0), (BYTE)db_get_b(0, "CList", "Alpha", SETTING_ALPHA_DEFAULT), LWA_ALPHA);
+				SetLayeredWindowAttributes(hwnd, RGB(0, 0, 0), (uint8_t)db_get_b(0, "CList", "Alpha", SETTING_ALPHA_DEFAULT), LWA_ALPHA);
 				#endif
 				transparentFocus = 1;
 			}
@@ -501,7 +501,7 @@ LRESULT CALLBACK FrameWindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPar
 		if (db_get_b(0, "CList", "Transparent", SETTING_TRANSPARENT_DEFAULT)) {
 			if (!transparentFocus && GetForegroundWindow() != hwnd) {
 				#ifdef LWA_ALPHA
-				SetLayeredWindowAttributes(hwnd, RGB(0, 0, 0), (BYTE)db_get_b(0, "CList", "Alpha", SETTING_ALPHA_DEFAULT), LWA_ALPHA);
+				SetLayeredWindowAttributes(hwnd, RGB(0, 0, 0), (uint8_t)db_get_b(0, "CList", "Alpha", SETTING_ALPHA_DEFAULT), LWA_ALPHA);
 				#endif
 				transparentFocus = 1;
 				SetTimer(hwnd, TM_AUTOALPHA, 250, nullptr);
@@ -528,8 +528,8 @@ LRESULT CALLBACK FrameWindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPar
 			if (inwnd != transparentFocus) { //change
 				transparentFocus = inwnd;
 				#ifdef LWA_ALPHA
-				if (transparentFocus) SetLayeredWindowAttributes(hwnd, RGB(0, 0, 0), (BYTE)db_get_b(0, "CList", "Alpha", SETTING_ALPHA_DEFAULT), LWA_ALPHA);
-				else SetLayeredWindowAttributes(hwnd, RGB(0, 0, 0), (BYTE)db_get_b(0, "CList", "AutoAlpha", SETTING_AUTOALPHA_DEFAULT), LWA_ALPHA);
+				if (transparentFocus) SetLayeredWindowAttributes(hwnd, RGB(0, 0, 0), (uint8_t)db_get_b(0, "CList", "Alpha", SETTING_ALPHA_DEFAULT), LWA_ALPHA);
+				else SetLayeredWindowAttributes(hwnd, RGB(0, 0, 0), (uint8_t)db_get_b(0, "CList", "AutoAlpha", SETTING_AUTOALPHA_DEFAULT), LWA_ALPHA);
 				#endif
 			}
 			if (!transparentFocus) KillTimer(hwnd, TM_AUTOALPHA);
@@ -546,11 +546,11 @@ LRESULT CALLBACK FrameWindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPar
 				break;
 			#ifdef WS_EX_LAYERED
 			if (GetWindowLongPtr(hwnd, GWL_EXSTYLE)&WS_EX_LAYERED) {
-				DWORD thisTick, startTick;
+				uint32_t thisTick, startTick;
 				int sourceAlpha, destAlpha;
 				if (wParam) {
 					sourceAlpha = 0;
-					destAlpha = (BYTE)db_get_b(0, "CList", "Alpha", SETTING_AUTOALPHA_DEFAULT);
+					destAlpha = (uint8_t)db_get_b(0, "CList", "Alpha", SETTING_AUTOALPHA_DEFAULT);
 					#ifdef LWA_ALPHA
 					SetLayeredWindowAttributes(hwnd, RGB(0, 0, 0), 0, LWA_ALPHA);
 					#endif
@@ -559,18 +559,18 @@ LRESULT CALLBACK FrameWindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPar
 					noRecurse = 0;
 				}
 				else {
-					sourceAlpha = (BYTE)db_get_b(0, "CList", "Alpha", SETTING_AUTOALPHA_DEFAULT);
+					sourceAlpha = (uint8_t)db_get_b(0, "CList", "Alpha", SETTING_AUTOALPHA_DEFAULT);
 					destAlpha = 0;
 				}
 				for (startTick = GetTickCount();;) {
 					thisTick = GetTickCount();
 					if (thisTick >= startTick + 200) break;
 					#ifdef LWA_ALPHA
-					SetLayeredWindowAttributes(hwnd, RGB(0, 0, 0), (BYTE)(sourceAlpha + (destAlpha - sourceAlpha)*(int)(thisTick - startTick) / 200), LWA_ALPHA);
+					SetLayeredWindowAttributes(hwnd, RGB(0, 0, 0), (uint8_t)(sourceAlpha + (destAlpha - sourceAlpha)*(int)(thisTick - startTick) / 200), LWA_ALPHA);
 					#endif
 				}
 				#ifdef LWA_ALPHA
-				SetLayeredWindowAttributes(hwnd, RGB(0, 0, 0), (BYTE)destAlpha, LWA_ALPHA);
+				SetLayeredWindowAttributes(hwnd, RGB(0, 0, 0), (uint8_t)destAlpha, LWA_ALPHA);
 				#endif
 			}
 			else AnimateWindow(hwnd, 200, AW_BLEND | (wParam ? 0 : AW_HIDE));
@@ -582,9 +582,9 @@ LRESULT CALLBACK FrameWindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPar
 		switch (LOWORD(wParam)) {
 		case ID_MENU_GRAPH:
 			if (context_point_valid) {
-				WORD x = LOWORD(context_point), y = HIWORD(context_point);
+				uint16_t x = LOWORD(context_point), y = HIWORD(context_point);
 				GetWindowRect(list_hwnd, &r);
-				DWORD item = SendMessage(list_hwnd, LB_ITEMFROMPOINT, 0, MAKELPARAM(x - r.left, y - r.top));
+				uint32_t item = SendMessage(list_hwnd, LB_ITEMFROMPOINT, 0, MAKELPARAM(x - r.left, y - r.top));
 				if (HIWORD(item) == 0) {
 					int count = LOWORD(item);
 					bool found = false;
@@ -604,9 +604,9 @@ LRESULT CALLBACK FrameWindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPar
 
 		case ID_MENU_TOGGLE:
 			if (context_point_valid) {
-				WORD x = LOWORD(context_point), y = HIWORD(context_point);
+				uint16_t x = LOWORD(context_point), y = HIWORD(context_point);
 				GetWindowRect(list_hwnd, &r);
-				DWORD item = SendMessage(list_hwnd, LB_ITEMFROMPOINT, 0, MAKELPARAM(x - r.left, y - r.top));
+				uint32_t item = SendMessage(list_hwnd, LB_ITEMFROMPOINT, 0, MAKELPARAM(x - r.left, y - r.top));
 				if (HIWORD(item) == 0) {
 					int count = LOWORD(item);
 
@@ -621,9 +621,9 @@ LRESULT CALLBACK FrameWindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPar
 
 		case ID_MENU_EDIT:
 			if (context_point_valid) {
-				WORD x = LOWORD(context_point), y = HIWORD(context_point);
+				uint16_t x = LOWORD(context_point), y = HIWORD(context_point);
 				GetWindowRect(list_hwnd, &r);
-				DWORD item = SendMessage(list_hwnd, LB_ITEMFROMPOINT, 0, MAKELPARAM(x - r.left, y - r.top));
+				uint32_t item = SendMessage(list_hwnd, LB_ITEMFROMPOINT, 0, MAKELPARAM(x - r.left, y - r.top));
 				PINGADDRESS *temp = nullptr;
 				if (HIWORD(item) == 0) {
 					int count = LOWORD(item);
@@ -671,7 +671,7 @@ LRESULT CALLBACK FrameWindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPar
 
 					PINGADDRESS *pItemData = (PINGADDRESS *)lp;
 					if (pItemData) {
-						DWORD item_id = pItemData->item_id;
+						uint32_t item_id = pItemData->item_id;
 
 						int wake = CallService(MODULENAME "/DblClick", (WPARAM)item_id, 0);
 						InvalidateRect(list_hwnd, nullptr, FALSE);

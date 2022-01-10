@@ -95,7 +95,7 @@ void UnixTimeToFileTime(time_t t, LPFILETIME pft)
 	LONGLONG ll;
 
 	ll = Int32x32To64(t, 10000000) + 116444736000000000;
-	pft->dwLowDateTime = (DWORD)ll;
+	pft->dwLowDateTime = (uint32_t)ll;
 	pft->dwHighDateTime = ll >> 32;
 }
 
@@ -135,7 +135,7 @@ SearchResult SearchHistory(MCONTACT contact, MEVENT hFirstEvent, void *searchDat
 			buffer = (wchar_t *)realloc(buffer, newSize);
 			oldSize = newSize;
 		}
-		dbEvent.pBlob = (PBYTE)buffer;
+		dbEvent.pBlob = (uint8_t*)buffer;
 		dbEvent.cbBlob = newSize;
 		if (db_event_get(hEvent, &dbEvent) == 0) { //successful
 			switch (type) {

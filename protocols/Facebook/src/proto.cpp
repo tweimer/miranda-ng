@@ -1,7 +1,7 @@
 /*
 
 Facebook plugin for Miranda NG
-Copyright © 2019-21 Miranda NG team
+Copyright © 2019-22 Miranda NG team
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -69,7 +69,7 @@ FacebookProto::FacebookProto(const char *proto_name, const wchar_t *username) :
 	m_szClientID = getMStringA(DBKEY_CLIENT_ID);
 	if (m_szClientID.IsEmpty()) {
 		for (int i = 0; i < 20; i++) {
-			DWORD dwRandon;
+			uint32_t dwRandon;
 			Utils_GetRandom(&dwRandon, sizeof(dwRandon));
 			int c = dwRandon % 62;
 			if (c >= 0 && c < 26)

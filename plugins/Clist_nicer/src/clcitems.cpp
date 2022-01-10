@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org),
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org),
 Copyright (c) 2000-03 Miranda ICQ/IM project,
 all portions of this codebase are copyrighted to the people
 listed in contributors.txt.
@@ -35,7 +35,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 static void TZ_LoadTimeZone(MCONTACT hContact, struct TExtraCache *c)
 {
-	DWORD flags = 0;
+	uint32_t flags = 0;
 	if (cfg::dat.bShowLocalTimeSelective)
 		flags |= TZF_DIFONLY;
 	c->hTimeZone = TimeZone_CreateByContact(hContact, nullptr, flags);
@@ -59,7 +59,7 @@ ClcContact* AddInfoItemToGroup(ClcGroup *group, int flags, const wchar_t *pszTex
 	return p;
 }
 
-ClcGroup *AddGroup(HWND hwnd, struct ClcData *dat, const wchar_t *szName, DWORD flags, int groupId, int calcTotalMembers)
+ClcGroup *AddGroup(HWND hwnd, struct ClcData *dat, const wchar_t *szName, uint32_t flags, int groupId, int calcTotalMembers)
 {
 	ClcGroup *p = coreCli.pfnAddGroup(hwnd, dat, szName, flags, groupId, calcTotalMembers);
 	if (p && p->parent)
@@ -70,7 +70,7 @@ ClcGroup *AddGroup(HWND hwnd, struct ClcData *dat, const wchar_t *szName, DWORD 
 
 void LoadAvatarForContact(ClcContact *p)
 {
-	DWORD dwFlags;
+	uint32_t dwFlags;
 
 	if (p->pExtra)
 		dwFlags = p->pExtra->dwDFlags;
@@ -152,7 +152,7 @@ void RebuildEntireList(HWND hwnd, struct ClcData *dat)
  * get it and store it properly formatted in the extra data cache
  */
 
-BYTE GetCachedStatusMsg(TExtraCache *p, char *szProto)
+uint8_t GetCachedStatusMsg(TExtraCache *p, char *szProto)
 {
 	if (p == nullptr)
 		return 0;
@@ -226,7 +226,7 @@ BYTE GetCachedStatusMsg(TExtraCache *p, char *szProto)
 		db_free(&dbv);
 
 	if (p->bStatusMsgValid != STATUSMSG_NOTFOUND) {
-		WORD infoTypeC2[12];
+		uint16_t infoTypeC2[12];
 		memset(infoTypeC2, 0, sizeof(infoTypeC2));
 		int iLen = min((int)mir_wstrlen(p->statusMsg), 10);
 		GetStringTypeW(CT_CTYPE2, p->statusMsg, iLen, infoTypeC2);
@@ -262,7 +262,7 @@ void ReloadExtraInfo(MCONTACT hContact)
 
 void RTL_DetectAndSet(ClcContact *contact, MCONTACT hContact)
 {
-	WORD infoTypeC2[12];
+	uint16_t infoTypeC2[12];
 	wchar_t *szText;
 	TExtraCache *p;
 
@@ -291,7 +291,7 @@ void RTL_DetectAndSet(ClcContact *contact, MCONTACT hContact)
 
 void RTL_DetectGroupName(ClcContact *group)
 {
-	WORD infoTypeC2[12];
+	uint16_t infoTypeC2[12];
 
 	group->isRtl = 0;
 
@@ -346,14 +346,14 @@ void LoadSkinItemToCache(TExtraCache *cEntry)
 		cEntry->status_item->TEXTCOLOR = db_get_dw(hContact, "EXTBK", "TEXT", RGB(20, 20, 20));
 		cEntry->status_item->COLOR = db_get_dw(hContact, "EXTBK", "COLOR1", RGB(224, 224, 224));
 		cEntry->status_item->COLOR2 = db_get_dw(hContact, "EXTBK", "COLOR2", RGB(224, 224, 224));
-		cEntry->status_item->ALPHA = (BYTE)db_get_b(hContact, "EXTBK", "ALPHA", 100);
+		cEntry->status_item->ALPHA = (uint8_t)db_get_b(hContact, "EXTBK", "ALPHA", 100);
 
-		cEntry->status_item->MARGIN_LEFT = (DWORD)db_get_b(hContact, "EXTBK", "LEFT", 0);
-		cEntry->status_item->MARGIN_RIGHT = (DWORD)db_get_b(hContact, "EXTBK", "RIGHT", 0);
-		cEntry->status_item->MARGIN_TOP = (DWORD)db_get_b(hContact, "EXTBK", "TOP", 0);
-		cEntry->status_item->MARGIN_BOTTOM = (DWORD)db_get_b(hContact, "EXTBK", "BOTTOM", 0);
+		cEntry->status_item->MARGIN_LEFT = (uint32_t)db_get_b(hContact, "EXTBK", "LEFT", 0);
+		cEntry->status_item->MARGIN_RIGHT = (uint32_t)db_get_b(hContact, "EXTBK", "RIGHT", 0);
+		cEntry->status_item->MARGIN_TOP = (uint32_t)db_get_b(hContact, "EXTBK", "TOP", 0);
+		cEntry->status_item->MARGIN_BOTTOM = (uint32_t)db_get_b(hContact, "EXTBK", "BOTTOM", 0);
 
-		cEntry->status_item->COLOR2_TRANSPARENT = (BYTE)db_get_b(hContact, "EXTBK", "TRANS", 1);
+		cEntry->status_item->COLOR2_TRANSPARENT = (uint8_t)db_get_b(hContact, "EXTBK", "TRANS", 1);
 		cEntry->status_item->BORDERSTYLE = db_get_dw(hContact, "EXTBK", "BDR", 0);
 
 		cEntry->status_item->CORNER = db_get_b(hContact, "EXTBK", "CORNER", 0);
@@ -386,10 +386,10 @@ int CLVM_GetContactHiddenStatus(MCONTACT hContact, char *szProto, struct ClcData
 		szProto = Proto_GetBaseAccountName(hContact);
 	// check stickies first (priority), only if we really have stickies defined (CLVM_STICKY_CONTACTS is set).
 	if (cfg::dat.bFilterEffective & CLVM_STICKY_CONTACTS) {
-		DWORD dwLocalMask = db_get_dw(hContact, "CLVM", cfg::dat.current_viewmode, 0);
+		uint32_t dwLocalMask = db_get_dw(hContact, "CLVM", cfg::dat.current_viewmode, 0);
 		if (dwLocalMask != 0) {
 			if (cfg::dat.bFilterEffective & CLVM_FILTER_STICKYSTATUS) {
-				WORD wStatus = db_get_w(hContact, szProto, "Status", ID_STATUS_OFFLINE);
+				uint16_t wStatus = db_get_w(hContact, szProto, "Status", ID_STATUS_OFFLINE);
 				return !((1 << (wStatus - ID_STATUS_OFFLINE)) & HIWORD(dwLocalMask));
 			}
 			return 0;
@@ -419,14 +419,14 @@ int CLVM_GetContactHiddenStatus(MCONTACT hContact, char *szProto, struct ClcData
 	}
 
 	if (cfg::dat.bFilterEffective & CLVM_FILTER_STATUS) {
-		WORD wStatus = db_get_w(hContact, szProto, "Status", ID_STATUS_OFFLINE);
+		uint16_t wStatus = db_get_w(hContact, szProto, "Status", ID_STATUS_OFFLINE);
 		filterResult = (cfg::dat.filterFlags & CLVM_GROUPSTATUS_OP) ? ((filterResult | ((1 << (wStatus - ID_STATUS_OFFLINE)) & cfg::dat.statusMaskFilter ? 1 : 0))) : (filterResult & ((1 << (wStatus - ID_STATUS_OFFLINE)) & cfg::dat.statusMaskFilter ? 1 : 0));
 	}
 
 	if (cfg::dat.bFilterEffective & CLVM_FILTER_LASTMSG) {
 		TExtraCache *p = cfg::getCache(hContact, szProto);
 		if (p) {
-			DWORD now = cfg::dat.t_now;
+			uint32_t now = cfg::dat.t_now;
 			now -= cfg::dat.lastMsgFilter;
 			if (cfg::dat.bFilterEffective & CLVM_FILTER_LASTMSG_OLDERTHAN)
 				filterResult = filterResult & (p->dwLastMsgTime < now);

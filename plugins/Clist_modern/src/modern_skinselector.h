@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org),
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org),
 Copyright (c) 2000-08 Miranda ICQ/IM project,
 all portions of this codebase are copyrighted to the people
 listed in contributors.txt.
@@ -35,42 +35,42 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 struct MASKPARAM
 {
-	DWORD	dwId;
-	BYTE	bMaskParamFlag;
+	uint32_t	dwId;
+	uint8_t	bMaskParamFlag;
 	char*	szName;
-	DWORD	dwValueHash;
+	uint32_t	dwValueHash;
 	char*	szValue;
 };
 
 struct MODERNMASK
 {
 	MASKPARAM*	    pl_Params;
-	DWORD				dwParamCnt;
+	uint32_t				dwParamCnt;
 	union
 	{
 		void*			pObject;
 		char*			szObjectName;
 	};
-	DWORD				dwMaskId;
+	uint32_t				dwMaskId;
 	BOOL				bObjectFound;
 };
 
 struct LISTMODERNMASK
 {
 	MODERNMASK*	pl_Masks;
-	DWORD			dwMaskCnt;
+	uint32_t			dwMaskCnt;
 };
 
 /// PROTOTYPES
-int AddStrModernMaskToList(DWORD maskID, char *szStr, char *objectName, LISTMODERNMASK *mmTemplateList);
+int AddStrModernMaskToList(uint32_t maskID, char *szStr, char *objectName, LISTMODERNMASK *mmTemplateList);
 int SortMaskList(LISTMODERNMASK *mmList);
 int ClearMaskList(LISTMODERNMASK *mmTemplateList);
 
 BOOL CompareStrWithModernMask(char *szValue, MODERNMASK *mmTemplate);
-DWORD mod_CalcHash(const char *a);
+uint32_t mod_CalcHash(const char *a);
 int RegisterObjectByParce(char *ObjectName, char *Params);
 SKINOBJECTDESCRIPTOR* skin_FindObjectByRequest(char *szValue, LISTMODERNMASK *mmTemplateList);
 SKINOBJECTDESCRIPTOR* skin_FindObjectByMask(MODERNMASK *mm, LISTMODERNMASK *mmTemplateList);
-wchar_t * GetParamNT(char *string, wchar_t *buf, int buflen, BYTE paramN, char Delim, BOOL SkipSpaces);
+wchar_t * GetParamNT(char *string, wchar_t *buf, int buflen, uint8_t paramN, char Delim, BOOL SkipSpaces);
 int SkinDrawGlyphMask(HDC hdc, RECT *rcSize, RECT *rcClip, MODERNMASK *ModernMask);
 #endif

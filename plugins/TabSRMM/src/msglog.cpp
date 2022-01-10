@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////////////////
 // Miranda NG: the free IM client for Microsoft* Windows*
 //
-// Copyright (C) 2012-21 Miranda NG team,
+// Copyright (C) 2012-22 Miranda NG team,
 // Copyright (c) 2000-09 Miranda ICQ/IM project,
 // all portions of this codebase are copyrighted to the people
 // listed in contributors.txt.
@@ -98,7 +98,7 @@ struct LogStreamData
 	DBEVENTINFO *dbei;
 };
 
-__forceinline char* GetRTFFont(DWORD dwIndex)
+__forceinline char* GetRTFFont(uint32_t dwIndex)
 {
 	return rtfFonts + (dwIndex * RTFCACHELINESIZE);
 }
@@ -476,7 +476,7 @@ static char* Template_CreateRTFFromDbEvent(CMsgDialog *dat, MCONTACT hContact, M
 	if (dbei.flags & DBEF_RTL)
 		dat->m_bRtlText = true;
 
-	DWORD dwEffectiveFlags = dat->m_dwFlags;
+	uint32_t dwEffectiveFlags = dat->m_dwFlags;
 
 	dat->m_bIsHistory = (dbei.timestamp < dat->m_cache->getSessionStart() && dbei.markedRead());
 	int iFontIDOffset = dat->m_bIsHistory ? 8 : 0;     // offset into the font table for either history (old) or new events... (# of fonts per configuration set)
@@ -855,7 +855,7 @@ static char* Template_CreateRTFFromDbEvent(CMsgDialog *dat, MCONTACT hContact, M
 						str.AppendChar(' ');
 					}
 					{
-						char *szFileName = (char *)dbei.pBlob + sizeof(DWORD);
+						char *szFileName = (char *)dbei.pBlob + sizeof(uint32_t);
 						ptrW tszFileName(DbEvent_GetString(&dbei, szFileName));
 
 						char *szDescr = szFileName + mir_strlen(szFileName) + 1;

@@ -133,8 +133,8 @@ const unsigned int WM_NETEVENT_TRANSFER             = WM_USER + 4;
 
 typedef struct {   //extended search result structure, used for all searches
     PROTOSEARCHRESULT hdr;
-    DWORD uin;
-    BYTE auth;
+    uint32_t uin;
+    uint8_t auth;
 } ICQSEARCHRESULT;
 
 ///////////////////////////////////////////////////////////////////////////////

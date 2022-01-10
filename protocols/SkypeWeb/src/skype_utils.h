@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2015-21 Miranda NG team (https://miranda-ng.org)
+Copyright (c) 2015-22 Miranda NG team (https://miranda-ng.org)
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -36,7 +36,7 @@ public:
 	__inline explicit EventHandle(HANDLE hEvent) : _hEvent(hEvent) {}
 	__inline ~EventHandle() { CloseHandle(_hEvent); }
 	__inline void Set() { SetEvent(_hEvent); }
-	__inline void Wait(DWORD dwMilliseconds = INFINITE) { WaitForSingleObject(_hEvent, dwMilliseconds); }
+	__inline void Wait(uint32_t dwMilliseconds = INFINITE) { WaitForSingleObject(_hEvent, dwMilliseconds); }
 	__inline operator HANDLE() { return _hEvent; }
 };
 

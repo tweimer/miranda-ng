@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org)
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org)
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -33,7 +33,7 @@ static int dwWinVer;
 
 void InitWinver()
 {
-	DWORD dwVer = LOWORD(GetVersion());
+	uint32_t dwVer = LOWORD(GetVersion());
 	dwWinVer = MAKEWORD(HIBYTE(dwVer), LOBYTE(dwVer));
 }
 
@@ -152,7 +152,7 @@ MIR_CORE_DLL(BOOL) OS_GetShortString(char *buf, size_t bufSize)
 #define PRODUCT_PROFESSIONAL_WMC                  0x00000067
 #endif
 
-typedef BOOL(WINAPI *PGPI)(DWORD, DWORD, DWORD, DWORD, PDWORD);
+typedef BOOL(WINAPI *PGPI)(uint32_t, uint32_t, uint32_t, uint32_t, PDWORD);
 typedef LPCSTR(WINAPI *WGV)(void);
 
 MIR_CORE_DLL(BOOL) OS_GetDisplayString(char *buf, size_t bufSize)

@@ -67,20 +67,20 @@ MIR_APP_DLL(HBITMAP) Image_Resize(HBITMAP hBmp, int fit /* RESIZEBITMAP_*/, int 
 	case RESIZEBITMAP_KEEP_PROPORTIONS:
 		if (height * widthOrig / heightOrig <= width) {
 			if (fit & RESIZEBITMAP_FLAG_DONT_GROW)
-				height = min(height, bminfo.bmHeight);
+				height = min(height, (int)bminfo.bmHeight);
 			width = height * widthOrig / heightOrig;
 		}
 		else {
 			if (fit & RESIZEBITMAP_FLAG_DONT_GROW)
-				width = min(width, bminfo.bmWidth);
+				width = min(width, (int)bminfo.bmWidth);
 			height = width * heightOrig / widthOrig;
 		}
 		break;
 
 	case RESIZEBITMAP_MAKE_SQUARE:
 		if (fit & RESIZEBITMAP_FLAG_DONT_GROW) {
-			width = min(width, bminfo.bmWidth);
-			height = min(height, bminfo.bmHeight);
+			width = min(width, (int)bminfo.bmWidth);
+			height = min(height, (int)bminfo.bmHeight);
 		}
 
 		width = height = min(width, height);
@@ -166,7 +166,7 @@ MIR_APP_DLL(HBITMAP) Image_LoadFromMem(const void *pBuf, size_t cbLen, FREE_IMAG
 	if (cbLen == 0 || pBuf == nullptr)
 		return 0;
 
-	FIMEMORY *hmem = FreeImage_OpenMemory((BYTE *)pBuf, (DWORD)cbLen);
+	FIMEMORY *hmem = FreeImage_OpenMemory((uint8_t *)pBuf, (uint32_t)cbLen);
 	if (fif == FIF_UNKNOWN)
 		fif = FreeImage_GetFileTypeFromMemory(hmem, 0);
 

@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org),
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org),
 Copyright (c) 2000-12 Miranda IM project,
 all portions of this codebase are copyrighted to the people
 listed in contributors.txt.
@@ -56,7 +56,7 @@ class IconSourceItem : public MZeroedObject
 	IconSourceItemKey key;
 	int   ref_count;
 
-	BYTE* icon_data;
+	uint8_t* icon_data;
 	int   icon_size;
 
 public:
@@ -80,7 +80,7 @@ public:
 struct IcolibItem : public MZeroedObject
 {
 	char*           name;
-	DWORD           signature = ICOLIB_MAGIC;
+	uint32_t           signature = ICOLIB_MAGIC;
 	SectionItem*    section;
 	int             orderID;
 	wchar_t*        description;
@@ -107,7 +107,7 @@ struct IcolibItem : public MZeroedObject
 
 UINT _ExtractIconEx(LPCTSTR lpszFile, int iconIndex, int cxIcon, int cyIcon, HICON *phicon, UINT flags);
 
-void __fastcall SafeDestroyIcon(HICON &icon);
+void SafeDestroyIcon(HICON &icon);
 
 IconSourceItem* GetIconSourceItem(const wchar_t* file, int indx, int cxIcon, int cyIcon);
 

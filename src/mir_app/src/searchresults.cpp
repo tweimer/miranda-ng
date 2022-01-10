@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org),
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org),
 Copyright (c) 2000-12 Miranda IM project,
 all portions of this codebase are copyrighted to the people
 listed in contributors.txt.
@@ -46,12 +46,12 @@ void SaveColumnSizes(HWND hwndResults)
 	for (int i = 0; i < NUM_COLUMNID; i++) {
 		char szSetting[32];
 		mir_snprintf(szSetting, "ColOrder%d", i);
-		db_set_b(0, "FindAdd", szSetting, (BYTE)columnOrder[i]);
+		db_set_b(0, "FindAdd", szSetting, (uint8_t)columnOrder[i]);
 		mir_snprintf(szSetting, "ColWidth%d", i);
-		db_set_w(0, "FindAdd", szSetting, (WORD)ListView_GetColumnWidth(hwndResults, i));
+		db_set_w(0, "FindAdd", szSetting, (uint16_t)ListView_GetColumnWidth(hwndResults, i));
 	}
-	db_set_b(0, "FindAdd", "SortColumn", (BYTE)dat->iLastColumnSortIndex);
-	db_set_b(0, "FindAdd", "SortAscending", (BYTE)dat->bSortAscending);
+	db_set_b(0, "FindAdd", "SortColumn", (uint8_t)dat->iLastColumnSortIndex);
+	db_set_b(0, "FindAdd", "SortAscending", (uint8_t)dat->bSortAscending);
 }
 
 static const wchar_t *szColumnNames[] = { nullptr, nullptr, L"Nick", L"First Name", L"Last Name", L"E-mail" };
@@ -185,7 +185,7 @@ static void __cdecl BeginSearchFailed(wchar_t *protoName)
 	MessageBox(nullptr, buf, TranslateT("Problem with search"), MB_OK | MB_ICONERROR);
 }
 
-int BeginSearch(HWND, struct FindAddDlgData *dat, const char *szProto, const char *szSearchService, DWORD requiredCapability, void *pvSearchParams)
+int BeginSearch(HWND, struct FindAddDlgData *dat, const char *szProto, const char *szSearchService, uint32_t requiredCapability, void *pvSearchParams)
 {
 	if (szProto == nullptr) {
 		int failures = 0;
@@ -195,7 +195,7 @@ int BeginSearch(HWND, struct FindAddDlgData *dat, const char *szProto, const cha
 			if (!pa->IsEnabled())
 				continue;
 			
-			DWORD caps = (DWORD)CallProtoServiceInt(0, pa->szModuleName, PS_GETCAPS, PFLAGNUM_1, 0);
+			uint32_t caps = (uint32_t)CallProtoServiceInt(0, pa->szModuleName, PS_GETCAPS, PFLAGNUM_1, 0);
 			if (!(caps & requiredCapability))
 				continue;
 			

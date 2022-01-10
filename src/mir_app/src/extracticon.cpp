@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org),
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org),
 Copyright (c) 2000-12 Miranda IM project,
 all portions of this codebase are copyrighted to the people
 listed in contributors.txt.
@@ -31,32 +31,32 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 // http://msdn.microsoft.com/library/default.asp?url = /library/en-us/winui/winui/windowsuserinterface/resources/introductiontoresources/resourcereference/resourcestructures/newheader.asp
 typedef struct
 {
-	WORD    Reserved;
-	WORD    ResType;
-	WORD    ResCount;
+	uint16_t    Reserved;
+	uint16_t    ResType;
+	uint16_t    ResCount;
 }
 	NEWHEADER;
 
 #define MAGIC_ICON       0
 #define MAGIC_ICO1       1
 #define MAGIC_CUR        2
-#define MAGIC_BMP        ((WORD)'B'+((WORD)'M'<<8))
+#define MAGIC_BMP        ((uint16_t)'B'+((uint16_t)'M'<<8))
 
-#define MAGIC_ANI1       ((WORD)'R'+((WORD)'I'<<8))
-#define MAGIC_ANI2       ((WORD)'F'+((WORD)'F'<<8))
-#define MAGIC_ANI3       ((WORD)'A'+((WORD)'C'<<8))
-#define MAGIC_ANI4       ((WORD)'O'+((WORD)'N'<<8))
+#define MAGIC_ANI1       ((uint16_t)'R'+((uint16_t)'I'<<8))
+#define MAGIC_ANI2       ((uint16_t)'F'+((uint16_t)'F'<<8))
+#define MAGIC_ANI3       ((uint16_t)'A'+((uint16_t)'C'<<8))
+#define MAGIC_ANI4       ((uint16_t)'O'+((uint16_t)'N'<<8))
 
 #define VER30            0x00030000
 
-void* _RelativeVirtualAddresstoPtr(IMAGE_DOS_HEADER *pDosHeader, DWORD rva)
+void* _RelativeVirtualAddresstoPtr(IMAGE_DOS_HEADER *pDosHeader, uint32_t rva)
 {
-	IMAGE_NT_HEADERS *pPE = (IMAGE_NT_HEADERS*)((BYTE*)pDosHeader + pDosHeader->e_lfanew);
+	IMAGE_NT_HEADERS *pPE = (IMAGE_NT_HEADERS*)((uint8_t*)pDosHeader + pDosHeader->e_lfanew);
 	IMAGE_SECTION_HEADER *pSection = IMAGE_FIRST_SECTION(pPE);
 
 	for (int i = 0; i < pPE->FileHeader.NumberOfSections; i++) {
 		IMAGE_SECTION_HEADER* cSection = &pSection[i];
-		DWORD size = cSection->Misc.VirtualSize ? cSection->Misc.VirtualSize : cSection->SizeOfRawData;
+		uint32_t size = cSection->Misc.VirtualSize ? cSection->Misc.VirtualSize : cSection->SizeOfRawData;
 
 		if (rva >= cSection->VirtualAddress && rva < cSection->VirtualAddress + size)
 			return (LPBYTE)pDosHeader + cSection->PointerToRawData + (rva - cSection->VirtualAddress);
@@ -67,7 +67,7 @@ void* _RelativeVirtualAddresstoPtr(IMAGE_DOS_HEADER *pDosHeader, DWORD rva)
 
 void* _GetResourceTable(IMAGE_DOS_HEADER* pDosHeader)
 {
-	IMAGE_NT_HEADERS *pPE = (IMAGE_NT_HEADERS*)((BYTE*)pDosHeader + pDosHeader->e_lfanew);
+	IMAGE_NT_HEADERS *pPE = (IMAGE_NT_HEADERS*)((uint8_t*)pDosHeader + pDosHeader->e_lfanew);
 	if (pPE->Signature != IMAGE_NT_SIGNATURE || pPE->FileHeader.SizeOfOptionalHeader < 2)
 		return nullptr;
 
@@ -89,7 +89,7 @@ void* _GetResourceTable(IMAGE_DOS_HEADER* pDosHeader)
 	return nullptr;
 }
 
-IMAGE_RESOURCE_DIRECTORY_ENTRY* _FindResourceBase(void *prt, DWORD resType, int *pCount)
+IMAGE_RESOURCE_DIRECTORY_ENTRY* _FindResourceBase(void *prt, uint32_t resType, int *pCount)
 {
 	IMAGE_RESOURCE_DIRECTORY *pDir = (IMAGE_RESOURCE_DIRECTORY*)prt;
 	int i;
@@ -112,21 +112,21 @@ IMAGE_RESOURCE_DIRECTORY_ENTRY* _FindResourceBase(void *prt, DWORD resType, int 
 	return (IMAGE_RESOURCE_DIRECTORY_ENTRY*)(pDir + 1);
 }
 
-int _FindResourceCount(void *prt, DWORD resType)
+int _FindResourceCount(void *prt, uint32_t resType)
 {
 	int count;
 	_FindResourceBase(prt, resType, &count);
 	return count;
 }
 
-void* _FindResource(IMAGE_DOS_HEADER *pDosHeader, void *prt, int resIndex, DWORD resType, DWORD *pcbSize)
+void* _FindResource(IMAGE_DOS_HEADER *pDosHeader, void *prt, int resIndex, uint32_t resType, uint32_t *pcbSize)
 {
 	int count, index = 0;
 
 	IMAGE_RESOURCE_DIRECTORY_ENTRY *pRes = _FindResourceBase(prt, resType, &count);
 	if (resIndex < 0) {
 		for (index = 0; index < count; index++)
-			if (pRes[index].Name == (DWORD)(-resIndex))
+			if (pRes[index].Name == (uint32_t)(-resIndex))
 				break;
 	}
 	else index = resIndex;
@@ -152,7 +152,7 @@ void* _FindResource(IMAGE_DOS_HEADER *pDosHeader, void *prt, int resIndex, DWORD
 UINT _ExtractFromExe(HANDLE hFile, int iconIndex, int cxIconSize, int cyIconSize, HICON *phicon, UINT flags)
 {
 	int retval = 0;
-	DWORD fileLen = GetFileSize(hFile, nullptr);
+	uint32_t fileLen = GetFileSize(hFile, nullptr);
 
 	HANDLE pFile = nullptr, hFileMap = CreateFileMapping(hFile, nullptr, PAGE_READONLY, 0, 0, nullptr);
 	if (hFileMap == nullptr)
@@ -165,7 +165,7 @@ UINT _ExtractFromExe(HANDLE hFile, int iconIndex, int cxIconSize, int cyIconSize
 	IMAGE_DOS_HEADER *pDosHeader = (IMAGE_DOS_HEADER*)(void*)pFile;
 	if (pDosHeader->e_magic != IMAGE_DOS_SIGNATURE) goto cleanup;
 	if (pDosHeader->e_lfanew <= 0) goto cleanup;
-	if ((DWORD)(pDosHeader->e_lfanew) >= fileLen) goto cleanup;
+	if ((uint32_t)(pDosHeader->e_lfanew) >= fileLen) goto cleanup;
 
 	void *pRes = _GetResourceTable(pDosHeader);
 	if (!pRes) goto cleanup;
@@ -174,7 +174,7 @@ UINT _ExtractFromExe(HANDLE hFile, int iconIndex, int cxIconSize, int cyIconSize
 		goto cleanup;
 	}
 
-	DWORD cbSize = 0;
+	uint32_t cbSize = 0;
 	NEWHEADER *pIconDir = (NEWHEADER*)_FindResource(pDosHeader, pRes, iconIndex, (ULONG_PTR)RT_GROUP_ICON, &cbSize);
 	if (!pIconDir) goto cleanup;
 	if (pIconDir->Reserved || pIconDir->ResType != RES_ICON) goto cleanup;
@@ -236,7 +236,7 @@ UINT _ExtractIconEx(LPCTSTR lpszFile, int iconIndex, int cxIcon, int cyIcon, HIC
 
 	// failed to read file signature
 	DWORD read = 0;
-	WORD magic[6];
+	uint16_t magic[6];
 	if (!ReadFile(hFile, &magic, sizeof(magic), &read, nullptr) || (read != sizeof(magic))) {
 		CloseHandle(hFile);
 		return 0;

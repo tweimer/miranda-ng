@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org),
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org),
 Copyright (c) 2000-12 Miranda IM project,
 all portions of this codebase are copyrighted to the people
 listed in contributors.txt.
@@ -27,9 +27,11 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #define TOOLTIP_TOLERANCE 5
 
+static ITaskbarList3* pTaskbarInterface;
+
 static UINT WM_TASKBARCREATED;
 static UINT WM_TASKBARBUTTONCREATED;
-static UINT_PTR RefreshTimerId = 0;   /////by FYR
+static UINT_PTR RefreshTimerId = 0;
 static UINT_PTR CycleTimerId;
 
 mir_cs trayLockCS;
@@ -364,9 +366,9 @@ int TrayIconUpdate(HICON hNewIcon, const wchar_t *szNewTip, const char *szPrefer
 
 		g_clistApi.trayIcon[i].isBase = isBase;
 		if (db_get_b(0, "CList", "TrayIcon", SETTING_TRAYICON_DEFAULT) == SETTING_TRAYICON_MULTI) {
-			DWORD time1 = db_get_w(0, "CList", "CycleTime", SETTING_CYCLETIME_DEFAULT) * 200;
-			DWORD time2 = db_get_w(0, "CList", "IconFlashTime", 550) + 1000;
-			DWORD time = max(max(2000, time1), time2);
+			uint32_t time1 = db_get_w(0, "CList", "CycleTime", SETTING_CYCLETIME_DEFAULT) * 200;
+			uint32_t time2 = db_get_w(0, "CList", "IconFlashTime", 550) + 1000;
+			uint32_t time = max(max(uint32_t(2000), time1), time2);
 			if (RefreshTimerId)
 				KillTimer(nullptr, RefreshTimerId);
 
@@ -592,7 +594,7 @@ int fnTrayIconPauseAutoHide(WPARAM, LPARAM)
 /////////////////////////////////////////////////////////////////////////////////////////
 // processes tray icon's messages
 
-static BYTE s_LastHoverIconID = 0;
+static uint8_t s_LastHoverIconID = 0;
 static bool g_trayTooltipActive = false;
 static POINT tray_hover_pos = { 0 };
 
@@ -786,7 +788,7 @@ static int sttGetIcon(const char *szProto)
 	return iconId;
 }
 
-MIR_APP_DLL(int) Clist_TrayNotifyA(const char *szProto, const char *szInfoTitle, const char *szInfo, DWORD dwInfoFlags, UINT uTimeout)
+MIR_APP_DLL(int) Clist_TrayNotifyA(const char *szProto, const char *szInfoTitle, const char *szInfo, uint32_t dwInfoFlags, UINT uTimeout)
 {
 	if (szInfo == nullptr || szInfoTitle == nullptr)
 		return 1;
@@ -805,7 +807,7 @@ MIR_APP_DLL(int) Clist_TrayNotifyA(const char *szProto, const char *szInfoTitle,
 	return Shell_NotifyIconA(NIM_MODIFY, &nid) == 0;
 }
 
-MIR_APP_DLL(int) Clist_TrayNotifyW(const char *szProto, const wchar_t *wszInfoTitle, const wchar_t *wszInfo, DWORD dwInfoFlags, UINT uTimeout)
+MIR_APP_DLL(int) Clist_TrayNotifyW(const char *szProto, const wchar_t *wszInfoTitle, const wchar_t *wszInfo, uint32_t dwInfoFlags, UINT uTimeout)
 {
 	if (wszInfo == nullptr || wszInfoTitle == nullptr)
 		return 1;
@@ -831,4 +833,13 @@ MIR_APP_DLL(int) Clist_TrayNotifyW(const char *szProto, const wchar_t *wszInfoTi
 void InitTray(void)
 {
 	fTrayInited = true;
+
+	if (IsWinVer7Plus())
+		CoCreateInstance(CLSID_TaskbarList, nullptr, CLSCTX_ALL, IID_ITaskbarList3, (void**)&pTaskbarInterface);
+}
+
+void UninitTray(void)
+{
+	if (pTaskbarInterface)
+		pTaskbarInterface->Release();
 }

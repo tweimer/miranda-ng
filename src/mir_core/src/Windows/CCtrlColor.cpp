@@ -2,7 +2,7 @@
 
 Object UI extensions
 Copyright (c) 2008  Victor Pavlychko, George Hazan
-Copyright (C) 2012-21 Miranda NG team
+Copyright (C) 2012-22 Miranda NG team
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -29,7 +29,7 @@ CCtrlColor::CCtrlColor(CDlgBase *dlg, int ctrlId) :
 	CCtrlData(dlg, ctrlId)
 {}
 
-BOOL CCtrlColor::OnCommand(HWND, WORD, WORD)
+BOOL CCtrlColor::OnCommand(HWND, uint16_t, uint16_t)
 {
 	NotifyChange();
 	return TRUE;
@@ -50,12 +50,12 @@ void CCtrlColor::OnReset()
 		SetColor(LoadInt());
 }
 
-DWORD CCtrlColor::GetColor()
+uint32_t CCtrlColor::GetColor()
 {
    return ::SendMessage(m_hwnd, CPM_GETCOLOUR, 0, 0);
 }
 
-void CCtrlColor::SetColor(DWORD dwValue)
+void CCtrlColor::SetColor(uint32_t dwValue)
 {
    ::SendMessage(m_hwnd, CPM_SETCOLOUR, 0, dwValue);
 }

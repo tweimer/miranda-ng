@@ -122,7 +122,7 @@ struct NewstoryListData : public MZeroedObject
 		int fontid, colorid;
 		item->getFontColor(fontid, colorid);
 
-		DWORD dwStyle = WS_CHILD | WS_BORDER | ES_MULTILINE | ES_AUTOVSCROLL;
+		uint32_t dwStyle = WS_CHILD | WS_BORDER | ES_MULTILINE | ES_AUTOVSCROLL;
 		if (bReadOnly) 
 			dwStyle |= ES_READONLY;
 
@@ -178,7 +178,7 @@ struct NewstoryListData : public MZeroedObject
 				if (pItem->hContact && pItem->hEvent) {
 					ptrA szUtf(mir_utf8encodeW(pItem->wtext));
 					pItem->dbe.cbBlob = (int)mir_strlen(szUtf) + 1;
-					pItem->dbe.pBlob = (BYTE *)szUtf.get();
+					pItem->dbe.pBlob = (uint8_t *)szUtf.get();
 					db_event_edit(pItem->hContact, pItem->hEvent, &pItem->dbe);
 
 					if (auto *ppro = Proto_GetInstance(pItem->hContact))

@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org),
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org),
 Copyright (c) 2000-08 Miranda ICQ/IM project,
 all portions of this codebase are copyrighted to the people
 listed in contributors.txt.
@@ -173,9 +173,9 @@ VOID CALLBACK cliTrayCycleTimerProc(HWND, UINT, UINT_PTR, DWORD)
 
 void SettingsMigrate(void)
 {
-	BYTE TrayIcon = g_plugin.getByte("TrayIcon");
-	BYTE AlwaysPrimary = g_plugin.getByte("AlwaysPrimary");
-	BYTE AlwaysMulti = g_plugin.getByte("AlwaysMulti");
+	uint8_t TrayIcon = g_plugin.getByte("TrayIcon");
+	uint8_t AlwaysPrimary = g_plugin.getByte("AlwaysPrimary");
+	uint8_t AlwaysMulti = g_plugin.getByte("AlwaysMulti");
 	ptrA PrimaryStatus(g_plugin.getStringA("PrimaryStatus"));
 
 	// these strings must always be set
@@ -246,7 +246,7 @@ static int GetGoodAccNum(bool *bDiffers, bool *bConn = nullptr)
 	return res;
 }
 
-BYTE OldMode; //
+uint8_t OldMode; //
 UINT_PTR TimerID = 0;
 
 int cliTrayIconInit(HWND hwnd)
@@ -275,7 +275,7 @@ int cliTrayIconInit(HWND hwnd)
 		return 0;
 	}
 
-	BYTE Mode;
+	uint8_t Mode;
 	if (!bDiffers)  // all equal
 		OldMode = Mode = g_plugin.getByte("tiModeS", TRAY_ICON_MODE_GLOBAL);
 	else
@@ -341,7 +341,7 @@ int cliTrayCalcChanged(const char *szChangedProto, int, int)
 	GetGoodAccNum(&bDiffers, &bConn);
 
 	// if the icon number to be changed, reinitialize module from scratch
-	BYTE Mode = g_plugin.getByte((!bDiffers) ? "tiModeS" : "tiModeV", TRAY_ICON_MODE_GLOBAL);
+	uint8_t Mode = g_plugin.getByte((!bDiffers) ? "tiModeS" : "tiModeV", TRAY_ICON_MODE_GLOBAL);
 	if (Mode != OldMode) {
 		OldMode = Mode;
 		Clist_TrayIconIconsChanged();

@@ -189,11 +189,11 @@ int UpdateWeather(MCONTACT hContact)
 
 			DBEVENTINFO dbei = {};
 			dbei.szModule = MODULENAME;
-			dbei.timestamp = (DWORD)time(0);
+			dbei.timestamp = (uint32_t)time(0);
 			dbei.flags = DBEF_READ | DBEF_UTF;
 			dbei.eventType = EVENTTYPE_MESSAGE;
 			dbei.pBlob = szMessage;
-			dbei.cbBlob = (DWORD)mir_strlen(szMessage) + 1;
+			dbei.cbBlob = (uint32_t)mir_strlen(szMessage) + 1;
 			db_event_add(hContact, &dbei);
 		}
 
@@ -398,7 +398,7 @@ int GetWeatherData(MCONTACT hContact)
 	if (Data == nullptr)
 		return SVC_NOT_FOUND;	// the ini for the station cannot be found
 
-	WORD cond = NA;
+	uint16_t cond = NA;
 	char loc[256];
 	for (int i = 0; i < 4; ++i) {
 		// generate update URL
@@ -554,7 +554,7 @@ int GetWeatherData(MCONTACT hContact)
 					if (cbuf[0] == '#')
 						cbuf = TranslateW(DataValue);
 					db_set_ws(hContact, WEATHERCONDITION, _T2A(Item->Item.Name), cbuf);
-					CharLowerBuff(DataValue, (DWORD)mir_wstrlen(DataValue));
+					CharLowerBuff(DataValue, (uint32_t)mir_wstrlen(DataValue));
 					cond = GetIcon(DataValue, Data);
 				}
 				else if (mir_wstrcmpi(Item->Item.Unit, L"Cond") == 0) {

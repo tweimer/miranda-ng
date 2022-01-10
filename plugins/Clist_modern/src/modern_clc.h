@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org),
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org),
 Copyright (c) 2000-08 Miranda ICQ/IM project,
 all portions of this codebase are copyrighted to the people
 listed in contributors.txt.
@@ -164,7 +164,7 @@ enum {
 
 struct tContactItems
 {
-	BYTE itemType;	   //one of above CIT_ definitions
+	uint8_t itemType;	   //one of above CIT_ definitions
 	RECT itemRect;
 };
 
@@ -188,11 +188,11 @@ struct ClcContact : public ClcContactBase
 	RECT pos_label;
 	RECT pos_contact_time;
 	RECT pos_extra[EXTRA_ICON_COUNT];
-	DWORD lastPaintCounter;
-	BYTE bContactRate;
+	uint32_t lastPaintCounter;
+	uint8_t bContactRate;
 
 	// For extended layout
-	BYTE ext_nItemsNum;
+	uint8_t ext_nItemsNum;
 	BOOL ext_fItemsValid;
 	tContactItems ext_mpItemsDesc[EXTRA_ICON_COUNT + 10];  //up to 10 items
 
@@ -225,22 +225,22 @@ struct ClcModernFontInfo {
 	HFONT hFont;
 	int  fontHeight, changed;
 	COLORREF colour;
-	BYTE effect;
+	uint8_t effect;
 	COLORREF effectColour1;
 	COLORREF effectColour2;
 };
 
 struct ClcData : public ClcDataBase
 {
-	BYTE HiLightMode;
-	BYTE doubleClickExpand;
-	BYTE IsMetaContactsEnabled;
+	uint8_t HiLightMode;
+	uint8_t doubleClickExpand;
+	uint8_t IsMetaContactsEnabled;
 	time_t last_tick_time;
 	bool bForceInDialog, bPlaceOfflineToRoot, bMetaIgnoreEmptyExtra, bMetaExpanding;
 	int  subIndent;
 	int  rightMargin, topMargin, bottomMargin;
 	HBITMAP hMenuBackground;
-	DWORD MenuBkColor, MenuBkHiColor, MenuTextColor, MenuTextHiColor;
+	uint32_t MenuBkColor, MenuBkHiColor, MenuTextColor, MenuTextHiColor;
 	int  MenuBmpUse;
 
 	// Row height
@@ -261,7 +261,7 @@ struct ClcData : public ClcDataBase
 	BOOL row_align_right_items_to_right;
 	int  row_items[NUM_ITEM_TYPE];
 	BOOL row_hide_group_icon;
-	BYTE row_align_group_mode;
+	uint8_t row_align_group_mode;
 
 	// Avatar
 	BOOL avatars_show;
@@ -301,18 +301,18 @@ struct ClcData : public ClcDataBase
 
 	ClcModernFontInfo fontModernInfo[FONTID_MODERN_MAX + 1];
 	HWND  hWnd;
-	BYTE  menuOwnerType;
+	uint8_t  menuOwnerType;
 	int   menuOwnerID;
-	DWORD m_paintCouter; //range is enoght to 49 days if painting will occure each one millisecond
-	BYTE  drawOverlayedStatus;
+	uint32_t m_paintCouter; //range is enoght to 49 days if painting will occure each one millisecond
+	uint8_t  drawOverlayedStatus;
 	int   nInsertionLevel;
 
-	BYTE  dbbMetaHideExtra;
-	BYTE  dbbBlendInActiveState;
-	BYTE  dbbBlend25;
+	uint8_t  dbbMetaHideExtra;
+	uint8_t  dbbBlendInActiveState;
+	uint8_t  dbbBlend25;
 
 	XPTHANDLE hCheckBoxTheme;
-	BYTE bCompactMode;
+	uint8_t bCompactMode;
 
 	__forceinline int getRowHeight(int iRow) const
 	{ return (row_heights && row_variable_height) ? row_heights[iRow] : rowHeight;
@@ -348,7 +348,7 @@ LRESULT cli_ProcessExternalMessages(HWND hwnd, ClcData *dat, UINT msg, WPARAM wP
 // clcutils.c
 void  cliRecalcScrollBar(HWND hwnd, ClcData *dat);
 void  cliBeginRenameSelection(HWND hwnd, ClcData *dat);
-int   cliHitTest(HWND hwnd, ClcData *dat, int testx, int testy, ClcContact **contact, ClcGroup **group, DWORD *flags);
+int   cliHitTest(HWND hwnd, ClcData *dat, int testx, int testy, ClcContact **contact, ClcGroup **group, uint32_t *flags);
 void  cliScrollTo(HWND hwnd, ClcData *dat, int desty, int noSmooth);
 int   GetDropTargetInformation(HWND hwnd, ClcData *dat, POINT pt);
 void  cli_LoadCLCOptions(HWND hwnd, ClcData *dat, BOOL bFirst);
@@ -357,8 +357,8 @@ COLORREF cliGetColor(char *module, char *color, COLORREF defColor);
 
 // clcopts.c
 int   ClcOptInit(WPARAM wParam, LPARAM lParam);
-DWORD GetDefaultExStyle(void);
-void  GetFontSetting(int i, LOGFONT *lf, COLORREF *colour, BYTE *effect, COLORREF *eColour1, COLORREF *eColour2);
+uint32_t GetDefaultExStyle(void);
+void  GetFontSetting(int i, LOGFONT *lf, COLORREF *colour, uint8_t *effect, COLORREF *eColour1, COLORREF *eColour2);
 
 // groups.c
 int   GetContactCachedStatus(MCONTACT hContact);

@@ -1,4 +1,4 @@
-// Copyright © 2010-21 sss
+// Copyright © 2010-22 sss
 // 
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -118,7 +118,7 @@ INT_PTR SendKey(WPARAM w, LPARAM)
 		szMessage = g_plugin.getMStringA("GPGPubKey"); //try to get default key as fallback in any way
 
 	if (!szMessage.IsEmpty()) {
-		BYTE enc = g_plugin.getByte(hContact, "GPGEncryption", 0);
+		uint8_t enc = g_plugin.getByte(hContact, "GPGEncryption", 0);
 		g_plugin.setByte(hContact, "GPGEncryption", 0);
 		ProtoChainSend(hContact, PSS_MESSAGE, 0, (LPARAM)szMessage.c_str());
 		std::string msg = "Public key ";
@@ -138,7 +138,7 @@ INT_PTR SendKey(WPARAM w, LPARAM)
 INT_PTR ToggleEncryption(WPARAM w, LPARAM)
 {
 	MCONTACT hContact = (MCONTACT)w;
-	BYTE enc;
+	uint8_t enc;
 	if (db_mc_isMeta(hContact)) {
 		enc = g_plugin.getByte(metaGetMostOnline(hContact), "GPGEncryption");
 		if (MessageBox(nullptr, TranslateT("Do you want to toggle encryption for all subcontacts?"), TranslateT("Metacontact detected"), MB_YESNO) == IDYES) {
@@ -469,25 +469,25 @@ INT_PTR onSendFile(WPARAM w, LPARAM l)
 	return Proto_ChainSend(w, ccs);
 }
 
-void HistoryLog(MCONTACT hContact, const char *msg, DWORD _time, DWORD flags)
+void HistoryLog(MCONTACT hContact, const char *msg, uint32_t _time, uint32_t flags)
 {
 	DBEVENTINFO dbei = {};
 	dbei.szModule = MODULENAME;
 	dbei.flags = DBEF_UTF | flags;
-	dbei.timestamp = (_time) ? _time : (DWORD)time(0);
-	dbei.cbBlob = (DWORD)mir_strlen(msg) + 1;
-	dbei.pBlob = (PBYTE)msg;
+	dbei.timestamp = (_time) ? _time : (uint32_t)time(0);
+	dbei.cbBlob = (uint32_t)mir_strlen(msg) + 1;
+	dbei.pBlob = (uint8_t*)msg;
 	db_event_add(hContact, &dbei);
 }
 
-static int ControlAddStringUtf(HWND ctrl, DWORD msg, const wchar_t *szString)
+static int ControlAddStringUtf(HWND ctrl, uint32_t msg, const wchar_t *szString)
 {
 	int item = -1;
 	item = SendMessage(ctrl, msg, 0, (LPARAM)szString);
 	return item;
 }
 
-int ComboBoxAddStringUtf(HWND hCombo, const wchar_t *szString, DWORD data)
+int ComboBoxAddStringUtf(HWND hCombo, const wchar_t *szString, uint32_t data)
 {
 	int item = ControlAddStringUtf(hCombo, CB_ADDSTRING, szString);
 	SendMessage(hCombo, CB_SETITEMDATA, item, data);
@@ -784,7 +784,7 @@ void RemoveHandlers()
 
 bool isContactSecured(MCONTACT hContact)
 {
-	BYTE gpg_enc = g_plugin.getByte(hContact, "GPGEncryption", 0);
+	uint8_t gpg_enc = g_plugin.getByte(hContact, "GPGEncryption", 0);
 	if (!gpg_enc) {
 		if (globals.debuglog)
 			globals.debuglog << "encryption is turned off for " + toUTF8(Clist_GetContactDisplayName(hContact));
@@ -867,8 +867,8 @@ const bool StriStr(const char *str, const char *substr)
 	char *str_up = NEWTSTR_MALLOC(str);
 	char *substr_up = NEWTSTR_MALLOC(substr);
 
-	CharUpperBuffA(str_up, (DWORD)mir_strlen(str_up));
-	CharUpperBuffA(substr_up, (DWORD)mir_strlen(substr_up));
+	CharUpperBuffA(str_up, (uint32_t)mir_strlen(str_up));
+	CharUpperBuffA(substr_up, (uint32_t)mir_strlen(substr_up));
 
 	if (strstr(str_up, substr_up))
 		i = true;
@@ -1210,7 +1210,7 @@ void SendErrorMessage(MCONTACT hContact)
 	if (!g_plugin.bSendErrorMessages)
 		return;
 
-	BYTE enc = g_plugin.getByte(hContact, "GPGEncryption", 0);
+	uint8_t enc = g_plugin.getByte(hContact, "GPGEncryption", 0);
 	g_plugin.setByte(hContact, "GPGEncryption", 0);
 	ProtoChainSend(hContact, PSS_MESSAGE, 0, (LPARAM)"Unable to decrypt PGP encrypted message");
 	HistoryLog(hContact, "Error message sent", DBEF_SENT);
@@ -1334,7 +1334,7 @@ bool gpg_validate_paths(wchar_t *gpg_bin_path, wchar_t *gpg_home_path)
 	}
 	{
 		CMStringW path = g_plugin.getMStringW("szHomePath");
-		DWORD dwFileAttr = GetFileAttributes(path);
+		uint32_t dwFileAttr = GetFileAttributes(path);
 		if (dwFileAttr != INVALID_FILE_ATTRIBUTES) {
 			dwFileAttr &= ~FILE_ATTRIBUTE_READONLY;
 			SetFileAttributes(path, dwFileAttr);

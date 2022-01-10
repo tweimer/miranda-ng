@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org),
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org),
 Copyright (c) 2000-03 Miranda ICQ/IM project,
 all portions of this codebase are copyrighted to the people
 listed in contributors.txt.
@@ -102,11 +102,11 @@ size_t MY_pathToAbsolute(const wchar_t *pSrc, wchar_t *pOut)
  * shares all the init stuff with HitTest()
  */
 
-int RTL_HitTest(HWND hwnd, struct ClcData *dat, int testx, ClcContact *hitcontact, DWORD *flags, int indent, int hit)
+int RTL_HitTest(HWND hwnd, struct ClcData *dat, int testx, ClcContact *hitcontact, uint32_t *flags, int indent, int hit)
 {
 	RECT clRect;
 	int right, checkboxWidth, width;
-	DWORD style = GetWindowLongPtr(hwnd, GWL_STYLE);
+	uint32_t style = GetWindowLongPtr(hwnd, GWL_STYLE);
 	SIZE textSize;
 	HDC hdc;
 	HFONT hFont;
@@ -194,7 +194,7 @@ int RTL_HitTest(HWND hwnd, struct ClcData *dat, int testx, ClcContact *hitcontac
 	return -1;
 }
 
-int HitTest(HWND hwnd, struct ClcData *dat, int testx, int testy, ClcContact **contact, ClcGroup **group, DWORD *flags)
+int HitTest(HWND hwnd, struct ClcData *dat, int testx, int testy, ClcContact **contact, ClcGroup **group, uint32_t *flags)
 {
 	ClcContact *hitcontact = nullptr;
 	ClcGroup *hitgroup = nullptr;
@@ -203,8 +203,8 @@ int HitTest(HWND hwnd, struct ClcData *dat, int testx, int testy, ClcContact **c
 	SIZE textSize;
 	RECT clRect;
 	HFONT hFont;
-	DWORD style = GetWindowLongPtr(hwnd, GWL_STYLE);
-	BYTE mirror_mode = cfg::dat.bUseDCMirroring;
+	uint32_t style = GetWindowLongPtr(hwnd, GWL_STYLE);
+	uint8_t mirror_mode = cfg::dat.bUseDCMirroring;
 
 	if (flags)
 		*flags = 0;
@@ -337,7 +337,7 @@ int HitTest(HWND hwnd, struct ClcData *dat, int testx, int testy, ClcContact **c
 
 void ScrollTo(HWND hwnd, struct ClcData *dat, int desty, int noSmooth)
 {
-	DWORD startTick, nowTick;
+	uint32_t startTick, nowTick;
 	int oldy = dat->yScroll;
 	RECT clRect, rcInvalidate;
 

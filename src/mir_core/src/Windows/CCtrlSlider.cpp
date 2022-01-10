@@ -2,7 +2,7 @@
 
 Object UI extensions
 Copyright (c) 2008  Victor Pavlychko, George Hazan
-Copyright (C) 2012-21 Miranda NG team
+Copyright (C) 2012-22 Miranda NG team
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -33,7 +33,7 @@ CCtrlSlider::CCtrlSlider(CDlgBase *dlg, int ctrlId, int wMax, int wMin) :
 	m_bNotifiable = true;
 }
 
-BOOL CCtrlSlider::OnCommand(HWND, WORD, WORD idCode)
+BOOL CCtrlSlider::OnCommand(HWND, uint16_t, uint16_t idCode)
 {
 	if (idCode == WM_HSCROLL) {
 		NotifyChange();

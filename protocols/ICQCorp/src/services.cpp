@@ -201,8 +201,8 @@ static INT_PTR icqRecvMessage(WPARAM, LPARAM lParam)
 	if (pre->flags & PREF_CREATEREAD) 
 		dbei.flags |= DBEF_READ;
 	dbei.eventType = EVENTTYPE_MESSAGE;
-	dbei.cbBlob = (DWORD)mir_strlen(szMsg) + 1;
-	dbei.pBlob = (PBYTE)szMsg.get();
+	dbei.cbBlob = (uint32_t)mir_strlen(szMsg) + 1;
+	dbei.pBlob = (uint8_t*)szMsg.get();
 	db_event_add(ccs->hContact, &dbei);
 	return 0;
 }
@@ -365,7 +365,7 @@ static INT_PTR icqRecvFile(WPARAM, LPARAM lParam)
 	Contact_Hide(ccs->hContact, false);
 
 	PROTORECVEVENT *pre = (PROTORECVEVENT *)ccs->lParam;
-	char *szFile = pre->szMessage + sizeof(DWORD);
+	char *szFile = pre->szMessage + sizeof(uint32_t);
 	char *szDesc = szFile + mir_strlen(szFile) + 1;
 
 	DBEVENTINFO dbei = {};
@@ -373,8 +373,8 @@ static INT_PTR icqRecvFile(WPARAM, LPARAM lParam)
 	dbei.timestamp = pre->timestamp;
 	dbei.flags = pre->flags & (PREF_CREATEREAD ? DBEF_READ : 0);
 	dbei.eventType = EVENTTYPE_FILE;
-	dbei.cbBlob = sizeof(DWORD) + (DWORD)mir_strlen(szFile) + (DWORD)mir_strlen(szDesc) + 2;
-	dbei.pBlob = (PBYTE)pre->szMessage;
+	dbei.cbBlob = sizeof(uint32_t) + (uint32_t)mir_strlen(szFile) + (uint32_t)mir_strlen(szDesc) + 2;
+	dbei.pBlob = (uint8_t*)pre->szMessage;
 	db_event_add(ccs->hContact, &dbei);
 
 	return 0;
@@ -409,7 +409,7 @@ static INT_PTR icqSetApparentMode(WPARAM, LPARAM)
 
 	Netlib_Logf(hNetlibUser, "[   ] set apparent mode\n");
 
-	if (newMode == ID_STATUS_ONLINE || newMode == ID_STATUS_OFFLINE) db_set_w(u->hContact, ICQCORP_PROTONAME, "ApparentMode", (WORD)newMode);
+	if (newMode == ID_STATUS_ONLINE || newMode == ID_STATUS_OFFLINE) db_set_w(u->hContact, ICQCORP_PROTONAME, "ApparentMode", (uint16_t)newMode);
 	else db_unset(u->hContact, ICQCORP_PROTONAME, "ApparentMode");
 
 	if (icq.statusVal <= ID_STATUS_OFFLINE) return 0;

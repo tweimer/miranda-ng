@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org),
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org),
 Copyright (c) 2000-12 Miranda IM project,
 all portions of this codebase are copyrighted to the people
 listed in contributors.txt.
@@ -35,7 +35,7 @@ MIR_APP_DLL(int) Netlib_Send(HNETLIBCONN nlc, const char *buf, int len, int flag
 		return SOCKET_ERROR;
 
 	int result;
-	Netlib_Dump(nlc, (PBYTE)buf, len, true, flags);
+	Netlib_Dump(nlc, (uint8_t*)buf, len, true, flags);
 	if (nlc->hSsl)
 		result = Netlib_SslWrite(nlc->hSsl, buf, len);
 	else
@@ -71,7 +71,7 @@ MIR_APP_DLL(int) Netlib_Recv(HNETLIBCONN nlc, char *buf, int len, int flags)
 	if (recvResult <= 0)
 		return recvResult;
 
-	Netlib_Dump(nlc, (PBYTE)buf, recvResult, false, flags);
+	Netlib_Dump(nlc, (uint8_t*)buf, recvResult, false, flags);
 
 	if ((flags & MSG_PEEK) == 0) {
 		NETLIBNOTIFY nln = { buf, len, flags, recvResult };

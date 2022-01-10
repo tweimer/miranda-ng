@@ -2,7 +2,7 @@
 
 Miranda NG: the free IM client for Microsoft* Windows*
 
-Copyright (C) 2012-21 Miranda NG team (https://miranda-ng.org),
+Copyright (C) 2012-22 Miranda NG team (https://miranda-ng.org),
 Copyright (c) 2000-08 Miranda ICQ/IM project,
 all portions of this codebase are copyrighted to the people
 listed in contributors.txt.
@@ -200,7 +200,7 @@ LRESULT cli_ProcessExternalMessages(HWND hwnd, ClcData *dat, UINT msg, WPARAM wP
 				index += contact->iSubNumber;
 			}
 
-			BYTE k = db_get_b(0, "CLC", "MetaExpanding", SETTING_METAEXPANDING_DEFAULT);
+			uint8_t k = db_get_b(0, "CLC", "MetaExpanding", SETTING_METAEXPANDING_DEFAULT);
 			if (k) {
 				for (int i = 0; i < mainindex; i++) {
 					ClcContact *tempCont = group->cl[i];

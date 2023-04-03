@@ -1,0 +1,36 @@
+name: CI
+
+on:
+  push:
+    branches:
+    - cmake
+
+env:
+  build-type: Release
+
+jobs:
+  build:
+
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Create Build Environment
+      run: cmake -E make_directory ${{runner.workspace}}/build
+
+    - name: Configure CMake
+      shell: bash
+      working-directory: ${{runner.workspace}}/build
+      run: cmake $GITHUB_WORKSPACE -DCMAKE_BUILD_TYPE=${{env.build-type}}
+
+    - name: Build
+      working-directory: ${{runner.workspace}}/build
+      shell: bash
+      run: cmake --build . --config ${{env.build-type}}
+
+    - name: Save build
+      uses: actions/upload-artifact@v2
+      with:
+        name: build
+        path: ${{runner.workspace}}/build/${{env.build-type}}

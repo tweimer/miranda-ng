@@ -1,3 +1,4 @@
+cmake_minimum_required(VERSION 2.8.12)
 file(GLOB SOURCES "cmstub.cpp")
 set(TARGET cmstub)
 add_library(${TARGET} ${SOURCES})

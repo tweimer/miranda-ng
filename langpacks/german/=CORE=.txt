@@ -1182,13 +1182,13 @@ Beim Empfang von unbekannten Kontakten wird immer nachgefragt.
 [If incoming files already exist]
 Wenn eingehende Dateien bereits existieren
 [Cloud files]
-
+Cloud-Dateien
 [Download cloud files automatically]
-
+Cloud-Dateien automatisch herunterladen
 [Only if their size is less than]
-
+Nur wenn ihre Größe unter
 [KBytes (0 - always)]
-
+KBytes (0 - immer)
 [Virus scanner]
 Virenscanner
 [Scan files:]
@@ -1537,9 +1537,9 @@ Eingehende Nachricht (10x10)
 [Outgoing message (10x10)]
 Ausgehende Nachricht (10x10)
 [Secure message (10x10)]
-
+Sichere Nachricht (10x10)
 [Secure verified message (10x10)]
-
+Sichere verifizierte Nachricht (10x10)
 [Me]
 Ich
 [File sent]
@@ -1724,7 +1724,7 @@ Seitenleiste
 [Title underline]
 Trennlinie unter Titel
 [Popup Mode]
-
+Popup-Modus
 ;file \src\core\stdpopup\src\yapp_history_dlg.cpp
 [Copy title to clipboard]
 Titel in Zwischenablage kopieren
@@ -1920,9 +1920,9 @@ Benutzer aktiviert Status für ...
 [User disables status for ...]
 Benutzer deaktiviert Status für ...
 [Action messages]
-
+Aktionsnachrichten
 [Highlighted messages]
-
+Hervorgehobene Nachrichten
 [Nick list members (online)]
 Benutzerliste (online)
 [Nick list members (away)]
@@ -2072,7 +2072,7 @@ Komprimierung der Datenbank fehlgeschlagen
 [Compact database]
 Datenbank komprimieren
 [Miranda is unable to open '%s' because you do not have any profile plugins installed.\nPress Yes to install Dbx_sqlite or Cancel to exit]
-
+Miranda konnte Profil '%s' nicht öffnen, da kein Profilplugin installiert ist.\nKlicken Sie Ja, um Dbx_sqlite zu installieren, oder Nein, um zu beenden.
 [Miranda was unable to open '%s', it's in an unknown format.]
 Miranda konnte Profil '%s' nicht öffnen, da es in einem unbekannten Format vorliegt.
 [Miranda was unable to open '%s'\nIt's inaccessible or used by other application or Miranda instance]
@@ -2080,7 +2080,7 @@ Miranda kann Profil '%s' nicht öffnen.\nAuf dieses Profil kann nicht zugegriffe
 [Miranda was unable to open '%s'\nThere is no suitable database driver installed]
 Miranda kann Profil '%s' nicht öffnen.\nEs ist kein passender Datenbanktreiber installiert.
 [Show password]
-
+Passwort anzeigen
 [No profile support installed!]
 Kein Profilplugin installiert!
 [Miranda can't open that profile]
@@ -2140,9 +2140,9 @@ Konto
 Extraicons
 ;file \src\mir_app\src\ei_services.cpp
 [Mute chat]
-Chat stumm
+Chat stummschalten
 [Attach]
-
+Anhängen
 ;file \src\mir_app\src\file.cpp
 [&File]
 &Datei
@@ -2436,7 +2436,7 @@ Beenden
 [Subgroup menu]
 Untergruppenmenü
 [New subgroup]
-
+Neue Untergruppe
 [Hide offline users in here]
 Offline-Kontakte hier ausblenden
 ;file \src\mir_app\src\menu_options.cpp
@@ -2582,7 +2582,7 @@ Programmauswahl für den Start
 [<mixed>]
 <gemischt>
 [System settings]
-
+Systemeinstellungen
 [<All connections>]
 <Alle Verbindungen>
 [Network]
@@ -2743,9 +2743,9 @@ Kontenname muss ausgefüllt werden.
 [Account error]
 Konto-Fehler
 [Account internal name contains invalid symbols, only ASCII chars are allowed.]
-
+Interner Kontenname enthält ungültige Zeichen, es sind nur ASCII-Zeichen erlaubt.
 [Account internal name has to be unique. Please enter unique name.]
-
+Interner Kontenname muss eindeutig sein. Bitte geben Sie einen eindeutigen Namen ein.
 ;file \src\mir_app\src\proto_order.cpp
 ;file \src\mir_app\src\searchresults.cpp
 [Could not start a search on '%s', there was a problem - is %s connected?]

@@ -33,9 +33,9 @@ Vertikalen Scrollbalken aktivieren
 [Draw window edge]
 Fensterrand darstellen
 [Ascending events sort order]
-
+Aufsteigende Sortierung der Ereignisse
 [History++ compatiblity mode]
-
+History++ Kompatibilitätsmodus
 [Template list:]
 Liste der Vorlagen:
 [Edit template:]
@@ -102,7 +102,7 @@ Hintergrund des ausgewählten Eintrags
 [Selected item's frame]
 Rahmen des ausgewählten Eintrags
 [Highlighted messages]
-
+Hervorgehobene Nachrichten
 [Grid background]
 Hintergrund des Verlaufsfensters
 [Separator]
@@ -112,13 +112,13 @@ Trennlinie
 Unbenannt
 ;file \plugins\NewStory\src\history_control.cpp
 [Toggle bookmark]
-
+Lesezeichen umschalten
 [Search]
 Suchen
 [Search forward]
-
+Vorwärts suchen
 [Search backward]
-
+Rückwärts suchen
 [Are you sure to remove selected event(s)?]
 Möchten Sie die ausgewählten Ereignisse wirklich löschen?
 ;file \plugins\NewStory\src\history_dlg.cpp
@@ -175,9 +175,9 @@ Unterhaltungen
 [Bookmarks]
 Lesezeichen
 [No more occuurences found]
-
+Keine weiteren Vorkommnisse gefunden
 [Passed the end of history]
-
+Ende des Verlaufes erreicht
 [It is metacontact. For export use one of this subcontacts:\r\n%s]
 Es ist ein Metakontakt. Verwenden Sie zum Export einen seiner Unterkontakte:\r\n%s
 [Export warning]
@@ -191,20 +191,20 @@ Fertig
 [History export]
 Verlaufsexport
 [Passed the beginning of history]
-
+Anfang des Verlaufs überschritten
 ;file \plugins\NewStory\src\history_menus.cpp
 [Copy file path]
-
+Dateipfad kopieren
 [Copy URL]
 URL kopieren
 [History]
 Verlauf
 [Global search]
-
+Globale Suche
 [Copy text]
 Text kopieren
 [Quote]
-Zitat
+Zitieren
 [Save as]
 Speichern als
 [Download]
@@ -235,7 +235,7 @@ Vorlage Gruppe
 [Cancel edit]
 Bearbeitung abbrechen
 [Downloaded]
-
+Heruntergeladen
 [Help]
 Hilfe
 ;file \plugins\NewStory\src\options.cpp
@@ -335,11 +335,11 @@ Oberfläche
 [Window title]
 Fenstertitel
 [%N - history [%c messages total]]
-
+%N - Verlauf [%c Nachrichten insgesamt]
 [Message log]
 Nachrichtenverlauf
 [Group head]
-
+Gruppenkopf
 [Grouped messages]
 Gruppierte Nachrichten
 [Presence requests]

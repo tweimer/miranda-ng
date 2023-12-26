@@ -396,9 +396,9 @@ Ausgehende Nachricht (10x10)
 [Notice (10x10)]
 Notiz (10x10)
 [Secure message (10x10)]
-
+Sichere Nachricht (10x10)
 [Secure verified message (10x10)]
-
+Sichere verifizierte Nachricht (10x10)
 [Window Icon]
 Fenstericon
 [Text color]
@@ -452,7 +452,7 @@ Information (10x10)
 [Single Messaging]
 Einzelchats
 [Group chat events]
-
+Gruppenchat-Ereignisse
 [Thai]
 Thailändisch
 [Japanese]

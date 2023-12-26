@@ -186,13 +186,13 @@ Datei:\s
 [Description: ]
 Beschreibung:\s
 [Size: ]
-
+Größe:\s
 [Transferred: ]
-
+Übertragen:\s
 [Path: ]
-
+Pfad:\s
 [URL: ]
-URL:
+URL:\s
 [Nick      :]
 Nickname   :
 [FirstName :]

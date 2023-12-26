@@ -517,7 +517,7 @@ Empfängt Informationen über OMEMO-Geräte
 [Supports message carbons (XEP-0280)]
 Unterstützt Nachrichtendurchschläge (XEP-0280)
 [Supports offline messages (XEP-0160)]
-
+Unterstützt Offline-Nachrichten (XEP-0160)
 ;file \protocols\JabberG\src\jabber_captcha.cpp
 [Enter the text you see]
 Geben Sie den Text ein, den Sie sehen

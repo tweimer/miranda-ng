@@ -1469,7 +1469,7 @@ BBCode-Formatierung verwenden
 [Use normal templates (uncheck to use simple templates if your template set supports them)]
 Verwende normale Vorlagen (deaktivieren für einfache Vorlagen, falls unterstützt)
 [Message log control]
-
+Nachrichtenverlauf
 [Log status changes]
 Statuswechsel aufzeichnen
 [Automatically copy selected text]
@@ -1618,7 +1618,7 @@ Statusänderung
 [Secure message]
 Sichere Nachricht
 [Secure verified message]
-
+Sichere verifizierte Nachricht
 [Static container icon]
 Statisches Containericon
 [Sounds (status bar)]

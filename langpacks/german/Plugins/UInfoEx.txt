@@ -1167,11 +1167,11 @@ Einige grundlegende Statistiken
 [all Contacts]
 alle Kontakte
 [XMLCard]
-
+XMLCard
 [DBEditor++ File]
-
+DBEditor++ Datei
 [Standard vCard]
-
+Standard vCard
 [Select a destination file...]
 Zieldatei auswählen...
 [Import User Details from VCard]

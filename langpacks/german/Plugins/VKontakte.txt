@@ -349,7 +349,7 @@ Teilnehmer
 [Owners]
 Besitzer
 [Adding bots, MUC or groups to MUC is not supported]
-
+Bots, MUC oder Gruppen können nicht hinzugefügt werden
 [Not supported]
 Wird nicht unterstützt
 [This chat is going to be destroyed forever with all its contents. This action cannot be undone. Are you sure?]

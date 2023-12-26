@@ -44,7 +44,7 @@ E-Mail-Adresse zur Kontenüberprüfung eingeben
 [Enter verification code received by email]
 Geben Sie den per E-Mail empfangenen Überprüfungscode ein
 [Enter the secret code sent to another device]
-eben Sie den Geheimcode ein, der an ein anderes Gerät gesendet wurde
+Geben Sie den Geheimcode ein, der an ein anderes Gerät gesendet wurde
 [Enter password]
 Passwort eingeben
 [ (hint: %s)]
@@ -74,7 +74,7 @@ Chatsitzung ver&lassen
 [Telegram Premium user]
 Telegram-Premiumnutzer
 [Reaction]
-
+Reaktion
 ;file \protocols\Telegram\src\menus.cpp
 ;file \protocols\Telegram\src\options.cpp
 [Network]
@@ -86,7 +86,7 @@ Erweitert
 ;file \protocols\Telegram\src\proto.cpp
 ;file \protocols\Telegram\src\server.cpp
 [Error %d: %s]
-
+Fehler %d: %s
 [%d member(s)]
 %d Mitglieder
 [Saved messages]

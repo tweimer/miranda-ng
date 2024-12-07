@@ -364,7 +364,7 @@ SecureIM hat unverschlüsselte Nachricht empfangen:\n
 [Key from disabled...]
 Schlüssel deaktiviert...
 [SecureIM: Sorry, unable to decrypt this message because you have no PGP/GPG installed. Visit www.pgp.com or www.gnupg.org for more info.]
-SecureIM: Kann nachricht nicht entschlüsseln weil Sie kein PGP/GPG installiert haben. Besuchen Sie www.pgp.com oder www.gnupg.org für weitere Informationen.
+SecureIM: Kann Nachricht nicht entschlüsseln weil Sie kein PGP/GPG installiert haben. Besuchen Sie www.pgp.com oder www.gnupg.org für weitere Informationen.
 [SecureIM received encrypted message:\n]
 SecureIM hat verschlüsselte Nachricht empfangen:\n
 [Sending back secure message...]
@@ -380,7 +380,7 @@ SecureIM kann die Nachricht nicht verschlüsseln! Prüfen Sie die Vertrauenswür
 [SecureIM not enabled! You must enable SecureIM with this user...]
 SecureIM nicht aktiviert! Sie müssen bei diesem Benutzer SecureIM aktivieren...
 [Can't send encrypted message!\nUser is offline now and his secure key has been expired. Do you want to send your message?\nIt will be unencrypted!]
-Kann keine verschlüsselte nachricht senden!\nDer Benutzer ist jetzt offline und sein geheimer Schlüssel ist ausgelaufen,\nmöchten Sie Ihre Nachricht nun unverschlüsselt senden?
+Kann keine verschlüsselte Nachricht senden!\nDer Benutzer ist jetzt offline und sein geheimer Schlüssel ist ausgelaufen,\nmöchten Sie Ihre Nachricht nun unverschlüsselt senden?
 ;file \plugins\SecureIM\src\svcs_rsa.cpp
 [SecureIM auto accepted NEW RSA Public key from: %s uin: %s New SHA-1: %s Old SHA-1: %s]
 SecureIM hat NEUEN öffentlichen RSA-Schlüssel automatisch akzeptiert von: %s, UIN: %s, Neues SHA-1: %s, Altes SHA-1: %s

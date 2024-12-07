@@ -63,9 +63,9 @@ Nachrichten
 [Read message if less characters than]
 Nachricht lesen, wenn weniger Zeichen als
 [Ignore event if message dialog is open]
-Ereignis ignoriere, wenn Nachrichtenfenster offen
+Ereignis ignorieren, wenn Nachrichtenfenster offen
 [Ignore event if message dialog is focused]
-Ignoriere, wenn Nachrichtenfenster fokussiert
+Ereignis ignorieren, wenn Nachrichtenfenster fokussiert
 [Active Modes]
 Aktiver Status
 [Active Users]

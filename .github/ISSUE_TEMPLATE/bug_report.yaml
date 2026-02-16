@@ -9,18 +9,69 @@ body:
   - type: markdown
     attributes:
       value: |
-        ### Expected behavior
-        What did you expect?
-        
-        ### Actual behavior
-        What did you get instead?
-        
-        ### Does it work in stable version?
-        If you know in which dev build (or approximate date when) it was broken, it may be much easier to identify and fix the issue.
-        
-        ### Steps to reproduce that behavior
-         * Provide step-by-step instructions so we can reproduce the issue (We can't fix what we can't reproduce).
-         * Attach your VersionInfo.
-         * Attach a crash report if you are experiencing crashes (It includes VersionInfo as well).
-         * Attach a network log captured if you are experiencing connectivity issues.
-         * If Miranda freezes, hangs up or consumes CPU, attach information obtained by Process Explorer tool.
+        Thanks for taking the time to report a bug! Please fill out the details below so we can investigate and fix it.
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+      description: What did you expect?
+      placeholder: Describe what you expected to happen.
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+      description: What did you get instead?
+      placeholder: Describe what actually happened.
+    validations:
+      required: true
+
+  - type: textarea
+    id: works_in_stable
+    attributes:
+      label: Does it work in stable version?
+      description: >
+        If you know in which dev build (or approximate date when) it was broken,
+        it may be much easier to identify and fix the issue.
+      placeholder: e.g., "Works in stable 0.95.x, broken since dev build from 2025‑10‑01"
+    validations:
+      required: false
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce that behavior
+      description: >
+        Provide step-by-step instructions so we can reproduce the issue
+        (we can't fix what we can't reproduce).
+      placeholder: |
+        1. Go to ...
+        2. Click on ...
+        3. Observe ...
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: attachments
+    attributes:
+      label: Helpful attachments
+      description: Please attach any relevant files. Check the boxes that apply.
+      options:
+        - label: I attached VersionInfo.
+        - label: I attached a crash report (if experiencing crashes).
+        - label: I attached a network log (if experiencing connectivity issues).
+        - label: I attached Process Explorer info (if freezes/hangs/high CPU).
+    validations:
+      required: false
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Additional information, logs, screenshots
+      description: Anything else that could help us diagnose the issue.
+      placeholder: Drag and drop files here or paste logs/screenshots.
+    validations:
+      required: false

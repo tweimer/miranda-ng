@@ -21,7 +21,7 @@ für
 [Change my status mode to:]
 Meinen Status ändern zu:
 [Do not set status back to online when returning from idle]
-Status nicht automatisch zu 'Online' ändern, sobald Untätigktät vorbei
+Status nicht automatisch zu 'Online' ändern, sobald Untätigkeit vorbei
 [Idle options]
 Untätigkeits-Einstellungen
 [Become idle if application full screen]
@@ -48,7 +48,7 @@ Folgende Nachricht als Standard verwenden:
 [Status messages]
 Statusnachrichten
 [Reset]
-Standard
+Zurücksetzen
 [Change %s message]
 '%s'-Nachricht ändern
 [Closing in %d]
@@ -137,7 +137,7 @@ Deckkraft aktiv:
 [Items]
 Objekte
 [Show divider between online and offline contacts]
-Trennlinie zwischen Online-/Offline-Kontakten
+Trennlinie zwischen Online- und Offline-Kontakten
 [Hot track items as mouse passes over]
 Kontakt bei Mausbewegung hervorheben
 [Disable drag and drop of items]
@@ -487,7 +487,7 @@ E-Mail-Adresse hinzufügen
 [View personal user details and more]
 Persönliche Benutzerdetails und mehr ansehen
 [Update now]
-Aktualisieren
+Jetzt aktualisieren
 [Updating]
 Aktualisieren
 [First name:]
@@ -527,13 +527,13 @@ Postleitzahl:
 [Country:]
 Land:
 [Spoken languages:]
-Sprachen:
+Gesprochene Sprachen:
 [Timezone:]
 Zeitzone:
 [Local time:]
 Lokale Zeit:
 [Set custom time zone]
-Eigene Zeitzone für diesen Kontakt setzen
+Eigene Zeitzone setzen
 [Company:]
 Firma:
 [Department:]
@@ -568,7 +568,7 @@ Kontakt auch vom Server entfernen
 [Remove server history]
 Serververlauf entfernen
 [Remove history for everyone]
-Verlauf für andere entfernen
+Verlauf für alle entfernen
 [&Yes]
 &Ja
 [&No]
@@ -586,7 +586,7 @@ Festlegen, welcher Name eines Kontakts in der Kontaktliste angezeigt werden soll
 [Miranda NG profile manager]
 Miranda-NG-Profilmanager
 [Manage your Miranda NG profile]
-Verwalten Sie Ihre Miranda-NG-Profile
+Verwalten Sie Ihr Miranda-NG-Profil
 [&Run]
 Ausfüh&ren
 [&Exit]
@@ -644,7 +644,7 @@ Sicherheitssystem, um arglistige Änderungen zu erkennen, ist angeschaltet und S
 [Database settings are being imported from]
 Datenbankeinstellungen werden importiert von
 [This file wishes to change the setting]
-Diese Datei möchte die Einstellungen ändern
+Diese Datei möchte die Einstellung ändern
 [to the value]
 auf den Wert
 [Do you want to allow this change?]
@@ -660,13 +660,13 @@ Der Import wurde abgeschlossen von
 [What do you want to do with the file now?]
 Was wollen Sie mit der Datei jetzt tun?
 [&Recycle]
-Wiede&rherstellen
+Papie&rkorb
 [&Delete]
 &Löschen
 [&Move]
 &Verschieben
 [&Leave]
-Ver&lassen
+Beibha&lten
 [Netlib log options]
 Netlib-Logeinstellungen
 [Received bytes]
@@ -744,15 +744,15 @@ Verschieben Sie Icons, um sie zuzuweisen:
 [Import multiple]
 Mehrfachimport
 [To main icons]
-in allg. Icon
+Zu Haupticons
 [To]
-An
+Zu
 [<< &Import]
 << &Import
 [Download more icons]
 Weitere Icons herunterladen
 [To default status icons]
-Als Standard-Statusicon
+Zu Standard-Statusicons
 [Logging...]
 Logeinstell.
 [Outgoing connections]

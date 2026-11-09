@@ -1,0 +1,105 @@
+--- a/langpacks/german/=CORE=.txt
++++ b/langpacks/german/=CORE=.txt
+@@
+-Status nicht automatisch zu 'Online' ändern, sobald Untätigktät vorbei
++Status nach Ende der Untätigkeit nicht automatisch wieder auf „Online“ setzen
+@@
+-[Reset]
+-Standard
++[Reset]
++Zurücksetzen
+@@
+-[Hide group counts when there are none online]
+-Summe der Kontakte ausblenden, wenn niemand online ist
++[Hide group counts when there are none online]
++Gruppenzahlen ausblenden, wenn keine Kontakte online sind
+@@
+-[Notices]
+-Notizen
++[Notices]
++Hinweise
+@@
+-[Update now]
+-Aktualisieren
++[Update now]
++Jetzt aktualisieren
+@@
+-[Updating]
+-Aktualisieren
++[Updating]
+-Wird aktualisiert …
+@@
+-[Past background:]
+-Vergangenheit:
++[Past background:]
+-Bisheriger Werdegang:
+@@
+-[This file wishes to change the setting]
+-Diese Datei möchte die Einstellungen ändern
++[This file wishes to change the setting]
+-Diese Datei möchte die Einstellung ändern
+@@
+-[The import has completed from]
+-Der Import wurde abgeschlossen von
++[The import has completed from]
+-Der Import aus … wurde abgeschlossen
+@@
+-[&Recycle]
+-Wiede&rherstellen
++[&Recycle]
+-In den Papierkorb &verschieben
+@@
+-[Only the ticked contacts will be shown on the main contact list]
+-Nur aktivierte Kontakte werden in der Kontaktliste angezeigt
++[Only the ticked contacts will be shown on the main contact list]
+-Nur markierte Kontakte werden in der Kontaktliste angezeigt
+@@
+-[Icon index]
+-Iconindex
++[Icon index]
++Icon-Index
+@@
+-[Icon library:]
+-Iconsammlung:
++[Icon library:]
++Icon-Sammlung:
+@@
+-[Drag icons to main list to assign them:]
+-Verschieben Sie Icons, um sie zuzuweisen:
++[Drag icons to main list to assign them:]
+-Ziehen Sie Icons in die Hauptliste, um sie zuzuweisen:
+@@
+-[To main icons]
+-in allg. Icon
++[To main icons]
+-In allgemeine Icons
+@@
+-[Account order and visibility]
+-Konten Reihenfolge und Sichtbarkeit
++[Account order and visibility]
+-Reihenfolge und Sichtbarkeit der Konten
+@@
+-[Select the extra icons to be shown in the contact list:]
+-Wählen Sie die Extraicons aus, welche in der Kontaktliste angezeigt werden sollen:
++[Select the extra icons to be shown in the contact list:]
+-Wählen Sie die zusätzlichen Icons aus, die in der Kontaktliste angezeigt werden sollen:
+@@
+-[*only the first %d icons will be shown]
+-Hinweis: Nur die ersten %d Icons werden angezeigt!
++[*only the first %d icons will be shown]
+-Hinweis: Es werden nur die ersten %d Icons angezeigt!
+@@
+-[Add to existing metacontact]
+-Zu Metakontakt hinzufügen
++[Add to existing metacontact]
+-Zu vorhandenem Metakontakt hinzufügen
+@@
+-[Unique ID:]
+-Unique ID:
++[Unique ID:]
+-Eindeutige ID:
+@@
+-[You can group/ungroup icons by selecting them (Ctrl+left click) and using the popup menu (right click)]
+-Wählen Sie mehrere Elemente mit gedrückter Umschalt- oder Strg+Taste aus. Drücken Sie anschließend die rechte Maustaste, um die ausgewählten Elemente zu gruppieren.
++[You can group/ungroup icons by selecting them (Ctrl+left click) and using the popup menu (right click)]
+-Wählen Sie Icons mit Strg+Linksklick aus. Gruppieren bzw. entgruppieren Sie sie über das Kontextmenü (Rechtsklick).

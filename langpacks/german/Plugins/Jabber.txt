@@ -39,7 +39,7 @@ Suchdienst
 [Roster Editor]
 Serverseitige Kontaktliste
 [View and modify your server-side contact list.]
-Anzeigen und Änderung der serverseitigen Kontaktliste.
+Serverseitigen Kontaktliste ansehen und ändern.
 [Download]
 Herunterladen
 [Upload]
@@ -55,7 +55,7 @@ Passwort ändern
 [Priority:]
 Priorität:
 [Use hostname as resource]
-Computername als Standort verwenden
+Hostnamen als Standort verwenden
 [Port:]
 Port:
 [Use SSL]
@@ -131,7 +131,7 @@ Mittlerer:
 [Last name:]
 Nachname:
 [Date of birth:]
-Geburtstag:
+Geburtsdatum:
 [YYYY-MM-DD]
 JJJJ-MM-TT
 [Gender:]
@@ -199,7 +199,7 @@ Neues Passwort bestätigen:
 [Jabber Multi-User Conference]
 Jabber-Mehrbenutzerkonferenz
 [Create or join existing conference room.]
-Konferenzräume betreten oder erstellen.
+Konferenzraum betreten oder erstellen.
 [Conference server:]
 Konferenzserver:
 [Room:]

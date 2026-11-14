@@ -2,117 +2,117 @@
 ;  Plugin: Weather
 ;============================================================
 [AM Rain]
-
+Morgens Regen
 [Am Clouds / Pm Sun]
-
+Morgens bewölkt / Nachmittags Sonne
 [Am Light Rain]
-
+Morgens leichter Regen
 [Am Rain / Snow Showers]
-
+Morgens Regen / Schneeschauer
 [Am Rain / Snow]
-
+Morgens Regen / Schnee
 [Am Rain]
-
+Morgens Regen
 [Am Showers / Wind]
-
+Morgens Schauer / Wind
 [Am Showers]
-
+Morgens Schauer
 [Am Snow Showers / Wind]
-
+Morgens Schneeschauer / Wind
 [Am Snow Showers]
-
+Morgens Schneeschauer
 [Am Snow]
-
+Morgens Schnee
 [Am T-Storms]
-
+Morgens Gewitter
 [Blowing Snow]
-
+Schneesturm
 [Broken Clouds]
-
+Aufgelockerte Bewölkung
 [Ceiling]
 Decke
 [Chance Of A Thunderstorm 20% Chance Of Precipitation]
-
+Gewitter möglich, 20 % Niederschlagswahrscheinlichkeit
 [Chance Of Rain 20% Chance Of Precipitation]
-
+Regenwahrscheinlichkeit 20 %
 [Chance Of Rain 30% Chance Of Precipitation]
-
+Regenwahrscheinlichkeit 30 %
 [Chance Of Rain 40% Chance Of Precipitation]
-
+Regenwahrscheinlichkeit 40 %
 [Chance Of Rain 50% Chance Of Precipitation]
-
+Regenwahrscheinlichkeit 50 %
 [Chance Of Rain 60% Chance Of Precipitation]
-
+Regenwahrscheinlichkeit 60 %
 [Chance Of Rain 70% Chance Of Precipitation]
-
+Regenwahrscheinlichkeit 70 %
 [Chance Of Rain 80% Chance Of Precipitation]
-
+Regenwahrscheinlichkeit 80 %
 [Chance Of Rain]
-
+Regenwahrscheinlichkeit
 [Chance Of Snow 20% Chance Of Precipitation]
-
+Schneewahrscheinlichkeit 20 %
 [Chance Of Snow 30% Chance Of Precipitation]
-
+Schneewahrscheinlichkeit 30 %
 [Chance Of Snow 40% Chance Of Precipitation]
-
+Schneewahrscheinlichkeit 40 %
 [Chance Of Snow 50% Chance Of Precipitation]
-
+Schneewahrscheinlichkeit 50 %
 [Chance Of Snow 60% Chance Of Precipitation]
-
+Schneewahrscheinlichkeit 60 %
 [Chance Of Snow 70% Chance Of Precipitation]
-
+Schneewahrscheinlichkeit 70 %
 [Chance Of Snow 80% Chance Of Precipitation]
-
+Schneewahrscheinlichkeit 80 %
 [Chance Of Snow]
-
+Schneewahrscheinlichkeit
 [Chance Of T-Storms 20% Chance Of Precipitation]
-
+Gewitter möglich, 20 % Niederschlagswahrscheinlichkeit
 [Chance Of T-Storms 30% Chance Of Precipitation]
-
+Gewitter möglich, 30 % Niederschlagswahrscheinlichkeit
 [Chance Of T-Storms 40% Chance Of Precipitation]
-
+Gewitter möglich, 40 % Niederschlagswahrscheinlichkeit
 [Chance Of T-Storms 50% Chance Of Precipitation]
-
+Gewitter möglich, 50 % Niederschlagswahrscheinlichkeit
 [Chance Of T-Storms 60% Chance Of Precipitation]
-
+Gewitter möglich, 60 % Niederschlagswahrscheinlichkeit
 [Chance Of T-Storms 70% Chance Of Precipitation]
-
+Gewitter möglich, 70 % Niederschlagswahrscheinlichkeit
 [Chance Of T-Storms 80% Chance Of Precipitation]
-
+Gewitter möglich, 80 % Niederschlagswahrscheinlichkeit
 [Chance Of T-Storms 90% Chance Of Precipitation]
-
+Gewitter möglich, 90 % Niederschlagswahrscheinlichkeit
 [Chance Rain 40% Chance Of Precipitation]
-
+Regenwahrscheinlichkeit 40 %
 [Chance Rain 50% Chance Of Precipitation]
-
+Regenwahrscheinlichkeit 50 %
 [Chance Rain 80% Chance Of Precipitation]
-
+Regenwahrscheinlichkeit 80 %
 [Chance Rain 90% Chance Of Precipitation]
-
+Regenwahrscheinlichkeit 90 %
 [Clear / Wind]
-
+Klar / Windig
 [Clear]
 Klar
 [Clouds Early / Clearing Late]
-
+Früh bewölkt / später aufklarend
 [Cloudy / Wind]
-
+Bewölkt / Windig
 [Cloudy / Windy]
-
+Bewölkt / windig
 [Cloudy And Windy]
-
+Bewölkt und windig
 [Cloudy]
 Wolkig
 [Day Length]
 Tageslänge
 [Drifting Snow]
-
+Triebschnee
 [Drizzle Fog]
-
+Nieselnebel
 [Drizzle Mist]
-
+Nieselnebel
 [Drizzle]
-
+Niesel
 [ENE]
 ONO
 [ESE]
@@ -120,273 +120,273 @@ OSO
 [E]
 O
 [Elevation]
-Elevation
+Höhe
 [Fair / Windy]
-
+Heiter / windig
 [Fair And Windy]
-
+Heiter und windig
 [Fair]
-
+Heiter
 [Falling]
-
+Fallend
 [Feel]
 gefühlt
 [Few Showers / Wind]
-
+Einzelne Schauer / Wind
 [Few Showers]
-
+Einzelne Schauer
 [Few Snow Showers]
-
+Einzelne Schneeschauer
 [First Quarter]
-
+Erstes Viertel
 [Fog / Windy]
-
+Nebel / windig
 [Fog And Windy]
-
+Nebel und windig
 [Fog Late]
-
+Später Nebel
 [Fog]
 Nebel
 [Freezing Drizzle / Windy]
-
+Eisniesel / windig
 [Freezing Drizzle Mist]
-
+Eisnieselnebel
 [Freezing Drizzle]
-
+Eisniesel
 [Freezing Fog]
-
+Frostnebel
 [Freezing Rain / Windy]
-
+Eisregen / windig
 [Freezing Rain Mist]
-
+Eisregen-Nebel
 [Freezing Rain]
-
+Eisregen
 [Full Moon]
 Vollmond
 [Full]
-
+Voll
 [Haze]
-
+Dunst
 [Heat Index]
-gefühlte Temperatur
+Gefühlte Temperatur
 [Heavy Blowing Snow]
-
+Starker Schneesturm
 [Heavy Fog]
-
+Starker Nebel
 [Heavy Rain / Wind]
-
+Starker Regen / Wind
 [Heavy Rain Showers]
-
+Starke Regenschauer
 [Heavy Rain]
-
+Starker Regen
 [Heavy Showers Snow Blowing Snow]
-
+Starke Schauer / Schnee / Schneesturm
 [Heavy Showers Snow Heavy Blowing Snow]
-
+Starke Schauer / Schnee / starker Schneesturm
 [Heavy Showers Snow Mist]
-
+Starke Schauer / Schnee / Nebel
 [Heavy Showers Snow]
-
+Starke Schauer / Schnee
 [Heavy Snow And Windy]
-
+Starker Schnee und windig
 [Heavy Snow Shower]
-
+Starker Schneeschauer
 [Heavy Snow Showers]
-
+Starke Schneeschauer
 [Heavy Snow]
-
+Starker Schnee
 [Heavy T-Storm]
-
+Starkes Gewitter
 [Heavy T-Storms]
-
+Starke Gewitter
 [Heavy Thunderstorm Rain]
-
+Starker Gewitterregen
 [High]
 Hoch
 [Ice Crystals Mist]
-
+Eiskristall-Nebel
 [Ice Crystals]
-
+Eiskristalle
 [Ice Pellets 30% Chance Of Precipitation]
-
+Eispartikel, 30 % Niederschlagswahrscheinlichkeit
 [Ice Pellets 40% Chance Of Precipitation]
-
+Eispartikel, 40 % Niederschlagswahrscheinlichkeit
 [Ice Pellets 50% Chance Of Precipitation]
-
+Eispartikel, 50 % Niederschlagswahrscheinlichkeit
 [Ice Pellets 60% Chance Of Precipitation]
-
+Eispartikel, 60 % Niederschlagswahrscheinlichkeit
 [Ice Pellets 70% Chance Of Precipitation]
-
+Eispartikel, 70 % Niederschlagswahrscheinlichkeit
 [Ice Pellets 80% Chance Of Precipitation]
-
+Eispartikel, 80 % Niederschlagswahrscheinlichkeit
 [Ice Pellets 90% Chance Of Precipitation]
-
+Eispartikel, 90 % Niederschlagswahrscheinlichkeit
 [Ice Pellets]
-
+Eispartikel
 [Isolated T-Storms / Wind]
-
+Einzelne Gewitter / Wind
 [Isolated T-Storms]
-
+Einzelne Gewitter
 [Light Blowing Snow]
-
+Leichter Schneesturm
 [Light Drizzle And Fog]
-
+Leichter Niesel und Nebel
 [Light Drizzle And Windy]
-
+Leichter Niesel und windig
 [Light Drizzle Fog]
-
+Leichter Nieselnebel
 [Light Drizzle Mist Patches Fog]
-
+Leichter Niesel, Nebelflecken
 [Light Drizzle Mist]
-
+Leichter Nieselnebel
 [Light Drizzle]
-
+Leichter Niesel
 [Light Fog]
-
+Leichter Nebel
 [Light Freezing Drizzle Light Snow Grains Mist]
-
+Leichter Eisniesel, leichte Schneekörner, Nebel
 [Light Freezing Drizzle Light Snow]
-
+Leichter Eisniesel, leichter Schnee
 [Light Freezing Drizzle Mist]
-
+Leichter Eisnieselnebel
 [Light Freezing Drizzle Snow]
-
+Leichter Eisniesel, Schnee
 [Light Freezing Drizzle]
-
+Leichter Eisniesel
 [Light Freezing Rain / Fog]
-
+Leichter Eisregen / Nebel
 [Light Freezing Rain / Windy]
-
+Leichter Eisregen / windig
 [Light Freezing Rain Light Showers Snow Mist]
-
+Leichter Eisregen, leichte Schneeschauer, Nebel
 [Light Freezing Rain Light Showers Snow]
-
+Leichter Eisregen, leichte Schneeschauer
 [Light Freezing Rain Light Snow]
-
+Leichter Eisregen, leichter Schnee
 [Light Freezing Rain Mist]
-
+Leichter Eisregen, Nebel
 [Light Freezing Rain]
-
+Leichter Eisregen
 [Light Ice Pellets Mist]
-
+Leichte Eispartikel, Nebel
 [Light Ice Pellets]
-
+Leichte Eispartikel
 [Light Low Drifting Snow]
-
+Leichter Treibschnce
 [Light Rain / Fog]
-
+Leichter Regen / Nebel
 [Light Rain / Freezing Rain]
-
+Leichter Regen / Eisregen
 [Light Rain / Wind Early]
-
+Leichter Regen / Wind früh
 [Light Rain / Wind]
-
+Leichter Regen / Wind
 [Light Rain / Windy]
-
+Leichter Regen / windig
 [Light Rain And Snow]
-
+Leichter Regen und Schnee
 [Light Rain And Windy]
-
+Leichter Regen und windig
 [Light Rain Early]
-
+Früh leichter Regen
 [Light Rain Fog]
-
+Leichter Regen mit Nebel
 [Light Rain Late]
-
+Später leichter Regen
 [Light Rain Mist]
-
+Leichter Regen, Nebel
 [Light Rain Shower And Windy]
-
+Leichter Regenschauer und windig
 [Light Rain Shower]
-
+Leichter Regenschauer
 [Light Rain Showers]
-
+Leichte Regenschauer
 [Light Rain Snow Mist]
-
+Leichter Regen, Schnee, Nebel
 [Light Rain Snow]
-
+Leichter Regen und Schnee
 [Light Rain With Thunder]
-
+Leichter Regen mit Gewitter
 [Light Rain]
-
+Leichter Regen
 [Light Showers Rain Mist]
-
+Leichte Schauer, Regen, Nebel
 [Light Showers Rain Snow Mist]
-
+Leichte Schauer, Regen, Schnee, Nebel
 [Light Showers Rain Snow]
-
+Leichte Schauer, Regen, Schnee
 [Light Showers Rain]
-
+Leichte Schauer, Regen
 [Light Showers Showers Rain]
-
+Leichte Schauer, regnerische Schauer
 [Light Showers Snow Blowing Snow]
-
+Leichte Schauer, Schnee, Schneesturm
 [Light Showers Snow Light Blowing Snow]
-
+Leichte Schauer, Schnee, leichter Schneesturm
 [Light Showers Snow Low Drifting Snow]
-
+Leichte Schauer, Schnee, Treibschnce
 [Light Showers Snow Mist]
-
+Leichte Schauer, Schnee, Nebel
 [Light Showers Snow Rain Mist]
-
+Leichte Schauer, Schnee, Regen, Nebel
 [Light Showers Snow Rain]
-
+Leichte Schauer, Schnee, Regen
 [Light Showers Snow]
-
+Leichte Schauer, Schnee
 [Light Snow / Fog]
-
+Leichter Schnee / Nebel
 [Light Snow 30% Chance Of Precipitation]
-
+Leichter Schnee, 30 % Niederschlagswahrscheinlichkeit
 [Light Snow And Windy]
-
+Leichter Schnee und windig
 [Light Snow Blowing Snow]
-
+Leichter Schnee, Schneesturm
 [Light Snow Early]
-
+Früh leichter Schnee
 [Light Snow Freezing Fog]
-
+Leichter Schnee, Frostnebel
 [Light Snow Grains Mist]
-
+Leichte Schneekörner, Nebel
 [Light Snow Grains]
-
+Leichte Schneekörner
 [Light Snow Late]
-
+Später leichter Schnee
 [Light Snow Light Blowing Snow]
-
+Leichter Schnee, leichter Schneesturm
 [Light Snow Low Drifting Snow Mist]
-
+Leichter Schnee, Treibschnce, Nebel
 [Light Snow Low Drifting Snow]
-
+Leichter Schnee, Treibschnce
 [Light Snow Mist]
-
+Leichter Schnee, Nebel
 [Light Snow Rain]
-
+Leichter Schnee, Regen
 [Light Snow Shallow Fog]
-
+Leichter Schnee, flacher Nebel
 [Light Snow Shower And Windy]
-
+Leichter Schneeschauer und windig
 [Light Snow Shower]
-
+Leichter Schneeschauer
 [Light Snow Showers]
-
+Leichte Schneeschauer
 [Light Snow]
-
+Leichter Schnee
 [Light Thunderstorm Rain]
-
+Leichter Gewitterregen
 [Light Thunderstorm]
-
+Leichtes Gewitter
 [Local Time]
-
+Ortszeit
 [Low Drifting Snow Mist]
-
+Niedriger Treibschnce, Nebel
 [Low Drifting Snow]
-
+Treibschnce
 [Low]
-Tief
+Niedrig
 [Mist]
-
+Nebel
 [Moderate]
-
+Mäßig
 [Moon phase]
 Mondphase
 [Moon]
@@ -398,13 +398,13 @@ Monduntergang
 [Mostly Clear]
 Meist klar
 [Mostly Cloudy / Wind]
-
+Meist bewölkt / Wind
 [Mostly Cloudy And Windy]
-
+Meist bewölkt und windig
 [Mostly Cloudy]
-Meist wolkig
+Meist bewölkt
 [Mostly Sunny / Wind]
-
+Meist sonnig / Wind
 [Mostly Sunny]
 Meist sonnig
 [NE]
@@ -424,111 +424,111 @@ Nacht
 [Observatory]
 Station
 [Overcast]
-
+Bedeckt
 [Partial Fog]
-
+Teilweise Nebel
 [Partially cloudy]
-
+Teilweise bewölkt
 [Partially sunny]
-
+Teilweise sonnig
 [Partly Cloudy / Wind]
-
+Teilweise bewölkt / Wind
 [Partly Cloudy / Windy]
-
+Teilweise bewölkt / windig
 [Partly Cloudy And Windy]
-
+Teilweise bewölkt und windig
 [Partly Cloudy]
-
+Teilweise bewölkt
 [Partly Sunny]
-
+Teilweise sonnig
 [Patches Fog Mist]
-
+Nebelstellen, Nebel
 [Patches Fog]
-
+Nebelstellen
 [Pm Light Rain]
-
+Nachmittags leichter Regen
 [Pm Rain / Snow]
-
+Nachmittags Regen / Schnee
 [Pm Rain / Wind]
-
+Nachmittags Regen / Wind
 [Pm Rain]
-
+Nachmittags Regen
 [Pm Showers / Wind]
-
+Nachmittags Schauer / Wind
 [Pm Showers]
-
+Nachmittags Schauer
 [Pm Snow Showers]
-
+Nachmittags Schneeschauer
 [Pm Snow]
-
+Nachmittags Schnee
 [Pm T-Storms]
-
+Nachmittags Gewitter
 [Precipitation]
-
+Niederschlag
 [Pressure Change]
-
+Druckänderung
 [Pressure Tendency]
 Luftdrucktendenz
 [Rain / Freezing Rain / Wind]
-
+Regen / Eisregen / Wind
 [Rain / Freezing Rain]
-
+Regen / Eisregen
 [Rain / Snow / Wind]
-
+Regen / Schnee / Wind
 [Rain / Snow Early]
-
+Regen / Schnee früh
 [Rain / Snow Late]
-
+Regen / Schnee später
 [Rain / Snow Showers Early]
-
+Regen-/Schneeschauer früh
 [Rain / Snow Showers Late]
-
+Regen-/Schneeschauer später
 [Rain / Snow Showers]
-
+Regen-/Schneeschauer
 [Rain / Snow]
-
+Regen / Schnee
 [Rain / Thunder]
-
+Regen / Gewitter
 [Rain / Wind Early]
-
+Regen / Wind früh
 [Rain / Wind]
-
+Regen / Wind
 [Rain 100% Chance Of Precipitation]
-Regen 100% Niederschlagswahrscheinlichkeit
+Regen, 100 % Niederschlagswahrscheinlichkeit
 [Rain 20% Chance Of Precipitation]
-Regen 20% Niederschlagswahrscheinlichkeit
+Regen, 20 % Niederschlagswahrscheinlichkeit
 [Rain 40% Chance Of Precipitation]
-Regen 40% Niederschlagswahrscheinlichkeit
+Regen, 40 % Niederschlagswahrscheinlichkeit
 [Rain 50% Chance Of Precipitation]
-Regen 50% Niederschlagswahrscheinlichkeit
+Regen, 50 % Niederschlagswahrscheinlichkeit
 [Rain 60% Chance Of Precipitation]
-Regen 60% Niederschlagswahrscheinlichkeit
+Regen, 60 % Niederschlagswahrscheinlichkeit
 [Rain 70% Chance Of Precipitation]
-Regen 70% Niederschlagswahrscheinlichkeit
+Regen, 70 % Niederschlagswahrscheinlichkeit
 [Rain 80% Chance Of Precipitation]
-Regen 80% Niederschlagswahrscheinlichkeit
+Regen, 80 % Niederschlagswahrscheinlichkeit
 [Rain 90% Chance Of Precipitation]
-Regen 90% Niederschlagswahrscheinlichkeit
+Regen, 90 % Niederschlagswahrscheinlichkeit
 [Rain And Snow]
 Regen und Schnee
 [Rain Early]
-
+Früh Regen
 [Rain Fog]
-
+Regen mit Nebel
 [Rain Late]
-
+Später Regen
 [Rain Mist]
-
+Regen, Nebel
 [Rain Shower]
-
+Regenschauer
 [Rain Showers]
-
+Regenschauer
 [Rain To Snow]
-
+Regen zu Schnee
 [Rain]
 Regen
 [Rising]
-
+Steigend
 [SE]
 SO
 [SSE]
@@ -540,240 +540,38 @@ SW
 [S]
 S
 [Sand]
-
+Sand
 [Scattered Clouds]
-
+Vereinzelt bewölkt
 [Scattered Showers]
-
+Vereinzelt Schauer
 [Scattered Snow Showers]
-
+Vereinzelt Schneeschauer
 [Scattered T-Storms / Wind]
-
+Vereinzelt Gewitter / Wind
 [Scattered T-Storms]
-
+Vereinzelt Gewitter
 [Scattered Thunderstorms]
-
+Vereinzelt Gewitter
 [Shallow Fog]
-
+Flacher Nebel
 [Showers / Wind Late]
-
+Schauer / Wind später
 [Showers / Wind]
-
+Schauer / Wind
 [Showers Early]
-
+Früh Schauer
 [Showers In The Vicinity]
-
+Schauer in der Umgebung
 [Showers Late]
-
+Später Schauer
 [Showers Rain Snow]
-
+Schauer, Regen, Schnee
 [Showers Rain]
-
+Schauer, Regen
 [Showers Showers Rain]
-
+Schauer, regnerische Schauer
 [Showers Snow Blowing Snow]
-
+Schauer, Schnee, Schneesturm
 [Showers Snow Heavy Blowing Snow]
-
-[Showers Snow Low Drifting Snow]
-
-[Showers Snow Mist]
-
-[Showers Snow Rain]
-
-[Showers Snow]
-
-[Showers]
-
-[Sleet And Windy]
-
-[Sleet]
-
-[Smoke]
-Rauch
-[Snow / Wind Early]
-
-[Snow / Wind]
-
-[Snow / Windy]
-
-[Snow 100% Chance Of Precipitation]
-Schnee 100% Niederschlagswahrscheinlichkeit
-[Snow 20% Chance Of Precipitation]
-Schnee 20% Niederschlagswahrscheinlichkeit
-[Snow 30% Chance Of Precipitation]
-Schnee 30% Niederschlagswahrscheinlichkeit
-[Snow 40% Chance Of Precipitation]
-Schnee 40% Niederschlagswahrscheinlichkeit
-[Snow 50% Chance Of Precipitation]
-Schnee 50% Niederschlagswahrscheinlichkeit
-[Snow 60% Chance Of Precipitation]
-Schnee 60% Niederschlagswahrscheinlichkeit
-[Snow 70% Chance Of Precipitation]
-Schnee 70% Niederschlagswahrscheinlichkeit
-[Snow 80% Chance Of Precipitation]
-Schnee 80% Niederschlagswahrscheinlichkeit
-[Snow 90% Chance Of Precipitation]
-Schnee 90% Niederschlagswahrscheinlichkeit
-[Snow And Sleet]
-
-[Snow Blowing Snow]
-
-[Snow Early]
-
-[Snow Freezing Rain Mist]
-
-[Snow Freezing Rain]
-
-[Snow Grains]
-
-[Snow Heavy Blowing Snow]
-
-[Snow Mist]
-
-[Snow Rain Mist]
-
-[Snow Rain]
-
-[Snow Shower / Wind]
-
-[Snow Shower And Windy]
-
-[Snow Shower]
-
-[Snow Showers / Wind Early]
-
-[Snow Showers 30% Chance Of Precipitation]
-
-[Snow Showers 40% Chance Of Precipitation]
-
-[Snow Showers 50% Chance Of Precipitation]
-
-[Snow Showers 60% Chance Of Precipitation]
-
-[Snow Showers 70% Chance Of Precipitation]
-
-[Snow Showers 80% Chance Of Precipitation]
-
-[Snow Showers Early]
-
-[Snow Showers Late]
-
-[Snow Showers]
-
-[Snow To Rain]
-
-[Snow To Wintry Mix]
-
-[Snow]
-Schnee
-[Stable]
-Stabil
-[Steady]
-
-[Sunny / Wind]
-
-[Sunny / Windy]
-
-[Sunny]
-Sonnig
-[T-Showers Early]
-
-[T-Showers]
-
-[T-Storm]
-
-[T-Storms 100% Chance Of Precipitation]
-
-[T-Storms 30% Chance Of Precipitation]
-
-[T-Storms 40% Chance Of Precipitation]
-
-[T-Storms 50% Chance Of Precipitation]
-
-[T-Storms 60% Chance Of Precipitation]
-
-[T-Storms 70% Chance Of Precipitation]
-
-[T-Storms 80% Chance Of Precipitation]
-
-[T-Storms 90% Chance Of Precipitation]
-
-[T-Storms Early]
-
-[T-Storms Late]
-
-[T-Storms]
-
-[Temperature]
-Temperatur
-[Thunder In The Vicinity]
-
-[Thunderstorm Rain]
-
-[Thunderstorm]
-
-[Thunderstorms And Rain]
-
-[UV Index]
-UV-Index
-[UVI]
-UVI
-[UV]
-UV
-[Visible Light Length]
-
-[WNW]
-WNW
-[WSW]
-WSW
-[W]
-W
-[Waning Crescent]
-Abnehmender Halbmond
-[Waning Gibbous]
-Abnehmender Mond
-[Waxing Crescent]
-Zunehmender Halbmond
-[Waxing Gibbous]
-Zunehmender Mond
-[West]
-West
-[Wind Chill]
-
-[Wind Direction DEG]
-Windrichtung (Grad)
-[Wind Direction Degrees]
-Windrichtung (Grad)
-[Wind Direction]
-Windrichtung
-[Wind Gust]
-
-[Wind Speed]
-Windgeschwindigkeit
-[Wind direction]
-Windrichtung
-[Wind speed]
-Windgeschwindigkeit
-[Wintry Mix / Wind]
-
-[Forecast Day 0]
-Vorhersage Tag 0
-[Forecast Day 1]
-Vorhersage Tag 1
-[Forecast Day 2]
-Vorhersage Tag 2
-[Forecast Day 3]
-Vorhersage Tag 3
-[Forecast Day 4]
-Vorhersage Tag 4
-[Forecast Day 5]
-Vorhersage Tag 5
-[Forecast Day 6]
-Vorhersage Tag 6
-[Forecast Day 7]
-Vorhersage Tag 7
-[Forecast Day 8]
-Vorhersage Tag 8
-[Forecast Day 9]
-Vorhersage Tag 9
+Schauer, Schnee

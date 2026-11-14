@@ -39,7 +39,7 @@ Tray
 [Options]
 Einstellungen
 [Text for autocomplete:]
-Text zur Auto-Vervollständigung:
+Text zur Autovervollständigung:
 [Add new rooms to group:]
 Gruppe für neue Räume:
 [Log files]
@@ -69,17 +69,17 @@ Basisverzeichnis der Verlaufsdateien öffnen
 [Line markers in the message log]
 Markierungen im Nachrichtenverlauf
 [Highlight user names]
-Hervorherbungen für Benutzernamen
+Hervorhebungen für Benutzernamen
 [Enable highlighting for user names]
 Hervorhebungen für Benutzernamen aktivieren
 [Also look in user IDs]
 Berücksichtige auch Nutzer-IDs
 [Names to highlight, wildcards like * and ? are allowed, separate multiple entries with spaces]
-Namen, die hervorgeoben werden sollen, Platzhalter wie * und ? sind erlaubt, mehrere Einträge durch Leerzeichen trennen
+Namen, die hervorgehoben werden sollen, Platzhalter wie * und ? sind erlaubt, mehrere Einträge durch Leerzeichen trennen
 [Highlight message text]
-Hervorherbungen fur Nachrichtentext
+Hervorhebungen für Nachrichtentext
 [Enable highlighting for message text]
-Hervorhebungen für Nachrichtentexte aktivieren
+Hervorhebungen für Nachrichtentext aktivieren
 [Words to highlight, wildcards like * and ? are allowed, separate multiple entries with spaces.]
 Wörter, die hervorgehoben werden sollen; Platzhalter wie * und ? sind erlaubt, mehrere Einträge durch Leerzeichen trennen.
 [Highlight messages containing my own nickname]
@@ -117,7 +117,7 @@ Andere Einstellungen
 [Note: All settings are applied immediately]
 Hinweis: Alle Einstellungen werden sofort aktiv!
 [The container is using private settings. The panel height will not be shared with other containers.]
-Der Container verwendet private Einstellungen. Die Panelhöhe wird nicht mit anderen Container geteilt werden.
+Der Container verwendet private Einstellungen. Die Panelhöhe wird nicht mit anderen Container geteilt.
 [Show picture for this contact]
 Zeige Avatar des Kontaktes:
 [Advanced tweaks]
@@ -127,7 +127,7 @@ Zeitlimit für Versand
 [seconds]
 Sekunden
 [Input history size]
-letzte Nachrichten Eingabefeld
+Größe des Eingabeverlaufs
 [entries]
 Einträge
 [More about advanced tweaks]
@@ -165,7 +165,7 @@ Container im Vordergrund
 [Vertical maximize]
 Vertikal maximieren
 [Close or hide inactive container after]
-Schließe oder verstecke Container nach
+Schließe oder verstecke inaktive Container nach
 [sec. (0=never)]
 Sek. (0=niemals)
 [Automatically size input area (*)]
@@ -175,7 +175,7 @@ Standardwert verwenden
 [Flash until focused]
 Bis zur Aktivierung blinken
 [Disable flashing]
-Niemals blinken
+Blinken deaktivieren
 [Enable popups if minimized]
 Popups aktivieren, wenn Fenster minimiert
 [Enable popups if unfocused]
@@ -231,7 +231,7 @@ Blinkender Aufschriftstext auf den Tabs
 [Single row tab control (*)]
 Einzeilige Tab-Anordnung (*)
 [Close button on tabs]
-Schließen-Schaltflache auf den Tabs
+Schließen-Schaltfläche auf den Tabs
 [Use button tabs (*)]
 Tab-Schaltflächen verwenden (*)
 [Side bar width]
@@ -912,7 +912,7 @@ Nicknamen in Benutzerliste färben (Sie können die Farben anpassen)
 [Show topic as status message on the contact list]
 Thema als Statusnachricht in der Kontaktliste anzeigen
 [Do not pop up the window when joining a chat room]
-Fenster beim Betreten eines Chatraumes nicht automatisch erzeugen
+Fenster beim Betreten eines Chatraums nicht automatisch erzeugen
 [Show contact's status modes if supported by the protocol]
 Kontaktstatus anzeigen, falls das Protokoll dies unterstützt
 [Display contact's status icon before user role icon]

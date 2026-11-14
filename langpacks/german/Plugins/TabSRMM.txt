@@ -249,7 +249,7 @@ Klangeffekte aktivieren
 [Play sounds when minimized]
 Klänge spielen wenn minimiert
 [Play sounds when not focused]
-Klänge spielen wenn nicht fokusiert
+Klänge spielen wenn nicht fokussiert
 [Play sounds for inactive tabs in active containers]
 Klänge für inaktive Tabs in aktiven Containern spielen
 [Play sounds for the active tab / window]

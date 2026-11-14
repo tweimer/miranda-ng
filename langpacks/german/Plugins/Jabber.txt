@@ -233,9 +233,9 @@ aus folgendem Grund eingeladen:
 [&Accept]
 &Akzeptieren
 [Server side bookmarks]
-Auf Server gespeicherte Lesezeichen
+Serverseitige Lesezeichen
 [Store conference rooms and web links on server.]
-Speicherung von Konferenzräumen und Weblinks auf dem Server.
+Konferenzräume und Weblinks auf dem Server speichern.
 [Remove]
 Entfernen
 [Edit]
@@ -253,7 +253,7 @@ Transport
 [URL]
 URL
 [Auto-join (Automatically join Bookmarks must be enabled in Miranda options)]
-Raum automatisch beim Verbinden betreten. (Muss auch in den Jabbereinstellungen aktiviert sein)
+Automatisch betreten (muss in den Jabbereinstellungen aktiviert sein)
 [Room JID/ URL:]
 Raum-JID/URL:
 [Bookmark Name:]
@@ -263,9 +263,9 @@ Privatsphärelisten
 [Flexible way to configure visibility and more.]
 Berechtigungen einstellen für Status senden/empfangen, Nachrichten und Querys.
 [Lists:]
-Liste
+Listen:
 [Rules:]
-Regeln
+Regeln:
 [Simple Mode]
 Einfacher Modus
 [Advanced Mode]
@@ -301,13 +301,13 @@ Nachrichten
 [Queries]
 Querys
 [Incoming presence]
-Status empfangen
+Eingehender Status
 [Outgoing presence]
-Status senden
+Ausgehender Status
 [New privacy list name:]
 Neue Privatsphärenliste:
 [Enter the name of the new list:]
-Name der neuen Liste:
+Name der neuen Liste eingeben:
 [Service Discovery]
 Diensterkennung
 [View as tree]
@@ -677,7 +677,7 @@ Thema für %s setzen
 [Change nickname in %s]
 Nicknamen in %s ändern
 [Reason to destroy %s]
-Grund der Zerstörung von %s
+Begründung der Zerstörung von %s
 ;file \protocols\JabberG\src\jabber_console.cpp
 [Filter mode]
 Filtermodus

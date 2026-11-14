@@ -523,7 +523,7 @@ Erweitert
 [WallOps from %s: ]
 WallOps von %s:\s
 [%s invites you to %s]
-%s lädt dich in den Channel %s ein
+%s lädt dich in %s ein
 [%s is away]
 %s ist abwesend
 [These are online: ]

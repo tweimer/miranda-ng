@@ -155,7 +155,7 @@ Lade nur aktuellen Nachrichtenverlauf
 [Use private splitter position]
 Private Splitterposition verwenden
 [Always trim message log to]
-Neue Nachrichten begrenzen auf
+Nachrichtenverlauf begrenzen auf
 [events]
 Ereignisse
 [Only show tab bar when it's needed]
